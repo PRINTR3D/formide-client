@@ -1,0 +1,41 @@
+<script src="/public/assets/javascripts/unity.js"></script>
+
+<div ng-controller="CreatePrintjobController">
+	<div class="layout">
+		<div class="layout__item 1/2">
+			<div class="unity">
+				<div id="unityPlayer">
+					<div class="missing">
+						<a href="http://unity3d.com/webplayer/" title="Unity Web Player. Install now!">
+							<img alt="Unity Web Player. Install now!" src="http://webplayer.unity3d.com/installation/getunity.png" width="193" height="63" />
+						</a>
+					</div>
+				</div>
+				<div class="broken">
+					<a href="http://unity3d.com/webplayer/" title="Unity Web Player. Install now! Restart your browser after install.">
+						<img alt="Unity Web Player. Install now! Restart your browser after install." src="http://webplayer.unity3d.com/installation/getunityrestart.png" width="193" height="63" />
+					</a>
+				</div>
+			</div>
+		</div><!--
+		--><div class="layout__item 1/2">
+			<form ng-submit="submit()">
+				<h4>Material</h4>
+				<select class="" data-ng-options="material.name for material in materials" data-ng-model="selectedMaterial"></select>
+				<br/><br/>
+				<h4>Slice settings</h4>
+				<select data-ng-options="sliceprofile.name for sliceprofile in sliceprofiles" data-ng-model="selectedSliceprofile"></select>
+				<br/>
+				<input type="radio" ng-model="selectedSlicemethod" value="online">  Online (fast) <br/>
+				<input type="radio" ng-model="selectedSlicemethod" value="offline">  Offline (secure) <br/>
+				
+				<br/><br/>
+				<h4>Printer</h4>
+				<select data-ng-options="printer.name for printer in printers" data-ng-model="selectedPrinter"></select>
+				
+				<br/><br/>
+				<input type="submit" value="Add to queue"/>
+			</form>
+		</div>
+	</div>
+</div>

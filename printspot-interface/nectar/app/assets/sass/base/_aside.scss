@@ -1,0 +1,104 @@
+.main-aside {
+	border-right: 1px solid $light-gray;
+	height: 100%;
+	padding: 0 !important;
+	margin: 0 !important;
+	box-shadow: inset 0 0 0 1px white;
+	/* overflow-y: scroll; */
+
+	ul {
+		padding-left: 0;
+		li {
+			list-style: none;
+			overflow: hidden;
+
+			> div {
+				padding: 10px 10px 10px 20px;
+				display: inline-block;
+			}
+
+			> a {
+				padding: 10px 20px;
+				width: 100%;
+				display: block;
+				border-bottom: 1px solid $light-gray;
+				position: relative;
+				box-shadow: inset 0 0 0 1px white;
+				color: inherit;
+
+				&:after {
+					content: '';
+					width: 4px;
+					height: 100%;
+					background: white;
+					display: block;
+					position: absolute;
+					right: 0;
+					top: 0;
+					bottom: 0;
+				}
+			}
+
+			> a {
+				&:before {
+					content: '';
+					width: 10px;
+					height: 100%;
+					background: red;
+					display: block;
+					position: absolute;
+					left: 0;
+					top: 0;
+					bottom: 0;
+					box-shadow: inset 0 0 0 1px rgba(0,0,0,.2);
+					z-index: 100;
+				}
+			}
+
+			> div {
+				display: inline-block;
+				position: relative;
+				&:before {
+					content: '';
+					width: 10px;
+					height: 100%;
+					background: red;
+					display: block;
+					position: absolute;
+					left: 0;
+					top: 0;
+					bottom: 0;
+					box-shadow: inset 0 0 0 1px rgba(0,0,0,.2);
+					z-index: 100;
+				}
+			}
+		}
+	}
+
+	.upload > a:before,
+	.upload-content:before {
+		background: $upload-color;
+	}
+
+	.slicing > a:before,
+	.slicing-content:before {
+		background: $slicing-color;
+	}
+
+	.control > a:before,
+	.control-content:before,
+	.control-content-replace:before,
+	.control-content-manual:before {
+		background: $control-color !important;
+	}
+
+	.upload-content {
+		/* display: none; */
+	}
+	.slicing-content {
+		/* display: none; */
+	}
+	.control-content {
+		/* display: none; */
+	}
+}

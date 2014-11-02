@@ -1,0 +1,42 @@
+<section ng-controller="AppsController">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-4" ng-repeat="(id, app) in apps track by id">
+				<div class="panel panel-default">
+					<div class="panel-heading">{{ app.name }}</div>
+					<div class="panel-body">
+						<img src="{{ app.image }}" width="100%"/>
+						<br/><br/>
+						<a class="btn btn-primary btn-block" ng-click="showApp(id)">Details</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+		
+	<div class="modal fade" id="appModal">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span>
+						<span class="sr-only">Close</span>
+					</button>
+					<h4 class="modal-title">{{ activeApp.name }}</h4>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-sm-6">
+							<p>{{ activeApp.description }}</p>
+							<a class="btn btn-primary btn-block" href="{{ activeApp.url }}">Launch app</a>
+						</div>
+						<div class="col-sm-6">
+							<img src="{{ activeApp.image }}" width="100%"/>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+		
+</section>
