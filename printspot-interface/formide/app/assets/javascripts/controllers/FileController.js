@@ -10,7 +10,7 @@ app.controller('FileController', ['$scope', '$upload', 'Modelfiles', function($s
 		for(var i = 0; i < $files.length; i++) {
 			var file = $files[i];
 			$scope.upload = $upload.upload({
-				url: '/upload',
+				url: api_url + '/upload',
 				method: 'POST',
 				file: file
 			}).progress(function(evt) {

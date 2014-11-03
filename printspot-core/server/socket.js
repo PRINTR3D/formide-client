@@ -1,14 +1,14 @@
 // server/socket.js
 
-module.exports = function(localIO, onlineIO, nsclient, macAddress) {
+module.exports = function(localIO, onlineIO, nsclient, macAddress, logger) {
 
 	/*
 	 * Setup online connection
 	 */
 	onlineIO.on('connect', function() {
-		global.log('new online server connection');
 		
 		onlineIO.on('handshake', function(data) {
+			global.log('info', 'new online server connection');
 			onlineIO.emit('typeof', {
 				type: 'client',
 				mac: macAddress
@@ -16,19 +16,26 @@ module.exports = function(localIO, onlineIO, nsclient, macAddress) {
 		});
 		
 		/*
+		 * Stream data logging to Printr servers
+		 */
+		global.logger.on('logging', function (transport, level, msg, meta) {
+	    	onlineIO.emit('client_push_log', {level: level, msg: msg, meta: meta, printerID: macAddress});
+	  	});
+		
+		/*
 		 * Dynamically load online dashboard functions from config.json
 		 */
 		for(var method in global.config.dashboard_commands) {
 			(function(realMethod) {
 				onlineIO.on(realMethod, function(data) {	
-					// chekc if incoming message is meant for this printer			
+					// check if incoming message is really meant for this printer			
 					if(data.printerID == macAddress) {
 						var json = {
 							"type": realMethod,
 							"args": data
 						};
 						nsclient.write(JSON.stringify(json));
-						global.log('online: ' + realMethod + ': ' + json);
+						global.log('debug', 'online server command ' + realMethod, data);
 					}
 				});
 			})(method);
@@ -49,12 +56,11 @@ module.exports = function(localIO, onlineIO, nsclient, macAddress) {
 	 * Setup local connection
 	 */
 	localIO.sockets.on('connection', function(socket) {
-		global.log('new local dashboard connection');
 		socket.emit('handshake', {id:socket.id});
 		
 		// Authentication not really neccesery locally
 		socket.on('typeof', function(data) {
-			global.log('typeof ' + data.type);
+			global.log('info', 'new local dashboard connection', data);
 			if(data.type == 'dashboard') {
 				socket.emit('auth', {message: 'OK', id: socket.id});
 			}
@@ -62,7 +68,7 @@ module.exports = function(localIO, onlineIO, nsclient, macAddress) {
 		
 		// Socket disconnect
 		socket.on('disconnect', function() {
-			global.log('dashboard disconnected');
+			global.log('info', 'local dashboard disconnected', {});
 		});
 		
 		/*
@@ -78,7 +84,7 @@ module.exports = function(localIO, onlineIO, nsclient, macAddress) {
 					};
 				
 					nsclient.write(JSON.stringify(json));
-					global.log('local: ' + realMethod + ': ' + json);
+					global.log('debug', 'local dashboard command ' + realMethod, data);
 				});
 			})(method);
 		}
@@ -99,5 +105,5 @@ module.exports = function(localIO, onlineIO, nsclient, macAddress) {
 		
 	});
 	
-	global.log('Module loaded: socket.js');
+	global.log('info', 'Module loaded: socket.js', {});
 };

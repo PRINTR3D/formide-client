@@ -1,11 +1,19 @@
 // index.js
-process.title = 'printspot-core';
 
-// process arguments =============
-var argv = require('minimist')(process.argv.slice(2));
-global.log = function(msg) {
-	if(argv.dev) {
-		console.log(msg);
+// logging ======================
+var argv 			= require('minimist')(process.argv.slice(2));
+var winston			= require('winston');
+
+global.logger = new (winston.Logger)({
+    transports: [
+      	new (winston.transports.File)({filename: '../logs/printspot.log', level: 'debug' })
+    ]
+  });
+
+global.log = function(level, msg, data) {
+	global.logger.log(level, msg, data);
+	if(!argv.dev) {
+		console.log(msg + data);
 	}
 }
 
@@ -30,7 +38,7 @@ var localIO 		= require('socket.io').listen(server);
 var onlineIO		= require('socket.io-client')(global.config.online.host + ':' + global.config.online.port);
 var net				= require('net');
 var nsclient		= net.connect({port: global.config.client.port}, function() {
-	global.log('qclient connected');
+	global.log('info', 'qclient connected', {port: global.config.client.port});
 });
 
 // configuration =================
@@ -89,5 +97,5 @@ getMac.getMac(function(err, macAddress) {
 	require('./server/routes')(app);
 	
 	// start back-end app =====================
-	global.log('Starting printspot-core version ' + global.config.version.number + ' on ' + global.config.local.host + ':' + global.config.local.port);
+	global.log('info', 'printspot-core started',  {'version': global.config.version.number, 'host': global.config.local.host, 'port': global.config.local.port});
 });

@@ -1,5 +1,5 @@
-var exec = require('child_process').exec;
-var argv = require('minimist')(process.argv.slice(2));
+var exec 		= require('child_process').exec;
+var argv 		= require('minimist')(process.argv.slice(2));
 
 if(!argv.interface) {
 	console.log('No interface given');

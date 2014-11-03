@@ -1,12 +1,13 @@
 // server/routes.js
 
-var request 		= require('request');
-var passport 		= require('passport');
-var LocalStrategy 	= require('passport-local').Strategy;
-var crypto			= require('crypto');
-var fs				= require('fs');
-var multipart 		= require('connect-multiparty');
+var request 			= require('request');
+var passport 			= require('passport');
+var LocalStrategy 		= require('passport-local').Strategy;
+var crypto				= require('crypto');
+var fs					= require('fs');
+var multipart 			= require('connect-multiparty');
 var multipartMiddleware = multipart();
+var http 				= require('http');
 
 passport.use(new LocalStrategy({
 	usernameField: 'username', 
@@ -55,6 +56,42 @@ module.exports = exports = function(app) {
 	// =====================================
 	app.post('/slicing', function(req, res) {
 		if(req.body.modelfile != null && req.body.sliceprofile != null && req.body.material != null && req.body.printer) {
+
+			var sliceparams = {
+				
+			};
+			
+			// OFFLINE
+			// 1) setup slicing params
+			// 2) request katana light with local file
+			// 3) response hash
+
+			if(req.body.slicemethod == 'local') {
+				var options = {
+					url: 'http://localhost:' + global.config.katana.port + '/katana/',
+					method: 'POST',
+					form: sliceparams
+				}
+				
+				request(options, function(error, resonse, body) {
+					if(error) {
+						global.log('error', error, {'request': req.body});
+					}
+					if(!error && response.statusCode == 200) {
+						// Print out the response body
+						console.log(body);
+    				}
+				});
+			}
+			else if(req.body.slicemthod == 'online') {
+				// ONLINE
+				// 1) upload file to api
+				// 2) setup slicing params
+				// 3) request katana via api (create queue item online)
+				// 4) download generated gcode to local filesystem
+				// 5) response hash
+			}
+			
 			global.db.Printjob.create({
 				modelfileID: req.body.modelfile.id,
 				printerID: req.body.printer.id,
@@ -125,7 +162,7 @@ module.exports = exports = function(app) {
 	app.get('/download', function(req, res) {
 		fs.readFile(__dirname + '/uploads/modelfiles/' + req.query.hash, function(err, data) {
 			if(err) {
-				global.log(err);
+				global.log('error', err, {'hash': req.query.hash});
 			}
 			else {
 				var base64File = new Buffer(data, 'binary').toString('base64');
@@ -140,7 +177,7 @@ module.exports = exports = function(app) {
 			var newPath = __dirname + '/uploads/modelfiles/' + hash;
 			fs.writeFile(newPath, data, function(err) {
 				if(err) {
-					global.log(err);
+					global.log('error', err, {'path': newPath});
 				}
 				else {
 					global.db.Modelfile.create({
@@ -155,5 +192,5 @@ module.exports = exports = function(app) {
 		});
 	});
 	
-	global.log('Module loaded: routes.js');
+	global.log('info', 'Module loaded: routes.js', {});
 }

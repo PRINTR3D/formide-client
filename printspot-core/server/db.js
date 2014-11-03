@@ -24,4 +24,4 @@ module.exports = lodash.extend({
   Sequelize: Sequelize
 }, db);
 
-global.log('Module loaded: db.js');
+global.log('info', 'Module loaded: db.js', {});

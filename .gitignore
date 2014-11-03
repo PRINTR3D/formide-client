@@ -28,7 +28,11 @@ node_modules
 .lock-wscript
 
 # Printspot
-config.json
+printspot-config/config.json
+logs
+
+printspot-core/server/uploads
+printspot-core/server/printspot.sqlite
 
 printspot-interface/formide/public/assets
 printspot-interface/formide/.sass-cache
