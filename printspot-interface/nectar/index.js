@@ -1,4 +1,5 @@
 // index.js
+process.title = 'printspot-interface';
 
 // set up ========================
 global.userConfig	= require('./../../printspot-config/userConfig.json');

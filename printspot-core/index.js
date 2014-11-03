@@ -1,4 +1,5 @@
 // index.js
+process.title = 'printspot-core';
 
 // process arguments =============
 var argv = require('minimist')(process.argv.slice(2));

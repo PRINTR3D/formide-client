@@ -1,3 +1,5 @@
+process.title = 'printspot-qclient-simulator';
+
 var server = require('net').createServer();
 
 server.on('connection', function(client) {
