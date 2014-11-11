@@ -8,7 +8,7 @@ module.exports = function(localIO, onlineIO, nsclient, macAddress, logger) {
 	onlineIO.on('connect', function() {
 		
 		onlineIO.on('handshake', function(data) {
-			global.log('info', 'new online server connection');
+			global.log('info', 'new online server connection', data);
 			onlineIO.emit('typeof', {
 				type: 'client',
 				mac: macAddress
@@ -93,6 +93,7 @@ module.exports = function(localIO, onlineIO, nsclient, macAddress, logger) {
 		 * Receive client data and send to local dashboard
 		 */
 		nsclient.on('data', function(data) {
+			global.log('debug', 'qclient status pushed', data.toString());
 			var data;
 			try {
 				data = JSON.parse(data.toString());
