@@ -1,0 +1,40 @@
+<div ng-controller="MaterialController">
+	<div class="layout">
+		<div class="layout__item 1/4">
+			<div ng-file-drop="onFileSelect($files)" class="upload" ng-file-drag-over-class="upload-hover">drop files here</div>
+			<br/>
+			<center><div class="btn" ng-file-select="onFileSelect($files)" data-multiple="true">Upload</div></center>
+		</div><!--
+		--><div class="layout__item 3/4">
+			<table class="table table--rows table--striped">
+				<thead>
+					<tr>
+						<th>Filename</th>
+						<th>Upload date</th>
+						<th>Filesize</th>
+						<th></th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="file in files">
+						<td>{{ file.filename }}</td>
+						<td>{{ file.createdAt }}</td>
+						<td>{{ file.filesize }}</td>
+						<td>
+							<a class="btn" href="/printjobs/create/{{ file.id }}">
+								Print
+							</a>
+						</td>
+						<td>
+							<a class="btn btn-alert" ng-click="deleteModelfile(file.id)">
+								Delete
+							</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div><!--
+		-->
+	</div>
+</div>

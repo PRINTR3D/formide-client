@@ -1,0 +1,173 @@
+<li class="slicing">
+	<a href="#"  ng-click="selectAside('slice')"><i class="icon slicing"></i> Slicing</a>
+
+	<div class="slicing-content slide" ng-show="selection == 'slice'">
+		<h3>Quick Printing</h3>
+
+		<div class="radio" ng-repeat="sliceprofile in defaultsliceprofiles">
+		  <label>
+		    <input type="radio" name="sliceprofileSelect" id="sliceprofile_{{ sliceprofile.id }}" value="{{ sliceprofile.id }}" ng-model="sliceform.sliceprofile">
+		    {{ sliceprofile.name }}
+		  </label>
+		</div>
+
+        <div class="radio">
+		  <label>
+		    <input type="radio" name="sliceprofileSelect" id="sliceprofile_">
+		    <select class="form-control form-control-slicing">
+                <option>Custom profile</option>
+		    </select>
+		  </label>
+		</div>
+
+        <hr />
+
+		<div class="checkbox">
+			<label>
+				<input type="checkbox"> Support
+			</label>
+		</div>
+
+		<hr />
+
+
+        <h3>Slicing</h3>
+
+		<div class="radio">
+		  <label>
+		    <input type="radio" name="optionsRadios2" id="optionsRadios1" value="option1" checked>
+		    Online (quickest)
+		  </label>
+		</div>
+<!--		<div class="radio">-->
+<!--		  <label>-->
+<!--		    <input type="radio" name="optionsRadios2" id="optionsRadios2" value="option2">-->
+<!--		    Offline (super secure)-->
+<!--		  </label>-->
+<!--		</div>-->
+
+		<div class="form-inline">
+			<button class="btn btn-more" id="slicing-more" ng-if="sliceform.sliceprofile > 0" ng-click="selectAside('slicing-more')">Edit</button>
+			<button class="btn btn-more" id="slicing-more" ng-if="!sliceform.sliceprofile" ng-click="selectAside('slicing-more')">New</button>
+
+			<button type="submit" class="btn btn-print" title="Select" ng-if="sliceform.modelfile && sliceform.sliceprofile" ng-click="slice()">Add to queue</button>
+		</div>
+	</div>
+
+	<div class="slicing-content-more" ng-show="selection == 'slicing-more'">
+		<div class="col-sm-6">
+			<h3>Channel A</h3>
+			<div class="color-bar" style="background-color: {{ activePrinterStatus.filamenta.colorString }}"></div>
+
+			<h3>Build</h3>
+			<p class="support-line">A: {{ activePrinterStatus.filamenta.material.name }} / {{ activePrinterStatus.filamenta.percentage }}% left</p>
+
+			<hr />
+
+			<div class="form-group form-inline">
+				<label>Nozzle</label>
+				<input type="text" class="form-control input-control-mm" value="5 mm" />
+			</div>
+
+			<div class="progress-box">
+				<div class="percentage-cur" ng-init="sliceprofile.layerheight=0">
+					<span class="num">Layer Height {{ sliceprofile.layerheight }}mm</span>
+				</div>
+				<div class="progress-bar progress-bar-slider">
+					<input class="progress-slider" type="range" min="0" max="100" ng-model="sliceprofile.layerheight">
+					<div class="inner" ng-style="{ width: sliceprofile.layerheight + '%' || '0%' }"></div>
+				</div>
+			</div>
+
+			<div class="progress-box">
+				<div class="percentage-cur" ng-init="sliceprofile.infill=0">
+					<span class="num">Infill {{ sliceprofile.infill }}%</span>
+				</div>
+				<div class="progress-bar progress-bar-slider">
+					<input class="progress-slider" type="range" min="0" max="100" ng-model="sliceprofile.infill">
+					<div class="inner" ng-style="{ width: sliceprofile.infill + '%' || '0%' }"></div>
+				</div>
+			</div>
+
+			<div class="progress-box">
+				<div class="percentage-cur" ng-init="sliceprofile.wall=0">
+					<span class="num">Wall Thickness {{ sliceprofile.wall }}mm</span>
+				</div>
+				<div class="progress-bar progress-bar-slider">
+					<input class="progress-slider" type="range" min="0" max="100" ng-model="sliceprofile.wall">
+					<div class="inner" ng-style="{ width: sliceprofile.wall + '%' || '0%' }"></div>
+				</div>
+			</div>
+
+			<div class="progress-box">
+				<div class="percentage-cur" ng-init="sliceprofile.bottomtop=0">
+					<span class="num">Bottom / Top Tickness {{ sliceprofile.bottomtop }}mm</span>
+				</div>
+				<div class="progress-bar progress-bar-slider">
+					<input class="progress-slider" type="range" min="0" max="100" ng-model="sliceprofile.bottomtop">
+					<div class="inner" ng-style="{ width: sliceprofile.bottomtop + '%' || '0%' }"></div>
+				</div>
+			</div>
+
+			<div class="progress-box">
+				<div class="percentage-cur" ng-init="sliceprofile.printspeed=0">
+					<span class="num">Print Speed {{ sliceprofile.printspeed }}mm/s</span>
+				</div>
+				<div class="progress-bar progress-bar-slider">
+					<input class="progress-slider" type="range" min="0" max="100" ng-model="sliceprofile.printspeed">
+					<div class="inner" ng-style="{ width: sliceprofile.printspeed + '%' || '0%' }"></div>
+				</div>
+			</div>
+
+			<div class="form-group form-inline checkbox">
+				<label><input type="checkbox" ng-model="sliceprofile.raft">Raft / Layers</label>
+				<input type="text" ng-model="sliceprofile.raftlayers" class="form-control input-control-mm" value="2" />
+			</div>
+
+			<div class="form-group form-inline checkbox">
+				<label><input type="checkbox" ng-model="sliceprofile.brim">Brim / Width</label>
+				<input type="text" ng-model="sliceprofile.brimlines" class="form-control input-control-mm" value="2 mm" />
+			</div>
+		</div>
+		<div class="col-sm-6">
+			<h3>Channel B</h3>
+			<div class="color-bar" style="background-color: {{ activePrinterStatus.filamentb.colorString }}"></div>
+
+			<h3>Support</h3>
+            <p class="support-line">A: {{ activePrinterStatus.filamentb.material.name }} / {{ activePrinterStatus.filamentb.percentage }}% left</p>
+
+
+            <hr />
+
+			<div class="radio">
+			<label>
+				<input type="radio"  ng-model="sliceprofile.supportplatform" name="optionsRadios" id="optionsRadios1">
+				Support on Platform
+			</label>
+			</div>
+			<div class="radio">
+			<label>
+				<input type="radio"  ng-model="sliceprofile.supportmodel" name="optionsRadios" id="optionsRadios2">
+				Support on Model
+			</label>
+			</div>
+
+			<div class="form-group form-inline">
+				<label>Overhang threshold</label>
+				<input type="text" ng-model="slideprofile.overhang" class="form-control input-control-deg" value="90" />
+			</div>
+		</div>
+
+		<div class="col-sm-12">
+			<hr />
+
+			<div class="form-inline">
+				<button class="btn btn-more" id="slicing-back" ng-click="selectAside('slice')">Back</button>
+				<button class="btn btn-more" id="slicing-back">Save Profile</button>
+				<button type="submit" class="btn btn-print" title="Select">Print</button>
+			</div>
+		</div>
+	</div>
+
+
+</li>

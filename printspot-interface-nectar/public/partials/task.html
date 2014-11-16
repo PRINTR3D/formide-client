@@ -1,0 +1,34 @@
+<strong class="task-name" ng-model="selectedTask"><i class="icon tasks"></i> Tasks</strong>
+
+<div class="task-content slide" ng-show="selectedTask" ng-click="$event.stopPropagation();">
+	<ul href="" class="task-queue">
+
+		<li class="task-queue-item selector s-right" ng-repeat="queueitem in activePrinterQueue" ng-model="collapsed" >
+			<span class="queue-title slide" ng-hide="collapsed"><span ng-click="collapsed=!collapsed">{{ queueitem.modelfile.filename }}</span></span>
+			<span class="queue-inner slide" ng-show="collapsed"><span ng-click="collapsed=!collapsed">{{ queueitem.modelfile.filename }}</span>
+				<hr />
+
+				<p>{{ queueitem.modelfile.filesize / 10000 }} MB / Added On {{ queueitem.created_at }} <br />
+				Support: Yes / PVA <br />
+				Estimated Print Time: {{ queueitem.duration_estimate }}s</p>
+
+				<hr />
+
+				<div class="form-group">
+					<label for="selectFile">Build:</label>
+					<select class="form-control" id="selectFile">
+					  <option>Channel {{ queueitem.build_channel }}: ABS</option>
+					</select>
+				</div>
+
+				<div class="form-group">
+					<label for="selectFile">Support:</label>
+					<select class="form-control" id="selectFile">
+					  <option>Channel {{ queueitem.support_channel }}: PVA</option>
+					</select>
+				</div>
+			</span>
+		</li>
+
+	</ul>
+</div>

@@ -1,0 +1,38 @@
+<ul class="main-list col-sm-10">
+	<li class="clearfix">
+		<div class="col-sm-4 name" ng-click="selectedPrinter=!selectedPrinter">
+			<strong class="printer-name" ng-model="selectedPrinter"><i class="icon printer"></i> Nectar One</strong>
+
+			<div class="printer-content slide" ng-show="selectedPrinter" ng-click="$event.stopPropagation();">
+				<div class="nectar-one clearfix">
+					<span class="material-a">{{ printerStatus.extrudera.material.name }}</span>
+					<span class="material-b">{{ printerStatus.extruderb.material.name }}</span>
+
+					<span class="nozzle-temp-a" ng-class="{'red' : printerStatus.extrudera.temp < printerStatus.extrudera.targettemp}">{{ printerStatus.extrudera.temp }} &deg;C <span class="final-temp">({{ printerStatus.extrudera.targettemp }} &deg;C)</span></span>
+					<span class="nozzle-temp-b" ng-class="{'red' : printerStatus.extruderb.temp < printerStatus.extruderb.targettemp}">{{ printerStatus.extruderb.temp }} &deg;C <span class="final-temp">({{ printerStatus.extruderb.targettemp }} &deg;C)</span></span>
+
+					<span class="bed-temp" ng-class="{'red' : printerStatus.bed.temp < printerStatus.bed.targettemp}">{{ printerStatus.bed.temp }} &deg;C <span class="final-temp">({{ printerStatus.bed.targettemp }} &deg;C)</span></span>
+
+                    <span class="fill-a" style="height: {{ printerStatus.extrudera.statusHeight }}px; background-color: {{ printerStatus.extrudera.colorString }};"></span>
+                    <span class="fill-b" style="height: {{ printerStatus.extruderb.statusHeight }}px; background-color: {{ printerStatus.extruderb.colorString }};"></span>
+				</div>
+
+				<hr />
+
+				<p>Status: {{ printerStatus.status }}</p>
+
+                <p ng-if="printerStatus.extrudera.statusHeight < 5">Channel A is running low!</p>
+                <p ng-if="printerStatus.extruderb.statusHeight < 5">Channel B is running low!</p>
+
+				<strong class="selector">Printer Queue</strong>
+
+				<ul href="" class="printer-queue">
+					<li ng-repeat="queueitem in activePrinterQueue" class="selector"><span>{{ queueitem.modelfile.filename }} <span class="duration"> / {{ queueitem.duration_estimate }}s</span></span></li>
+				</ul>
+			</div>
+		</div>
+		
+		<div ng-include src=" '/public/partials/task.html' " class="col-sm-offset-4 col-sm-4 task" ng-click="selectedTask=!selectedTask"></div>
+
+	</li>
+</ul>

@@ -1,0 +1,27 @@
+{
+  "name": "nectar-Nectar",
+  "version": "0.0.0",
+  "ignore": [
+    ".jshintrc",
+    "**/*.txt"
+  ],
+  "private": "true",
+  "dependencies": {
+    "jquery": "latest",
+    "angular": "latest",
+    "angular-route": "latest",
+    "angular-resource": "latest",
+    "angular-sanitize": "latest",
+    "angular-animate": "latest",
+    "angular-elastic": "~2.3.5",
+    "underscore": "latest",
+    "animate-sass": "latest",
+    "modernizr": "latest",
+    "bootstrap": "~3.2.0",
+    "ng-file-upload": "~1.6.6",
+    "ngDialog": "~0.3.0",
+    "thingiview.js": "*",
+    "angular-socket-io": "~0.6.0",
+    "angular-growl-notifications": "~2.1.1"
+  }
+}

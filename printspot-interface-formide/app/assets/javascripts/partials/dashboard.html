@@ -1,0 +1,149 @@
+<div class="layout" ng-controller="DashboardController">
+	
+	<div ng-repeat="(id, notification) in notifications track by id">
+        <growl-notification class="fading" ttl="2000">
+            {{notification}}
+        </growl-notification>
+    </div>
+    
+	<div class="layout__item 1/2">
+		<h2>Temperatures</h2>
+		<div class="layout">
+			<div class="layout__item 1/2">
+				<h4 class="text-center"><center>Extruder</center></h4>
+				<div id="ext0" style="width:250px; height:160px"></div>
+				<div class="layout">
+					<div class="layout__item 1/3">
+						<input type="text" class="text-input" ng-model="controlVariables.ext0temp"/>
+					</div><!--
+					--><div class="layout__item 2/3">
+						<a class="btn" ng-click="controlPrinter.extruderTemperature(controlVariables.ext0temp)">Set</a>
+					</div>
+				</div>
+			</div><!--
+			--><div class="layout__item 1/2">
+				<h4 class="text-center"><center>Heated bed</center></h4>
+				<div id="bed" style="width:250px; height:160px"></div>
+				<div class="layout">
+					<div class="layout__item 1/3">
+						<input type="text" class="text-input" ng-model="controlVariables.bedtemp"/>
+					</div><!--
+					--><div class="layout__item 2/3">
+						<a class="btn" ng-click="controlPrinter.bedTemperature(controlVariables.bedtemp)">Set</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<br/><br/>
+		<div class="layout">
+			<div class="layout__item 1/1">
+				<!--
+<h2>Current printjob</h2>
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Filename</th>
+							<th>Estimated print time</th>
+							<th>Sliceprofile</th>
+							<th>Material</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="printjob in printjobs">
+							<td>{{ printjob.modelfile.name }}</td>
+							<td>{{ printjob.duration_estimate }}</td>
+							<td>{{ printjob.sliceprofile.name }}</td>
+							<td>{{ printjob.material.type }}<label class="label" style="background-color:{{ printjob.material.color }}; display: inline-block; height: 20px; width:20px; margin-left: 10px; border-radius: 50%;"></label></td>
+							<td>
+								<a ng-if="printerStatus.status == 'online'" ng-click="controlPrinter.stop()" class="btn btn-xs btn-danger">Stop</a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+-->
+			</div>
+		</div>
+	</div><!--
+	--><div class="layout__item 1/2">
+		<div class="layout">
+			<div class="layout__item 1/2">
+				<h2>Manual control</h2>
+			</div><!--
+			--><div class="layout__item 1/6">
+				<input type="text" ng-model="controlVariables.movement" class="text-input"/>
+			</div>
+		</div>
+		<div class="layout">
+			<div class="layout__item 1/3">
+				<h5>X axis</h5>
+				<a ng-click="controlPrinter.move('x', controlVariables.movement*-1, 'mm')">
+					<span class="mega-octicon octicon-chevron-up"></span>
+				</a>
+				<br/>
+				<a ng-click="controlPrinter.move('x', controlVariables.movement, 'mm')">
+					<span class="mega-octicon octicon-chevron-down"></span>
+				</a>
+			</div><!--
+			--><div class="layout__item 1/3">
+				<h5>Y axis</h5>
+				<a ng-click="controlPrinter.move('y', controlVariables.movement*-1, 'mm')">
+					<span class="mega-octicon octicon-chevron-up"></span>
+				</a>
+				<br/>
+				<a ng-click="controlPrinter.move('y', controlVariables.movement, 'mm')">
+					<span class="mega-octicon octicon-chevron-down"></span>
+				</a>
+			</div><!--
+			--><div class="layout__item 1/3">
+				<h5>Z axis</h5>
+				<a ng-click="controlPrinter.move('z', controlVariables.movement*-1, 'mm')">
+					<span class="mega-octicon octicon-chevron-up"></span>
+				</a>
+				<br/>
+				<a ng-click="controlPrinter.move('z', controlVariables.movement, 'mm')">
+					<span class="mega-octicon octicon-chevron-down"></span>
+				</a>
+			</div>
+		</div>
+		<br/>
+		<hr class="rule"/>
+		<div class="layout">
+			<div class="layout__item 1/4">
+				<a ng-click="controlPrinter.pause()" class="btn btn--alert">Pause</a>
+			</div><!--
+			--><div class="layout__item 1/4">
+				<a ng-click="controlPrinter.stop()" class="btn btn--alert">Stop</a>
+			</div><!--
+			--><div class="layout__item 1/4">
+				<a ng-click="controlPrinter.stopAll()" class="btn btn--alert">Power off</a>
+			</div><!--
+			--><div class="layout__item 1/4">
+				<a ng-click="controlPrinter.reconnect()" class="btn btn--alert">Reconnect</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+
+	var ext0 = new JustGage({
+    	id: "ext0", 
+		value: 0, 
+		min: 0,
+	    max: 300,
+		title: " ",
+		gaugeWidthScale: 0.2,
+		shadowSize: 0
+	});
+	var bed = new JustGage({
+    	id: "bed", 
+		value: 0, 
+		min: 0,
+	    max: 100,
+		title: " ",
+		gaugeWidthScale: 0.2,
+		shadowSize: 0
+	});
+		
+</script>

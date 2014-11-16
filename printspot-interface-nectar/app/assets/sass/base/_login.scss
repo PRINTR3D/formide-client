@@ -1,0 +1,38 @@
+body.login {
+	background-image: url('../images/login_bg.jpg');
+
+	.login-window {
+		margin-top: 150px;
+		box-shadow: 0px 0px 3px rgba(0,0,0,0.1);
+	
+		.login-header {
+			background: $lighter-gray;
+			padding: 10px 0 10px 20px;
+			box-shadow: inset 0 0 0 1px white;
+			border-bottom: solid 1px #dbdada;
+			position: relative;
+		
+			&:before {
+				content: '';
+				width: 10px;
+				background: $printer-color;
+				display: block;
+				position: absolute;
+				left: 1px;
+				top: 1px;
+				bottom: 1px;
+				box-shadow: inset 0 0 0 1px rgba(0,0,0,.2);
+				z-index: 100;
+			}
+			
+			
+		}
+		
+		.login-body {
+			box-shadow: inset 0 0 0 1px white;
+			background: $lighter-gray;
+			height: 278px;
+			padding: 65px;
+		}
+	}
+}

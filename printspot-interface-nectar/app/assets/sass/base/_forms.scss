@@ -1,0 +1,76 @@
+.form-control {
+	border-radius: none !important;
+	-webkit-border-radius: 0 !important;
+	border: 1px solid white;
+	background: #f8f8f8;
+	box-shadow: none;
+	color: black;
+	padding: 4px;
+	height: 30px;
+}
+
+label {
+	font-weight: normal;
+	text-shadow: 0 1px 0 white;
+	&.btn {
+		text-shadow: none;
+	}
+}
+
+input[type="file"]{
+    z-index: 999;
+    line-height: 0;
+    font-size: 50px;
+    position: absolute;
+    opacity: 0;
+    filter: alpha(opacity = 0);-ms-filter: "alpha(opacity=0)";
+    cursor: pointer;
+    _cursor: hand;
+    margin: 0;
+    padding:0;
+    left:0;
+}
+
+.btn,
+.form-control {
+	font-size: 12px;
+	font-weight: 300;
+}
+
+.input-text-mm {
+	min-width: 130px;
+}
+
+.input-control-mm {
+	width: 46px !important;
+	text-align: center;
+}
+
+.input-control-deg {
+	width: 32px !important;
+}
+
+.radio,
+.checkbox {
+	padding-left: 20px !important;
+}
+
+.form-inline {
+	.radio,
+	.checkbox {
+		padding-left: 4px !important;
+	}
+}
+
+.form-control-upload {
+	width: 134px !important;
+}
+
+.form-control-slicing {
+	width: 118px;
+	display: inline-block;
+}
+
+.percentage-cur {
+	border: none !important;
+}

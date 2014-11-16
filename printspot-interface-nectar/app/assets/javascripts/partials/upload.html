@@ -1,0 +1,28 @@
+<li class="upload" >
+	<a href="#" ng-click="selectAside('upload')"><i class="icon upload"></i> Model</a>
+
+	<div class="upload-content slide" ng-show="selection == 'upload'">
+		<label for="uploadFile">Upload File:</label>
+		<form class="form-inline" role="form">
+			<div class="form-group">
+				<input type="file" id="myfile" name="file" ng-file-select="onFileSelect($files)"/>
+				<input type="text" class="form-control form-control-upload" id="path" />
+					<label class="btn btn-upload"><div class="upload-icon"></div><input type="file" id="myfile" name="file" ng-file-select="onFileSelect($files)"/></span>
+				</label>
+			</div>
+		</form>
+
+		<hr class="or"/>
+
+		<label for="selectFile">Select a Recent File:</label>
+		<form class="form-inline" role="form">
+			<div class="form-group">
+				<select class="form-control form-control-upload" ng-model="sliceform.modelfile">
+				  <option ng-repeat="file in modelfiles|orderBy:'created_at':true" value="{{ file.id }}">{{ file.filename }}</option>
+				</select>
+			</div>
+
+			<button type="submit" class="btn btn-upload" title="Select" ng-click="selectFile()"><div class="select-icon"></div></button>
+		</form>
+	</div>
+</li>
