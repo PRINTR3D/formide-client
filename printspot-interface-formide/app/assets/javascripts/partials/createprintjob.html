@@ -20,21 +20,29 @@
 		</div><!--
 		--><div class="layout__item 1/2">
 			<form ng-submit="submit()">
-				<h4>Material</h4>
-				<select class="" data-ng-options="material.name for material in materials" data-ng-model="selectedMaterial"></select>
-				<br/><br/>
 				<h4>Slice settings</h4>
-				<select data-ng-options="sliceprofile.name for sliceprofile in sliceprofiles" data-ng-model="selectedSliceprofile"></select>
+				<select data-ng-options="sliceprofile as sliceprofile.name for sliceprofile in sliceprofiles" data-ng-model="selectedSliceprofile"></select>
 				<br/>
-				<input type="radio" ng-model="selectedSlicemethod" value="online">  Online (fast) <br/>
-				<input type="radio" ng-model="selectedSlicemethod" value="offline">  Offline (secure) <br/>
-				
+				<input type="radio" ng-model="selectedSlicemethod" value="cloud"> Online (fast) <br/>
+				<input type="radio" ng-model="selectedSlicemethod" value="local"> Offline (secure) <br/>
 				<br/><br/>
-				<h4>Printer</h4>
-				<select data-ng-options="printer.name for printer in printers" data-ng-model="selectedPrinter"></select>
 				
+				<h4>Select printer type</h4>
+				<select data-ng-options="printer as printer.name for printer in printers" data-ng-model="selectedPrinter"></select>
 				<br/><br/>
-				<input type="submit" value="Add to queue"/>
+				
+				<h4>Select materials</h4>
+				<div ng-repeat="extruder in selectedPrinter.extruders">
+					<label>{{ extruder.name }}</label>
+					<select data-ng-options="material as material.name for material in materials" data-ng-model="selectedMaterials[extruder.id].material"></select>
+					<select data-ng-model="selectedMaterials[extruder.id].mode">
+						<option value="model">Model</option>
+						<option value="support">Support</option>
+					</select>
+					<br/><br/>
+				</div>
+				
+				<input type="submit" class="btn" value="Create printjob"/>
 			</form>
 		</div>
 	</div>

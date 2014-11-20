@@ -36,10 +36,16 @@ var app 			= express();
 var server 			= app.listen(global.config.local.port);
 var localIO 		= require('socket.io').listen(server);
 var onlineIO		= require('socket.io-client')(global.config.online.host + ':' + global.config.online.port);
+var ss 				= require('socket.io-stream');
 var net				= require('net');
 var nsclient		= net.connect({port: global.config.client.port}, function() {
 	global.log('info', 'qclient connected', {port: global.config.client.port});
 });
+/*
+var nskatana		= net.connect({port: global.config.katana.port}, function() {
+	global.log('info', 'katana connected', {port: global.config.katana.port});
+});
+*/
 
 // configuration =================
 app.use(bodyParser.urlencoded({'extended': 'true'}));
@@ -60,7 +66,7 @@ getMac.getMac(function(err, macAddress) {
 		macAddress = global.config.online.mac
 	}
 	
-	global.socket = require('./server/socket.js')(localIO, onlineIO, nsclient, macAddress);
+	global.socket = require('./server/socket.js')(localIO, onlineIO, ss, nsclient, macAddress);
 	restful.initialize({ app: app });
 	
 	var sliceprofiles = restful.resource({
@@ -92,6 +98,11 @@ getMac.getMac(function(err, macAddress) {
 	    model: global.db.Modelfile,
 	    endpoints: ['/api/modelfiles', '/api/modelfiles/:id']
 	});
+	
+	var queue = restful.resource({
+		model: global.db.Queueitem,
+		endpoints: ['/api/queue', '/api/queue/:id']
+	})
 	
 	// routes ========================
 	require('./server/routes')(app);

@@ -12,19 +12,25 @@
 			<tr>
 				<th>Model</th>
 				<th>Est. printtime</th>
-				<th>Sliceprofile</th>
-				<th>Material</th>
-				<th>Status</th>
+				<th>Slicing</th>
+				<th>Materials</th>
+				<th></th>
 				<th></th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr ng-repeat="printjob in printjobs">
-				<td>{{ printjob.modelfile.name }}</td>
-				<td>{{ printjob.duration_estimate }}</td>
-				<td><a href="/slicing?active={{ printjob.sliceprofileID }}">{{ printjob.sliceprofile.name }}</a></td>
-				<td><a href="/materials?active={{ printjob.materialID }}">{{ printjob.material.type }}</a></td>
-				<td>{{ printjob.status }}</td>
+				<td>{{ printjob.sliceParams.model }}</td>
+				<td>2hrs 4mins</td>
+				<td>
+					<a href="/slicing?active={{ printjob.sliceprofileID }}">{{ printjob.sliceprofile.layers.layerHeight }} micron</a>
+				</td>
+				<td>
+					<span ng-repeat="material in printjob.materials">
+						<a href="/materials?active={{ material.material.id }}">{{ material.material.name }} ({{material.mode}})</a>
+					</span>
+				</td>
+				<td><a ng-click="addToQueue(printjob.id)">Add to queue</a></td>
 				<td><a ng-click="deletePrintjob(printjob.id)">Remove</a></td>
 			</tr>
 		</tbody>

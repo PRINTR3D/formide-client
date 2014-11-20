@@ -55,56 +55,32 @@ module.exports = exports = function(app) {
 	// SLICING =============================
 	// =====================================
 	app.post('/slicing', function(req, res) {
-		if(req.body.modelfile != null && req.body.sliceprofile != null && req.body.material != null && req.body.printer) {
-
-			var sliceparams = {
-				
-			};
-			
-			// OFFLINE
-			// 1) setup slicing params
-			// 2) request katana light with local file
-			// 3) response hash
-
+		if(req.body.sliceparams && req.body.modelfile && req.body.sliceprofile && req.body.materials && req.body.printer && req.body.slicemethod) {
+		
 			if(req.body.slicemethod == 'local') {
-				var options = {
-					url: 'http://localhost:' + global.config.katana.port + '/katana/',
-					method: 'POST',
-					form: sliceparams
-				}
-				
-				request(options, function(error, resonse, body) {
-					if(error) {
-						global.log('error', error, {'request': req.body});
-					}
-					if(!error && response.statusCode == 200) {
-						// Print out the response body
-						console.log(body);
-    				}
+				// call katana light via tcp socket
+				/*
+nskatana.write(JSON.stringify(json), 'UTF8', function(data) {
+					
 				});
+*/
 			}
-			else if(req.body.slicemthod == 'online') {
-				// ONLINE
-				// 1) upload file to api
-				// 2) setup slicing params
-				// 3) request katana via api (create queue item online)
-				// 4) download generated gcode to local filesystem
-				// 5) response hash
+			else if(req.body.slicemethod == 'cloud') {
+				// call katana via websockets
+				
 			}
 			
 			global.db.Printjob.create({
 				modelfileID: req.body.modelfile.id,
 				printerID: req.body.printer.id,
 				sliceprofileID: req.body.sliceprofile.id,
-				materialID: req.body.material.id,
-				sliceHash: "RANDOM",
-				status: "queued",
-				sliceLocation: req.body.slicemethod
+				materials: JSON.stringify(req.body.materials),
+				sliceParams: JSON.stringify(req.body.sliceparams),
+				sliceMethod: 'local',
+				hash: ''
 			});
-			return res.json('OK');
-		}
-		else {
 			
+			return res.json('OK');
 		}
 	});
 	
@@ -160,7 +136,7 @@ module.exports = exports = function(app) {
 	// FILES ===============================
 	// =====================================
 	app.get('/download', function(req, res) {
-		fs.readFile(__dirname + '/uploads/modelfiles/' + req.query.hash, function(err, data) {
+		fs.readFile(global.config.files.modelfile_path + '/' + req.query.hash, function(err, data) {
 			if(err) {
 				global.log('error', err, {'hash': req.query.hash});
 			}
@@ -174,7 +150,7 @@ module.exports = exports = function(app) {
 	app.post('/upload', multipartMiddleware, function(req, res) {
 		fs.readFile(req.files.file.path, function(err, data) {
 			var hash = (Math.random() / +new Date()).toString(36).replace(/[^a-z]+/g, '');
-			var newPath = __dirname + '/uploads/modelfiles/' + hash;
+			var newPath = global.config.files.modelfile_path + '/' + hash;
 			fs.writeFile(newPath, data, function(err) {
 				if(err) {
 					global.log('error', err, {'path': newPath});

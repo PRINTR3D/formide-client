@@ -1,6 +1,9 @@
 // server/socket.js
+var fs					= require('fs');
 
-module.exports = function(localIO, onlineIO, nsclient, macAddress, logger) {
+module.exports = function(localIO, onlineIO, ss, nsclient, macAddress) {
+	
+	var authorized = false;
 
 	/*
 	 * Setup online connection
@@ -13,6 +16,12 @@ module.exports = function(localIO, onlineIO, nsclient, macAddress, logger) {
 				type: 'client',
 				mac: macAddress
 			});
+		});
+		
+		onlineIO.on('auth', function(data) {
+			if(data.message == 'OK') {
+				authorized = true;
+			}
 		});
 		
 		/*
@@ -41,14 +50,45 @@ module.exports = function(localIO, onlineIO, nsclient, macAddress, logger) {
 			})(method);
 		}
 		
+		onlineIO.on('dashboard_push_printer_printjob', function(data) {
+			if(data.printerID == macAddress) {
+				var hash = (Math.random() / +new Date()).toString(36).replace(/[^a-z]+/g, '');
+				var newPath = __dirname + '/uploads/gcode/' + hash;
+				fs.writeFile(newPath, data.gcode, function(err) {
+					if(err) {
+						global.log('error', err, {'path': newPath});
+					}
+					else {
+						global.db.Queueitem.create({
+							slicedata: data.slicesettings,
+							origin: 'online',
+							gcode: hash,
+							printjobID: data.printjobID,
+							status: "queued"
+						});
+					}
+				});
+			}
+		});
+		
+		onlineIO.on('dashboard_get_printer_queue', function(data) {
+			if(data.printerID == macAddress) {
+				global.db.Queueitem.findAll({ where: { status: 'queued' } }).success(function(queue) {
+					onlineIO.emit('client_push_printer_queue', {printerID: macAddress, data: queue});
+				});
+			}
+		});
+		
 		/*
 		 * Receive client data and send to online dashboard
 		 */
 		nsclient.on('data', function(data) {
-			var data = JSON.parse(data.toString());
-			// add printer ID to arguments
-			data.args.printerID = macAddress;
-			onlineIO.emit(data.type, data.args);
+			if(authorized) {
+				var data = JSON.parse(data.toString());
+				// add printer ID to arguments
+				data.args.printerID = macAddress;
+				onlineIO.emit(data.type, data.args);
+			}
 		});
 	});
 	
