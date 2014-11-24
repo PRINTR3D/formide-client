@@ -35,4 +35,4 @@ printspot-core/server/uploads
 printspot-core/server/printspot.sqlite
 
 printspot-interface-formide/.sass-cache/
-printspot-interface-formide/assets/components/
+printspot-interface-formide/app/assets/components/
