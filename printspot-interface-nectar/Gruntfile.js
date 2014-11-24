@@ -59,12 +59,10 @@ module.exports = function(grunt) {
 					'./app/assets/components/featherlight/src/featherlight.js',
 					'./app/assets/components/chartjs/Chart.js',
 					'./app/assets/components/bootstrap/dist/js/bootstrap.js',
-					'./app/assets/javascripts/dependencies/chromeframe.js',
-					'./app/assets/javascripts/dependencies/jquery.base64.js',
+					'./app/assets/javascripts/dependencies/cfinstall.min.js',
 					'./app/assets/javascripts/dependencies/Three.js',
 					'./app/assets/javascripts/dependencies/plane.js',
 					'./app/assets/javascripts/dependencies/thingiview.js'
-
 				],
 				dest: './public/assets/javascripts/main.js',
 			},

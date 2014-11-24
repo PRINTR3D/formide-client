@@ -1,16 +1,42 @@
-app.controller('NectarController', ['$scope', '$http', '$timeout', 'ngDialog', '$upload', 'Realtime', 'Modelfiles', 'Materials', 'Printjobs', 'Sliceprofiles', function($scope, $http, $timeout, ngDialog, $upload, Realtime, Modelfiles, Materials, Printjobs, Sliceprofiles) {
+app.controller('NectarController', ['$scope', '$http', '$timeout', 'ngDialog', '$upload', 'Realtime', 'Modelfiles', 'Materials', 'Printjobs', 'Sliceprofiles', 'Printers', 'Queue', function($scope, $http, $timeout, ngDialog, $upload, Realtime, Modelfiles, Materials, Printjobs, Sliceprofiles, Printers, Queue) {
 	
 	var index = 0;
 	
-    $scope.notifications = []; 
+	$scope.selections = {};
+	$scope.selections.selectedSlicemethod = 'local';
+	$scope.sliceParams = {};
+	$scope.interfaceSettings = {
+		"extruders": {
+			"a": {
+				"mode": "build"
+			},
+			"b": {
+				"mode": "support"
+			}
+		},
+		"support": true
+	};
+	
+	$scope.singlePrinterMode = true;
+    $scope.notifications = [];
+    
     $scope.modelfiles = [];
+    $scope.selections.selectedModelfile = {};
+    
     $scope.materials = [];
+    $scope.selections.selectedMaterials =  [];
+    
     $scope.sliceprofiles = [];
+    $scope.selections.selectedSliceprofile = {};
+   
+    $scope.printers = [];
+    $scope.selections.selectedPrinter = {};
+    
     $scope.printjobs = [];
-    $scope.printer = {};
+    $scope.queue = [];
+    
     $scope.printerStatus = {};
     $scope.controlPrinter = {};
-    $scope.sliceform = {};
 
     $scope.movementVal = 10;
     $scope.extrudeVal = 10;
@@ -21,14 +47,32 @@ app.controller('NectarController', ['$scope', '$http', '$timeout', 'ngDialog', '
 		$scope.getMaterials();
 		$scope.getSliceprofiles();
 		$scope.getPrintjobs();
+		$scope.getQueue();
+		$scope.getPrinters();
     };
     
     $scope.showNotification = function(msg) {
 	    var i;
 		i = index++;
-		console.log(msg);
 		$scope.notifications[i] = msg;
     }
+    
+    $scope.getPrinters = function() {
+	    Printers.query(function(response) {
+			$scope.printers = response;
+			angular.forEach($scope.printers, function(value, key) {
+				value.extruders = JSON.parse(value.extruders);
+				$scope.printers[key] = value;
+			});
+			if($scope.singlePrinterMode) {
+		    	$scope.selectPrinter($scope.printers[0]);
+	    	}
+		});
+	}
+	
+	$scope.selectPrinter = function(printer) {
+		$scope.selections.selectedPrinter = printer;
+	}
     
     $scope.getModelfiles = function() {
 		Modelfiles.query(function(response) {
@@ -37,21 +81,62 @@ app.controller('NectarController', ['$scope', '$http', '$timeout', 'ngDialog', '
     }
     
     $scope.getMaterials = function() {
-	    Materials.query(function(response) {
+		Materials.query(function(response) {
 			$scope.materials = response;
 		});
-    }
+	}
     
     $scope.getSliceprofiles = function() {
-	    Sliceprofiles.query(function(response) {
+		Sliceprofiles.query(function(response) {
 			$scope.sliceprofiles = response;
+			angular.forEach($scope.sliceprofiles, function(value, key) {
+				value.settings = JSON.parse(value.settings);
+				$scope.sliceprofiles[key] = value;
+			});
 		});
-    }
+	}
     
     $scope.getPrintjobs = function() {
 	    Printjobs.query(function(response) {
 			$scope.printjobs = response;
 		});
+    }
+    
+    $scope.getQueue = function() {
+	    Queue.query(function(response) {
+		 	$scope.queue = response;
+		 	angular.forEach($scope.queue, function(value, key) {
+			 	var printjob = Printjobs.get({id: value.printjobID}, function() {
+				 	var modelfile = Modelfiles.get({id: printjob.modelfileID}, function() {
+					 	printjob.modelfile = modelfile;
+				 	});
+				 	value.slicedata = JSON.parse(value.slicedata);
+				 	value.printjob = printjob;
+				 	$scope.queue[key] = value;
+			 	});
+		 	});
+	    });
+    }
+    
+    $scope.removeFromQueue = function(id) {
+	    Queue.delete({id: id}, function() {
+			$scope.getQueue();
+	    });
+    }
+    
+    $scope.switchChannels = function() {
+	    if($scope.interfaceSettings.extruders.a.mode == 'build') {
+		    $scope.interfaceSettings.extruders.a.mode = 'support';
+		    $scope.interfaceSettings.extruders.b.mode = 'build';
+	    }
+	    else {
+		    $scope.interfaceSettings.extruders.a.mode = 'build';
+		    $scope.interfaceSettings.extruders.b.mode = 'support';
+	    }
+    }
+    
+    $scope.saveSelectedSliceprofile = function() {
+	    
     }
 
     $scope.onFileSelect = function($files) {
@@ -100,40 +185,6 @@ app.controller('NectarController', ['$scope', '$http', '$timeout', 'ngDialog', '
         }
     };
 
-    /*
-$scope.selectPrinterSection = function(id, item) {
-        if($scope.printerSelection[id].selection == item) {
-            $scope.printerSelection[id].selection = false;
-        }
-        else {
-            if(item == 'queue') {
-                dataService.get(api_url + config.endpoints.queue.printer + '/' + id).then(function(data) {
-                    $scope.printerSelection[id].queue = data;
-                });
-            }
-            else if(item == 'archive') {
-
-            }
-            $scope.printerSelection[id].selection = item;
-        }
-    };
-*/
-
-    $scope.deletePrintjob = function(id, printerID) {
-        /*
-dataService.post(api_url + config.endpoints.queue.delete + '/' + id).then(function(data) {
-            dataService.get(api_url + config.endpoints.queue.printer + '/' + printerID).then(function(data) {
-                console.log(data);
-                $scope.printerSelection[printerID].queue = data;
-                $scope.apply();
-            });
-            dataService.get(api_url + config.endpoints.archive.printer + '/' + printerID).then(function(data) {
-                $scope.printerSelection[printerID].archive = data;
-            });
-        });
-*/
-    };
-
     $scope.bottomTooltip = false;
     $scope.selectBottomTooltip = function(item) {
         if($scope.bottomTooltip == item) {
@@ -143,71 +194,80 @@ dataService.post(api_url + config.endpoints.queue.delete + '/' + id).then(functi
             $scope.bottomTooltip = item;
         }
     };
-
+    
     $scope.slice = function() {
-       /*
- $scope.notification.title = "Added to queue";
-        $scope.notification.visible = true;
-
-        $timeout(function() {
-            $scope.notification.visible = false;
-        }, 2000);
-
-        $scope.sliceform.printer = $scope.activePrinter.id;
-        $scope.sliceform.material = 1;
-
-        dataService.post(api_url + config.endpoints.queue.create +'?modelfileID='+$scope.sliceform.modelfile+'&materialID='+$scope.sliceform.material+'&printerID='+$scope.sliceform.printer+'&sliceprofileID='+$scope.sliceform.sliceprofile).then(function(data) {
-        	if(data.success == true) {
-                dataService.get(api_url + config.endpoints.queue.active).then(function(data) {
-                    $scope.activePrinterQueue = data;
-                });
-            }
-            else {
-            	$scope.notification.title = data.error;
-                $scope.notification.visible = true;
-
-                $timeout(function() {
-                    $scope.notification.visible = false;
-                }, 2000);
-            }
-        });
-*/
-    };
-
-    $scope.activeEdit = {};
-
-    $scope.removeFilament = function () {
-        // ngDialog.open({ template: 'removeFilamentTemplate' });
-    };
-
-    $scope.initThingiview = function() {
-       //  $scope.thingiview = new Thingiview("viewer");
-    };
+	    
+	    $scope.showNotification('Slicing...');
+	    
+		$scope.sliceParams = angular.copy($scope.selections.selectedSliceprofile.settings);
+		$scope.sliceParams.extruders = angular.copy($scope.selections.selectedPrinter.extruders);
+		angular.forEach($scope.sliceParams.extruders, function(value, key) {
+			value.material = $scope.printerStatus.extruders[key].material.type;
+			value.temperature = $scope.printerStatus.extruders[key].material.temperature;
+			value.firstLayersTemperature = $scope.printerStatus.extruders[key].material.firstLayersTemperature;
+			value.filamentDiameter = $scope.printerStatus.extruders[key].material.diameter;
+			value.feedrate = $scope.printerStatus.extruders[key].material.feedrate;
+			if(key == 0) {
+				value.mode = $scope.interfaceSettings.extruders.a.mode;
+			}
+			else if(key == 1) {
+				value.mode = $scope.interfaceSettings.extruders.b.mode;
+			}
+			$scope.sliceParams.extruders[key] = value;
+		});
+		if($scope.selections.selectedPrinter.bed) {
+			$scope.sliceParams.bed = {
+				"temperature": $scope.printerStatus.extruders[0].material.bedTemperature,
+				"firstLayersTemperature": $scope.printerStatus.extruders[0].material.firstLayersBedTemperature
+			};
+		}
+		if($scope.interfaceSettings.support == false) {
+			delete $scope.sliceParams.support;
+		}
+		$scope.sliceParams.model = $scope.selections.selectedModelfile.hash;
+		
+		$http.post(api_url + '/slicing', {
+			modelfile: $scope.selections.selectedModelfile,
+			sliceprofile: $scope.selections.selectedSliceprofile,
+			slicemethod: $scope.selections.selectedSlicemethod,
+			materials: $scope.printerStatus.extruders,
+			printer: $scope.selections.selectedPrinter,
+			sliceparams: $scope.sliceParams
+		}).success(function(data, status, headers, config) {
+			if(data == 'OK') {
+				$scope.showNotification('Done slicing');
+				$scope.getPrintjobs();
+				$scope.getQueue();
+			}
+		}).error(function(data, status, headers, config) {
+  			console.log(data);
+		});
+	}
+	
+	$scope.startPrint = function(queueitemID, gcodeHash) {
+		if(confirm('Is the printbead cleared?')) {
+			$scope.controlPrinter.start(queueitemID, gcodeHash);
+		}
+	}
 
     $scope.selectFile = function() {
-        //$scope.preview($scope.sliceform.modelfile);
+        $scope.preview($scope.selections.selectedModelfile);
         $scope.selectAside('slice');
     };
 
-    $scope.preview = function(id) {
-        /*
-// var modelfileName = getUrlVars()['stl'];
-        // $scope.addForm['modelfile'] = modelfileName;
-        $scope.contentModule = 'printerPreview';
-        // You may want to place these lines inside an onload handler
-        CFInstall.check({
-             mode: "inline", // the default
-             node: "prompt"
-        });
-        
-        dataService.get(api_url + config.endpoints.modelfiles.single + '/' + id).then(function(data) {
-            $scope.initThingiview();
-			$scope.thingiview.setBackgroundColor('#f1f1f1');
-			$scope.thingiview.initScene();
-			$scope.thingiview.loadSTL(data.data.name);
-			$scope.thingiview.setRotation(false);
-        });
-*/
+    $scope.preview = function(modelfile) {
+	    $scope.contentModule = 'printerPreview';
+    	CFInstall.check({
+	        mode: "inline",
+	        node: "prompt"
+		});
+		thingiurlbase = "/public/assets/javascripts";
+		thingiview = new Thingiview("viewer");
+		thingiview.setObjectColor('#C0D8F0');
+		thingiview.setBackgroundColor('#f1f1f1');
+		thingiview.initScene();
+		//thingiview.setShowPlane(true);
+		thingiview.loadSTL(api_url + '/download?hash=' + modelfile.hash + '&encoding=false');
     };
     
     /*
@@ -253,8 +313,7 @@ dataService.post(api_url + config.endpoints.queue.delete + '/' + id).then(functi
 	$scope.controlPrinter.move = function(axis, dist, distmode) {
 		$scope.pushToPrinter('dashboard_push_printer_jog', {
 			axis: axis,
-			dist: parseFloat(dist),
-			distmode: distmode
+			dist: parseFloat(dist)
 		});
 	}
 	
@@ -314,8 +373,11 @@ dataService.post(api_url + config.endpoints.queue.delete + '/' + id).then(functi
 	/*
 	 * Push start printjob message to printer
 	 */
-	$scope.controlPrinter.start = function() {
-		$scope.pushToPrinter('dashboard_push_printer_start', {});
+	$scope.controlPrinter.start = function(queueitemID, gcodeHash) {
+		$scope.pushToPrinter('dashboard_push_printer_start', {
+			printjobID: queueitemID,
+			hash: gcodeHash
+		});
 	}
 	
 	/*
@@ -376,17 +438,6 @@ dataService.post(api_url + config.endpoints.queue.delete + '/' + id).then(functi
 	$scope.controlPrinter.LCD = function(message) {
 		$scope.pushToPrinter('dashboard_push_printer_lcd_message', {
 			message: message
-		});
-	}
-	
-	/*
-	 * Push printjob gcode to printer
-	 */
-	$scope.controlPrinter.printjob = function(printjobID, hash) {
-		$scope.pushToPrinter('dashboard_push_printer_printjob', {
-			printjobOrigin: 'local',
-			printjobID: printjobID,
-			hash: hash
 		});
 	}
 	

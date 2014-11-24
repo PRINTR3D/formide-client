@@ -41,7 +41,7 @@ var Plane = function ( width, height, segments_width, segments_height ) {
 			var d = ( ix + 1 ) + gridX1 * iy;
 
 			this.faces.push( new THREE.Face4( a, b, c, d ) );
-			this.faceUvs.push( [
+			this.uvs.push( [
 						new THREE.UV( ix / gridX, iy / gridY ),
 						new THREE.UV( ix / gridX, ( iy + 1 ) / gridY ),
 						new THREE.UV( ( ix + 1 ) / gridX, ( iy + 1 ) / gridY ),
@@ -54,6 +54,7 @@ var Plane = function ( width, height, segments_width, segments_height ) {
 
 	this.computeCentroids();
 	this.computeFaceNormals();
+	this.sortFacesByMaterial();
 
 };
 

@@ -23,16 +23,10 @@
 
                 <p ng-if="printerStatus.extrudera.statusHeight < 5">Channel A is running low!</p>
                 <p ng-if="printerStatus.extruderb.statusHeight < 5">Channel B is running low!</p>
-
-				<strong class="selector">Printer Queue</strong>
-
-				<ul href="" class="printer-queue">
-					<li ng-repeat="queueitem in activePrinterQueue" class="selector"><span>{{ queueitem.modelfile.filename }} <span class="duration"> / {{ queueitem.duration_estimate }}s</span></span></li>
-				</ul>
 			</div>
 		</div>
 		
-		<div ng-include src=" '/public/partials/task.html' " class="col-sm-offset-4 col-sm-4 task" ng-click="selectedTask=!selectedTask"></div>
+		<div ng-show="queue.length > 0" ng-include src=" '/public/partials/task.html' " class="col-sm-offset-4 col-sm-4 task" ng-click="selectedTask=!selectedTask"></div>
 
 	</li>
 </ul>

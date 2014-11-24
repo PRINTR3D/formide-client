@@ -1,0 +1,62 @@
+<div class="progress-box">
+	<div class="percentage-cur">
+		<span class="num">Layer Height {{ selections.selectedSliceprofile.settings.layers.layerHeight }}mm</span>
+	</div>
+	<div class="progress-bar progress-bar-slider">
+		<input class="progress-slider" type="range" min="0" max="200" step="10" ng-model="selections.selectedSliceprofile.settings.layers.layerHeight">
+		<div class="inner" ng-style="{ width: selections.selectedSliceprofile.settings.layers.layerHeight / 2 + '%' || '0%' }"></div>
+	</div>
+</div>
+<div class="progress-box">
+	<div class="percentage-cur">
+		<span class="num">Infill {{ selections.selectedSliceprofile.settings.infill.amount }}%</span>
+	</div>
+	<div class="progress-bar progress-bar-slider">
+		<input class="progress-slider" type="range" min="0" max="100" step="5" ng-model="selections.selectedSliceprofile.settings.infill.amount">
+		<div class="inner" ng-style="{ width: selections.selectedSliceprofile.settings.infill.amount + '%' || '0%' }"></div>
+	</div>
+</div>
+<div class="progress-box">
+	<div class="percentage-cur">
+		<span class="num">Wall Thickness {{ selections.selectedSliceprofile.settings.extra.wallThickness / 100 }}mm</span>
+	</div>
+	<div class="progress-bar progress-bar-slider">
+		<input class="progress-slider" type="range" min="0" max="200" ng-model="selections.selectedSliceprofile.settings.extra.wallThickness">
+		<div class="inner" ng-style="{ width: selections.selectedSliceprofile.settings.extra.wallThickness / 2 + '%' || '0%' }"></div>
+	</div>
+</div>
+<div class="progress-box">
+	<div class="percentage-cur">
+		<span class="num">Top tickness {{ selections.selectedSliceprofile.settings.top.thickness / 1000 }}mm</span>
+	</div>
+	<div class="progress-bar progress-bar-slider">
+		<input class="progress-slider" type="range" min="0" max="5000" ng-model="selections.selectedSliceprofile.settings.top.thickness">
+		<div class="inner" ng-style="{ width: selections.selectedSliceprofile.settings.top.thickness / 50 + '%' || '0%' }"></div>
+	</div>
+</div>
+<div class="progress-box">
+	<div class="percentage-cur">
+		<span class="num">Bottom tickness {{ selections.selectedSliceprofile.settings.bottom.thickness / 1000 }}mm</span>
+	</div>
+	<div class="progress-bar progress-bar-slider">
+		<input class="progress-slider" type="range" min="0" max="5000" ng-model="selections.selectedSliceprofile.settings.bottom.thickness">
+		<div class="inner" ng-style="{ width: selections.selectedSliceprofile.settings.bottom.thickness / 50 + '%' || '0%' }"></div>
+	</div>
+</div>
+<div class="progress-box">
+	<div class="percentage-cur">
+		<span class="num">Print Speed {{ selections.selectedSliceprofile.settings.movement.printSpeed }}mm/s</span>
+	</div>
+	<div class="progress-bar progress-bar-slider">
+		<input class="progress-slider" type="range" min="0" max="100" ng-model="selections.selectedSliceprofile.settings.movement.printSpeed">
+		<div class="inner" ng-style="{ width: selections.selectedSliceprofile.settings.movement.printSpeed + '%' || '0%' }"></div>
+	</div>
+</div>
+<div class="form-group form-inline checkbox">
+	<label><input type="checkbox" ng-model="interfaceSettings.sliceparams.raft">Raft</label>
+	<input type="text" ng-model="selections.selectedSliceprofile.settings.raft.raftInterfaceThickness" class="form-control input-control-mm" />
+</div>
+<div class="form-group form-inline checkbox">
+	<label><input type="checkbox" ng-model="interfaceSettings.sliceparams.brim">Brim</label>
+	<input type="text" ng-model="selections.selectedSliceprofile.settings.extra.brimLines" class="form-control input-control-mm" />
+</div>

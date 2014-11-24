@@ -77,10 +77,18 @@ nskatana.write(JSON.stringify(json), 'UTF8', function(data) {
 				materials: JSON.stringify(req.body.materials),
 				sliceParams: JSON.stringify(req.body.sliceparams),
 				sliceMethod: 'local',
-				hash: ''
+				hash: 'RANDOM'
+			}).success(function(printjob) {
+				global.db.Queueitem.create({
+					slicedata: JSON.stringify(req.body.sliceparams),
+					origin: 'local',
+					gcode: 'RANDOM',
+					printjobID: printjob.id,
+					status: "queued"
+				}).success(function(queueitem) {
+					return res.json('OK');
+				});
 			});
-			
-			return res.json('OK');
 		}
 	});
 	
@@ -141,8 +149,13 @@ nskatana.write(JSON.stringify(json), 'UTF8', function(data) {
 				global.log('error', err, {'hash': req.query.hash});
 			}
 			else {
-				var base64File = new Buffer(data, 'binary').toString('base64');
-				res.send(base64File);
+				if(req.query.encoding == 'false') {
+					return res.send(data);
+				}
+				else {
+					var base64File = new Buffer(data, 'binary').toString('base64');
+					return res.send(base64File);
+				}
 			}
 		});
 	});

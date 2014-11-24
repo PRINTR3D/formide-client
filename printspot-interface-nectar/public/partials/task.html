@@ -3,30 +3,24 @@
 <div class="task-content slide" ng-show="selectedTask" ng-click="$event.stopPropagation();">
 	<ul href="" class="task-queue">
 
-		<li class="task-queue-item selector s-right" ng-repeat="queueitem in activePrinterQueue" ng-model="collapsed" >
-			<span class="queue-title slide" ng-hide="collapsed"><span ng-click="collapsed=!collapsed">{{ queueitem.modelfile.filename }}</span></span>
-			<span class="queue-inner slide" ng-show="collapsed"><span ng-click="collapsed=!collapsed">{{ queueitem.modelfile.filename }}</span>
+		<li class="task-queue-item selector s-right" ng-repeat="queueitem in queue" ng-model="collapsed" >
+			<span class="queue-title slide" ng-hide="collapsed">
+				<span ng-click="collapsed=!collapsed">{{ queueitem.printjob.modelfile.filename }}
+					<a ng-click="startPrint(queueitem.id, queueitem.gcode)">/ print</a>
+					<a ng-click="removeFromQueue(queueitem.id)">/ delete</a>
+				</span>
+			</span>
+			<span class="queue-inner slide" ng-show="collapsed">
+				<span ng-click="collapsed=!collapsed">{{ queueitem.printjob.modelfile.filename }}</span>
 				<hr />
 
-				<p>{{ queueitem.modelfile.filesize / 10000 }} MB / Added On {{ queueitem.created_at }} <br />
-				Support: Yes / PVA <br />
-				Estimated Print Time: {{ queueitem.duration_estimate }}s</p>
+				<p>{{ queueitem.printjob.modelfile.filesize / 10000 }} MB / Added On {{ queueitem.createdAt | date }}</p>
+				<p>Estimated Print Time: {{ queueitem.duration_estimate }}s</p>
 
 				<hr />
 
-				<div class="form-group">
-					<label for="selectFile">Build:</label>
-					<select class="form-control" id="selectFile">
-					  <option>Channel {{ queueitem.build_channel }}: ABS</option>
-					</select>
-				</div>
-
-				<div class="form-group">
-					<label for="selectFile">Support:</label>
-					<select class="form-control" id="selectFile">
-					  <option>Channel {{ queueitem.support_channel }}: PVA</option>
-					</select>
-				</div>
+				<p>Channel A: {{ queueitem.slicedata.extruders[0].mode }} / {{ queueitem.slicedata.extruders[0].material }}</p>
+				<p>Channel B: {{ queueitem.slicedata.extruders[1].mode }} / {{ queueitem.slicedata.extruders[1].material }}</p>
 			</span>
 		</li>
 

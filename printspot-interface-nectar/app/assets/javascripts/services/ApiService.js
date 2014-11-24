@@ -2,6 +2,10 @@ app.factory('Printjobs', function($resource) {
 	return $resource(api_url + '/api/printjobs/:id');
 });
 
+app.factory('Queue', function($resource) {
+	return $resource(api_url + '/api/queue/:id');
+});
+
 app.factory('Materials', function($resource) {
 	return $resource(api_url + '/api/materials/:id');
 });

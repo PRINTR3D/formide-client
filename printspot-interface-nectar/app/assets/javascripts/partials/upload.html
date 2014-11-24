@@ -17,9 +17,7 @@
 		<label for="selectFile">Select a Recent File:</label>
 		<form class="form-inline" role="form">
 			<div class="form-group">
-				<select class="form-control form-control-upload" ng-model="sliceform.modelfile">
-				  <option ng-repeat="file in modelfiles|orderBy:'created_at':true" value="{{ file.id }}">{{ file.filename }}</option>
-				</select>
+				<select class="form-control form-control-upload" ng-model="selections.selectedModelfile" ng-options="modelfile.filename for modelfile in modelfiles | orderBy:'created_at':true"></select>
 			</div>
 
 			<button type="submit" class="btn btn-upload" title="Select" ng-click="selectFile()"><div class="select-icon"></div></button>
