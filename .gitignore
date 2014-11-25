@@ -28,4 +28,5 @@ node_modules
 .lock-wscript
 
 # Ignore interfaces
+printspot-formide-dashboard
 printr-nectar-dashboard
