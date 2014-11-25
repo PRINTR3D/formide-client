@@ -1,0 +1,838 @@
+# ************************************************************
+# Sequel Pro SQL dump
+# Version 4096
+#
+# http://www.sequelpro.com/
+# http://code.google.com/p/sequel-pro/
+#
+# Host: Localhost (MySQL 5.5.38)
+# Database: formide_users
+# Generation Time: 2014-11-24 21:29:03 +0000
+# ************************************************************
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+
+# Dump of table invite_tokens
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `invite_tokens`;
+
+CREATE TABLE `invite_tokens` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `token` varchar(50) DEFAULT NULL,
+  `used` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+LOCK TABLES `invite_tokens` WRITE;
+/*!40000 ALTER TABLE `invite_tokens` DISABLE KEYS */;
+
+INSERT INTO `invite_tokens` (`id`, `token`, `used`)
+VALUES
+	(1,'RANDOMTOKEN',1);
+
+/*!40000 ALTER TABLE `invite_tokens` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table migrations
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `migrations`;
+
+CREATE TABLE `migrations` (
+  `migration` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `batch` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+LOCK TABLES `migrations` WRITE;
+/*!40000 ALTER TABLE `migrations` DISABLE KEYS */;
+
+INSERT INTO `migrations` (`migration`, `batch`)
+VALUES
+	('2014_08_06_000000_create_users',1),
+	('2014_08_06_000001_create_profiles',1),
+	('2014_08_06_000002_create_password_reminders',1),
+	('2014_08_06_000020_create_locations',2),
+	('2014_08_06_000027_create_images',2),
+	('2014_08_14_084236_create_failed_jobs_table',2),
+	('2014_08_14_152137_create_events',2),
+	('2014_08_15_115022_create_favorites',2),
+	('2014_11_04_110326_create_printservices_table',2),
+	('2014_11_04_110905_create_apps_table',2),
+	('2014_11_04_111412_create_orders_table',2),
+	('2014_11_04_112706_create_modelfiles_table',2),
+	('2014_11_04_113322_create_messages_table',2),
+	('2014_11_04_114400_create_ratings_table',2),
+	('2014_11_04_115603_create_materials_table',2),
+	('2014_11_04_115629_create_colors_table',2),
+	('2014_11_04_115705_create_filetypes_table',2),
+	('2014_11_04_115738_create_printservices_materials_colors_table',2),
+	('2014_11_04_115809_create_printservices_filetypes_table',2),
+	('2014_11_04_120010_create_orderlines_table',2),
+	('2014_11_04_120515_create_materialdetails_table',2),
+	('2014_11_04_122724_create_materialtypes_table',2),
+	('2014_11_04_122759_create_materialtypes_materials_table',2),
+	('2014_11_04_123446_create_transactions_table',2),
+	('2014_11_04_123513_create_orderupdates_table',2),
+	('2014_11_04_124205_create_user_materials_table',2),
+	('2014_11_04_124230_create_user_materials_colors_table',2),
+	('2014_11_04_125140_create_printers_table',2),
+	('2014_11_04_125217_create_user_printers_table',2),
+	('2014_11_04_125300_create_sliceprofiles_table',2),
+	('2014_11_04_125319_create_user_sliceprofiles_table',2),
+	('2014_11_04_125352_create_connections_table',2),
+	('2014_11_04_125414_create_printjobs_table',2),
+	('2014_11_05_163357_create_oauth_scopes_table',3),
+	('2014_11_05_163358_create_oauth_grants_table',3),
+	('2014_11_05_163359_create_oauth_grant_scopes_table',3),
+	('2014_11_05_163400_create_oauth_clients_table',3),
+	('2014_11_05_163401_create_oauth_client_endpoints_table',3),
+	('2014_11_05_163402_create_oauth_client_scopes_table',3),
+	('2014_11_05_163403_create_oauth_client_grants_table',3),
+	('2014_11_05_163404_create_oauth_sessions_table',3),
+	('2014_11_05_163405_create_oauth_session_scopes_table',3),
+	('2014_11_05_163407_create_oauth_auth_codes_table',3),
+	('2014_11_05_163408_create_oauth_auth_code_scopes_table',3),
+	('2014_11_05_163409_create_oauth_access_tokens_table',3),
+	('2014_11_05_163410_create_oauth_access_token_scopes_table',3),
+	('2014_11_05_163411_create_oauth_refresh_tokens_table',3);
+
+/*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table oauth_access_token_scopes
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `oauth_access_token_scopes`;
+
+CREATE TABLE `oauth_access_token_scopes` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `access_token_id` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+  `scope_id` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`id`),
+  KEY `oauth_access_token_scopes_access_token_id_index` (`access_token_id`),
+  KEY `oauth_access_token_scopes_scope_id_index` (`scope_id`),
+  CONSTRAINT `oauth_access_token_scopes_access_token_id_foreign` FOREIGN KEY (`access_token_id`) REFERENCES `oauth_access_tokens` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `oauth_access_token_scopes_scope_id_foreign` FOREIGN KEY (`scope_id`) REFERENCES `oauth_scopes` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+LOCK TABLES `oauth_access_token_scopes` WRITE;
+/*!40000 ALTER TABLE `oauth_access_token_scopes` DISABLE KEYS */;
+
+INSERT INTO `oauth_access_token_scopes` (`id`, `access_token_id`, `scope_id`, `created_at`, `updated_at`)
+VALUES
+	(32,'PAu1e45LPXtqDorshoLzfPDcpnhYChwArAn3m3vk','basic.apps','2014-11-23 18:22:49','2014-11-23 18:22:49'),
+	(34,'PAu1e45LPXtqDorshoLzfPDcpnhYChwArAn3m3vk','basic.printservice','2014-11-23 18:22:49','2014-11-23 18:22:49'),
+	(35,'PAu1e45LPXtqDorshoLzfPDcpnhYChwArAn3m3vk','basic.resources','2014-11-23 18:22:49','2014-11-23 18:22:49'),
+	(37,'PAu1e45LPXtqDorshoLzfPDcpnhYChwArAn3m3vk','cloud.slice','2014-11-23 18:22:49','2014-11-23 18:22:49'),
+	(39,'PAu1e45LPXtqDorshoLzfPDcpnhYChwArAn3m3vk','user.print','2014-11-23 18:22:49','2014-11-23 18:22:49'),
+	(40,'PAu1e45LPXtqDorshoLzfPDcpnhYChwArAn3m3vk','user.printservice','2014-11-23 18:22:49','2014-11-23 18:22:49'),
+	(41,'PAu1e45LPXtqDorshoLzfPDcpnhYChwArAn3m3vk','user.resources','2014-11-23 18:22:49','2014-11-23 18:22:49'),
+	(42,'PAu1e45LPXtqDorshoLzfPDcpnhYChwArAn3m3vk','user.transfer','2014-11-23 18:22:49','2014-11-23 18:22:49'),
+	(43,'PAu1e45LPXtqDorshoLzfPDcpnhYChwArAn3m3vk','user.user','2014-11-23 18:22:49','2014-11-23 18:22:49'),
+	(44,'8iBk9qrTmCpAX0dRZRTXzT8S5JTT1L1s04lOeFpi','basic.apps','2014-11-23 18:53:15','2014-11-23 18:53:15'),
+	(46,'8iBk9qrTmCpAX0dRZRTXzT8S5JTT1L1s04lOeFpi','basic.printservice','2014-11-23 18:53:15','2014-11-23 18:53:15'),
+	(47,'8iBk9qrTmCpAX0dRZRTXzT8S5JTT1L1s04lOeFpi','basic.resources','2014-11-23 18:53:15','2014-11-23 18:53:15'),
+	(49,'8iBk9qrTmCpAX0dRZRTXzT8S5JTT1L1s04lOeFpi','cloud.slice','2014-11-23 18:53:15','2014-11-23 18:53:15'),
+	(51,'8iBk9qrTmCpAX0dRZRTXzT8S5JTT1L1s04lOeFpi','user.print','2014-11-23 18:53:15','2014-11-23 18:53:15'),
+	(52,'8iBk9qrTmCpAX0dRZRTXzT8S5JTT1L1s04lOeFpi','user.printservice','2014-11-23 18:53:15','2014-11-23 18:53:15'),
+	(53,'8iBk9qrTmCpAX0dRZRTXzT8S5JTT1L1s04lOeFpi','user.resources','2014-11-23 18:53:15','2014-11-23 18:53:15'),
+	(54,'8iBk9qrTmCpAX0dRZRTXzT8S5JTT1L1s04lOeFpi','user.transfer','2014-11-23 18:53:15','2014-11-23 18:53:15'),
+	(55,'8iBk9qrTmCpAX0dRZRTXzT8S5JTT1L1s04lOeFpi','user.user','2014-11-23 18:53:15','2014-11-23 18:53:15'),
+	(57,'6CpSGGBvnb5uOXqaljNpUtWHmewA0yucWrfcxI6B','user.user','2014-11-23 18:58:49','2014-11-23 18:58:49'),
+	(58,'TjTEwzSFBbYBERdK5vekgUxghuo4dH4PpMIAhLhc','basic.apps','2014-11-23 19:05:06','2014-11-23 19:05:06'),
+	(60,'TjTEwzSFBbYBERdK5vekgUxghuo4dH4PpMIAhLhc','basic.printservice','2014-11-23 19:05:06','2014-11-23 19:05:06'),
+	(61,'TjTEwzSFBbYBERdK5vekgUxghuo4dH4PpMIAhLhc','basic.resources','2014-11-23 19:05:06','2014-11-23 19:05:06'),
+	(63,'TjTEwzSFBbYBERdK5vekgUxghuo4dH4PpMIAhLhc','cloud.slice','2014-11-23 19:05:06','2014-11-23 19:05:06'),
+	(65,'TjTEwzSFBbYBERdK5vekgUxghuo4dH4PpMIAhLhc','user.authorize','2014-11-23 19:05:06','2014-11-23 19:05:06'),
+	(66,'TjTEwzSFBbYBERdK5vekgUxghuo4dH4PpMIAhLhc','user.print','2014-11-23 19:05:06','2014-11-23 19:05:06'),
+	(67,'TjTEwzSFBbYBERdK5vekgUxghuo4dH4PpMIAhLhc','user.printservice','2014-11-23 19:05:06','2014-11-23 19:05:06'),
+	(68,'TjTEwzSFBbYBERdK5vekgUxghuo4dH4PpMIAhLhc','user.resources','2014-11-23 19:05:06','2014-11-23 19:05:06'),
+	(69,'TjTEwzSFBbYBERdK5vekgUxghuo4dH4PpMIAhLhc','user.transfer','2014-11-23 19:05:06','2014-11-23 19:05:06'),
+	(70,'TjTEwzSFBbYBERdK5vekgUxghuo4dH4PpMIAhLhc','user.user','2014-11-23 19:05:06','2014-11-23 19:05:06'),
+	(71,'CGMkvlBDAknrPZ7LhYDP0Zc8dRQXr8B4AWimHOTo','basic.apps','2014-11-23 22:56:33','2014-11-23 22:56:33'),
+	(72,'CGMkvlBDAknrPZ7LhYDP0Zc8dRQXr8B4AWimHOTo','basic.info','2014-11-23 22:56:33','2014-11-23 22:56:33'),
+	(73,'CGMkvlBDAknrPZ7LhYDP0Zc8dRQXr8B4AWimHOTo','basic.printservice','2014-11-23 22:56:33','2014-11-23 22:56:33'),
+	(74,'CGMkvlBDAknrPZ7LhYDP0Zc8dRQXr8B4AWimHOTo','basic.resources','2014-11-23 22:56:33','2014-11-23 22:56:33'),
+	(75,'CGMkvlBDAknrPZ7LhYDP0Zc8dRQXr8B4AWimHOTo','cloud.render','2014-11-23 22:56:33','2014-11-23 22:56:33'),
+	(76,'CGMkvlBDAknrPZ7LhYDP0Zc8dRQXr8B4AWimHOTo','cloud.slice','2014-11-23 22:56:33','2014-11-23 22:56:33'),
+	(77,'CGMkvlBDAknrPZ7LhYDP0Zc8dRQXr8B4AWimHOTo','user.apps','2014-11-23 22:56:33','2014-11-23 22:56:33'),
+	(78,'CGMkvlBDAknrPZ7LhYDP0Zc8dRQXr8B4AWimHOTo','user.print','2014-11-23 22:56:33','2014-11-23 22:56:33'),
+	(79,'CGMkvlBDAknrPZ7LhYDP0Zc8dRQXr8B4AWimHOTo','user.printservice','2014-11-23 22:56:33','2014-11-23 22:56:33'),
+	(80,'CGMkvlBDAknrPZ7LhYDP0Zc8dRQXr8B4AWimHOTo','user.resources','2014-11-23 22:56:33','2014-11-23 22:56:33'),
+	(81,'CGMkvlBDAknrPZ7LhYDP0Zc8dRQXr8B4AWimHOTo','user.transfer','2014-11-23 22:56:33','2014-11-23 22:56:33'),
+	(82,'CGMkvlBDAknrPZ7LhYDP0Zc8dRQXr8B4AWimHOTo','user.user','2014-11-23 22:56:33','2014-11-23 22:56:33'),
+	(83,'nTj8GAKhd56bqedylwRfhkvU7qhWFT5Zp0iivIq3','basic.apps','2014-11-24 09:00:23','2014-11-24 09:00:23'),
+	(84,'nTj8GAKhd56bqedylwRfhkvU7qhWFT5Zp0iivIq3','basic.info','2014-11-24 09:00:23','2014-11-24 09:00:23'),
+	(85,'nTj8GAKhd56bqedylwRfhkvU7qhWFT5Zp0iivIq3','basic.printservice','2014-11-24 09:00:23','2014-11-24 09:00:23'),
+	(86,'nTj8GAKhd56bqedylwRfhkvU7qhWFT5Zp0iivIq3','basic.resources','2014-11-24 09:00:23','2014-11-24 09:00:23'),
+	(87,'nTj8GAKhd56bqedylwRfhkvU7qhWFT5Zp0iivIq3','cloud.render','2014-11-24 09:00:23','2014-11-24 09:00:23'),
+	(88,'nTj8GAKhd56bqedylwRfhkvU7qhWFT5Zp0iivIq3','cloud.slice','2014-11-24 09:00:23','2014-11-24 09:00:23'),
+	(89,'nTj8GAKhd56bqedylwRfhkvU7qhWFT5Zp0iivIq3','user.apps','2014-11-24 09:00:23','2014-11-24 09:00:23'),
+	(90,'nTj8GAKhd56bqedylwRfhkvU7qhWFT5Zp0iivIq3','user.print','2014-11-24 09:00:23','2014-11-24 09:00:23'),
+	(91,'nTj8GAKhd56bqedylwRfhkvU7qhWFT5Zp0iivIq3','user.printservice','2014-11-24 09:00:23','2014-11-24 09:00:23'),
+	(92,'nTj8GAKhd56bqedylwRfhkvU7qhWFT5Zp0iivIq3','user.resources','2014-11-24 09:00:23','2014-11-24 09:00:23'),
+	(93,'nTj8GAKhd56bqedylwRfhkvU7qhWFT5Zp0iivIq3','user.transfer','2014-11-24 09:00:23','2014-11-24 09:00:23'),
+	(94,'nTj8GAKhd56bqedylwRfhkvU7qhWFT5Zp0iivIq3','user.user','2014-11-24 09:00:23','2014-11-24 09:00:23'),
+	(95,'SYN34BHzh1mmvcfAHYh4q7q4HgTcSFQwKTNqr4iD','basic.apps','2014-11-24 09:03:24','2014-11-24 09:03:24'),
+	(96,'SYN34BHzh1mmvcfAHYh4q7q4HgTcSFQwKTNqr4iD','basic.info','2014-11-24 09:03:24','2014-11-24 09:03:24'),
+	(97,'SYN34BHzh1mmvcfAHYh4q7q4HgTcSFQwKTNqr4iD','basic.printservice','2014-11-24 09:03:24','2014-11-24 09:03:24'),
+	(98,'SYN34BHzh1mmvcfAHYh4q7q4HgTcSFQwKTNqr4iD','basic.resources','2014-11-24 09:03:24','2014-11-24 09:03:24'),
+	(99,'SYN34BHzh1mmvcfAHYh4q7q4HgTcSFQwKTNqr4iD','cloud.render','2014-11-24 09:03:24','2014-11-24 09:03:24'),
+	(100,'SYN34BHzh1mmvcfAHYh4q7q4HgTcSFQwKTNqr4iD','cloud.slice','2014-11-24 09:03:24','2014-11-24 09:03:24'),
+	(101,'SYN34BHzh1mmvcfAHYh4q7q4HgTcSFQwKTNqr4iD','user.apps','2014-11-24 09:03:24','2014-11-24 09:03:24'),
+	(102,'SYN34BHzh1mmvcfAHYh4q7q4HgTcSFQwKTNqr4iD','user.print','2014-11-24 09:03:24','2014-11-24 09:03:24'),
+	(103,'SYN34BHzh1mmvcfAHYh4q7q4HgTcSFQwKTNqr4iD','user.printservice','2014-11-24 09:03:24','2014-11-24 09:03:24'),
+	(104,'SYN34BHzh1mmvcfAHYh4q7q4HgTcSFQwKTNqr4iD','user.resources','2014-11-24 09:03:24','2014-11-24 09:03:24'),
+	(105,'SYN34BHzh1mmvcfAHYh4q7q4HgTcSFQwKTNqr4iD','user.transfer','2014-11-24 09:03:24','2014-11-24 09:03:24'),
+	(106,'SYN34BHzh1mmvcfAHYh4q7q4HgTcSFQwKTNqr4iD','user.user','2014-11-24 09:03:24','2014-11-24 09:03:24');
+
+/*!40000 ALTER TABLE `oauth_access_token_scopes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table oauth_access_tokens
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `oauth_access_tokens`;
+
+CREATE TABLE `oauth_access_tokens` (
+  `id` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+  `session_id` int(10) unsigned NOT NULL,
+  `expire_time` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `oauth_access_tokens_id_session_id_unique` (`id`,`session_id`),
+  KEY `oauth_access_tokens_session_id_index` (`session_id`),
+  CONSTRAINT `oauth_access_tokens_session_id_foreign` FOREIGN KEY (`session_id`) REFERENCES `oauth_sessions` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+LOCK TABLES `oauth_access_tokens` WRITE;
+/*!40000 ALTER TABLE `oauth_access_tokens` DISABLE KEYS */;
+
+INSERT INTO `oauth_access_tokens` (`id`, `session_id`, `expire_time`, `created_at`, `updated_at`)
+VALUES
+	('1PFO3Ydp31iXFL8oO0IPvamav7WHWkCS4TSIW2yq',34,1416018013,'2014-11-08 02:20:13','2014-11-08 02:20:13'),
+	('5ciG2Exa09HeMVdypFdLs761nvfFEALdmH4b1Frf',26,1416012213,'2014-11-08 00:43:33','2014-11-08 00:43:33'),
+	('5lD4lUVivKxv1eSCSCOwAWYYoIF8cKIKujWrMvgv',57,1416613409,'2014-11-14 23:43:29','2014-11-14 23:43:29'),
+	('6CpSGGBvnb5uOXqaljNpUtWHmewA0yucWrfcxI6B',66,1417373929,'2014-11-23 18:58:49','2014-11-23 18:58:49'),
+	('8iBk9qrTmCpAX0dRZRTXzT8S5JTT1L1s04lOeFpi',64,1417373595,'2014-11-23 18:53:15','2014-11-23 18:53:15'),
+	('9FeMOSJIv9mMwxs2dlEAJhYgV35JFFdMY0grKXEk',45,1416154638,'2014-11-09 16:17:18','2014-11-09 16:17:18'),
+	('as2pQn15lhF8wHSlVxc662NK9gGnBMgkd2u4rgkN',28,1416014011,'2014-11-08 01:13:31','2014-11-08 01:13:31'),
+	('B7um8vRsHzVXLDNmMdsgcTMYaxMxzjGg7JM8zHZn',62,1416917663,'2014-11-18 12:14:24','2014-11-18 12:14:24'),
+	('Bvel5V8AwxdidoZu9YRQG0o5cK4bpTweh8hGHsBH',39,1416018495,'2014-11-08 02:28:15','2014-11-08 02:28:15'),
+	('CGMkvlBDAknrPZ7LhYDP0Zc8dRQXr8B4AWimHOTo',69,1417388193,'2014-11-23 22:56:33','2014-11-23 22:56:33'),
+	('D56tIY9sJ4giN21PyL2rFZSZMEgnwCnVe3LhYaJG',35,1416018053,'2014-11-08 02:20:53','2014-11-08 02:20:53'),
+	('D5ddLKqTYeajZswSzjK7uHPNeYgBMKiNLBqq7ZLW',60,1416848094,'2014-11-17 16:54:54','2014-11-17 16:54:54'),
+	('eAVtkDd12jXFmDDKgF81bgMCjG4umH66Smeh20Vu',41,1416093897,'2014-11-08 23:24:57','2014-11-08 23:24:57'),
+	('fDxvV3a80SeMpLcquMCksCkWnRyPkjPRRWIFQX5g',55,1416611657,'2014-11-14 23:14:17','2014-11-14 23:14:17'),
+	('gdvTzTeb6tyliuUXJhUkf8hmxGnLlxlxAGDYwEZE',24,1416012157,'2014-11-08 00:42:37','2014-11-08 00:42:37'),
+	('GzJfs85PWYriCO8oifsTOePRTewhEM21VjJaYqDh',58,1416847059,'2014-11-17 16:37:39','2014-11-17 16:37:39'),
+	('hvlELngsEFIWAvDDDDPUXYyzFOLRMDVumg3XiNMq',32,1416017990,'2014-11-08 02:19:50','2014-11-08 02:19:50'),
+	('kE8QfXmBJyPTjTwEdirAooYQBTTDkWNkzl5WDQhj',51,1416574563,'2014-11-14 12:56:03','2014-11-14 12:56:03'),
+	('kssfGxOpzK13C8lYW8ogTLG1kvepPpO2XrMFCLeb',18,1416011823,'2014-11-08 00:37:03','2014-11-08 00:37:03'),
+	('LpluVqdNHQCbcO4DmfPCORiWdLrNev69YlqO44Fo',20,1416011976,'2014-11-08 00:39:36','2014-11-08 00:39:36'),
+	('mhc2DOlyQac4rvHUrRSICLGR28StSjMVRJZ9Irx2',50,1416562807,'2014-11-14 09:40:07','2014-11-14 09:40:07'),
+	('MqArMOmZGqkIswG7p4XlInHm52TyXQogx2WWUZFF',30,1416014065,'2014-11-08 01:14:25','2014-11-08 01:14:25'),
+	('MUk2dCqoV6KrigDCXWNloWTDMqM5oC89KFdp0diT',54,1416603570,'2014-11-14 20:59:30','2014-11-14 20:59:30'),
+	('nTj8GAKhd56bqedylwRfhkvU7qhWFT5Zp0iivIq3',70,1417424423,'2014-11-24 09:00:23','2014-11-24 09:00:23'),
+	('OF0qV2VL5wTxC5rotM6FsvfD2JEVsFBmIrDLEFzY',31,1416017781,'2014-11-08 02:16:21','2014-11-08 02:16:21'),
+	('P8GRKy2SWQpk0EpkKLG8jc5xcCMHOd830KywjcBW',47,1416154655,'2014-11-09 16:17:35','2014-11-09 16:17:35'),
+	('PAu1e45LPXtqDorshoLzfPDcpnhYChwArAn3m3vk',63,1417371769,'2014-11-23 18:22:49','2014-11-23 18:22:49'),
+	('Q3d6XmK9f4Qn3ViSd2CsFdWGpNo8utLsEvOBssY5',49,1416303821,'2014-11-11 09:43:41','2014-11-11 09:43:41'),
+	('R3naFD4wPl7vAh5W5DTlz13PLsNNcZ6FY9yBc6Ae',43,1416093922,'2014-11-08 23:25:22','2014-11-08 23:25:22'),
+	('SECRETACCESSTOKEN',3,150000,'2014-11-06 13:30:59','2014-11-06 13:30:59'),
+	('SYN34BHzh1mmvcfAHYh4q7q4HgTcSFQwKTNqr4iD',71,1417424604,'2014-11-24 09:03:24','2014-11-24 09:03:24'),
+	('T4yp649fiV76oZyZczBDcj3KzYm4VCaJfPtGfIme',53,1416574570,'2014-11-14 12:56:10','2014-11-14 12:56:10'),
+	('TjTEwzSFBbYBERdK5vekgUxghuo4dH4PpMIAhLhc',68,1417374306,'2014-11-23 19:05:06','2014-11-23 19:05:06'),
+	('tyybjQ8Yt7Wm7uuK1Rw3x1Hoi25tOXCXvsWVDs87',36,1416018313,'2014-11-08 02:25:13','2014-11-08 02:25:13'),
+	('VTmqGnmdSmiaRglCmRbxlANxEXdtWb49ywwRzJWa',22,1416012067,'2014-11-08 00:41:07','2014-11-08 00:41:07'),
+	('xFL1Y9dMpxWlgcndgfbqKSw25pQr4VfwPF7WwBUx',59,1416847743,'2014-11-17 16:49:03','2014-11-17 16:49:03'),
+	('YFbFsbiUITnTgfHagoyv6huNXpe5XOg588TIKAEI',61,1416913352,'2014-11-18 11:02:32','2014-11-18 11:02:32'),
+	('YFUVAV1nYwApcMngugUnwhjMwwrMZEk3IBL6DJll',33,1416018010,'2014-11-08 02:20:10','2014-11-08 02:20:10');
+
+/*!40000 ALTER TABLE `oauth_access_tokens` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table oauth_auth_code_scopes
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `oauth_auth_code_scopes`;
+
+CREATE TABLE `oauth_auth_code_scopes` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `auth_code_id` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+  `scope_id` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`id`),
+  KEY `oauth_auth_code_scopes_auth_code_id_index` (`auth_code_id`),
+  KEY `oauth_auth_code_scopes_scope_id_index` (`scope_id`),
+  CONSTRAINT `oauth_auth_code_scopes_auth_code_id_foreign` FOREIGN KEY (`auth_code_id`) REFERENCES `oauth_auth_codes` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `oauth_auth_code_scopes_scope_id_foreign` FOREIGN KEY (`scope_id`) REFERENCES `oauth_scopes` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+
+
+# Dump of table oauth_auth_codes
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `oauth_auth_codes`;
+
+CREATE TABLE `oauth_auth_codes` (
+  `id` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+  `session_id` int(10) unsigned NOT NULL,
+  `redirect_uri` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `expire_time` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`id`),
+  KEY `oauth_auth_codes_session_id_index` (`session_id`),
+  CONSTRAINT `oauth_auth_codes_session_id_foreign` FOREIGN KEY (`session_id`) REFERENCES `oauth_sessions` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+LOCK TABLES `oauth_auth_codes` WRITE;
+/*!40000 ALTER TABLE `oauth_auth_codes` DISABLE KEYS */;
+
+INSERT INTO `oauth_auth_codes` (`id`, `session_id`, `redirect_uri`, `expire_time`, `created_at`, `updated_at`)
+VALUES
+	('6Nyl3jCI1exilxqeSV1mTWNEkfg34CPA6axhslSk',11,'http://localhost/printr/php/formide_api_wrapper/redirect.php',1415325391,'2014-11-07 01:46:31','2014-11-07 01:46:31'),
+	('72H0c0P27ZgqO8AatwVmFIRgohU6Z1eM0onU8Yn5',14,'http://localhost/printr/php/formide_api_wrapper/redirect.php',1415325685,'2014-11-07 01:51:25','2014-11-07 01:51:25'),
+	('8JEtAVoBZWfoo5TetYsOf9hvWZKpsj754aR3SHpp',9,'http://localhost/printr/php/formide_api_wrapper/redirect.php',1415325083,'2014-11-07 01:41:23','2014-11-07 01:41:23'),
+	('9h2kEEiUrxepI5a5ROrS94eF5CrxySqzuWHEYinP',5,'http://localhost/printr/php/formide_api_wrapper/redirect.php',1415324694,'2014-11-07 01:34:54','2014-11-07 01:34:54'),
+	('BJRRld7kmc0E94vaVGN7r1hNkde5PzloewKQuJnW',8,'http://localhost/printr/php/formide_api_wrapper/redirect.php',1415324972,'2014-11-07 01:39:32','2014-11-07 01:39:32'),
+	('G40070LWPeBm0eYZ6qETTKAWmltTJbg7G5TIcKcr',10,'http://localhost/printr/php/formide_api_wrapper/redirect.php',1415325344,'2014-11-07 01:45:44','2014-11-07 01:45:44'),
+	('iRz2TNt4kuq6Baeu7i7mYP8MWXzcUjVUKZRYbRIg',12,'http://localhost/printr/php/formide_api_wrapper/redirect.php',1415325443,'2014-11-07 01:47:23','2014-11-07 01:47:23'),
+	('ItMopRWkVLta4PtIzlCuRGl74j4ZseuT0JrQVxxb',16,'http://localhost/printr/php/formide_api_wrapper/redirect.php',1415406612,'2014-11-08 00:20:12','2014-11-08 00:20:12'),
+	('KkW9JMIXNqeaQLMvuAKViwxwlAlc1CEfZ5cR2L7B',13,'http://localhost/printr/php/formide_api_wrapper/redirect.php',1415325537,'2014-11-07 01:48:57','2014-11-07 01:48:57'),
+	('lypOAvpQOPEV1hlyESDa747X9kdX7fmeZwahkga9',15,'http://localhost/printr/php/formide_api_wrapper/redirect.php',1415368926,'2014-11-07 13:52:06','2014-11-07 13:52:06'),
+	('p8tuPFFhOZGuZ9aiHlV2rqNkPxVsQqNlIwY8smQF',4,'http://localhost/printr/php/formide_api_wrapper/redirect.php',1415324644,'2014-11-07 01:34:04','2014-11-07 01:34:04'),
+	('TQHyfz04upycIk2n9YNbBpexSLCh4lftakqwcjU6',7,'http://localhost/printr/php/formide_api_wrapper/redirect.php',1415324757,'2014-11-07 01:35:57','2014-11-07 01:35:57'),
+	('tU3POH4fPdc0kfkpHhafxgXbgspTlLQ6mK4azg9Z',37,'http://localhost/printr/php/formide_api_wrapper/redirect.php',1415414116,'2014-11-08 02:25:16','2014-11-08 02:25:16'),
+	('vk6py1xnWKovOr5H4eBJJ1OT3nJkcyXDnkdtMlV8',3,'http://localhost/printr/php/formide_api_wrapper/redirect.php',1415272258,'2014-11-06 11:00:58','2014-11-06 11:00:58'),
+	('Z0zwuDYVT9XRrdVtnOORZ761WfuNCs1ywON9JAC7',6,'http://localhost/printr/php/formide_api_wrapper/redirect.php',1415324735,'2014-11-07 01:35:35','2014-11-07 01:35:35');
+
+/*!40000 ALTER TABLE `oauth_auth_codes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table oauth_client_endpoints
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `oauth_client_endpoints`;
+
+CREATE TABLE `oauth_client_endpoints` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `client_id` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+  `redirect_uri` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `oauth_client_endpoints_client_id_redirect_uri_unique` (`client_id`,`redirect_uri`),
+  CONSTRAINT `oauth_client_endpoints_client_id_foreign` FOREIGN KEY (`client_id`) REFERENCES `oauth_clients` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+LOCK TABLES `oauth_client_endpoints` WRITE;
+/*!40000 ALTER TABLE `oauth_client_endpoints` DISABLE KEYS */;
+
+INSERT INTO `oauth_client_endpoints` (`id`, `client_id`, `redirect_uri`, `created_at`, `updated_at`)
+VALUES
+	(1,'FORMIDE','http://localhost/printr/github/formide-api-wrapper-php/examples/redirect.php','2014-11-05 19:11:13','2014-11-05 19:11:13');
+
+/*!40000 ALTER TABLE `oauth_client_endpoints` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table oauth_client_grants
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `oauth_client_grants`;
+
+CREATE TABLE `oauth_client_grants` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `client_id` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+  `grant_id` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`id`),
+  KEY `oauth_client_grants_client_id_index` (`client_id`),
+  KEY `oauth_client_grants_grant_id_index` (`grant_id`),
+  CONSTRAINT `oauth_client_grants_client_id_foreign` FOREIGN KEY (`client_id`) REFERENCES `oauth_clients` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  CONSTRAINT `oauth_client_grants_grant_id_foreign` FOREIGN KEY (`grant_id`) REFERENCES `oauth_grants` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+LOCK TABLES `oauth_client_grants` WRITE;
+/*!40000 ALTER TABLE `oauth_client_grants` DISABLE KEYS */;
+
+INSERT INTO `oauth_client_grants` (`id`, `client_id`, `grant_id`, `created_at`, `updated_at`)
+VALUES
+	(3,'FORMIDE','authorization_code','2014-11-06 13:45:15','2014-11-06 13:45:15'),
+	(5,'FORMIDE','password','2014-11-23 22:43:54','2014-11-23 22:43:54');
+
+/*!40000 ALTER TABLE `oauth_client_grants` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table oauth_client_scopes
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `oauth_client_scopes`;
+
+CREATE TABLE `oauth_client_scopes` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `client_id` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+  `scope_id` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`id`),
+  KEY `oauth_client_scopes_client_id_index` (`client_id`),
+  KEY `oauth_client_scopes_scope_id_index` (`scope_id`),
+  CONSTRAINT `oauth_client_scopes_client_id_foreign` FOREIGN KEY (`client_id`) REFERENCES `oauth_clients` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `oauth_client_scopes_scope_id_foreign` FOREIGN KEY (`scope_id`) REFERENCES `oauth_scopes` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+LOCK TABLES `oauth_client_scopes` WRITE;
+/*!40000 ALTER TABLE `oauth_client_scopes` DISABLE KEYS */;
+
+INSERT INTO `oauth_client_scopes` (`id`, `client_id`, `scope_id`, `created_at`, `updated_at`)
+VALUES
+	(5,'FORMIDE','basic.apps','0000-00-00 00:00:00','0000-00-00 00:00:00'),
+	(6,'FORMIDE','basic.printservice','0000-00-00 00:00:00','0000-00-00 00:00:00'),
+	(7,'FORMIDE','basic.resources','0000-00-00 00:00:00','0000-00-00 00:00:00'),
+	(8,'FORMIDE','cloud.slice','0000-00-00 00:00:00','0000-00-00 00:00:00'),
+	(9,'FORMIDE','user.apps','0000-00-00 00:00:00','0000-00-00 00:00:00'),
+	(10,'FORMIDE','user.authorize','0000-00-00 00:00:00','0000-00-00 00:00:00'),
+	(11,'FORMIDE','user.printservice','0000-00-00 00:00:00','0000-00-00 00:00:00'),
+	(12,'FORMIDE','user.resources','0000-00-00 00:00:00','0000-00-00 00:00:00'),
+	(13,'FORMIDE','user.transfer','0000-00-00 00:00:00','0000-00-00 00:00:00'),
+	(14,'FORMIDE','user.user','0000-00-00 00:00:00','0000-00-00 00:00:00'),
+	(17,'FORMIDE','basic.info','0000-00-00 00:00:00','0000-00-00 00:00:00'),
+	(20,'FORMIDE','cloud.render','0000-00-00 00:00:00','0000-00-00 00:00:00'),
+	(21,'FORMIDE','user.print','0000-00-00 00:00:00','0000-00-00 00:00:00');
+
+/*!40000 ALTER TABLE `oauth_client_scopes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table oauth_clients
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `oauth_clients`;
+
+CREATE TABLE `oauth_clients` (
+  `id` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+  `secret` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `oauth_clients_id_secret_unique` (`id`,`secret`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+LOCK TABLES `oauth_clients` WRITE;
+/*!40000 ALTER TABLE `oauth_clients` DISABLE KEYS */;
+
+INSERT INTO `oauth_clients` (`id`, `secret`, `name`, `created_at`, `updated_at`)
+VALUES
+	('FORMIDE','FORMIDESECRET','Formide.com','2014-11-05 19:11:13','2014-11-05 19:11:13');
+
+/*!40000 ALTER TABLE `oauth_clients` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table oauth_grant_scopes
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `oauth_grant_scopes`;
+
+CREATE TABLE `oauth_grant_scopes` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `grant_id` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+  `scope_id` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`id`),
+  KEY `oauth_grant_scopes_grant_id_index` (`grant_id`),
+  KEY `oauth_grant_scopes_scope_id_index` (`scope_id`),
+  CONSTRAINT `oauth_grant_scopes_grant_id_foreign` FOREIGN KEY (`grant_id`) REFERENCES `oauth_grants` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `oauth_grant_scopes_scope_id_foreign` FOREIGN KEY (`scope_id`) REFERENCES `oauth_scopes` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+
+
+# Dump of table oauth_grants
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `oauth_grants`;
+
+CREATE TABLE `oauth_grants` (
+  `id` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+LOCK TABLES `oauth_grants` WRITE;
+/*!40000 ALTER TABLE `oauth_grants` DISABLE KEYS */;
+
+INSERT INTO `oauth_grants` (`id`, `created_at`, `updated_at`)
+VALUES
+	('authorization_code','2014-11-06 13:45:00','2014-11-06 13:45:00'),
+	('password','2014-11-23 22:41:39','2014-11-23 22:41:39');
+
+/*!40000 ALTER TABLE `oauth_grants` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table oauth_refresh_tokens
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `oauth_refresh_tokens`;
+
+CREATE TABLE `oauth_refresh_tokens` (
+  `id` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+  `access_token_id` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+  `expire_time` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`access_token_id`),
+  UNIQUE KEY `oauth_refresh_tokens_id_unique` (`id`),
+  CONSTRAINT `oauth_refresh_tokens_access_token_id_foreign` FOREIGN KEY (`access_token_id`) REFERENCES `oauth_access_tokens` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+
+
+# Dump of table oauth_scopes
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `oauth_scopes`;
+
+CREATE TABLE `oauth_scopes` (
+  `id` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+  `description` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+LOCK TABLES `oauth_scopes` WRITE;
+/*!40000 ALTER TABLE `oauth_scopes` DISABLE KEYS */;
+
+INSERT INTO `oauth_scopes` (`id`, `description`, `created_at`, `updated_at`)
+VALUES
+	('basic.apps','access app information','2014-11-23 19:03:00','2014-11-23 19:03:14'),
+	('basic.info','access basic api info','0000-00-00 00:00:00','0000-00-00 00:00:00'),
+	('basic.printservice','access the printservice api','2014-11-23 19:03:10','2014-11-23 19:03:16'),
+	('basic.resources','access shared resources','2014-11-23 19:03:05','2014-11-23 19:03:15'),
+	('cloud.render','access render cloud','2014-11-23 19:03:08','2014-11-23 19:03:16'),
+	('cloud.slice','access slice cloud','2014-11-23 19:03:08','2014-11-23 19:03:16'),
+	('user.apps','access user app information','2014-11-23 23:50:55','2014-11-23 23:50:55'),
+	('user.authorize','authorize via username and password','2014-11-23 20:01:27','2014-11-23 20:01:27'),
+	('user.print','access user printjobs','2014-11-23 19:17:17','2014-11-23 19:17:21'),
+	('user.printservice','access user orders','2014-11-23 19:17:18','2014-11-23 19:17:21'),
+	('user.resources','access user resources','2014-11-23 19:03:12','2014-11-23 19:03:18'),
+	('user.transfer','upload and download files','2014-11-23 19:03:12','2014-11-23 19:03:19'),
+	('user.user','access user information','2014-11-23 19:17:20','2014-11-23 19:17:22');
+
+/*!40000 ALTER TABLE `oauth_scopes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table oauth_session_scopes
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `oauth_session_scopes`;
+
+CREATE TABLE `oauth_session_scopes` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `session_id` int(10) unsigned NOT NULL,
+  `scope_id` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`id`),
+  KEY `oauth_session_scopes_session_id_index` (`session_id`),
+  KEY `oauth_session_scopes_scope_id_index` (`scope_id`),
+  CONSTRAINT `oauth_session_scopes_scope_id_foreign` FOREIGN KEY (`scope_id`) REFERENCES `oauth_scopes` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `oauth_session_scopes_session_id_foreign` FOREIGN KEY (`session_id`) REFERENCES `oauth_sessions` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+LOCK TABLES `oauth_session_scopes` WRITE;
+/*!40000 ALTER TABLE `oauth_session_scopes` DISABLE KEYS */;
+
+INSERT INTO `oauth_session_scopes` (`id`, `session_id`, `scope_id`, `created_at`, `updated_at`)
+VALUES
+	(32,63,'basic.apps','2014-11-23 18:22:49','2014-11-23 18:22:49'),
+	(34,63,'basic.printservice','2014-11-23 18:22:49','2014-11-23 18:22:49'),
+	(35,63,'basic.resources','2014-11-23 18:22:49','2014-11-23 18:22:49'),
+	(37,63,'cloud.slice','2014-11-23 18:22:49','2014-11-23 18:22:49'),
+	(39,63,'user.print','2014-11-23 18:22:49','2014-11-23 18:22:49'),
+	(40,63,'user.printservice','2014-11-23 18:22:49','2014-11-23 18:22:49'),
+	(41,63,'user.resources','2014-11-23 18:22:49','2014-11-23 18:22:49'),
+	(42,63,'user.transfer','2014-11-23 18:22:49','2014-11-23 18:22:49'),
+	(43,63,'user.user','2014-11-23 18:22:49','2014-11-23 18:22:49'),
+	(44,64,'basic.apps','2014-11-23 18:53:15','2014-11-23 18:53:15'),
+	(46,64,'basic.printservice','2014-11-23 18:53:15','2014-11-23 18:53:15'),
+	(47,64,'basic.resources','2014-11-23 18:53:15','2014-11-23 18:53:15'),
+	(49,64,'cloud.slice','2014-11-23 18:53:15','2014-11-23 18:53:15'),
+	(51,64,'user.print','2014-11-23 18:53:15','2014-11-23 18:53:15'),
+	(52,64,'user.printservice','2014-11-23 18:53:15','2014-11-23 18:53:15'),
+	(53,64,'user.resources','2014-11-23 18:53:15','2014-11-23 18:53:15'),
+	(54,64,'user.transfer','2014-11-23 18:53:15','2014-11-23 18:53:15'),
+	(55,64,'user.user','2014-11-23 18:53:15','2014-11-23 18:53:15'),
+	(57,66,'user.user','2014-11-23 18:58:49','2014-11-23 18:58:49'),
+	(58,68,'basic.apps','2014-11-23 19:05:06','2014-11-23 19:05:06'),
+	(60,68,'basic.printservice','2014-11-23 19:05:06','2014-11-23 19:05:06'),
+	(61,68,'basic.resources','2014-11-23 19:05:06','2014-11-23 19:05:06'),
+	(63,68,'cloud.slice','2014-11-23 19:05:06','2014-11-23 19:05:06'),
+	(65,68,'user.authorize','2014-11-23 19:05:06','2014-11-23 19:05:06'),
+	(66,68,'user.print','2014-11-23 19:05:06','2014-11-23 19:05:06'),
+	(67,68,'user.printservice','2014-11-23 19:05:06','2014-11-23 19:05:06'),
+	(68,68,'user.resources','2014-11-23 19:05:06','2014-11-23 19:05:06'),
+	(69,68,'user.transfer','2014-11-23 19:05:06','2014-11-23 19:05:06'),
+	(70,68,'user.user','2014-11-23 19:05:06','2014-11-23 19:05:06'),
+	(71,69,'basic.apps','2014-11-23 22:56:33','2014-11-23 22:56:33'),
+	(72,69,'basic.info','2014-11-23 22:56:33','2014-11-23 22:56:33'),
+	(73,69,'basic.printservice','2014-11-23 22:56:33','2014-11-23 22:56:33'),
+	(74,69,'basic.resources','2014-11-23 22:56:33','2014-11-23 22:56:33'),
+	(75,69,'cloud.render','2014-11-23 22:56:33','2014-11-23 22:56:33'),
+	(76,69,'cloud.slice','2014-11-23 22:56:33','2014-11-23 22:56:33'),
+	(77,69,'user.apps','2014-11-23 22:56:33','2014-11-23 22:56:33'),
+	(78,69,'user.print','2014-11-23 22:56:33','2014-11-23 22:56:33'),
+	(79,69,'user.printservice','2014-11-23 22:56:33','2014-11-23 22:56:33'),
+	(80,69,'user.resources','2014-11-23 22:56:33','2014-11-23 22:56:33'),
+	(81,69,'user.transfer','2014-11-23 22:56:33','2014-11-23 22:56:33'),
+	(82,69,'user.user','2014-11-23 22:56:33','2014-11-23 22:56:33'),
+	(83,70,'basic.apps','2014-11-24 09:00:23','2014-11-24 09:00:23'),
+	(84,70,'basic.info','2014-11-24 09:00:23','2014-11-24 09:00:23'),
+	(85,70,'basic.printservice','2014-11-24 09:00:23','2014-11-24 09:00:23'),
+	(86,70,'basic.resources','2014-11-24 09:00:23','2014-11-24 09:00:23'),
+	(87,70,'cloud.render','2014-11-24 09:00:23','2014-11-24 09:00:23'),
+	(88,70,'cloud.slice','2014-11-24 09:00:23','2014-11-24 09:00:23'),
+	(89,70,'user.apps','2014-11-24 09:00:23','2014-11-24 09:00:23'),
+	(90,70,'user.print','2014-11-24 09:00:23','2014-11-24 09:00:23'),
+	(91,70,'user.printservice','2014-11-24 09:00:23','2014-11-24 09:00:23'),
+	(92,70,'user.resources','2014-11-24 09:00:23','2014-11-24 09:00:23'),
+	(93,70,'user.transfer','2014-11-24 09:00:23','2014-11-24 09:00:23'),
+	(94,70,'user.user','2014-11-24 09:00:23','2014-11-24 09:00:23'),
+	(95,71,'basic.apps','2014-11-24 09:03:24','2014-11-24 09:03:24'),
+	(96,71,'basic.info','2014-11-24 09:03:24','2014-11-24 09:03:24'),
+	(97,71,'basic.printservice','2014-11-24 09:03:24','2014-11-24 09:03:24'),
+	(98,71,'basic.resources','2014-11-24 09:03:24','2014-11-24 09:03:24'),
+	(99,71,'cloud.render','2014-11-24 09:03:24','2014-11-24 09:03:24'),
+	(100,71,'cloud.slice','2014-11-24 09:03:24','2014-11-24 09:03:24'),
+	(101,71,'user.apps','2014-11-24 09:03:24','2014-11-24 09:03:24'),
+	(102,71,'user.print','2014-11-24 09:03:24','2014-11-24 09:03:24'),
+	(103,71,'user.printservice','2014-11-24 09:03:24','2014-11-24 09:03:24'),
+	(104,71,'user.resources','2014-11-24 09:03:24','2014-11-24 09:03:24'),
+	(105,71,'user.transfer','2014-11-24 09:03:24','2014-11-24 09:03:24'),
+	(106,71,'user.user','2014-11-24 09:03:24','2014-11-24 09:03:24');
+
+/*!40000 ALTER TABLE `oauth_session_scopes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table oauth_sessions
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `oauth_sessions`;
+
+CREATE TABLE `oauth_sessions` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `client_id` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+  `owner_type` enum('client','user') COLLATE utf8_unicode_ci NOT NULL DEFAULT 'user',
+  `owner_id` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `client_redirect_uri` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`id`),
+  KEY `oauth_sessions_client_id_owner_type_owner_id_index` (`client_id`,`owner_type`,`owner_id`),
+  CONSTRAINT `oauth_sessions_client_id_foreign` FOREIGN KEY (`client_id`) REFERENCES `oauth_clients` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+LOCK TABLES `oauth_sessions` WRITE;
+/*!40000 ALTER TABLE `oauth_sessions` DISABLE KEYS */;
+
+INSERT INTO `oauth_sessions` (`id`, `client_id`, `owner_type`, `owner_id`, `client_redirect_uri`, `created_at`, `updated_at`)
+VALUES
+	(3,'FORMIDE','user','1','http://localhost/printr/php/formide_api_wrapper/redirect.php','2014-11-06 11:00:58','2014-11-06 11:00:58'),
+	(4,'FORMIDE','user','1','http://localhost/printr/php/formide_api_wrapper/redirect.php','2014-11-07 01:34:04','2014-11-07 01:34:04'),
+	(5,'FORMIDE','user','1','http://localhost/printr/php/formide_api_wrapper/redirect.php','2014-11-07 01:34:54','2014-11-07 01:34:54'),
+	(6,'FORMIDE','user','1','http://localhost/printr/php/formide_api_wrapper/redirect.php','2014-11-07 01:35:35','2014-11-07 01:35:35'),
+	(7,'FORMIDE','user','1','http://localhost/printr/php/formide_api_wrapper/redirect.php','2014-11-07 01:35:57','2014-11-07 01:35:57'),
+	(8,'FORMIDE','user','1','http://localhost/printr/php/formide_api_wrapper/redirect.php','2014-11-07 01:39:32','2014-11-07 01:39:32'),
+	(9,'FORMIDE','user','1','http://localhost/printr/php/formide_api_wrapper/redirect.php','2014-11-07 01:41:23','2014-11-07 01:41:23'),
+	(10,'FORMIDE','user','1','http://localhost/printr/php/formide_api_wrapper/redirect.php','2014-11-07 01:45:44','2014-11-07 01:45:44'),
+	(11,'FORMIDE','user','1','http://localhost/printr/php/formide_api_wrapper/redirect.php','2014-11-07 01:46:31','2014-11-07 01:46:31'),
+	(12,'FORMIDE','user','1','http://localhost/printr/php/formide_api_wrapper/redirect.php','2014-11-07 01:47:23','2014-11-07 01:47:23'),
+	(13,'FORMIDE','user','1','http://localhost/printr/php/formide_api_wrapper/redirect.php','2014-11-07 01:48:57','2014-11-07 01:48:57'),
+	(14,'FORMIDE','user','1','http://localhost/printr/php/formide_api_wrapper/redirect.php','2014-11-07 01:51:25','2014-11-07 01:51:25'),
+	(15,'FORMIDE','user','1','http://localhost/printr/php/formide_api_wrapper/redirect.php','2014-11-07 13:52:06','2014-11-07 13:52:06'),
+	(16,'FORMIDE','user','1','http://localhost/printr/php/formide_api_wrapper/redirect.php','2014-11-08 00:20:12','2014-11-08 00:20:12'),
+	(17,'FORMIDE','user','1','http://localhost/printr/php/formide_api_wrapper/redirect.php','2014-11-08 00:37:02','2014-11-08 00:37:02'),
+	(18,'FORMIDE','user','1','http://localhost/printr/php/formide_api_wrapper/redirect.php','2014-11-08 00:37:03','2014-11-08 00:37:03'),
+	(19,'FORMIDE','user','1','http://localhost/printr/php/formide_api_wrapper/redirect.php','2014-11-08 00:39:36','2014-11-08 00:39:36'),
+	(20,'FORMIDE','user','1','http://localhost/printr/php/formide_api_wrapper/redirect.php','2014-11-08 00:39:36','2014-11-08 00:39:36'),
+	(21,'FORMIDE','user','1','http://localhost/printr/php/formide_api_wrapper/redirect.php','2014-11-08 00:41:06','2014-11-08 00:41:06'),
+	(22,'FORMIDE','user','1','http://localhost/printr/php/formide_api_wrapper/redirect.php','2014-11-08 00:41:07','2014-11-08 00:41:07'),
+	(23,'FORMIDE','user','1','http://localhost/printr/php/formide_api_wrapper/redirect.php','2014-11-08 00:42:37','2014-11-08 00:42:37'),
+	(24,'FORMIDE','user','1','http://localhost/printr/php/formide_api_wrapper/redirect.php','2014-11-08 00:42:37','2014-11-08 00:42:37'),
+	(25,'FORMIDE','user','1','http://localhost/printr/php/formide_api_wrapper/redirect.php','2014-11-08 00:43:33','2014-11-08 00:43:33'),
+	(26,'FORMIDE','user','1','http://localhost/printr/php/formide_api_wrapper/redirect.php','2014-11-08 00:43:33','2014-11-08 00:43:33'),
+	(27,'FORMIDE','user','1','http://localhost/printr/php/formide_api_wrapper/redirect.php','2014-11-08 01:10:39','2014-11-08 01:10:39'),
+	(28,'FORMIDE','user','1','http://localhost/printr/php/formide_api_wrapper/redirect.php','2014-11-08 01:13:31','2014-11-08 01:13:31'),
+	(29,'FORMIDE','user','1','http://localhost/printr/php/formide_api_wrapper/redirect.php','2014-11-08 01:14:02','2014-11-08 01:14:02'),
+	(30,'FORMIDE','user','1','http://localhost/printr/php/formide_api_wrapper/redirect.php','2014-11-08 01:14:25','2014-11-08 01:14:25'),
+	(31,'FORMIDE','user','1',NULL,'2014-11-08 02:16:21','2014-11-08 02:16:21'),
+	(32,'FORMIDE','user','1',NULL,'2014-11-08 02:19:50','2014-11-08 02:19:50'),
+	(33,'FORMIDE','user','1',NULL,'2014-11-08 02:20:10','2014-11-08 02:20:10'),
+	(34,'FORMIDE','user','1',NULL,'2014-11-08 02:20:13','2014-11-08 02:20:13'),
+	(35,'FORMIDE','user','1',NULL,'2014-11-08 02:20:53','2014-11-08 02:20:53'),
+	(36,'FORMIDE','user','1',NULL,'2014-11-08 02:25:13','2014-11-08 02:25:13'),
+	(37,'FORMIDE','user','1','http://localhost/printr/php/formide_api_wrapper/redirect.php','2014-11-08 02:25:16','2014-11-08 02:25:16'),
+	(38,'FORMIDE','user','1','http://localhost/printr/php/formide_api_wrapper/redirect.php','2014-11-08 02:27:19','2014-11-08 02:27:19'),
+	(39,'FORMIDE','user','1','http://localhost/printr/php/formide_api_wrapper/redirect.php','2014-11-08 02:28:15','2014-11-08 02:28:15'),
+	(40,'FORMIDE','user','1','http://localhost/printr/github/formide-api-wrapper-php/redirect.php','2014-11-08 23:24:56','2014-11-08 23:24:56'),
+	(41,'FORMIDE','user','1','http://localhost/printr/github/formide-api-wrapper-php/redirect.php','2014-11-08 23:24:57','2014-11-08 23:24:57'),
+	(42,'FORMIDE','user','1','http://localhost/printr/github/formide-api-wrapper-php/redirect.php','2014-11-08 23:25:22','2014-11-08 23:25:22'),
+	(43,'FORMIDE','user','1','http://localhost/printr/github/formide-api-wrapper-php/redirect.php','2014-11-08 23:25:22','2014-11-08 23:25:22'),
+	(44,'FORMIDE','user','1','http://localhost/printr/github/formide-api-wrapper-php/examples/redirect.php','2014-11-09 16:17:17','2014-11-09 16:17:17'),
+	(45,'FORMIDE','user','1','http://localhost/printr/github/formide-api-wrapper-php/examples/redirect.php','2014-11-09 16:17:18','2014-11-09 16:17:18'),
+	(46,'FORMIDE','user','1','http://localhost/printr/github/formide-api-wrapper-php/examples/redirect.php','2014-11-09 16:17:35','2014-11-09 16:17:35'),
+	(47,'FORMIDE','user','1','http://localhost/printr/github/formide-api-wrapper-php/examples/redirect.php','2014-11-09 16:17:35','2014-11-09 16:17:35'),
+	(48,'FORMIDE','user','1','http://localhost/printr/github/formide-api-wrapper-php/examples/redirect.php','2014-11-11 09:43:41','2014-11-11 09:43:41'),
+	(49,'FORMIDE','user','1','http://localhost/printr/github/formide-api-wrapper-php/examples/redirect.php','2014-11-11 09:43:41','2014-11-11 09:43:41'),
+	(50,'FORMIDE','user','1',NULL,'2014-11-14 09:40:07','2014-11-14 09:40:07'),
+	(51,'FORMIDE','user','1',NULL,'2014-11-14 12:56:03','2014-11-14 12:56:03'),
+	(52,'FORMIDE','user','1','http://localhost/printr/github/formide-api-wrapper-php/examples/redirect.php','2014-11-14 12:56:09','2014-11-14 12:56:09'),
+	(53,'FORMIDE','user','1','http://localhost/printr/github/formide-api-wrapper-php/examples/redirect.php','2014-11-14 12:56:10','2014-11-14 12:56:10'),
+	(54,'FORMIDE','user','1',NULL,'2014-11-14 20:59:30','2014-11-14 20:59:30'),
+	(55,'FORMIDE','user','1',NULL,'2014-11-14 23:14:17','2014-11-14 23:14:17'),
+	(56,'FORMIDE','user','1','http://localhost/printr/github/formide-api-wrapper-php/examples/redirect.php','2014-11-14 23:43:28','2014-11-14 23:43:28'),
+	(57,'FORMIDE','user','1','http://localhost/printr/github/formide-api-wrapper-php/examples/redirect.php','2014-11-14 23:43:29','2014-11-14 23:43:29'),
+	(58,'FORMIDE','user','1',NULL,'2014-11-17 16:37:39','2014-11-17 16:37:39'),
+	(59,'FORMIDE','user','1',NULL,'2014-11-17 16:49:03','2014-11-17 16:49:03'),
+	(60,'FORMIDE','user','1',NULL,'2014-11-17 16:54:54','2014-11-17 16:54:54'),
+	(61,'FORMIDE','user','1',NULL,'2014-11-18 11:02:32','2014-11-18 11:02:32'),
+	(62,'FORMIDE','user','1',NULL,'2014-11-18 12:14:23','2014-11-18 12:14:23'),
+	(63,'FORMIDE','user','1',NULL,'2014-11-23 18:22:49','2014-11-23 18:22:49'),
+	(64,'FORMIDE','user','1',NULL,'2014-11-23 18:53:15','2014-11-23 18:53:15'),
+	(65,'FORMIDE','user','1','http://localhost/printr/github/formide-api-wrapper-php/examples/redirect.php','2014-11-23 18:58:48','2014-11-23 18:58:48'),
+	(66,'FORMIDE','user','1','http://localhost/printr/github/formide-api-wrapper-php/examples/redirect.php','2014-11-23 18:58:49','2014-11-23 18:58:49'),
+	(67,'FORMIDE','user','1','http://localhost/printr/github/formide-api-wrapper-php/examples/redirect.php','2014-11-23 19:05:06','2014-11-23 19:05:06'),
+	(68,'FORMIDE','user','1','http://localhost/printr/github/formide-api-wrapper-php/examples/redirect.php','2014-11-23 19:05:06','2014-11-23 19:05:06'),
+	(69,'FORMIDE','user','1',NULL,'2014-11-23 22:56:33','2014-11-23 22:56:33'),
+	(70,'FORMIDE','user','1',NULL,'2014-11-24 09:00:23','2014-11-24 09:00:23'),
+	(71,'FORMIDE','user','1',NULL,'2014-11-24 09:03:24','2014-11-24 09:03:24');
+
+/*!40000 ALTER TABLE `oauth_sessions` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table password_reminders
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `password_reminders`;
+
+CREATE TABLE `password_reminders` (
+  `email` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `token` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  KEY `password_reminders_email_index` (`email`),
+  KEY `password_reminders_token_index` (`token`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+
+
+# Dump of table profiles
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `profiles`;
+
+CREATE TABLE `profiles` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(10) unsigned NOT NULL,
+  `username` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `gender` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `uid` bigint(20) NOT NULL,
+  `access_token` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `access_token_secret` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `profiles_user_id_foreign` (`user_id`),
+  CONSTRAINT `profiles_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+LOCK TABLES `profiles` WRITE;
+/*!40000 ALTER TABLE `profiles` DISABLE KEYS */;
+
+INSERT INTO `profiles` (`id`, `user_id`, `username`, `gender`, `uid`, `access_token`, `access_token_secret`, `created_at`, `updated_at`, `deleted_at`)
+VALUES
+	(4,1,'chris.terbeke','male',843876055644347,'CAAKUUskER5MBACzftnTNxWjbC7TqzTrfWJlzTxPZCE0IMZA1KleMbLX16pe8FppIatDTJa8YnWrvDVVfq5JId0evZBgDh2WWseaFMl4tmWV85nSTrhnPEZBOMzc1hLRQZCYCiunNmUfiP3QIcIfCNEmiMjcEv02Hg8eK2elJWDyfMyIfgEzbaRbL1Fn2QnoeohZCDclVl8DpZCQFgBpR5jw','','2014-10-24 17:14:11','2014-11-15 11:17:19',NULL);
+
+/*!40000 ALTER TABLE `profiles` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table users
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `users`;
+
+CREATE TABLE `users` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `socket_uid` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `username` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `password` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `firstName` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `lastName` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `email` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `instagram_uid` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `instagram_token` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `profileImage` int(11) NOT NULL,
+  `lang` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `remember_token` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `auth_link` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `country` int(11) NOT NULL,
+  `invite_token` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `is_developer` tinyint(4) NOT NULL DEFAULT '0',
+  `is_admin` tinyint(4) NOT NULL DEFAULT '0',
+  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+
+INSERT INTO `users` (`id`, `socket_uid`, `username`, `password`, `firstName`, `lastName`, `email`, `instagram_uid`, `instagram_token`, `profileImage`, `lang`, `remember_token`, `auth_link`, `country`, `invite_token`, `is_developer`, `is_admin`, `created_at`, `updated_at`, `deleted_at`)
+VALUES
+	(1,'7qBbWsAZfTLNONoefYVfxdcVXv5RCqn0khc78W2H','chris.terbeke','$2y$10$/sr32y0qhVIzAnrSEKhGMeVE4pmK9neFjS6MMBCPr9TQqGAzrHpOq','Chris','ter Beke','chris@printr.nl','40267639','40267639.eedf5f1.6e45d25f9294410ea9d0a528c86f61d5',1,'EN','KfdAdm6Dlp3sAmAo2JbpxZ50kdqa1PF34FXeU4UBa8cU2igfqx3xvIOf8s1z','',528,'RANDOMTOKEN',1,1,'2014-10-24 17:14:11','2014-11-23 22:51:39',NULL);
+
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
