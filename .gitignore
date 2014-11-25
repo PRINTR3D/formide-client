@@ -26,16 +26,3 @@ node_modules
 
 # Users Environment Variables
 .lock-wscript
-
-# Printspot
-printspot-config/config.json
-logs
-
-printspot-core/server/uploads
-printspot-core/server/printspot.sqlite
-
-printspot-interface/formide/public/assets
-printspot-interface/formide/.sass-cache
-
-printspot-interface/nectar/public/assets
-printspot-interface/nectar/.sass-cache
