@@ -1,12 +1,13 @@
 // server/routes.js
 
-var request 		= require('request');
-var passport 		= require('passport');
-var LocalStrategy 	= require('passport-local').Strategy;
-var crypto			= require('crypto');
-var fs				= require('fs');
-var multipart 		= require('connect-multiparty');
+var request 			= require('request');
+var passport 			= require('passport');
+var LocalStrategy 		= require('passport-local').Strategy;
+var crypto				= require('crypto');
+var fs					= require('fs');
+var multipart 			= require('connect-multiparty');
 var multipartMiddleware = multipart();
+var http 				= require('http');
 
 passport.use(new LocalStrategy({
 	usernameField: 'username', 
@@ -54,20 +55,40 @@ module.exports = exports = function(app) {
 	// SLICING =============================
 	// =====================================
 	app.post('/slicing', function(req, res) {
-		if(req.body.modelfile != null && req.body.sliceprofile != null && req.body.material != null && req.body.printer) {
+		if(req.body.sliceparams && req.body.modelfile && req.body.sliceprofile && req.body.materials && req.body.printer && req.body.slicemethod) {
+		
+			if(req.body.slicemethod == 'local') {
+				// call katana light via tcp socket
+				/*
+nskatana.write(JSON.stringify(json), 'UTF8', function(data) {
+					
+				});
+*/
+			}
+			else if(req.body.slicemethod == 'cloud') {
+				// call katana via websockets
+				
+			}
+			
 			global.db.Printjob.create({
 				modelfileID: req.body.modelfile.id,
 				printerID: req.body.printer.id,
 				sliceprofileID: req.body.sliceprofile.id,
-				materialID: req.body.material.id,
-				sliceHash: "RANDOM",
-				status: "queued",
-				sliceLocation: req.body.slicemethod
+				materials: JSON.stringify(req.body.materials),
+				sliceParams: JSON.stringify(req.body.sliceparams),
+				sliceMethod: 'local',
+				hash: 'RANDOM'
+			}).success(function(printjob) {
+				global.db.Queueitem.create({
+					slicedata: JSON.stringify(req.body.sliceparams),
+					origin: 'local',
+					gcode: 'RANDOM',
+					printjobID: printjob.id,
+					status: "queued"
+				}).success(function(queueitem) {
+					return res.json('OK');
+				});
 			});
-			return res.json('OK');
-		}
-		else {
-			
 		}
 	});
 	
@@ -123,13 +144,18 @@ module.exports = exports = function(app) {
 	// FILES ===============================
 	// =====================================
 	app.get('/download', function(req, res) {
-		fs.readFile(__dirname + '/uploads/modelfiles/' + req.query.hash, function(err, data) {
+		fs.readFile(global.config.files.modelfile_path + '/' + req.query.hash, function(err, data) {
 			if(err) {
-				global.log(err);
+				global.log('error', err, {'hash': req.query.hash});
 			}
 			else {
-				var base64File = new Buffer(data, 'binary').toString('base64');
-				res.send(base64File);
+				if(req.query.encoding == 'false') {
+					return res.send(data);
+				}
+				else {
+					var base64File = new Buffer(data, 'binary').toString('base64');
+					return res.send(base64File);
+				}
 			}
 		});
 	});
@@ -137,10 +163,10 @@ module.exports = exports = function(app) {
 	app.post('/upload', multipartMiddleware, function(req, res) {
 		fs.readFile(req.files.file.path, function(err, data) {
 			var hash = (Math.random() / +new Date()).toString(36).replace(/[^a-z]+/g, '');
-			var newPath = __dirname + '/uploads/modelfiles/' + hash;
+			var newPath = global.config.files.modelfile_path + '/' + hash;
 			fs.writeFile(newPath, data, function(err) {
 				if(err) {
-					global.log(err);
+					global.log('error', err, {'path': newPath});
 				}
 				else {
 					global.db.Modelfile.create({
@@ -155,5 +181,5 @@ module.exports = exports = function(app) {
 		});
 	});
 	
-	global.log('Module loaded: routes.js');
+	global.log('info', 'Module loaded: routes.js', {});
 }

@@ -1,0 +1,55 @@
+{
+	"version": {
+		"number": "0.2.1",
+		"brand": "printr"
+	},
+	"local": {
+		"host": "http://localhost",
+		"port": 1337,
+		"interfaceport": 1336
+	},
+	"online": {
+		"host": "http://wsdev.formide.com",
+		"port": 4000,
+		"mac": "AAABBBCCCDDD"
+	},
+	"client": {
+		"port": 1338
+	},
+	"katana": {
+		"port": 1339	
+	},
+	"files": {
+		"temp_path": "../../printspot/uploads/tmp",
+		"modelfile_path": "../../printspot/uploads/modelfiles",
+		"gcode_path": "../../printspot/uploads/gcode"
+	},
+	"dashboard_commands": {
+		"dashboard_push_printer_gcode": true,
+		"dashboard_push_printer_home": true,
+		"dashboard_push_printer_jog": true,
+		"dashboard_push_printer_start": true,
+		"dashboard_push_printer_pause": true,
+		"dashboard_push_printer_resume": true,
+		"dashboard_push_printer_stop": true,
+		"dashboard_push_printer_temp_ext": true,
+		"dashboard_push_printer_temp_bed": true,
+		"dashboard_push_printer_lcd_message": true,
+		"dashboard_push_printer_extrude": true,
+		"dashboard_push_printer_retract": true,
+		"dashboard_push_printer_fan": true,
+		"dashboard_push_printer_reconnect": true,
+		"dashboard_push_printer_autolevel": true,
+		"dashboard_push_printer_door_open": true,
+		"dashboard_push_printer_door_close": true,
+		"dashboard_push_software_version": true
+	},
+	"client_commands": {
+		"client_push_printer_status": true,
+		"client_push_printer_finished": true,
+		"client_push_software_version": true,
+		"client_push_printer_connect": true,
+		"client_push_printer_disconnect": true,
+		"client_push_printer_error": true
+	}
+}

@@ -1,9 +1,8 @@
 {
-    "onlineControl": "0",
+    "onlineControl": "1",
     "offlineControl": "1",
     "onlineSlicing": "1",
     "offlineSlicing": "1",
-    "log": "0",
-    "report": "0",
-    "access_token": ""
+    "log": "1",
+    "report": "1"
 }

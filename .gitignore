@@ -27,11 +27,6 @@ node_modules
 # Users Environment Variables
 .lock-wscript
 
-# Printspot
-config.json
-
-printspot-interface/formide/public/assets
-printspot-interface/formide/.sass-cache
-
-printspot-interface/nectar/public/assets
-printspot-interface/nectar/.sass-cache
+# Ignore interfaces
+printspot-formide-dashboard
+printr-nectar-dashboard

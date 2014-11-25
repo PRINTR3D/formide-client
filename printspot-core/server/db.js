@@ -17,11 +17,11 @@ Object.keys(db).forEach(function(modelName) {
   if ('associate' in db[modelName]) {
     db[modelName].associate(db)
   }
-})
+});
  
 module.exports = lodash.extend({
   sequelize: sequelize,
   Sequelize: Sequelize
 }, db);
 
-global.log('Module loaded: db.js');
+global.log('info', 'Module loaded: db.js', {});

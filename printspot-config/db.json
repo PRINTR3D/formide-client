@@ -18,13 +18,23 @@
 			"userID": "INTEGER",
 			"printerID": "INTEGER",
 			"sliceprofileID": "INTEGER",
-			"materialID": "INTEGER",
-			"timeStarted": "STRING",
-			"timeFinished": "STRING",
-			"timePlanned": "STRING",
-			"sliceHash": "STRING",
+			"materials": "TEXT",
+			"hash": "STRING",
+			"sliceParams": "TEXT",
+			"sliceMethod": "STRING"
+		},
+		"records": {
+			
+		}
+	},
+	
+	"Queueitem": {
+		"fields": {
+			"slicedata": "TEXT",
+			"origin": "STRING",
+			"gcode": "STRING",
 			"status": "STRING",
-			"sliceLocation": "STRING"
+			"printjobID": "INTEGER"
 		},
 		"records": {
 			
@@ -46,55 +56,58 @@
 	"Printer": {
 		"fields": {
 			"name": "STRING",
-			"manufacturer": "STRING",
 			"buildVolumeX": "INTEGER",
 			"buildVolumeY": "INTEGER",
 			"buildVolumeZ": "INTEGER",
-			"nozzleSize": "FLOAT",
-			"maxPrintspeed": "INTEGER",
-			"maxTravelspeed": "INTEGER",
-			"maxTemp": "INTEGER",
-			"stepResolution": "FLOAT",
-			"minLayerheight": "INTEGER",
-			"maxLayerheight": "INTEGER",
-			"firmware": "STRING"
+			"bed": "BOOLEAN",
+			"extruders": "TEXT"
 		},
 		"records": {
-			"BigBuilder": {
-				"name": "Big Builder",
-				"manufacturer": "Builder3D",
-				"buildVolumeX": 200,
-				"buildVolumeY": 200,
-				"buildVolumeZ": 600,
-				"nozzleSize": 0.35,
-				"maxPrintspeed": 300,
-				"maxTravelspeed": 500,
-				"maxTemp": 280,
-				"stepResolution": 0.0087,
-				"minLayerheight": 250,
-				"maxLayerheight": 50,
-				"firmware": "Marlin-v3"
-			}
+			
 		}
 	},
 	
 	"Material": {
 		"fields": {
 			"name": "STRING",
-			"diameter": "FLOAT",
 			"type": "STRING",
-			"colors": "FLOAT",
-			"extruderTemperature": "INTEGER",
-			"bedTemperature": "INTEGER"
+			"diameter": "FLOAT",
+			"temperature": "INTEGER",
+			"firstLayersTemperature": "INTEGER",
+			"bedTemperature": "INTEGER",
+			"firstLayersBedTemperature": "INTEGER",
+			"feedrate": "INTEGER"
 		},
 		"records": {
 			"PLA": {
 				"name": "PLA",
 				"type": "PLA",
-				"extruderTemperature": 193,
-				"bedTemperature": 0,
+				"temperature": 193,
+				"firstLayersTemperature": 200,
+				"bedTemperature": 50,
+				"firstLayersBedTemperature": 60,
 				"diameter": 1.75,
-				"colors": "blue, white, yellow, green"
+				"feedrate": 100
+			},
+			"ABS": {
+				"name": "ABS",
+				"type": "ABS",
+				"temperature": 220,
+				"firstLayersTemperature": 230,
+				"bedTemperature": 0,
+				"firstLayersBedTemperature": 0,
+				"diameter": 1.75,
+				"feedrate": 100
+			},
+			"PVA": {
+				"name": "PVA",
+				"type": "PVA",
+				"temperature": 210,
+				"firstLayersTemperature": 215,
+				"bedTemperature": 0,
+				"firstLayersBedTemperature": 0,
+				"diameter": 1.75,
+				"feedrate": 98
 			}
 		}
 	},
@@ -102,57 +115,10 @@
 	"Sliceprofile": {
 		"fields": {
 			"name": "STRING",
-			"layerheight": "INTEGER",
-			"printspeed": "INTEGER",
-			"infill": "INTEGER",
-			"perimeters": "INTEGER",
-			"raft": "INTEGER",
-			"raftlayers": "INTEGER",
-			"brim": "INTEGER",
-			"brimlines": "INTEGER",
-			"supportModel": "INTEGER",
-			"supportPlatform": "INTEGER"
+			"settings": "TEXT"
 		},
 		"records": {
-			"Low": {
-				"name": "Low quality",
-				"layerheight": 200,
-				"printspeed": 200,
-				"infill": 25,
-				"perimeters": 3,
-				"raft": 0,
-				"raftlayers": 0,
-				"brim": 0,
-				"brimlines": 0,
-				"supportModel": 0,
-				"supportPlatform": 1
-			},
-			"Medium": {
-				"name": "Medium quality",
-				"layerheight": 100,
-				"printspeed": 100,
-				"infill": 50,
-				"perimeters": 3,
-				"raft": 0,
-				"raftlayers": 0,
-				"brim": 0,
-				"brimlines": 0,
-				"supportModel": 0,
-				"supportPlatform": 0
-			},
-			"High": {
-				"name": "High quality",
-				"layerheight": 50,
-				"printspeed": 50,
-				"infill": 75,
-				"perimeters": 3,
-				"raft": 1,
-				"raftlayers": 2,
-				"brim": 1,
-				"brimlines": 2,
-				"supportModel": 1,
-				"supportPlatform": 1
-			}
+			
 		}
 	}	
 }
