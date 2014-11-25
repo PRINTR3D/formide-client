@@ -25,19 +25,4 @@ build/Release
 node_modules
 
 # Users Environment Variables
-<<<<<<< HEAD
 .lock-wscript
-=======
-.lock-wscript
-
-# Printspot
-printspot-config/config.json
-logs
-
-printspot-core/server/uploads
-printspot-core/server/printspot.sqlite
-
-printspot-interface-formide/.sass-cache/
-printspot-interface-formide/app/assets/components/
-printspot-interface-formide/public/assets/
->>>>>>> FETCH_HEAD
