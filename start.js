@@ -25,14 +25,13 @@ var nsclient = net.connect({port: global.config.client.port}, function() {
     console.log('printer driver connected');
 
     var core = spawn('node', ['index.js','--dev'], {cwd: 'printspot-core', stdio: 'pipe'});
-    var manufacturer = spawn('node', ['index.js'], {cwd: argv.interface, stdio: 'pipe'});
+    var manufacturer = spawn('node', ['index.js'], {cwd: 'printspot-interface-'+argv.interface, stdio: 'pipe'});
 
     core.on('exit',function(code) { console.error('core exited', code); });
     core.on('error',function(err) { console.log('core error',err); });
 
     manufacturer.on('exit',function(code) { console.error('manufacturer exited', code); });
     manufacturer.on('error',function(err) { console.log('manufacturer error',err); });
-console.log(argv);
     if(argv.dev) {
         console.log('running in dev mode');
 
