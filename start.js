@@ -5,8 +5,8 @@ var argv        = require('minimist')(process.argv.slice(2));
 var net         = require('net');
 
 if(!argv.interface) {
-    console.log('No interface given');
-    process.exit(0);
+    console.error('No interface given');
+    process.exit(1);
 }
 
 function readlines(stream,cb) {
