@@ -9,7 +9,7 @@
 		"interfaceport": 1336
 	},
 	"online": {
-		"host": "http://wsdev.formide.com",
+		"host": "http://localhost",
 		"port": 4000,
 		"mac": "AAABBBCCCDDD"
 	},
@@ -17,7 +17,7 @@
 		"port": 1338
 	},
 	"katana": {
-		"port": 1339	
+		"port": 1339
 	},
 	"files": {
 		"temp_path": "../../printspot/uploads/tmp",

@@ -2,14 +2,14 @@
 var fs					= require('fs');
 
 module.exports = function(localIO, onlineIO, ss, nsclient, macAddress) {
-	
+
 	var authorized = false;
 
 	/*
 	 * Setup online connection
 	 */
 	onlineIO.on('connect', function() {
-		
+
 		onlineIO.on('handshake', function(data) {
 			global.log('info', 'new online server connection', data);
 			onlineIO.emit('typeof', {
@@ -17,27 +17,27 @@ module.exports = function(localIO, onlineIO, ss, nsclient, macAddress) {
 				mac: macAddress
 			});
 		});
-		
+
 		onlineIO.on('auth', function(data) {
 			if(data.message == 'OK') {
 				authorized = true;
 			}
 		});
-		
+
 		/*
 		 * Stream data logging to Printr servers
 		 */
 		global.logger.on('logging', function (transport, level, msg, meta) {
 	    	onlineIO.emit('client_push_log', {level: level, msg: msg, meta: meta, printerID: macAddress});
 	  	});
-		
+
 		/*
 		 * Dynamically load online dashboard functions from config.json
 		 */
 		for(var method in global.config.dashboard_commands) {
 			(function(realMethod) {
-				onlineIO.on(realMethod, function(data) {	
-					// check if incoming message is really meant for this printer			
+				onlineIO.on(realMethod, function(data) {
+					// check if incoming message is really meant for this printer
 					if(data.printerID == macAddress) {
 						var json = {
 							"type": realMethod,
@@ -49,7 +49,7 @@ module.exports = function(localIO, onlineIO, ss, nsclient, macAddress) {
 				});
 			})(method);
 		}
-		
+
 		onlineIO.on('dashboard_push_printer_printjob', function(data) {
 			if(data.printerID == macAddress) {
 				var hash = (Math.random() / +new Date()).toString(36).replace(/[^a-z]+/g, '');
@@ -63,14 +63,14 @@ module.exports = function(localIO, onlineIO, ss, nsclient, macAddress) {
 							slicedata: data.slicesettings,
 							origin: 'online',
 							gcode: hash,
-							printjobID: data.printjobID,
+							printjobID: data.id,
 							status: "queued"
 						});
 					}
 				});
 			}
 		});
-		
+
 		onlineIO.on('dashboard_get_printer_queue', function(data) {
 			if(data.printerID == macAddress) {
 				global.db.Queueitem.findAll({ where: { status: 'queued' } }).success(function(queue) {
@@ -78,7 +78,7 @@ module.exports = function(localIO, onlineIO, ss, nsclient, macAddress) {
 				});
 			}
 		});
-		
+
 		/*
 		 * Receive client data and send to online dashboard
 		 */
@@ -91,13 +91,13 @@ module.exports = function(localIO, onlineIO, ss, nsclient, macAddress) {
 			}
 		});
 	});
-	
+
 	/*
 	 * Setup local connection
 	 */
 	localIO.sockets.on('connection', function(socket) {
 		socket.emit('handshake', {id:socket.id});
-		
+
 		// Authentication not really neccesery locally
 		socket.on('typeof', function(data) {
 			global.log('info', 'new local dashboard connection', data);
@@ -105,30 +105,30 @@ module.exports = function(localIO, onlineIO, ss, nsclient, macAddress) {
 				socket.emit('auth', {message: 'OK', id: socket.id});
 			}
 		});
-		
+
 		// Socket disconnect
 		socket.on('disconnect', function() {
 			global.log('info', 'local dashboard disconnected', {});
 		});
-		
+
 		/*
 		 * Dynamically load local dashboard functions from config.json
 		 */
 		for(var method in global.config.dashboard_commands) {
 			(function(realMethod) {
 				socket.on(realMethod, function(data) {
-					
+
 					var json = {
 						"type": realMethod,
 						"args": data
 					};
-				
+
 					nsclient.write(JSON.stringify(json));
 					global.log('debug', 'local dashboard command ' + realMethod, data);
 				});
 			})(method);
 		}
-		
+
 		/*
 		 * Receive client data and send to local dashboard
 		 */
@@ -143,8 +143,8 @@ module.exports = function(localIO, onlineIO, ss, nsclient, macAddress) {
 			}
 			socket.emit(data.type, data.args);
 		});
-		
+
 	});
-	
+
 	global.log('info', 'Module loaded: socket.js', {});
 };
