@@ -6,7 +6,8 @@ var winston			= require('winston');
 
 global.logger = new (winston.Logger)({
     transports: [
-      	new (winston.transports.File)({filename: '../logs/printspot.log', level: 'debug' })
+      	new (winston.transports.File)({filename: '../logs/printspot.log', level: 'debug' }),
+	new winston.transports.Console()
     ]
   });
 
@@ -40,6 +41,10 @@ var ss 				= require('socket.io-stream');
 var net				= require('net');
 var nsclient		= net.connect({port: global.config.client.port}, function() {
 	global.log('info', 'qclient connected', {port: global.config.client.port});
+});
+nsclient.on('error',function(err) {
+	console.error('error connecting to nsclient on port',global.config.client.port);
+	throw err;
 });
 /*
 var nskatana		= net.connect({port: global.config.katana.port}, function() {
