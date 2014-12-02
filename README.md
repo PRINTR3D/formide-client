@@ -39,11 +39,11 @@ Printspot is the internal name for the node.js part of FormideOS. This includes 
 ### printers
 - GET /api/printers
 - GET /api/printers/:id
-- 
+
 ### users
 - GET /api/users
 - GET /api/users/:id
-- 
+
 ### modelfiles
 - GET /api/modelfiles
 - GET /api/modelfiles/:id
