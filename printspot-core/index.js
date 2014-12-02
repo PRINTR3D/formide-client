@@ -41,6 +41,10 @@ var net				= require('net');
 var nsclient		= net.connect({port: global.config.client.port}, function() {
 	global.log('info', 'qclient connected', {port: global.config.client.port});
 });
+nsclient.on('error',function(err) {
+	console.error('error connecting to nsclient on port', global.config.client.port);
+	throw err;
+});
 /*
 var nskatana		= net.connect({port: global.config.katana.port}, function() {
 	global.log('info', 'katana connected', {port: global.config.katana.port});
@@ -61,52 +65,52 @@ app.all('/*', function(req, res, next) {
 });
 
 getMac.getMac(function(err, macAddress) {
-	
+
 	if(global.config.online.mac != '') {
 		macAddress = global.config.online.mac
 	}
-	
+
 	global.socket = require('./server/socket.js')(localIO, onlineIO, ss, nsclient, macAddress);
 	restful.initialize({ app: app });
-	
+
 	var sliceprofiles = restful.resource({
 	    model: global.db.Sliceprofile,
 	    endpoints: ['/api/sliceprofiles', '/api/sliceprofiles/:id']
 	});
-	
+
 	var printjobs = restful.resource({
 	    model: global.db.Printjob,
 	    endpoints: ['/api/printjobs', '/api/printjobs/:id']
 	});
-	
+
 	var materials = restful.resource({
 	    model: global.db.Material,
 	    endpoints: ['/api/materials', '/api/materials/:id']
 	});
-	
+
 	var printers = restful.resource({
 	    model: global.db.Printer,
 	    endpoints: ['/api/printers', '/api/printers/:id']
 	});
-	
+
 	var users = restful.resource({
 	    model: global.db.User,
 	    endpoints: ['/api/users', '/api/users/:id']
 	});
-	
+
 	var modelfiles = restful.resource({
 	    model: global.db.Modelfile,
 	    endpoints: ['/api/modelfiles', '/api/modelfiles/:id']
 	});
-	
+
 	var queue = restful.resource({
 		model: global.db.Queueitem,
 		endpoints: ['/api/queue', '/api/queue/:id']
 	})
-	
+
 	// routes ========================
 	require('./server/routes')(app);
-	
+
 	// start back-end app =====================
 	global.log('info', 'printspot-core started',  {'version': global.config.version.number, 'host': global.config.local.host, 'port': global.config.local.port});
 });

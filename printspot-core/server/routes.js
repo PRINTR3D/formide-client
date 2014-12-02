@@ -10,7 +10,7 @@ var multipartMiddleware = multipart();
 var http 				= require('http');
 
 passport.use(new LocalStrategy({
-	usernameField: 'username', 
+	usernameField: 'username',
 	passwordField: 'password'
 },
 function(username, password, done) {
@@ -25,7 +25,7 @@ function(username, password, done) {
 			else {
 				return done(null, user);
 			}
-		})	
+		})
 		.error(function(err) {
 			return done(err);
 		});
@@ -46,30 +46,29 @@ passport.deserializeUser(function(id, done) {
 });
 
 module.exports = exports = function(app) {
-	
+
 	app.set('jwtTokenSecret', 'SECRETSTRING');
 	app.use(passport.initialize());
 	app.use(passport.session());
-	
+
 	// =====================================
 	// SLICING =============================
 	// =====================================
 	app.post('/slicing', function(req, res) {
 		if(req.body.sliceparams && req.body.modelfile && req.body.sliceprofile && req.body.materials && req.body.printer && req.body.slicemethod) {
-		
+
 			if(req.body.slicemethod == 'local') {
 				// call katana light via tcp socket
 				/*
 nskatana.write(JSON.stringify(json), 'UTF8', function(data) {
-					
+
 				});
 */
 			}
 			else if(req.body.slicemethod == 'cloud') {
 				// call katana via websockets
-				
 			}
-			
+
 			global.db.Printjob.create({
 				modelfileID: req.body.modelfile.id,
 				printerID: req.body.printer.id,
@@ -91,18 +90,7 @@ nskatana.write(JSON.stringify(json), 'UTF8', function(data) {
 			});
 		}
 	});
-	
-	// =====================================
-	// SETTINGS ============================
-	// =====================================
-	app.get('/api/settings', function(req, res) {
-		
-	});
-	
-	app.post('/api/settings', function(req, res) {
-		
-	});
-	
+
 	// =====================================
 	// SESSION =============================
 	// =====================================
@@ -111,35 +99,35 @@ nskatana.write(JSON.stringify(json), 'UTF8', function(data) {
 			if(err) {
 				return res.send(401);
 			}
-			
+
 			if(!user) {
 				return res.send(401);
 			}
-			
+
 			req.logIn(user, function(err) {
 				return res.send(401);
 			});
-			
+
 			var token = crypto.randomBytes(64).toString('hex');
-			 
+
 			return res.json({
 				token : token,
 				user: user.toJSON()
 			});
 		})(req, res, next);
 	});
-	
+
 	app.get('/session', function(req, res) {
 		return res.json(req.isAuthenticated());
 	});
-	
+
 	app.post('/logout', function(req, res) {
 		if(req.isAuthenticated()) {
 			req.logout();
 			return res.json('OK');
 		}
 	});
-	
+
 	// =====================================
 	// FILES ===============================
 	// =====================================
@@ -159,7 +147,7 @@ nskatana.write(JSON.stringify(json), 'UTF8', function(data) {
 			}
 		});
 	});
-	
+
 	app.post('/upload', multipartMiddleware, function(req, res) {
 		fs.readFile(req.files.file.path, function(err, data) {
 			var hash = (Math.random() / +new Date()).toString(36).replace(/[^a-z]+/g, '');
@@ -175,11 +163,11 @@ nskatana.write(JSON.stringify(json), 'UTF8', function(data) {
 						hash: hash
 					});
 					res.json('OK');
-					
+
 				}
 			});
 		});
 	});
-	
+
 	global.log('info', 'Module loaded: routes.js', {});
 }
