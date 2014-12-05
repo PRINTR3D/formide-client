@@ -45,7 +45,7 @@ passport.deserializeUser(function(id, done) {
 		});
 });
 
-module.exports = exports = function(app) {
+module.exports = exports = function(app, nskatana) {
 
 	app.set('jwtTokenSecret', 'SECRETSTRING');
 	app.use(passport.initialize());
@@ -57,15 +57,19 @@ module.exports = exports = function(app) {
 	app.post('/slicing', function(req, res) {
 		if(req.body.sliceparams && req.body.modelfile && req.body.sliceprofile && req.body.materials && req.body.printer && req.body.slicemethod) {
 
-			if(req.body.slicemethod == 'local') {
-				// call katana light via tcp socket
-				/*
-nskatana.write(JSON.stringify(json), 'UTF8', function(data) {
+			var json = {
+				"type": "slice",
+				"data": req.body.sliceparams
+			};
 
-				});
-*/
+			json.data.model = "uploads/modelfiles/" + json.data.model;
+
+			if(req.body.slicemethod == 'local')
+			{
+				nskatana.write(JSON.stringify(json));
 			}
-			else if(req.body.slicemethod == 'cloud') {
+			else if(req.body.slicemethod == 'cloud')
+			{
 				// call katana via websockets
 			}
 
@@ -75,15 +79,13 @@ nskatana.write(JSON.stringify(json), 'UTF8', function(data) {
 				sliceprofileID: req.body.sliceprofile.id,
 				materials: JSON.stringify(req.body.materials),
 				sliceParams: JSON.stringify(req.body.sliceparams),
-				sliceMethod: 'local',
-				hash: 'RANDOM'
+				sliceMethod: 'local'
 			}).success(function(printjob) {
 				global.db.Queueitem.create({
 					slicedata: JSON.stringify(req.body.sliceparams),
 					origin: 'local',
-					gcode: 'RANDOM',
 					printjobID: printjob.id,
-					status: "queued"
+					status: 'queued'
 				}).success(function(queueitem) {
 					return res.json('OK');
 				});

@@ -11,7 +11,7 @@
 			}
 		}
 	},
-	
+
 	"Printjob": {
 		"fields": {
 			"modelfileID": "INTEGER",
@@ -24,10 +24,10 @@
 			"sliceMethod": "STRING"
 		},
 		"records": {
-			
+
 		}
 	},
-	
+
 	"Queueitem": {
 		"fields": {
 			"slicedata": "TEXT",
@@ -37,7 +37,7 @@
 			"printjobID": "INTEGER"
 		},
 		"records": {
-			
+
 		}
 	},
 
@@ -49,10 +49,10 @@
 			"userID": "INTEGER"
 		},
 		"records": {
-			
+
 		}
 	},
-	
+
 	"Printer": {
 		"fields": {
 			"name": "STRING",
@@ -63,10 +63,10 @@
 			"extruders": "TEXT"
 		},
 		"records": {
-			
+
 		}
 	},
-	
+
 	"Material": {
 		"fields": {
 			"name": "STRING",
@@ -111,14 +111,14 @@
 			}
 		}
 	},
-	
+
 	"Sliceprofile": {
 		"fields": {
 			"name": "STRING",
 			"settings": "TEXT"
 		},
 		"records": {
-			
+
 		}
-	}	
+	}
 }

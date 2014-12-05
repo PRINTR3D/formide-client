@@ -9,7 +9,7 @@
 		"interfaceport": 1336
 	},
 	"online": {
-		"host": "http://localhost",
+		"host": "http://wsdev.formide.com",
 		"port": 4000,
 		"mac": "AAABBBCCCDDD"
 	},

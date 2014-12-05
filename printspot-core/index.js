@@ -45,11 +45,18 @@ nsclient.on('error',function(err) {
 	console.error('error connecting to nsclient on port', global.config.client.port);
 	throw err;
 });
-/*
 var nskatana		= net.connect({port: global.config.katana.port}, function() {
 	global.log('info', 'katana connected', {port: global.config.katana.port});
 });
-*/
+nskatana.on('error',function(err) {
+	console.error('error connecting to katana on port', global.config.katana.port);
+	throw err;
+});
+nskatana.on('data', function(data)
+{
+	data = JSON.parse(data.toString());
+	console.log(data);
+});
 
 // configuration =================
 app.use(bodyParser.urlencoded({'extended': 'true'}));
@@ -109,7 +116,7 @@ getMac.getMac(function(err, macAddress) {
 	})
 
 	// routes ========================
-	require('./server/routes')(app);
+	require('./server/routes')(app, nskatana);
 
 	// start back-end app =====================
 	global.log('info', 'printspot-core started',  {'version': global.config.version.number, 'host': global.config.local.host, 'port': global.config.local.port});
