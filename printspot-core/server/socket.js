@@ -1,24 +1,24 @@
 // server/socket.js
-var fs					= require('fs');
+var fs = require('fs');
 
-module.exports = function(localIO, onlineIO, ss, nsclient, macAddress) {
+module.exports = function(macAddress) {
 
 	var authorized = false;
 
 	/*
 	 * Setup online connection
 	 */
-	onlineIO.on('connect', function() {
+	global.comm.online.on('connect', function() {
 
-		onlineIO.on('handshake', function(data) {
+		global.comm.online.on('handshake', function(data) {
 			global.log('info', 'new online server connection', data);
-			onlineIO.emit('typeof', {
+			global.comm.online.emit('typeof', {
 				type: 'client',
 				mac: macAddress
 			});
 		});
 
-		onlineIO.on('auth', function(data) {
+		global.comm.online.on('auth', function(data) {
 			if(data.message == 'OK') {
 				authorized = true;
 			}
@@ -28,7 +28,7 @@ module.exports = function(localIO, onlineIO, ss, nsclient, macAddress) {
 		 * Stream data logging to Printr servers
 		 */
 		global.logger.on('logging', function (transport, level, msg, meta) {
-	    	onlineIO.emit('client_push_log', {level: level, msg: msg, meta: meta, printerID: macAddress});
+	    	global.comm.online.emit('client_push_log', {level: level, msg: msg, meta: meta, printerID: macAddress});
 	  	});
 
 		/*
@@ -36,21 +36,21 @@ module.exports = function(localIO, onlineIO, ss, nsclient, macAddress) {
 		 */
 		for(var method in global.config.dashboard_commands) {
 			(function(realMethod) {
-				onlineIO.on(realMethod, function(data) {
+				global.comm.online.on(realMethod, function(data) {
 					// check if incoming message is really meant for this printer
 					if(data.printerID == macAddress) {
 						var json = {
 							"type": realMethod,
 							"args": data
 						};
-						nsclient.write(JSON.stringify(json));
+						global.comm.client.write(JSON.stringify(json));
 						global.log('debug', 'online server command ' + realMethod, data);
 					}
 				});
 			})(method);
 		}
 
-		onlineIO.on('dashboard_push_printer_printjob', function(data) {
+		global.comm.online.on('dashboard_push_printer_printjob', function(data) {
 			if(data.printerID == macAddress) {
 				var hash = (Math.random() / +new Date()).toString(36).replace(/[^a-z]+/g, '');
 				var newPath = __dirname + '/uploads/gcode/' + hash;
@@ -71,10 +71,10 @@ module.exports = function(localIO, onlineIO, ss, nsclient, macAddress) {
 			}
 		});
 
-		onlineIO.on('dashboard_get_printer_queue', function(data) {
+		global.comm.online.on('dashboard_get_printer_queue', function(data) {
 			if(data.printerID == macAddress) {
 				global.db.Queueitem.findAll({ where: { status: 'queued' } }).success(function(queue) {
-					onlineIO.emit('client_push_printer_queue', {printerID: macAddress, data: queue});
+					global.comm.online.emit('client_push_printer_queue', {printerID: macAddress, data: queue});
 				});
 			}
 		});
@@ -82,12 +82,12 @@ module.exports = function(localIO, onlineIO, ss, nsclient, macAddress) {
 		/*
 		 * Receive client data and send to online dashboard
 		 */
-		nsclient.on('data', function(data) {
+		global.comm.client.on('data', function(data) {
 			if(authorized) {
 				var data = JSON.parse(data.toString());
 				// add printer ID to arguments
 				data.args.printerID = macAddress;
-				onlineIO.emit(data.type, data.args);
+				global.comm.online.emit(data.type, data.args);
 			}
 		});
 	});
@@ -95,7 +95,7 @@ module.exports = function(localIO, onlineIO, ss, nsclient, macAddress) {
 	/*
 	 * Setup local connection
 	 */
-	localIO.sockets.on('connection', function(socket) {
+	global.comm.local.sockets.on('connection', function(socket) {
 		socket.emit('handshake', {id:socket.id});
 
 		// Authentication not really neccesery locally
@@ -123,7 +123,7 @@ module.exports = function(localIO, onlineIO, ss, nsclient, macAddress) {
 						"args": data
 					};
 
-					nsclient.write(JSON.stringify(json));
+					global.comm.client.write(JSON.stringify(json));
 					global.log('debug', 'local dashboard command ' + realMethod, data);
 				});
 			})(method);
@@ -132,7 +132,7 @@ module.exports = function(localIO, onlineIO, ss, nsclient, macAddress) {
 		/*
 		 * Receive client data and send to local dashboard
 		 */
-		nsclient.on('data', function(data) {
+		global.comm.client.on('data', function(data) {
 			global.log('debug', 'qclient status pushed', data.toString());
 			var data;
 			try {

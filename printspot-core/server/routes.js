@@ -45,7 +45,7 @@ passport.deserializeUser(function(id, done) {
 		});
 });
 
-module.exports = exports = function(app, nskatana) {
+module.exports = exports = function(app) {
 
 	app.set('jwtTokenSecret', 'SECRETSTRING');
 	app.use(passport.initialize());
@@ -66,11 +66,11 @@ module.exports = exports = function(app, nskatana) {
 
 			if(req.body.slicemethod == 'local')
 			{
-				nskatana.write(JSON.stringify(json));
+				global.comm.slicer.write(JSON.stringify(json));
 			}
 			else if(req.body.slicemethod == 'cloud')
 			{
-				// call katana via websockets
+				// call online katana via websockets
 			}
 
 			global.db.Printjob.create({
