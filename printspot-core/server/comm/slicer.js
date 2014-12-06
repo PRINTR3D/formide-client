@@ -35,8 +35,14 @@ global.comm.slicer.on('data', function(data)
 	{
 		global.db.Printjob.find({where: {id: data.responseID}}).success(function(printjob)
 		{
-			printjob.updateAttributes({gcode: data.gcode}, ['gcode']).success(function()
+			printjob.updateAttributes({gcode: data.data.gcode, sliceResponse: JSON.stringify(data.data)}, ['gcode']).success(function()
 			{
+				global.db.Queueitem.create({
+					origin: 'local',
+					printjobID: printjob.id,
+					status: 'queued',
+					gcode: data.data.gcode
+				});
 				global.comm.local.sockets.emit('client_push_notification', 'Done slicing');
 				//global.comm.online.sockets.emit('client_push_notification', 'Done slicing');
 			});

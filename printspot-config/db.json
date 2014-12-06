@@ -31,7 +31,6 @@
 
 	"Queueitem": {
 		"fields": {
-			"slicedata": "TEXT",
 			"origin": "STRING",
 			"gcode": "STRING",
 			"status": "STRING",
