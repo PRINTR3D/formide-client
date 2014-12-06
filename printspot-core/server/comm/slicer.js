@@ -31,6 +31,20 @@ global.comm.slicer.on('error',function(err)
 global.comm.slicer.on('data', function(data)
 {
 	data = JSON.parse(data.toString());
-	console.log(data);
-	// put respose in DB
+	if(data.status == 200 && data.responseID != null)
+	{
+		global.db.Printjob.find({where: {id: data.responseID}}).success(function(printjob)
+		{
+			printjob.updateAttributes({gcode: data.gcode}, ['gcode']).success(function()
+			{
+				global.comm.local.sockets.emit('client_push_notification', 'Done slicing');
+				//global.comm.online.sockets.emit('client_push_notification', 'Done slicing');
+			});
+		});
+	}
+	else
+	{
+		global.comm.local.sockets.emit('client_push_notification', 'Slicing failed. Please try again');
+		console.error(data);
+	}
 });

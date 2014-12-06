@@ -19,8 +19,9 @@
 			"printerID": "INTEGER",
 			"sliceprofileID": "INTEGER",
 			"materials": "TEXT",
-			"hash": "STRING",
+			"gcode": "STRING",
 			"sliceParams": "TEXT",
+			"sliceResponse": "TEXT",
 			"sliceMethod": "STRING"
 		},
 		"records": {

@@ -50,10 +50,10 @@ global.server 		= global.app.listen(global.config.local.port);
 
 // communication =================
 global.comm = {};
-require('./server/comm/client.js');
-require('./server/comm/slicer.js');
 require('./server/comm/local.js');
 require('./server/comm/online.js');
+require('./server/comm/client.js');
+require('./server/comm/slicer.js');
 
 // app configuration =============
 global.app.use(bodyParser.urlencoded({'extended': 'true'}));
