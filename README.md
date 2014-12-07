@@ -3,21 +3,27 @@ printspot
 
 Printspot is the internal name for the node.js part of FormideOS. This includes the communication between the online socketserver, the qclient, katana (slicing) and all the different interfaces for manufacturers.
 
+## Important
+- Make sure you have sqlite3 and node.js installed and have sqlite3 compiled for your machine
+- Run the sqlite3 daemon
 
-## Install
+## Install core
 - Create a folder with mkdir /home/printspot
 - Go to that folder with cd /home/printspot
 - Download a zipped version of the repository (see 'version') and put it in /home/printspot
 - Unzip the zip, this should create several folders and files in /home/printspot
 - Delete the zip (if you want)
 
-## Important
-- Make sure you have sqlite3 and node.js installed and have sqlite3 compiled for your machine
-- Run the sqlite3 daemon
+## Install interface
+- Download an interface app from GitHub or check one out
+- Put it a folder in the /home/printspot folder (gitignore should ignore this interface folder)
 
 ## Start
 - Start up the printer driver (qclient, nectarClient or qclient-simulator) that hosts a TCP server on port 1338
-- Run node start.js --interface=nectar (node start.js --interface=nectar --dev to get console logging)
+- Run node start.js --interface=printspot-formide-dashboard (port 1336 for interface, 1337 for core)
+- Add --dev for debug info
+- Add --simulator when no printer driver client is available (port 1338)
+- Add --slicer when no slicer is available (port 1339)
 
 ## Local dashboard
 - Go to your browser (http://localhost:1336 during development)
@@ -68,21 +74,13 @@ Printspot is the internal name for the node.js part of FormideOS. This includes 
 
 #### queue
 - GET /api/queue
-- GET /api/queue/:id
-<<<<<<< HEAD
-=======
-- POST /slicing
->>>>>>> master
-- DELETE /api/queue/:id
+- GET /api/queue/:id- DELETE /api/queue/:id
 
 #### session
 - POST /login
 - POST /logout
 - GET /session
-<<<<<<< HEAD
 
 #### slicing and queue
 - POST /slicing
 - POST /addtoqueue
-=======
->>>>>>> master
