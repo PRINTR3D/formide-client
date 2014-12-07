@@ -18,7 +18,8 @@ var winston			= require('winston');
 
 global.logger = new (winston.Logger)({
     transports: [
-      	new (winston.transports.File)({filename: '../logs/printspot.log', level: 'debug' })
+      	new (winston.transports.File)({filename: '../logs/printspot.log', level: 'debug' }),
+	new winston.transports.Console()
     ]
 });
 

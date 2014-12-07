@@ -7,10 +7,13 @@ var net         = require('net');
 if(!argv.interface) {
     console.error('No interface given');
     process.exit(1);
+<<<<<<< HEAD
 }
 
 if(argv.simulator) {
 	console.log('Simulation mode');
+=======
+>>>>>>> master
 }
 
 function readlines(stream,cb) {
@@ -51,22 +54,41 @@ core.on('error',function(err) { console.log('core error',err); });
 manufacturer.on('exit',function(code) { console.error('manufacturer exited', code); });
 manufacturer.on('error',function(err) { console.log('manufacturer error',err); });
 
+<<<<<<< HEAD
 if(argv.dev) {
     console.log('running in dev mode');
+=======
+    var core = spawn('node', ['index.js','--dev'], {cwd: 'printspot-core', stdio: 'pipe'});
+    var manufacturer = spawn('node', ['index.js'], {cwd: 'printspot-interface-'+argv.interface, stdio: 'pipe'});
+>>>>>>> master
 
 	if(argv.simulator) {
 		readlines(client.stdout, console.log.bind(null,'client:'));
 		readlines(client.stderr, console.error.bind(null,'client:'));
 	}
 
+<<<<<<< HEAD
 	if(argv.slicer) {
 		readlines(katana.stdout, console.log.bind(null,'katana:'));
 		readlines(katana.stderr, console.error.bind(null,'katana:'));
 	}
+=======
+    manufacturer.on('exit',function(code) { console.error('manufacturer exited', code); });
+    manufacturer.on('error',function(err) { console.log('manufacturer error',err); });
+    if(argv.dev) {
+        console.log('running in dev mode');
+>>>>>>> master
 
     readlines(core.stdout, console.log.bind(null,'core:'));
     readlines(core.stderr, console.error.bind(null,'core:'));
 
+<<<<<<< HEAD
     readlines(manufacturer.stdout, console.log.bind(null,'manufacturer:'));
     readlines(manufacturer.stderr, console.error.bind(null,'manufacturer:'));
 }
+=======
+        readlines(manufacturer.stdout, console.log.bind(null,'manufacturer:'));
+        readlines(manufacturer.stderr, console.error.bind(null,'manufacturer:'));
+    }
+});
+>>>>>>> master
