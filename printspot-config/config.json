@@ -1,6 +1,6 @@
 {
 	"version": {
-		"number": "0.2.1",
+		"number": "0.3.0",
 		"brand": "printr"
 	},
 	"local": {
@@ -17,7 +17,7 @@
 		"port": 1338
 	},
 	"katana": {
-		"port": 1339	
+		"port": 1339
 	},
 	"files": {
 		"temp_path": "../../printspot/uploads/tmp",

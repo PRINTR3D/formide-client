@@ -69,10 +69,20 @@ Printspot is the internal name for the node.js part of FormideOS. This includes 
 #### queue
 - GET /api/queue
 - GET /api/queue/:id
+<<<<<<< HEAD
+=======
 - POST /slicing
+>>>>>>> master
 - DELETE /api/queue/:id
 
 #### session
 - POST /login
 - POST /logout
 - GET /session
+<<<<<<< HEAD
+
+#### slicing and queue
+- POST /slicing
+- POST /addtoqueue
+=======
+>>>>>>> master
