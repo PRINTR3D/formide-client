@@ -14,25 +14,29 @@
 
 var fs = require('fs');
 
-module.exports = function(macAddress) {
-
+module.exports = function(macAddress)
+{
 	var authorized = false;
 
 	/*
 	 * Setup online connection
 	 */
-	global.comm.online.on('connect', function() {
-
-		global.comm.online.on('handshake', function(data) {
+	global.comm.online.on('connect', function()
+	{
+		global.comm.online.on('handshake', function(data)
+		{
 			global.log('info', 'new online server connection', data);
-			global.comm.online.emit('typeof', {
+			global.comm.online.emit('typeof',
+			{
 				type: 'client',
 				mac: macAddress
 			});
 		});
 
-		global.comm.online.on('auth', function(data) {
-			if(data.message == 'OK') {
+		global.comm.online.on('auth', function(data)
+		{
+			if(data.message == 'OK')
+			{
 				authorized = true;
 			}
 		});
@@ -40,18 +44,23 @@ module.exports = function(macAddress) {
 		/*
 		 * Stream data logging to Printr servers
 		 */
-		global.logger.on('logging', function (transport, level, msg, meta) {
+		global.logger.on('logging', function (transport, level, msg, meta)
+		{
 	    	global.comm.online.emit('client_push_log', {level: level, msg: msg, meta: meta, printerID: macAddress});
 	  	});
 
 		/*
 		 * Dynamically load online dashboard functions from config.json
 		 */
-		for(var method in global.config.dashboard_commands) {
-			(function(realMethod) {
-				global.comm.online.on(realMethod, function(data) {
+		for(var method in global.config.dashboard_commands)
+		{
+			(function(realMethod)
+			{
+				global.comm.online.on(realMethod, function(data)
+				{
 					// check if incoming message is really meant for this printer
-					if(data.printerID == macAddress) {
+					if(data.printerID == macAddress)
+					{
 						var json = {
 							"type": realMethod,
 							"args": data
@@ -63,15 +72,21 @@ module.exports = function(macAddress) {
 			})(method);
 		}
 
-		global.comm.online.on('dashboard_push_printer_printjob', function(data) {
-			if(data.printerID == macAddress) {
+		global.comm.online.on('dashboard_push_printer_printjob', function(data)
+		{
+			if(data.printerID == macAddress)
+			{
 				var hash = (Math.random() / +new Date()).toString(36).replace(/[^a-z]+/g, '');
 				var newPath = __dirname + '/uploads/gcode/' + hash;
-				fs.writeFile(newPath, data.gcode, function(err) {
-					if(err) {
+
+				fs.writeFile(newPath, data.gcode, function(err)
+				{
+					if(err)
+					{
 						global.log('error', err, {'path': newPath});
 					}
-					else {
+					else
+					{
 						global.db.Queueitem.create({
 							slicedata: data.slicesettings,
 							origin: 'online',
@@ -84,9 +99,16 @@ module.exports = function(macAddress) {
 			}
 		});
 
-		global.comm.online.on('dashboard_get_printer_queue', function(data) {
-			if(data.printerID == macAddress) {
-				global.db.Queueitem.findAll({ where: { status: 'queued' } }).success(function(queue) {
+		global.comm.online.on('dashboard_get_printer_queue', function(data)
+		{
+			if(data.printerID == macAddress)
+			{
+				global.db.Queueitem.findAll({
+					where: {
+						status: 'queued'
+					}
+				}).success(function(queue)
+				{
 					global.comm.online.emit('client_push_printer_queue', {printerID: macAddress, data: queue});
 				});
 			}
@@ -95,8 +117,10 @@ module.exports = function(macAddress) {
 		/*
 		 * Receive client data and send to online dashboard
 		 */
-		global.comm.client.on('data', function(data) {
-			if(authorized) {
+		global.comm.client.on('data', function(data)
+		{
+			if(authorized)
+			{
 				var data = JSON.parse(data.toString());
 				// add printer ID to arguments
 				data.args.printerID = macAddress;
@@ -108,29 +132,35 @@ module.exports = function(macAddress) {
 	/*
 	 * Setup local connection
 	 */
-	global.comm.local.sockets.on('connection', function(socket) {
+	global.comm.local.sockets.on('connection', function(socket)
+	{
 		socket.emit('handshake', {id:socket.id});
 
 		// Authentication not really neccesery locally
-		socket.on('typeof', function(data) {
+		socket.on('typeof', function(data)
+		{
 			global.log('info', 'new local dashboard connection', data);
-			if(data.type == 'dashboard') {
+			if(data.type == 'dashboard')
+			{
 				socket.emit('auth', {message: 'OK', id: socket.id});
 			}
 		});
 
 		// Socket disconnect
-		socket.on('disconnect', function() {
+		socket.on('disconnect', function()
+		{
 			global.log('info', 'local dashboard disconnected', {});
 		});
 
 		/*
 		 * Dynamically load local dashboard functions from config.json
 		 */
-		for(var method in global.config.dashboard_commands) {
-			(function(realMethod) {
-				socket.on(realMethod, function(data) {
-
+		for(var method in global.config.dashboard_commands)
+		{
+			(function(realMethod)
+			{
+				socket.on(realMethod, function(data)
+				{
 					var json = {
 						"type": realMethod,
 						"args": data
@@ -145,13 +175,16 @@ module.exports = function(macAddress) {
 		/*
 		 * Receive client data and send to local dashboard
 		 */
-		global.comm.client.on('data', function(data) {
+		global.comm.client.on('data', function(data)
+		{
 			global.log('debug', 'qclient status pushed', data.toString());
 			var data;
-			try {
+			try
+			{
 				data = JSON.parse(data.toString());
 			}
-			catch(e) {
+			catch(e)
+			{
 				global.log(e);
 			}
 			socket.emit(data.type, data.args);
