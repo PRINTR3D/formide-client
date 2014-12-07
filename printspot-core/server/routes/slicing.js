@@ -49,7 +49,19 @@ module.exports = exports = function(app)
 
 	app.post('/addtoqueue', function(req, res)
 	{
-
+		if(req.body.printjobID)
+		{
+			global.db.Printjob.find({where: {id: data.data.responseID}}).success(function(printjob)
+			{
+				global.db.Queueitem.create({
+					origin: 'local',
+					printjobID: printjob.id,
+					status: 'queued',
+					gcode: printjob.gcode
+				});
+				return res.json('OK');
+			}
+		}
 	});
 
 	global.log('info', 'Module loaded: routes/slicing.js', {});

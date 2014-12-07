@@ -21,3 +21,61 @@ Printspot is the internal name for the node.js part of FormideOS. This includes 
 
 ## Local dashboard
 - Go to your browser (http://localhost:1336 during development)
+
+## Endpoints
+
+#### sliceprofiles
+- GET /api/sliceprofiles
+- GET /api/sliceprofiles/:id
+- PUT /api/sliceprofiles
+- POST /api/sliceprofiles/:id
+- DELETE /api/sliceprofiles/:id
+
+#### printjobs
+- GET /api/printjobs
+- GET /api/printjobs/:id
+- PUT /api/printjobs
+- POST /api/printjobs/:id
+- DELETE /api/printjobs/:id
+
+#### materials
+- GET /api/materials
+- GET /api/materials/:id
+- PUT /api/materials
+- POST /api/materials/:id
+- DELETE /api/materials/:id
+
+#### printers
+- GET /api/printers
+- GET /api/printers/:id
+- PUT /api/printers
+- POST /api/printers/:id
+- DELETE /api/printers/:id
+
+#### users
+- GET /api/users
+- GET /api/users/:id
+- PUT /api/users
+- POST /api/users/:id
+- DELETE /api/users/:id
+
+#### modelfiles
+- GET /api/modelfiles
+- GET /api/modelfiles/:id
+- PUT /api/modelfiles
+- POST /api/modelfiles/:id
+- DELETE /api/modelfiles/:id
+
+#### queue
+- GET /api/queue
+- GET /api/queue/:id
+- DELETE /api/queue/:id
+
+#### session
+- POST /login
+- POST /logout
+- GET /session
+
+#### slicing and queue
+- POST /slicing
+- POST /addtoqueue
