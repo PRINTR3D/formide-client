@@ -60,7 +60,7 @@ module.exports = exports = function(app)
 					gcode: printjob.gcode
 				});
 				return res.json('OK');
-			}
+			});
 		}
 	});
 
