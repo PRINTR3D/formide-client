@@ -12,98 +12,95 @@
  *
  */
 
-var passport 			= require('passport');
-var LocalStrategy 		= require('passport-local').Strategy;
-var crypto				= require('crypto');
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
 
-passport.use(new LocalStrategy({
-	usernameField: 'username',
-	passwordField: 'password'
-},
-function(username, password, done) {
-	global.db.User.find({where: {username: username}})
-		.success(function(user) {
-			if(!user) {
-				return done(null, false, {message: 'User does not exist'});
-			}
-			else if(password != user.password) {
-				return done(null, false, {message: 'Wrong password'});
-			}
-			else {
-				return done(null, user);
-			}
-		})
-		.error(function(err) {
-			return done(err);
-		});
-}));
-
-passport.serializeUser(function(user, done) {
+passport.serializeUser(function(user, done)
+{
 	done(null, user.id);
 });
 
-passport.deserializeUser(function(id, done) {
-	global.db.User.find(id)
-		.success(function(user) {
-			done(null, user);
-		})
-		.error(function(err) {
-			done(new Error('User ' + id + ' does not exist'));
-		});
+passport.deserializeUser(function(id, done)
+{
+  	global.db.User.find({where: {id: id}})
+  	.success(function(user)
+  	{
+    	done(null, user);
+  	})
+  	.error(function(err)
+  	{
+    	done(err, null);
+	});
 });
+
+passport.use(new LocalStrategy(
+	function(username, password, done)
+	{
+   		global.db.User.find({ where: { username: username }})
+   		.success(function(user)
+   		{
+   			if (!user)
+   			{
+   				done(null, false, { message: 'Unknown user' });
+      		}
+      		else if (password != user.password)
+      		{
+	  			done(null, false, { message: 'Invalid password'});
+      		}
+      		else
+      		{
+	  			done(null, user);
+	  		}
+    	})
+    	.error(function(err)
+    	{
+			done(err);
+    	});
+  	}
+));
+
+var auth = function(req, res, next)
+{
+	if(!req.isAuthenticated())
+	{
+		res.send(401);
+	}
+	else
+	{
+		next();
+	}
+};
 
 module.exports = exports = function(app)
 {
-	app.set('jwtTokenSecret', 'SECRETSTRING');
-	app.use(passport.initialize());
-	app.use(passport.session());
-
-	app.post('/login', function(req, res, next)
+	app.post('/login', passport.authenticate('local'), function(req, res)
 	{
-		passport.authenticate('local', function(err, user, info) {
-			if(err) {
-				return res.send(401);
-			}
-
-			if(!user) {
-				return res.send(401);
-			}
-
-			req.logIn(user, function(err) {
-				return res.send(401);
-			});
-
-			var token = crypto.randomBytes(64).toString('hex');
-
-			return res.json({
-				token : token,
-				user: user.toJSON()
-			});
-		})(req, res, next);
+		res.send(req.user);
 	});
 
 	app.get('/session', function(req, res)
 	{
-		return res.json(req.isAuthenticated());
+		res.send(req.isAuthenticated() ? req.user : '0');
 	});
 
 	app.get('/settings', function(req, res)
 	{
-		// return settings of logged in user
+
 	});
 
 	app.post('/settings', function(req, res)
 	{
-		// write settings of logged in user
+
+	});
+
+	app.get('/users', auth, function(req, res)
+	{
+
 	});
 
 	app.post('/logout', function(req, res)
 	{
-		if(req.isAuthenticated()) {
-			req.logout();
-			return res.json('OK');
-		}
+		req.logOut();
+		res.send(200);
 	});
-
-	global.log('info', 'Module loaded: routes/session.js', {});
 };

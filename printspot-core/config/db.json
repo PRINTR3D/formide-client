@@ -3,22 +3,16 @@
 		"fields": {
 			"username": "STRING",
 			"password": "STRING",
+			"salt": "STRING",
 			"role": "STRING",
-			"slicingOnline": "BOOLEAN",
-			"slicingOffline": "BOOLEAN",
-			"controlOffline": "BOOLEAN",
-			"controlOnline": "BOOLEAN",
 			"userStatistics": "BOOLEAN"
 		},
 		"records": {
 			"admin": {
 				"username": "login@printspot.local",
 				"password": "password",
+				"salt": "",
 				"role": "admin",
-				"slicingOnline": 1,
-				"slicingOffline": 1,
-				"controlOffline": 1,
-				"controlOnline": 1,
 				"userStatistics": 1
 			}
 		}

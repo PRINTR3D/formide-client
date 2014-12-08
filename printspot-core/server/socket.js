@@ -18,11 +18,10 @@ module.exports = function(macAddress)
 {
 	var authorized = false;
 
-	/*
-	 * Setup online connection
-	 */
+	// online connection
 	global.comm.online.on('connect', function()
 	{
+		// receive handshake from socket server
 		global.comm.online.on('handshake', function(data)
 		{
 			global.log('info', 'new online server connection', data);
@@ -33,6 +32,7 @@ module.exports = function(macAddress)
 			});
 		});
 
+		// receive auth from socket server
 		global.comm.online.on('auth', function(data)
 		{
 			if(data.message == 'OK')
@@ -41,17 +41,13 @@ module.exports = function(macAddress)
 			}
 		});
 
-		/*
-		 * Stream data logging to Printr servers
-		 */
+		// steram error logging to socket server
 		global.logger.on('logging', function (transport, level, msg, meta)
 		{
 	    	global.comm.online.emit('client_push_log', {level: level, msg: msg, meta: meta, printerID: macAddress});
 	  	});
 
-		/*
-		 * Dynamically load online dashboard functions from config.json
-		 */
+		// load channels from config
 		for(var method in global.config.dashboard_commands)
 		{
 			(function(realMethod)
@@ -72,6 +68,7 @@ module.exports = function(macAddress)
 			})(method);
 		}
 
+		// send online printjob to client
 		global.comm.online.on('dashboard_push_printer_printjob', function(data)
 		{
 			if(data.printerID == macAddress)
@@ -99,6 +96,7 @@ module.exports = function(macAddress)
 			}
 		});
 
+		// send local queue to online dashboard
 		global.comm.online.on('dashboard_get_printer_queue', function(data)
 		{
 			if(data.printerID == macAddress)
@@ -114,9 +112,7 @@ module.exports = function(macAddress)
 			}
 		});
 
-		/*
-		 * Receive client data and send to online dashboard
-		 */
+		// Receive client data and send to online dashboard
 		global.comm.client.on('data', function(data)
 		{
 			if(authorized)
@@ -129,9 +125,7 @@ module.exports = function(macAddress)
 		});
 	});
 
-	/*
-	 * Setup local connection
-	 */
+	// local connection
 	global.comm.local.sockets.on('connection', function(socket)
 	{
 		socket.emit('handshake', {id:socket.id});
@@ -152,9 +146,7 @@ module.exports = function(macAddress)
 			global.log('info', 'local dashboard disconnected', {});
 		});
 
-		/*
-		 * Dynamically load local dashboard functions from config.json
-		 */
+		// load channels from config
 		for(var method in global.config.dashboard_commands)
 		{
 			(function(realMethod)
@@ -172,9 +164,7 @@ module.exports = function(macAddress)
 			})(method);
 		}
 
-		/*
-		 * Receive client data and send to local dashboard
-		 */
+		// receive driver data and send to local dashboard
 		global.comm.client.on('data', function(data)
 		{
 			global.log('debug', 'qclient status pushed', data.toString());
@@ -189,8 +179,5 @@ module.exports = function(macAddress)
 			}
 			socket.emit(data.type, data.args);
 		});
-
 	});
-
-	global.log('info', 'Module loaded: socket.js', {});
 };

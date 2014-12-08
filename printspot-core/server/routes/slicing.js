@@ -65,6 +65,4 @@ module.exports = exports = function(app)
 			});
 		}
 	});
-
-	global.log('info', 'Module loaded: routes/slicing.js', {});
 };

@@ -39,8 +39,8 @@ global.config 		= require('./config/core.json');
 
 // dependencies =================
 var express 		= require('express');
-var session 		= require('express-session')
 var bodyParser		= require('body-parser');
+var cookieParser 	= require('cookie-parser');
 var methodOverride	= require('method-override');
 var getMac			= require('getmac');
 var os				= require('os');
@@ -61,8 +61,8 @@ require('./server/comm/slicer.js');
 global.app.use(bodyParser.urlencoded({'extended': 'true'}));
 global.app.use(bodyParser.json());
 global.app.use(bodyParser.json({type: 'application/vnd.api+json'}));
+global.app.use(cookieParser());
 global.app.use(methodOverride());
-//global.app.use(session({secret: 'RANDOMRANDOM'}));
 
 global.app.all('/*', function(req, res, next)
 {
