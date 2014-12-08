@@ -87,6 +87,16 @@ module.exports = exports = function(app)
 		return res.json(req.isAuthenticated());
 	});
 
+	app.get('/settings', function(req, res)
+	{
+		// return settings of logged in user
+	});
+
+	app.post('/settings', function(req, res)
+	{
+		// write settings of logged in user
+	});
+
 	app.post('/logout', function(req, res)
 	{
 		if(req.isAuthenticated()) {

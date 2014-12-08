@@ -16,30 +16,32 @@
 var argv 			= require('minimist')(process.argv.slice(2));
 var winston			= require('winston');
 
-global.logger = new (winston.Logger)({
-    transports: [
-      	new (winston.transports.File)({filename: '../logs/printspot.log', level: 'debug' }),
-	new winston.transports.Console()
+global.logger = new (winston.Logger)(
+{
+    transports:
+    [
+		new (winston.transports.File)({filename: '../logs/printspot.log', level: 'debug' }),
+		new winston.transports.Console()
     ]
 });
 
-global.log = function(level, msg, data) {
+global.log = function(level, msg, data)
+{
 	global.logger.log(level, msg, data);
-	if(!argv.dev) {
+	if(!argv.dev)
+	{
 		console.log(msg + data);
 	}
 }
 
 // config =======================
-global.userConfig	= require('./../printspot-config/userConfig.json');
-global.config 		= require('./../printspot-config/config.json');
+global.config 		= require('./config/core.json');
 
 // dependencies =================
 var express 		= require('express');
 var session 		= require('express-session')
 var bodyParser		= require('body-parser');
 var methodOverride	= require('method-override');
-var dbConfig		= require('./../printspot-config/db.json');
 var getMac			= require('getmac');
 var os				= require('os');
 
@@ -61,17 +63,20 @@ global.app.use(bodyParser.json());
 global.app.use(bodyParser.json({type: 'application/vnd.api+json'}));
 global.app.use(methodOverride());
 //global.app.use(session({secret: 'RANDOMRANDOM'}));
-global.app.all('/*', function(req, res, next) {
-	res.header("Access-Control-Allow-Origin", global.config.local.host + ':' + global.config.local.interfaceport);
+
+global.app.all('/*', function(req, res, next)
+{
+	res.header("Access-Control-Allow-Origin", "*");
 	res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
 	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 	res.header("Access-Control-Allow-Credentials", "true");
 	next();
 });
 
-getMac.getMac(function(err, macAddress) {
-
-	if(global.config.online.mac != '') {
+getMac.getMac(function(err, macAddress)
+{
+	if(global.config.online.mac != '')
+	{
 		macAddress = global.config.online.mac;
 	}
 

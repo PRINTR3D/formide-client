@@ -1,12 +1,10 @@
 {
 	"version": {
-		"number": "0.3.0",
-		"brand": "printr"
+		"number": "0.3.0"
 	},
 	"local": {
 		"host": "http://localhost",
-		"port": 1337,
-		"interfaceport": 1336
+		"port": 1337
 	},
 	"online": {
 		"host": "http://wsdev.formide.com",
