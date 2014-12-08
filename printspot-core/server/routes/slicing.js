@@ -16,7 +16,9 @@ module.exports = exports = function(app)
 {
 	app.post('/slicing', function(req, res)
 	{
-		if(req.body.sliceparams && req.body.modelfile && req.body.sliceprofile && req.body.materials && req.body.printer && req.body.slicemethod) {
+		if(req.body.sliceparams && req.body.modelfile && req.body.sliceprofile && req.body.materials && req.body.printer && req.body.slicemethod)
+		{
+			var hash = (Math.random() / +new Date()).toString(36).replace(/[^a-z]+/g, '');
 
 			var json = {
 				"type": "slice",
@@ -24,26 +26,26 @@ module.exports = exports = function(app)
 			};
 
 			json.data.model = "uploads/modelfiles/" + json.data.model;
+			json.data.responseID = hash;
 
 			if(req.body.slicemethod == 'local')
 			{
+				// send slice request to local slicer
 				global.comm.slicer.write(JSON.stringify(json));
-			}
-			else if(req.body.slicemethod == 'cloud')
-			{
-				// call online katana via websockets
-			}
 
-			global.db.Printjob.create({
-				modelfileID: req.body.modelfile.id,
-				printerID: req.body.printer.id,
-				sliceprofileID: req.body.sliceprofile.id,
-				materials: JSON.stringify(req.body.materials),
-				sliceParams: JSON.stringify(req.body.sliceparams),
-				sliceMethod: 'local'
-			}).success(function(printjob) {
-				return res.json('OK');
-			});
+				// create printjob in DB
+				global.db.Printjob.create({
+					modelfileID: req.body.modelfile.id,
+					printerID: req.body.printer.id,
+					sliceprofileID: req.body.sliceprofile.id,
+					materials: JSON.stringify(req.body.materials),
+					sliceResponse: hash,
+					sliceParams: JSON.stringify(req.body.sliceparams),
+					sliceMethod: 'local'
+				}).success(function(printjob){
+					return res.json('OK');
+				});
+			}
 		}
 	});
 

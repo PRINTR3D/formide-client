@@ -31,9 +31,9 @@ global.comm.slicer.on('error',function(err)
 global.comm.slicer.on('data', function(data)
 {
 	data = JSON.parse(data.toString());
-	if(data.status == 200 && data.responseID != null)
+	if(data.status == 200 && data.data.responseID != null)
 	{
-		global.db.Printjob.find({where: {id: data.data.responseID}}).success(function(printjob)
+		global.db.Printjob.find({where: {sliceResponse: data.data.responseID}}).success(function(printjob)
 		{
 			printjob.updateAttributes({gcode: data.data.gcode, sliceResponse: JSON.stringify(data.data)}, ['gcode']).success(function()
 			{
