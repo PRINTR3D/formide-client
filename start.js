@@ -1,5 +1,3 @@
-global.config   = require('./printspot-config/config.json');
-
 var spawn       = require('child_process').spawn;
 var argv        = require('minimist')(process.argv.slice(2));
 var net         = require('net');

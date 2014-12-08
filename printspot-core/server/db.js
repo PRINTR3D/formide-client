@@ -19,7 +19,7 @@ var sequelize 	= new Sequelize('printspot', 'root', null, {
 	storage: 'server/printspot.sqlite'
 });
 var db			= {};
-var sqliteConfig = require('./../../printspot-config/db.json');
+var sqliteConfig = require('./../config/db.json');
 
 for(var key in sqliteConfig) {
 	(function(realKey) {
