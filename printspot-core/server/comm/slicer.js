@@ -15,15 +15,15 @@
 var net = require('net');
 
 // tcp connection to the local slicer (katana  light)
-global.comm.slicer = net.connect({port: global.config.katana.port}, function()
+global.comm.slicer = net.connect({port: global.config.get('slicer.port')}, function()
 {
-	global.log('info', 'katana connected', {port: global.config.katana.port});
+	global.log('info', 'katana connected', {port: global.config.get('slicer.port')});
 });
 
 // when slicer produces error, log this
 global.comm.slicer.on('error',function(err)
 {
-	console.error('error connecting to katana on port', global.config.katana.port);
+	console.error('error connecting to katana on port', global.config.get('slicer.port'));
 	throw err;
 });
 

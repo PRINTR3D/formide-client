@@ -48,7 +48,7 @@ module.exports = function(macAddress)
 	  	});
 
 		// load channels from config
-		for(var method in global.config.dashboard_commands)
+		for(var method in global.config.get('channels.dashboard'))
 		{
 			(function(realMethod)
 			{
@@ -147,7 +147,7 @@ module.exports = function(macAddress)
 		});
 
 		// load channels from config
-		for(var method in global.config.dashboard_commands)
+		for(var method in global.config.get('channels.dashboard'))
 		{
 			(function(realMethod)
 			{

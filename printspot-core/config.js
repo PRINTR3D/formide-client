@@ -20,7 +20,7 @@ var sequelize 	= new Sequelize('printspot', 'root', null, {
 		charset: 'utf8'
 	}
 });
-var sqliteConfig = require('./../printspot-config/db.json');
+var sqliteConfig = require('./config/development/database.json');
 
 for(var key in sqliteConfig) {
 	(function(realKey) {

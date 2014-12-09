@@ -1,0 +1,7 @@
+{
+	"temp": "../../printspot/uploads/tmp",
+
+	"modelfile": "../../printspot/uploads/modelfiles",
+
+	"gcode": "../../printspot/uploads/gcode"
+}

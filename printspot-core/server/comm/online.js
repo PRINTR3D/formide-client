@@ -13,4 +13,4 @@
  */
 
 // Handles communication with online socketserver and dashboards
-global.comm.online = require('socket.io-client')(global.config.online.host + ':' + global.config.online.port);
+global.comm.online = require('socket.io-client')(global.config.get('cloud.url') + ':' + global.config.get('cloud.port'));

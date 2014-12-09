@@ -22,24 +22,26 @@ if(!argv.interface)
 }
 else
 {
-	var interfaceConfig = require('./' + argv.interface + '/man_config.json');
-	var coreConfig = require('./printspot-core/config/core.json');
+	/*
+var interfaceConfig = require('./' + argv.interface + '/man_config.json');
+	var coreConfig = require('./printspot-core/config/app.json');
 
 	if(!interfaceConfig.dependencies['printspot-core'])
 	{
 		console.error('Interface config has no printspot-core dependency version listed');
 		process.exit(1);
 	}
-	else if(!coreConfig.version.number)
+	else if(!coreConfig.version)
 	{
 		console.error('Core config has no verion number listed');
 		process.exit(1);
 	}
-	else if(coreConfig.version.number != interfaceConfig.dependencies['printspot-core'])
+	else if(coreConfig.version != interfaceConfig.dependencies['printspot-core'])
 	{
 		console.error('Core version number is not compatible with interface printspot-core dependency version number');
 		process.exit(1);
 	}
+*/
 }
 
 if(argv.simulator)
