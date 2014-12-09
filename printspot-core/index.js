@@ -44,6 +44,7 @@ var cookieParser 	= require('cookie-parser');
 var methodOverride	= require('method-override');
 var getMac			= require('getmac');
 var os				= require('os');
+var session 		= require('express-session')
 
 // app and server ================
 global.db			= require('./server/db.js');
@@ -63,10 +64,14 @@ global.app.use(bodyParser.json());
 global.app.use(bodyParser.json({type: 'application/vnd.api+json'}));
 global.app.use(cookieParser());
 global.app.use(methodOverride());
+global.app.use(session(
+{
+	secret: 'much_secret_many_safety_wow'
+}));
 
 global.app.all('/*', function(req, res, next)
 {
-	res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Origin", "http://localhost:1336");
 	res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
 	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 	res.header("Access-Control-Allow-Credentials", "true");

@@ -73,6 +73,9 @@ var auth = function(req, res, next)
 
 module.exports = exports = function(app)
 {
+	app.use(passport.initialize());
+	app.use(passport.session());
+
 	app.post('/login', passport.authenticate('local'), function(req, res)
 	{
 		res.send(req.user);
@@ -81,21 +84,6 @@ module.exports = exports = function(app)
 	app.get('/session', function(req, res)
 	{
 		res.send(req.isAuthenticated() ? req.user : '0');
-	});
-
-	app.get('/settings', function(req, res)
-	{
-
-	});
-
-	app.post('/settings', function(req, res)
-	{
-
-	});
-
-	app.get('/users', auth, function(req, res)
-	{
-
 	});
 
 	app.post('/logout', function(req, res)

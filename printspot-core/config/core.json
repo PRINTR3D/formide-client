@@ -49,5 +49,8 @@
 		"client_push_printer_connect": true,
 		"client_push_printer_disconnect": true,
 		"client_push_printer_error": true
+	},
+	"available_modules": {
+
 	}
 }

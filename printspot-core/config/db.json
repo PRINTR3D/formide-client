@@ -2,18 +2,12 @@
 	"User": {
 		"fields": {
 			"username": "STRING",
-			"password": "STRING",
-			"salt": "STRING",
-			"role": "STRING",
-			"userStatistics": "BOOLEAN"
+			"password": "STRING"
 		},
 		"records": {
 			"admin": {
 				"username": "login@printspot.local",
-				"password": "password",
-				"salt": "",
-				"role": "admin",
-				"userStatistics": 1
+				"password": "password"
 			}
 		}
 	},
