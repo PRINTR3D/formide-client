@@ -20,6 +20,7 @@
     "minimist": "^1.1.0",
     "passport": "^0.2.1",
     "passport-local": "^1.0.0",
+    "polo": "^0.7.1",
     "request": "2.40.0",
     "sequelize": "1.5.0",
     "sequelize-restful": "0.3.0",
