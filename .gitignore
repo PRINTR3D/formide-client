@@ -27,6 +27,9 @@ node_modules
 # Users Environment Variables
 .lock-wscript
 
+# Ignore database
+printspot-core/server/printspot.sqlite
+
 # Ignore config
 printspot-core/config/core.json
 
