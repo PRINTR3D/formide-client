@@ -91,4 +91,12 @@ module.exports = exports = function(app)
 		req.logOut();
 		res.send(200);
 	});
+
+	app.post('/settings', function(req, res)
+	{
+		if(req.isAuthenticated())
+		{
+			// do something with user settings
+		}
+	});
 };

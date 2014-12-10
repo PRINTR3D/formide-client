@@ -48,7 +48,7 @@ module.exports = function(macAddress)
 	  	});
 
 		// load channels from config
-		for(var method in global.config.get('channels.dashboard'))
+		global.config.get('channels.dashboard').forEach(function(method)
 		{
 			(function(realMethod)
 			{
@@ -66,7 +66,7 @@ module.exports = function(macAddress)
 					}
 				});
 			})(method);
-		}
+		});
 
 		// send online printjob to client
 		global.comm.online.on('dashboard_push_printer_printjob', function(data)
@@ -147,7 +147,7 @@ module.exports = function(macAddress)
 		});
 
 		// load channels from config
-		for(var method in global.config.get('channels.dashboard'))
+		global.config.get('channels.dashboard').forEach(function(method)
 		{
 			(function(realMethod)
 			{
@@ -162,7 +162,7 @@ module.exports = function(macAddress)
 					global.log('debug', 'local dashboard command ' + realMethod, data);
 				});
 			})(method);
-		}
+		});
 
 		// receive driver data and send to local dashboard
 		global.comm.client.on('data', function(data)
