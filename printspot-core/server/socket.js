@@ -74,7 +74,7 @@ module.exports = function(macAddress)
 			if(data.printerID == macAddress)
 			{
 				var hash = (Math.random() / +new Date()).toString(36).replace(/[^a-z]+/g, '');
-				var newPath = __dirname + '/uploads/gcode/' + hash;
+				var newPath = __dirname + '/' + global.config.get('paths.gcode') + '/' + hash;
 
 				fs.writeFile(newPath, data.gcode, function(err)
 				{
@@ -117,8 +117,14 @@ module.exports = function(macAddress)
 		{
 			if(authorized)
 			{
-				var data = JSON.parse(data.toString());
-				// add printer ID to arguments
+				try
+				{
+					data = JSON.parse(data.toString());
+				}
+				catch(e)
+				{
+					global.log(e);
+				}
 				data.args.printerID = macAddress;
 				global.comm.online.emit(data.type, data.args);
 			}
@@ -168,7 +174,6 @@ module.exports = function(macAddress)
 		global.comm.client.on('data', function(data)
 		{
 			global.log('debug', 'qclient status pushed', data.toString());
-			var data;
 			try
 			{
 				data = JSON.parse(data.toString());

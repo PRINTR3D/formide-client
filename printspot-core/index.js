@@ -39,7 +39,7 @@ global.config = require('nodejs-config')(
 	__dirname,
 	{
 		development: ['chris.local'],
-		production: []
+		production: ['raspberrypi']
 	}
 );
 

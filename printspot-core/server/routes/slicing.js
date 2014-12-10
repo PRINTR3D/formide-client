@@ -34,7 +34,9 @@ module.exports = exports = function(app)
 				global.comm.slicer.write(JSON.stringify(json));
 
 				// create printjob in DB
-				global.db.Printjob.create({
+				global.db.Printjob
+				.create(
+				{
 					modelfileID: req.body.modelfile.id,
 					printerID: req.body.printer.id,
 					sliceprofileID: req.body.sliceprofile.id,
@@ -42,7 +44,9 @@ module.exports = exports = function(app)
 					sliceResponse: hash,
 					sliceParams: JSON.stringify(req.body.sliceparams),
 					sliceMethod: 'local'
-				}).success(function(printjob){
+				})
+				.success(function(printjob)
+				{
 					return res.json('OK');
 				});
 			}
