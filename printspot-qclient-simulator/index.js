@@ -15,7 +15,7 @@ var server = net.createServer(function(client) {
 
 			var json = {
 			   "type": "client_push_printer_status",
-			   "args": {
+			   "data": {
 				   "status": "printing",
 				   "printjobID": 1,
 			       "extruders": [

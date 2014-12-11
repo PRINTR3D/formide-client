@@ -59,7 +59,7 @@ module.exports = function(macAddress)
 					{
 						var json = {
 							"type": realMethod,
-							"args": data
+							"data": data
 						};
 						global.comm.client.write(JSON.stringify(json));
 						global.log('debug', 'online server command ' + realMethod, data);
@@ -125,8 +125,8 @@ module.exports = function(macAddress)
 				{
 					global.log(e);
 				}
-				data.args.printerID = macAddress;
-				global.comm.online.emit(data.type, data.args);
+				data.data.printerID = macAddress;
+				global.comm.online.emit(data.type, data.data);
 			}
 		});
 	});
@@ -161,7 +161,7 @@ module.exports = function(macAddress)
 				{
 					var json = {
 						"type": realMethod,
-						"args": data
+						"data": data
 					};
 
 					global.comm.client.write(JSON.stringify(json));
@@ -182,7 +182,7 @@ module.exports = function(macAddress)
 			{
 				global.log(e);
 			}
-			socket.emit(data.type, data.args);
+			socket.emit(data.type, data.data);
 		});
 	});
 };
