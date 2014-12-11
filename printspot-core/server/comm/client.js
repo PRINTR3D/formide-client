@@ -15,12 +15,12 @@
 var net = require('net');
 
 // tcp connection to the printer driver or simulator on given port
-global.comm.client = net.connect({port: global.config.client.port}, function() {
-	global.log('info', 'qclient connected', {port: global.config.client.port});
+global.comm.client = net.connect({port: global.config.get('client.port')}, function() {
+	global.log('info', 'qclient connected', {port: global.config.get('client.port')});
 });
 
 // when client produces error, log this
 global.comm.client.on('error',function(err) {
-	console.error('error connecting to nsclient on port', global.config.client.port);
+	console.error('error connecting to nsclient on port', global.config.get('client.port'));
 	throw err;
 });

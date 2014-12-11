@@ -3,20 +3,21 @@ process.title = 'printspot-qclient-simulator';
 var net = require('net');
 
 var server = net.createServer(function(client) {
-	
+
 	client.on('data', function(data) {
 		console.log(data.toString());
 	});
-	
+
 	console.log('qclient simulator running');
-	
+
 	setTimeout(function() {
 		setInterval(function() {
-			
+
 			var json = {
 			   "type": "client_push_printer_status",
 			   "args": {
 				   "status": "printing",
+				   "printjobID": 1,
 			       "extruders": [
 			           {
 				           "name": "beehead_extruder1",
@@ -51,7 +52,7 @@ var server = net.createServer(function(client) {
 			       	}
 			   	}
 			}
-			
+
 			client.write(JSON.stringify(json));
 		}, 2000);
 	}, 2000);

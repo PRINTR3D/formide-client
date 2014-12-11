@@ -35,20 +35,27 @@ global.log = function(level, msg, data)
 }
 
 // config =======================
-global.config 		= require('./config/core.json');
+global.config = require('nodejs-config')(
+	__dirname,
+	{
+		development: ['chris.local'],
+		production: ['raspberrypi']
+	}
+);
 
 // dependencies =================
 var express 		= require('express');
-var session 		= require('express-session')
 var bodyParser		= require('body-parser');
+var cookieParser 	= require('cookie-parser');
 var methodOverride	= require('method-override');
 var getMac			= require('getmac');
 var os				= require('os');
+var session 		= require('express-session')
 
 // app and server ================
 global.db			= require('./server/db.js');
 global.app 			= express();
-global.server 		= global.app.listen(global.config.local.port);
+global.server 		= global.app.listen(global.config.get('app.port'), global.config.get('app.url'));
 
 // communication =================
 global.comm = {};
@@ -61,12 +68,16 @@ require('./server/comm/slicer.js');
 global.app.use(bodyParser.urlencoded({'extended': 'true'}));
 global.app.use(bodyParser.json());
 global.app.use(bodyParser.json({type: 'application/vnd.api+json'}));
+global.app.use(cookieParser());
 global.app.use(methodOverride());
-//global.app.use(session({secret: 'RANDOMRANDOM'}));
+global.app.use(session(
+{
+	secret: 'much_secret_many_safety_wow'
+}));
 
 global.app.all('/*', function(req, res, next)
 {
-	res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Origin", "http://" + global.config.get('app.url') + ':1336');
 	res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
 	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 	res.header("Access-Control-Allow-Credentials", "true");
@@ -75,9 +86,9 @@ global.app.all('/*', function(req, res, next)
 
 getMac.getMac(function(err, macAddress)
 {
-	if(global.config.online.mac != '')
+	if(global.config.environment() == 'development')
 	{
-		macAddress = global.config.online.mac;
+		macAddress = global.config.get('cloud.mac', macAddress);
 	}
 
 	global.socket = require('./server/socket.js')(macAddress);
@@ -91,8 +102,8 @@ getMac.getMac(function(err, macAddress)
 	// start back-end app =====================
 	global.log('info', 'printspot-core started',
 	{
-		'version': global.config.version.number,
-		'host': global.config.local.host,
-		'port': global.config.local.port
+		'version': global.config.get('app.version'),
+		'host': global.config.get('app.url'),
+		'port': global.config.get('app.port')
 	});
 });

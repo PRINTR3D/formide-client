@@ -27,6 +27,17 @@ node_modules
 # Users Environment Variables
 .lock-wscript
 
+# Ignore database
+printspot-core/server/printspot.sqlite
+
+# Ignore config
+printspot-core/config/core.json
+
+# Ignore uploads
+uploads/gcode
+uploads/modelfiles
+uploads/tmp
+
 # Ignore interfaces
 printspot-formide-dashboard
 printr-nectar-dashboard
