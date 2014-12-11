@@ -55,7 +55,7 @@ var session 		= require('express-session')
 // app and server ================
 global.db			= require('./server/db.js');
 global.app 			= express();
-global.server 		= global.app.listen(global.config.get('app.port'), global.config.get('app.url'));
+global.server 		= global.app.listen(global.config.get('app.port'));
 
 // communication =================
 global.comm = {};
@@ -77,7 +77,7 @@ global.app.use(session(
 
 global.app.all('/*', function(req, res, next)
 {
-	res.header("Access-Control-Allow-Origin", "http://" + global.config.get('app.url') + ':1336');
+	res.header("Access-Control-Allow-Origin", req.headers.origin);
 	res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
 	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 	res.header("Access-Control-Allow-Credentials", "true");
