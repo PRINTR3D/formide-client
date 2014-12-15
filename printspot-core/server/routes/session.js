@@ -71,7 +71,7 @@ var auth = function(req, res, next)
 	}
 };
 
-module.exports = exports = function(app)
+module.exports = exports = function(app, macAddress)
 {
 	app.use(passport.initialize());
 	app.use(passport.session());
@@ -86,10 +86,46 @@ module.exports = exports = function(app)
 		res.send(req.isAuthenticated() ? req.user : '0');
 	});
 
+	app.get('/device', function(req, res)
+	{
+		var config = {
+			"environment": global.config.__environment,
+			"ports": {
+				"app": global.config.get('app.port'),
+				"client": global.config.get('client.port'),
+				"slicer": global.config.get('slicer.port'),
+				"interface": global.config.get('app.interface')
+			},
+			"version": global.config.get('app.version'),
+			"debug": global.config.get('app.debug'),
+			"cloud": {
+				"url": global.config.get('cloud.url'),
+				"port": global.config.get('cloud.port')
+			},
+			"mac": macAddress
+		};
+		res.send(config);
+	});
+
 	app.post('/logout', function(req, res)
 	{
 		req.logOut();
 		res.send(200);
+	});
+
+	app.post('/changepassword', function(req, res)
+	{
+		if(req.body.password)
+		{
+			global.db.User.find({where: {id: req.user.id}})
+		  	.success(function(user)
+		  	{
+			  	user.updateAttributes({ password: req.body.password }, ['password']).success(function()
+				{
+					res.send('OK');
+				});
+		  	});
+	  	}
 	});
 
 	app.post('/settings', function(req, res)

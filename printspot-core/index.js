@@ -95,7 +95,7 @@ getMac.getMac(function(err, macAddress)
 
 	// routes ========================
 	require('./server/routes/api.js')(global.app);
-	require('./server/routes/session.js')(global.app);
+	require('./server/routes/session.js')(global.app, macAddress);
 	require('./server/routes/slicing.js')(global.app);
 	require('./server/routes/files.js')(global.app);
 
