@@ -38,13 +38,8 @@ global.log = function(level, msg, data)
 global.config = require('nodejs-config')(
 	__dirname,
 	{
-<<<<<<< Updated upstream
 		development: ['chris.local'],
 		production: ['raspberrypi']
-=======
-		development: ['bouke.local'],
-		production: []
->>>>>>> Stashed changes
 	}
 );
 
