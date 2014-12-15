@@ -57,7 +57,7 @@ module.exports = exports = function(app)
 	{
 		if(req.body.printjobID)
 		{
-			global.db.Printjob.find({where: {id: data.data.responseID}}).success(function(printjob)
+			global.db.Printjob.find({where: {id: req.body.printjobID}}).success(function(printjob)
 			{
 				global.db.Queueitem.create({
 					origin: 'local',

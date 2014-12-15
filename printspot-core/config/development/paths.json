@@ -1,7 +1,7 @@
 {
-	"temp": "uploads/tmp",
+	"temp": "../uploads/tmp",
 
-	"modelfile": "uploads/modelfiles",
+	"modelfile": "../uploads/modelfiles",
 
-	"gcode": "uploads/gcode"
+	"gcode": "../uploads/gcode"
 }
