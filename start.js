@@ -23,12 +23,12 @@ if(!argv.interface)
 else
 {
 	/*
-var interfaceConfig = require('./' + argv.interface + '/man_config.json');
+var interfaceConfig = require('./' + argv.interface + '/config.json');
 	var coreConfig = require('./printspot-core/config/app.json');
 
 	if(!interfaceConfig.dependencies['printspot-core'])
 	{
-		console.error('Interface config has no printspot-core dependency version listed');
+		console.error('Interface config has no printspot-core dependency versions listed');
 		process.exit(1);
 	}
 	else if(!coreConfig.version)

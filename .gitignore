@@ -41,3 +41,9 @@ uploads/tmp
 # Ignore interfaces
 printspot-formide-dashboard
 printr-nectar-dashboard
+
+# Ignore katana
+katana
+settings.json
+firstoutput.stl
+svgdump.html
