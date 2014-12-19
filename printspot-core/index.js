@@ -38,7 +38,7 @@ global.log = function(level, msg, data)
 global.config = require('nodejs-config')(
 	__dirname,
 	{
-		development: ['chris.local'],
+		development: ['chris.local', 'bouke.local'],
 		production: ['raspberrypi']
 	}
 );
