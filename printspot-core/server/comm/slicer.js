@@ -35,7 +35,7 @@ global.comm.slicer.on('data', function(data)
 	{
 		global.db.Printjob.find({where: {sliceResponse: data.data.responseID}}).success(function(printjob)
 		{
-			printjob.updateAttributes({gcode: data.data.gcode, sliceResponse: JSON.stringify(data.data)}, ['gcode']).success(function()
+			printjob.updateAttributes({gcode: data.data.gcode, sliceResponse: JSON.stringify(data.data)}).success(function()
 			{
 				global.db.Queueitem.create({
 					origin: 'local',

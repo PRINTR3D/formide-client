@@ -5,6 +5,7 @@ var printjobID = 0;
 var printerStatus = 'online';
 var targetTemp = 0;
 var targetBedTemp = 0;
+var progress = 0;
 
 var server = net.createServer(function(client)
 {
@@ -31,6 +32,7 @@ var server = net.createServer(function(client)
 
 		if(data.type == 'dashboard_push_printer_stop')
 		{
+			progress = 0;
 			printerStatus = 'online';
 		}
 	});
@@ -45,6 +47,7 @@ var server = net.createServer(function(client)
 			   "type": "client_push_printer_status",
 			   "data": {
 				   "status": printerStatus,
+				   "progress": progress,
 				   "printjobID": printjobID,
 			       "extruders": [
 			           {
@@ -82,6 +85,27 @@ var server = net.createServer(function(client)
 			}
 
 			client.write(JSON.stringify(json));
+
+			if(printerStatus == 'printing')
+			{
+				progress++;
+			}
+
+			if(progress == 100)
+			{
+				printerStatus = 'online';
+				progress = 0;
+
+				var json2 = {
+				   "type": "client_push_printer_finished",
+				   "data": {
+					   "printjobID": printjobID
+				   }
+				}
+
+				client.write(JSON.stringify(json2));
+			}
+
 		}, 2000);
 	}, 2000);
 });

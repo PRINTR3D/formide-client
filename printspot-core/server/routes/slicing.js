@@ -35,20 +35,20 @@ module.exports = exports = function(app)
 
 				// create printjob in DB
 				global.db.Printjob
-				.create(
-				{
-					modelfileID: req.body.modelfile.id,
-					printerID: req.body.printer.id,
-					sliceprofileID: req.body.sliceprofile.id,
-					materials: JSON.stringify(req.body.materials),
-					sliceResponse: hash,
-					sliceParams: JSON.stringify(req.body.sliceparams),
-					sliceMethod: 'local'
-				})
-				.success(function(printjob)
-				{
-					return res.json('OK');
-				});
+					.create(
+					{
+						modelfileID: req.body.modelfile.id,
+						printerID: req.body.printer.id,
+						sliceprofileID: req.body.sliceprofile.id,
+						materials: JSON.stringify(req.body.materials),
+						sliceResponse: hash,
+						sliceParams: JSON.stringify(req.body.sliceparams),
+						sliceMethod: 'local'
+					})
+					.success(function(printjob)
+					{
+						return res.json('OK');
+					});
 			}
 		}
 	});
@@ -59,14 +59,27 @@ module.exports = exports = function(app)
 		{
 			global.db.Printjob.find({where: {id: req.body.printjobID}}).success(function(printjob)
 			{
-				global.db.Queueitem.create({
-					origin: 'local',
-					printjobID: printjob.id,
-					status: 'queued',
-					gcode: printjob.gcode
-				});
+				global.db.Queueitem
+					.create({
+						origin: 'local',
+						printjobID: printjob.id,
+						status: 'queued',
+						gcode: printjob.gcode
+					});
+
 				return res.json('OK');
 			});
 		}
+	});
+
+	app.get('/getqueue', function(req, res)
+	{
+		global.db.Queueitem
+			.findAll(
+			{where:{status: 'queued'}})
+			.success(function(queue)
+			{
+				return res.json(queue);
+			});
 	});
 };

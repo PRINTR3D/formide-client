@@ -174,6 +174,7 @@ module.exports = function(macAddress)
 		global.comm.client.on('data', function(data)
 		{
 			global.log('debug', 'qclient status pushed', data.toString());
+
 			try
 			{
 				data = JSON.parse(data.toString());
@@ -182,6 +183,15 @@ module.exports = function(macAddress)
 			{
 				global.log(e);
 			}
+
+			if(data.type == 'client_push_printer_finished')
+			{
+				global.db.Queueitem.find({where: {id: data.data.printjobID}}).success(function(queueitem)
+				{
+					queueitem.updateAttributes({status: 'finished'});
+				});
+			}
+
 			socket.emit(data.type, data.data);
 		});
 	});
