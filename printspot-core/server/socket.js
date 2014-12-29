@@ -21,111 +21,116 @@ module.exports = function(macAddress)
 	// online connection
 	global.comm.online.on('connect', function()
 	{
-		// receive handshake from socket server
-		global.comm.online.on('handshake', function(data)
-		{
-			global.log('info', 'new online server connection', data);
-			global.comm.online.emit('typeof',
-			{
-				type: 'client',
-				mac: macAddress
-			});
-		});
 
-		// receive auth from socket server
-		global.comm.online.on('auth', function(data)
-		{
-			if(data.message == 'OK')
-			{
-				authorized = true;
-			}
-		});
+	});
 
-		// steram error logging to socket server
-		global.logger.on('logging', function (transport, level, msg, meta)
-		{
-	    	global.comm.online.emit('client_push_log', {level: level, msg: msg, meta: meta, printerID: macAddress});
-	  	});
 
-		// load channels from config
-		global.config.get('channels.dashboard').forEach(function(method)
+	// receive handshake from socket server
+	global.comm.online.on('handshake', function(data)
+	{
+		global.log('info', 'new online server connection', data);
+		global.comm.online.emit('typeof',
 		{
-			(function(realMethod)
-			{
-				global.comm.online.on(realMethod, function(data)
-				{
-					// check if incoming message is really meant for this printer
-					if(data.printerID == macAddress)
-					{
-						var json = {
-							"type": realMethod,
-							"data": data
-						};
-						global.comm.client.write(JSON.stringify(json));
-						global.log('debug', 'online server command ' + realMethod, data);
-					}
-				});
-			})(method);
-		});
-
-		// send online printjob to client
-		global.comm.online.on('dashboard_push_printer_printjob', function(data)
-		{
-			if(data.printerID == macAddress)
-			{
-				var hash = (Math.random() / +new Date()).toString(36).replace(/[^a-z]+/g, '');
-				var newPath = __dirname + '/' + global.config.get('paths.gcode') + '/' + hash;
-
-				fs.writeFile(newPath, data.gcode, function(err)
-				{
-					if(err)
-					{
-						global.log('error', err, {'path': newPath});
-					}
-					else
-					{
-						global.db.Queueitem.create({
-							slicedata: data.slicesettings,
-							origin: 'online',
-							gcode: hash,
-							printjobID: data.id,
-							status: "queued"
-						});
-					}
-				});
-			}
-		});
-
-		// send local queue to online dashboard
-		global.comm.online.on('dashboard_get_printer_queue', function(data)
-		{
-			if(data.printerID == macAddress)
-			{
-				global.db.Queueitem.findAll().success(function(queue)
-				{
-					global.comm.online.emit('client_push_printer_queue', {printerID: macAddress, data: queue});
-				});
-			}
-		});
-
-		// Receive client data and send to online dashboard
-		global.comm.client.on('data', function(data)
-		{
-			if(authorized)
-			{
-				try
-				{
-					data = JSON.parse(data.toString());
-					data.data.printerID = macAddress;
-					global.comm.online.emit(data.type, data.data);
-				}
-				catch(e)
-				{
-					global.log(e);
-				}
-			}
+			type: 'client',
+			mac: macAddress
 		});
 	});
+
+	// receive auth from socket server
+	global.comm.online.on('auth', function(data)
+	{
+		if(data.message == 'OK')
+		{
+			authorized = true;
+		}
+	});
+
+	// steram error logging to socket server
+	global.logger.on('logging', function (transport, level, msg, meta)
+	{
+    	global.comm.online.emit('client_push_log', {level: level, msg: msg, meta: meta, printerID: macAddress});
+  	});
+
+	// load channels from config
+	global.config.get('channels.dashboard').forEach(function(method)
+	{
+		(function(realMethod)
+		{
+			global.comm.online.on(realMethod, function(data)
+			{
+				// check if incoming message is really meant for this printer
+				if(data.printerID == macAddress)
+				{
+					var json = {
+						"type": realMethod,
+						"data": data
+					};
+					global.comm.client.write(JSON.stringify(json));
+					global.log('debug', 'online server command ' + realMethod, data);
+				}
+			});
+		})(method);
+	});
+
+	// send online printjob to client
+	global.comm.online.on('dashboard_push_printer_printjob', function(data)
+	{
+		if(data.printerID == macAddress)
+		{
+			var hash = (Math.random() / +new Date()).toString(36).replace(/[^a-z]+/g, '');
+			var newPath = __dirname + '/' + global.config.get('paths.gcode') + '/' + hash;
+
+			fs.writeFile(newPath, data.gcode, function(err)
+			{
+				if(err)
+				{
+					global.log('error', err, {'path': newPath});
+				}
+				else
+				{
+					global.db.Queueitem.create({
+						slicedata: data.slicesettings,
+						origin: 'online',
+						gcode: hash,
+						printjobID: data.id,
+						status: "queued"
+					});
+				}
+			});
+		}
+	});
+
+	// send local queue to online dashboard
+	global.comm.online.on('dashboard_get_printer_queue', function(data)
+	{
+		if(data.printerID == macAddress)
+		{
+			global.db.Queueitem.findAll().success(function(queue)
+			{
+				global.comm.online.emit('client_push_printer_queue', {printerID: macAddress, data: queue});
+			});
+		}
+	});
+
+	// Receive client data and send to online dashboard
+	global.comm.client.on('data', function(data)
+	{
+		if(authorized)
+		{
+			try
+			{
+				data = JSON.parse(data.toString());
+				data.data.printerID = macAddress;
+				global.comm.online.emit(data.type, data.data);
+			}
+			catch(e)
+			{
+				global.log(e);
+			}
+		}
+	});
+
+
 
 	// local connection
 	global.comm.local.sockets.on('connection', function(socket)
