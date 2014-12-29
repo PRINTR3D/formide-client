@@ -101,11 +101,7 @@ module.exports = function(macAddress)
 		{
 			if(data.printerID == macAddress)
 			{
-				global.db.Queueitem.findAll({
-					where: {
-						status: 'queued'
-					}
-				}).success(function(queue)
+				global.db.Queueitem.findAll().success(function(queue)
 				{
 					global.comm.online.emit('client_push_printer_queue', {printerID: macAddress, data: queue});
 				});
@@ -120,13 +116,13 @@ module.exports = function(macAddress)
 				try
 				{
 					data = JSON.parse(data.toString());
+					data.data.printerID = macAddress;
+					global.comm.online.emit(data.type, data.data);
 				}
 				catch(e)
 				{
 					global.log(e);
 				}
-				data.data.printerID = macAddress;
-				global.comm.online.emit(data.type, data.data);
 			}
 		});
 	});
@@ -178,21 +174,20 @@ module.exports = function(macAddress)
 			try
 			{
 				data = JSON.parse(data.toString());
+				if(data.type == 'client_push_printer_finished')
+				{
+					global.db.Queueitem.find({where: {id: data.data.printjobID}}).success(function(queueitem)
+					{
+						queueitem.updateAttributes({status: 'finished'});
+					});
+				}
+
+				socket.emit(data.type, data.data);
 			}
 			catch(e)
 			{
 				global.log(e);
 			}
-
-			if(data.type == 'client_push_printer_finished')
-			{
-				global.db.Queueitem.find({where: {id: data.data.printjobID}}).success(function(queueitem)
-				{
-					queueitem.updateAttributes({status: 'finished'});
-				});
-			}
-
-			socket.emit(data.type, data.data);
 		});
 	});
 };
