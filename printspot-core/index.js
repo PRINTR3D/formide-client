@@ -88,7 +88,7 @@ getMac.getMac(function(err, macAddress)
 {
 	if(global.config.environment() == 'development')
 	{
-		macAddress = global.config.get('cloud.mac', macAddress);
+		macAddress = global.config.get('cloud.softMac', macAddress);
 	}
 
 	global.socket = require('./server/socket.js')(macAddress);

@@ -88,7 +88,7 @@ var server = net.createServer(function(client)
 
 			if(printerStatus == 'printing')
 			{
-				progress++;
+				progress += 5;
 			}
 
 			if(progress == 100)

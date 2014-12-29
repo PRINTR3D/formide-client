@@ -1,7 +1,4 @@
 {
-	"url": "http://wsdev.formide.com",
-
-	"port": 4000,
-
-	"mac": "AAABBBCCCDDD"
+	"url": "http://ws.formide.com:4000",
+	"softMac": "AAABBBCCCDDD"
 }
