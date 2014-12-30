@@ -105,7 +105,9 @@ module.exports = function(macAddress)
 	{
 		if(data.printerID == macAddress)
 		{
-			global.db.Queueitem.findAll().success(function(queue)
+			global.db.Queueitem
+			.findAll({where: {status: 'queued'}, include: [{model: global.db.Printjob, include: [{model: global.db.Modelfile}]}]})
+			.success(function(queue)
 			{
 				global.comm.online.emit('client_push_printer_queue', {printerID: macAddress, data: queue});
 			});
