@@ -13,7 +13,7 @@
  */
 
 var Config = require('nodejs-config')(
-	__dirname,
+	__dirname + '/..',
 	{
 		development: ['chris.local'],
 		production: ['raspberrypi']
@@ -23,6 +23,5 @@ var Config = require('nodejs-config')(
 module.exports = function()
 {
 	var config = Config;
-
 	return config;
 }

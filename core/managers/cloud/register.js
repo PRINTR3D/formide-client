@@ -13,10 +13,7 @@
  */
 
 // setup new cloud connection
-var cloudConfig = {
-	url: 'http://ws.formide.com:4000',
-	softMac: 'AAABBBCCCDDD'
-};
+var cloudConfig = global.Printspot.config.get('cloud');
 var cloud = require('./cloud.js')(cloudConfig);
 
 // register cloud in printspot

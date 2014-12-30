@@ -19,22 +19,90 @@ module.exports = function(config)
 
 	cloud = require('socket.io-client')(config.url);
 
-	cloud.on('connect', function() {
-		global.Printspot.eventbus.emit('internalSuccess', {
-			type: 'cloud',
-			data: {
-				message: 'Cloud connection initiated'
-			}
+	cloud.on('connect', function()
+	{
+
+	});
+
+	cloud.on('handshake', function(handshake)
+	{
+		cloud.emit('typeof', {
+			type: 'client',
+			mac: global.Printspot.macAddress
 		});
 	});
 
-	cloud.on('handshake', function(handshake) {
-		global.Printspot.eventbus.emit('internalSuccess', {
-			type: 'cloud',
-			data: {
-				message: 'Cloud connection handshake'
-			}
-		});
+	cloud.on('auth', function(auth)
+	{
+		if(auth.message == 'OK')
+		{
+			global.Printspot.eventbus.emit('internalSuccess', {
+				type: 'cloud',
+				data: {
+					url: config.url
+				}
+			});
+		}
+		else
+		{
+			// todo
+		}
+	});
+
+	// send online printjob to client
+	/*
+global.comm.online.on('dashboard_push_printer_printjob', function(data)
+	{
+		if(data.printerID == macAddress)
+		{
+			var hash = (Math.random() / +new Date()).toString(36).replace(/[^a-z]+/g, '');
+			var newPath = __dirname + '/' + global.config.get('paths.gcode') + '/' + hash;
+
+			fs.writeFile(newPath, data.gcode, function(err)
+			{
+				if(err)
+				{
+					global.log('error', err, {'path': newPath});
+				}
+				else
+				{
+					global.db.Queueitem.create({
+						slicedata: data.slicesettings,
+						origin: 'online',
+						gcode: hash,
+						printjobID: data.id,
+						status: "queued"
+					});
+				}
+			});
+		}
+	});
+*/
+
+	global.Printspot.config.get('channels.dashboard').forEach(function(method)
+	{
+		(function(realMethod)
+		{
+			cloud.on(realMethod, function(data)
+			{
+				// check if incoming message is really meant for this printer
+				if(data.printerID == global.Printspot.macAddress)
+				{
+					var json = {
+						"type": realMethod,
+						"data": data
+					};
+
+					global.Printspot.eventbus.emit('cloudPush', json);
+				}
+			});
+		})(method);
+	});
+
+	global.Printspot.eventbus.on('printerStatus', function(status)
+	{
+		status.data.printerID = global.Printspot.macAddress;
+		cloud.emit(status.type, status.data);
 	});
 
 	return cloud;

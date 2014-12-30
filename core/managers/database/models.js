@@ -39,7 +39,7 @@ module.exports = function(config)
 		"sliceParams": "TEXT",
 		"sliceResponse": "TEXT",
 		"sliceMethod": "STRING",
-		"ModelfileId": "INTEGER"
+		//"ModelfileId": "INTEGER"
 	});
 
 	db.Queueitem = sequelize.define('Queueitem', {

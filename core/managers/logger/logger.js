@@ -38,5 +38,11 @@ module.exports = function()
 		console.log(success.type + ": " + JSON.stringify(success.data)); // temporarily
 	});
 
+	global.Printspot.eventbus.on('internalMessage', function(message)
+	{
+		logger.log('debug', message.type, message.data);
+		console.log(message.type + ": " + JSON.stringify(message.data)); // temporarily
+	});
+
 	return logger;
 }

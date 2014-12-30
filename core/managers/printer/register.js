@@ -13,8 +13,7 @@
  */
 
 // setup new printer connection
-//var slicerConfig = global.Printspot.config.get('slicer');
-var printerConfig = {port: 1338};
+var printerConfig = global.Printspot.config.get('printer');
 var printer = require('./printer.js')(printerConfig);
 
 // register printer in printspot

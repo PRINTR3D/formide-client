@@ -20,11 +20,11 @@ module.exports = function(config)
 	var slicer = {};
 
 	// setup tcp connection and log to logger
-	slicer.connection = net.connect({
+	slicer = net.connect({
 		port: config.port
 	}, function() {
 		// emit slicer connection success to global eventbus
-		global.Printspot.eventbus.emit('success', {
+		global.Printspot.eventbus.emit('internalSuccess', {
 			type: 'slicer',
 			data: {
 				port: config.port
@@ -32,7 +32,7 @@ module.exports = function(config)
 		});
 	});
 
-	slicer.connection.on('error', function(error)
+	slicer.on('error', function(error)
 	{
 		// emit slicer connection error to global eventbus
 		global.Printspot.eventbus.emit('internalError', {
@@ -41,7 +41,7 @@ module.exports = function(config)
 		});
 	});
 
-	slicer.connection.on('data', function(data)
+	slicer.on('data', function(data)
 	{
 		try // try parsing
 		{
@@ -81,6 +81,12 @@ module.exports = function(config)
 		{
 			// todo
 		}
+	});
+
+	global.Printspot.eventbus.on('slice', function(slice)
+	{
+		console.log(slice);
+		slicer.write(JSON.stringify(slice));
 	});
 
 	return slicer;

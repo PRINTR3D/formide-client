@@ -13,12 +13,7 @@
  */
 
 // setup new db connection
-var dbConfig = {
-	username: 'root',
-	password: null,
-	database: 'printspot',
-	storage: 'printspot.sqlite'
-};
+var dbConfig = global.Printspot.config.get('database');
 var db = require('./models.js')(dbConfig);
 
 // register db in printspot

@@ -1,0 +1,7 @@
+{
+	"temp": "../uploads/tmp",
+
+	"modelfile": "../uploads/modelfiles",
+
+	"gcode": "../uploads/gcode"
+}

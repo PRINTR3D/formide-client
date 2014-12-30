@@ -84,7 +84,9 @@ var server = net.createServer(function(client)
 			   	}
 			}
 
-			client.write(JSON.stringify(json));
+			if(!client.destroyed) {
+				client.write(JSON.stringify(json));
+			}
 
 			if(printerStatus == 'printing')
 			{
@@ -103,7 +105,9 @@ var server = net.createServer(function(client)
 				   }
 				}
 
-				client.write(JSON.stringify(json2));
+				if(!client.destroyed) {
+					client.write(JSON.stringify(json2));
+				}
 			}
 
 		}, 2000);

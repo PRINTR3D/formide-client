@@ -15,5 +15,13 @@
 module.exports = function(name, object)
 {
 	global.Printspot[name] = object;
+
+	global.Printspot.eventbus.emit('internalMessage', {
+		type: 'register',
+		data: {
+			message: 'Registered module: ' + name
+		}
+	});
+
 	// do other stuff like registering events and listeners
 }

@@ -54,7 +54,7 @@ if(argv.slicer)
 	var katana = spawn('node', ['index.js'], {cwd: 'printspot-katana-simulator', stdio: 'pipe'});
 }
 
-var core = spawn('node', ['index.js','--dev'], {cwd: 'printspot-core', stdio: 'pipe'});
+var core = spawn('node', ['bootstrap.js'], {cwd: 'core', stdio: 'pipe'});
 var manufacturer = spawn('node', ['index.js'], {cwd: argv.interface, stdio: 'pipe'});
 
 if(argv.simulator)
