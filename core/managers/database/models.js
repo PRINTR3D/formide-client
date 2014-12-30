@@ -30,7 +30,7 @@ module.exports = function(config)
 	});
 
 	db.Printjob = sequelize.define('Printjob', {
-		"modelfileID": "INTEGER",
+		//"modelfileID": "INTEGER",
 		"userID": "INTEGER",
 		"printerID": "INTEGER",
 		"sliceprofileID": "INTEGER",
@@ -39,7 +39,7 @@ module.exports = function(config)
 		"sliceParams": "TEXT",
 		"sliceResponse": "TEXT",
 		"sliceMethod": "STRING",
-		//"ModelfileId": "INTEGER"
+		"ModelfileId": "INTEGER"
 	});
 
 	db.Queueitem = sequelize.define('Queueitem', {

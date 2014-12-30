@@ -39,14 +39,11 @@ module.exports = function(app)
 
 			if(req.body.slicemethod == 'local')
 			{
-				// send slice request to local slicer
-				global.Printspot.eventbus.emit('slice', json);
-
 				// create printjob in DB
 				global.Printspot.db.Printjob
 					.create(
 					{
-						modelfileID: req.body.modelfile.id,
+						ModelfileId: req.body.modelfile.id,
 						printerID: req.body.printer.id,
 						sliceprofileID: req.body.sliceprofile.id,
 						materials: JSON.stringify(req.body.materials),
@@ -56,6 +53,8 @@ module.exports = function(app)
 					})
 					.success(function(printjob)
 					{
+						// send slice request to local slicer
+						global.Printspot.eventbus.emit('slice', json);
 						return res.json('OK');
 					});
 			}

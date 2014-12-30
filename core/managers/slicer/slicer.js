@@ -85,7 +85,7 @@ module.exports = function(config)
 
 	global.Printspot.eventbus.on('slice', function(slice)
 	{
-		console.log(slice);
+		console.log(slice); // todo
 		slicer.write(JSON.stringify(slice));
 	});
 
