@@ -100,6 +100,18 @@ module.exports = function(macAddress)
 		}
 	});
 
+	// push print start
+	global.comm.online.on('dashboard_push_printer_start', function(data)
+	{
+		data.hash = __dirname + '/../../uploads/gcode/' + data.hash;
+		var json = {
+			"type": "dashboard_push_printer_start",
+			"data": data
+		};
+		global.comm.client.write(JSON.stringify(json));
+		global.log('debug', 'online dashboard command ' + "dashboard_push_printer_start", data);
+	});
+
 	// send local queue to online dashboard
 	global.comm.online.on('dashboard_get_printer_queue', function(data)
 	{

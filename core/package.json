@@ -1,0 +1,16 @@
+{
+  "name": "printspot-core",
+  "version": "1.0.0",
+  "description": "Event based 3D printing operating system",
+  "main": "bootstrap.js",
+  "author": "Printr",
+  "private": true,
+  "dependencies": {
+    "nodejs-config": "1.0.0",
+    "winston": "^0.8.1",
+    "sequelize": "~1.7.0-rc6",
+    "lodash": "2.4.1",
+    "sqlite3": "2.1.19",
+    "socket.io-client": "1.1.0"
+  }
+}
