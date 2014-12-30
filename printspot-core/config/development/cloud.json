@@ -1,4 +1,4 @@
 {
-	"url": "http://ws.formide.com:4000",
+	"url": "http://localhost:4000",
 	"softMac": "AAABBBCCCDDD"
 }

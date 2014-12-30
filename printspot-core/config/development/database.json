@@ -33,8 +33,7 @@
 		"fields": {
 			"origin": "STRING",
 			"gcode": "STRING",
-			"status": "STRING",
-			"printjobID": "INTEGER"
+			"status": "STRING"
 		},
 		"records": {
 

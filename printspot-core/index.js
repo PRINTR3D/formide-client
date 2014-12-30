@@ -12,6 +12,23 @@
  *
  */
 
+
+// Managers
+
+/*
+
+Driver (printer)					Printspot.printers[0].home()
+Slicer								Printspot.slicer.on, Printspot.slicer.slice()
+Dashboard							Printspot.dashboard.notifiy()
+Socketserver (cloud)				Printspot.cloud.notify(), Printspot.cloud.on(), Printspot.cloud.sliceprofiles.get(1)
+Data (resources, queue, users)		Printspot.data.sliceprofiles.get(1)
+wifi								Printspot.utils.wifi.scan()
+LED									Printspot.utils.led.temp(150)
+Update								Printspot.utils.update.search()
+
+*/
+
+
 // logging ======================
 var argv 			= require('minimist')(process.argv.slice(2));
 var winston			= require('winston');
@@ -91,7 +108,7 @@ getMac.getMac(function(err, macAddress)
 	global.socket = require('./server/socket.js')(macAddress);
 
 	// routes ========================
-	require('./server/routes/api.js')(global.app);
+	require('./server/routes/api.js')(global.app, global.sequelize);
 	require('./server/routes/session.js')(global.app, macAddress);
 	require('./server/routes/slicing.js')(global.app);
 	require('./server/routes/files.js')(global.app);

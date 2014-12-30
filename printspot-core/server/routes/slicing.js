@@ -25,7 +25,16 @@ module.exports = exports = function(app)
 				"data": req.body.sliceparams
 			};
 
-			json.data.model = "uploads/modelfiles/" + json.data.model;
+			var model = {
+				"hash": json.data.model,
+				"bucketIn": __dirname + "/../../../uploads/modelfiles",
+				"x": 10000,
+				"y": 10000,
+				"z": 0
+			};
+
+			json.data.model = [model];
+			json.data.bucketOut = __dirname + "/../../../uploads/gcode";
 			json.data.responseID = hash;
 
 			if(req.body.slicemethod == 'local')
@@ -57,26 +66,28 @@ module.exports = exports = function(app)
 	{
 		if(req.body.printjobID)
 		{
-			global.db.Printjob.find({where: {id: req.body.printjobID}}).success(function(printjob)
-			{
-				global.db.Queueitem
-					.create({
-						origin: 'local',
-						printjobID: printjob.id,
-						status: 'queued',
-						gcode: printjob.gcode
-					});
-
-				return res.json('OK');
-			});
+			global.db.Printjob.find({where: {id: req.body.printjobID}})
+				.success(function(printjob)
+				{
+					global.db.Queueitem
+						.create({
+							origin: 'local',
+							status: 'queued',
+							gcode: printjob.gcode,
+							PrintjobId: printjob.id
+						})
+						.success(function(queueitem)
+						{
+							return res.json('OK');
+						});
+				});
 		}
 	});
 
 	app.get('/getqueue', function(req, res)
 	{
 		global.db.Queueitem
-			.findAll(
-			{where:{status: 'queued'}})
+			.findAll({where: {status: 'queued'}, include: [{model: global.db.Printjob, include: [{model: global.db.Modelfile}]}]})
 			.success(function(queue)
 			{
 				return res.json(queue);

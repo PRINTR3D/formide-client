@@ -14,9 +14,12 @@
 
 var restful = require('epilogue');
 
-module.exports = exports = function(app)
+module.exports = exports = function(app, sequelize)
 {
-	restful.initialize({ app: global.app });
+	restful.initialize({
+		app: app,
+		sequelize: sequelize
+	});
 
 	restful.resource({
 	    model: global.db.Sliceprofile,

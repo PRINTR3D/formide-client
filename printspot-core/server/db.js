@@ -14,18 +14,68 @@
 
 var Sequelize 	= require('sequelize');
 var lodash    	= require('lodash');
-var sequelize 	= new Sequelize('printspot', 'root', null, {
+var sequelize = global.sequelize = new Sequelize('printspot', 'root', null, {
 	dialect: "sqlite",
 	storage: 'server/printspot.sqlite'
 });
 var db			= {};
-var sqliteConfig = global.config.get('database');
 
-for(var key in sqliteConfig) {
-	(function(realKey) {
-		db[realKey] = sequelize.define(realKey, sqliteConfig[realKey].fields);
-	})(key);
-}
+db.User = sequelize.define('User', {
+    "username": "STRING",
+    "password": "STRING"
+});
+
+db.Printjob = sequelize.define('Printjob', {
+	"modelfileID": "INTEGER",
+	"userID": "INTEGER",
+	"printerID": "INTEGER",
+	"sliceprofileID": "INTEGER",
+	"materials": "TEXT",
+	"gcode": "STRING",
+	"sliceParams": "TEXT",
+	"sliceResponse": "TEXT",
+	"sliceMethod": "STRING",
+	"ModelfileId": "INTEGER"
+});
+
+db.Queueitem = sequelize.define('Queueitem', {
+	"origin": "STRING",
+	"gcode": "STRING",
+	"status": "STRING",
+	"PrintjobId": "INTEGER"
+});
+
+db.Modelfile = sequelize.define('Modelfile', {
+	"filename": "STRING",
+	"filesize": "INTEGER",
+	"hash": "STRING",
+	"userID": "INTEGER"
+});
+
+db.Printer = sequelize.define('Printer', {
+	"name": "STRING",
+	"buildVolumeX": "INTEGER",
+	"buildVolumeY": "INTEGER",
+	"buildVolumeZ": "INTEGER",
+	"bed": "BOOLEAN",
+	"extruders": "TEXT"
+});
+
+db.Material = sequelize.define('Material', {
+	"name": "STRING",
+	"type": "STRING",
+	"filamentDiameter": "INTEGER",
+	"temperature": "INTEGER",
+	"firstLayersTemperature": "INTEGER",
+	"bedTemperature": "INTEGER",
+	"firstLayersBedTemperature": "INTEGER",
+	"feedrate": "INTEGER"
+});
+
+db.Sliceprofile = sequelize.define('Sliceprofile', {
+	"name": "STRING",
+	"settings": "TEXT"
+});
 
 Object.keys(db).forEach(function(modelName) {
   if ('associate' in db[modelName]) {
@@ -33,7 +83,13 @@ Object.keys(db).forEach(function(modelName) {
   }
 });
 
+db.Printjob.hasMany(db.Queueitem);
+db.Queueitem.belongsTo(db.Printjob);
+
+db.Modelfile.hasMany(db.Printjob);
+db.Printjob.belongsTo(db.Modelfile);
+
 module.exports = lodash.extend({
-  sequelize: sequelize,
-  Sequelize: Sequelize
+	sequelize: sequelize,
+	Sequelize: Sequelize
 }, db);

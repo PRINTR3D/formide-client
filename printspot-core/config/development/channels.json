@@ -4,7 +4,6 @@
 		"dashboard_push_printer_gcode",
 		"dashboard_push_printer_home",
 		"dashboard_push_printer_jog",
-		"dashboard_push_printer_start",
 		"dashboard_push_printer_pause",
 		"dashboard_push_printer_resume",
 		"dashboard_push_printer_stop",

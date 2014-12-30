@@ -171,6 +171,18 @@ module.exports = function(macAddress)
 			})(method);
 		});
 
+		// push print start
+		socket.on('dashboard_push_printer_start', function(data)
+		{
+			data.hash = __dirname + '/../../uploads/gcode/' + data.hash;
+			var json = {
+				"type": "dashboard_push_printer_start",
+				"data": data
+			};
+			global.comm.client.write(JSON.stringify(json));
+			global.log('debug', 'local dashboard command ' + "dashboard_push_printer_start", data);
+		});
+
 		// receive driver data and send to local dashboard
 		global.comm.client.on('data', function(data)
 		{
