@@ -29,7 +29,12 @@ module.exports = function(config)
 	});
 
 	cloud.on('handshake', function(handshake) {
-
+		global.Printspot.eventbus.emit('internalSuccess', {
+			type: 'cloud',
+			data: {
+				message: 'Cloud connection handshake'
+			}
+		});
 	});
 
 	return cloud;

@@ -101,12 +101,6 @@ sequelize
 				"password": "password"
 			});
 
-			Modelfile.create({
-				"filename": "cube40mm.stl",
-				"filesize": 1423,
-				"hash": "epsnhgnyoxahbursor"
-			});
-
 			Printer.create({
 				"name": "Big Builder",
 				"buildVolumeX": 200,
@@ -152,7 +146,7 @@ sequelize
 			});
 
 			Sliceprofile.create({
-				"name": "Nectar Default",
+				"name": "Default",
 				"settings": JSON.stringify(
 				{
 					"slicerConfig": "marlinDualExtrusion",
