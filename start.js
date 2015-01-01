@@ -55,7 +55,7 @@ if(argv.slicer)
 }
 
 var core = spawn('node', ['bootstrap.js'], {cwd: 'core', stdio: 'pipe'});
-var manufacturer = spawn('node', ['index.js'], {cwd: argv.interface, stdio: 'pipe'});
+var manufacturer = spawn('node', ['index.js'], {cwd: 'interfaces/' + argv.interface, stdio: 'pipe'});
 
 if(argv.simulator)
 {

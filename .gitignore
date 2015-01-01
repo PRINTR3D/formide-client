@@ -32,8 +32,7 @@ core/printspot.sqlite
 uploads
 
 # Interfaces
-printspot-formide-dashboard
-printr-nectar-dashboard
+interfaces
 
 # Slicer
 katana
