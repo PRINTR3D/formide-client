@@ -1,0 +1,17 @@
+{
+	"supported": [
+		"RepRap",
+		"Ultimaker",
+		"Ultimaker 2",
+		"Prusa i2",
+		"Prusa i3",
+		"NectarOne",
+		"Solidoodle 2",
+		"Felix 2",
+		"Felix 3",
+		"Witbox"
+	],
+	"unsupported": [
+		"Makerbot"
+	]
+}
