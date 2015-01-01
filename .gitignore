@@ -1,5 +1,4 @@
 # Logs
-logs
 *.log
 
 # Runtime data
@@ -20,13 +19,26 @@ coverage
 build/Release
 
 # Dependency directory
-# Commenting this out is preferred by some people, see
-# https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git-
 node_modules
+core/node_modules
 
 # Users Environment Variables
 .lock-wscript
 
-# Ignore interfaces
-printspot-formide-dashboard
-printr-nectar-dashboard
+# Database
+core/printspot.sqlite
+
+# Uploads
+uploads
+
+# Interfaces
+interfaces
+
+# Slicer
+katana
+settings.json
+firstoutput.stl
+svgdump.html
+
+# Logs
+logs

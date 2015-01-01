@@ -1,0 +1,6 @@
+{
+	"username": "root",
+	"password": null,
+	"database": "printspot",
+	"storage": "printspot.sqlite"
+}

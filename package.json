@@ -1,0 +1,6 @@
+{
+  "name": "printspot",
+  "dependencies": {
+    "minimist": "latest"
+  }
+}

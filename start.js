@@ -22,24 +22,26 @@ if(!argv.interface)
 }
 else
 {
-	var interfaceConfig = require('./' + argv.interface + '/man_config.json');
-	var coreConfig = require('./printspot-core/config/core.json');
+	/*
+var interfaceConfig = require('./' + argv.interface + '/config.json');
+	var coreConfig = require('./printspot-core/config/app.json');
 
 	if(!interfaceConfig.dependencies['printspot-core'])
 	{
-		console.error('Interface config has no printspot-core dependency version listed');
+		console.error('Interface config has no printspot-core dependency versions listed');
 		process.exit(1);
 	}
-	else if(!coreConfig.version.number)
+	else if(!coreConfig.version)
 	{
 		console.error('Core config has no verion number listed');
 		process.exit(1);
 	}
-	else if(coreConfig.version.number != interfaceConfig.dependencies['printspot-core'])
+	else if(coreConfig.version != interfaceConfig.dependencies['printspot-core'])
 	{
 		console.error('Core version number is not compatible with interface printspot-core dependency version number');
 		process.exit(1);
 	}
+*/
 }
 
 if(argv.simulator)
@@ -52,8 +54,8 @@ if(argv.slicer)
 	var katana = spawn('node', ['index.js'], {cwd: 'printspot-katana-simulator', stdio: 'pipe'});
 }
 
-var core = spawn('node', ['index.js','--dev'], {cwd: 'printspot-core', stdio: 'pipe'});
-var manufacturer = spawn('node', ['index.js'], {cwd: argv.interface, stdio: 'pipe'});
+var core = spawn('node', ['bootstrap.js'], {cwd: 'core', stdio: 'pipe'});
+var manufacturer = spawn('node', ['index.js'], {cwd: 'interfaces/' + argv.interface, stdio: 'pipe'});
 
 if(argv.simulator)
 {
