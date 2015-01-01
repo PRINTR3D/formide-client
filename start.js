@@ -1,6 +1,7 @@
-var spawn       = require('child_process').spawn;
-var argv        = require('minimist')(process.argv.slice(2));
-var net         = require('net');
+var spawn       	= require('child_process').spawn;
+var argv        	= require('minimist')(process.argv.slice(2));
+var net         	= require('net');
+var manufacturer_d 	= 'printspot-formide-dashboard';
 
 function readlines(stream,cb)
 {
@@ -17,34 +18,14 @@ function readlines(stream,cb)
 
 if(!argv.interface)
 {
-    console.error('No interface given');
-    process.exit(1);
+    console.error('No interface given, defaulted to FormideOS');
 }
 else
 {
-	/*
-var interfaceConfig = require('./' + argv.interface + '/config.json');
-	var coreConfig = require('./printspot-core/config/app.json');
-
-	if(!interfaceConfig.dependencies['printspot-core'])
-	{
-		console.error('Interface config has no printspot-core dependency versions listed');
-		process.exit(1);
-	}
-	else if(!coreConfig.version)
-	{
-		console.error('Core config has no verion number listed');
-		process.exit(1);
-	}
-	else if(coreConfig.version != interfaceConfig.dependencies['printspot-core'])
-	{
-		console.error('Core version number is not compatible with interface printspot-core dependency version number');
-		process.exit(1);
-	}
-*/
+	manufacturer_d = argv.interface;
 }
 
-if(argv.simulator)
+if(argv.driver)
 {
 	var client = spawn('node', ['index.js'], {cwd: 'printspot-qclient-simulator', stdio: 'pipe'});
 }
@@ -55,9 +36,9 @@ if(argv.slicer)
 }
 
 var core = spawn('node', ['bootstrap.js'], {cwd: 'core', stdio: 'pipe'});
-var manufacturer = spawn('node', ['index.js'], {cwd: 'interfaces/' + argv.interface, stdio: 'pipe'});
+var manufacturer = spawn('node', ['index.js'], {cwd: 'interfaces/' + manufacturer_d, stdio: 'pipe'});
 
-if(argv.simulator)
+if(argv.driver)
 {
     client.on('exit',function(code) { console.error('client exited', code); });
 	client.on('error',function(err) { console.log('client error',err); });
@@ -79,7 +60,7 @@ if(argv.dev)
 {
     console.log('running in dev mode');
 
-    if(argv.simulator)
+    if(argv.driver)
     {
 		readlines(client.stdout, console.log.bind(null,'client:'));
 		readlines(client.stderr, console.error.bind(null,'client:'));
