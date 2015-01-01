@@ -12,16 +12,17 @@
  *
  */
 
-var Config = require('nodejs-config')(
-	__dirname + '/..',
-	{
-		development: ['chris.local'],
-		production: ['raspberrypi']
-	}
-);
+var Config = require('nodejs-config');
 
 module.exports = function()
 {
-	var config = Config;
+	var config = Config(
+		__dirname + '/..',
+		{
+			development: ['chris.local', 'wlan229181.mobiel.utwente.nl'],
+			production: ['raspberrypi']
+		}
+	);
+
 	return config;
 }

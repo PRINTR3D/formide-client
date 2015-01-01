@@ -28,7 +28,7 @@ module.exports = function(config)
 	{
 		cloud.emit('typeof', {
 			type: 'client',
-			mac: global.Printspot.macAddress
+			mac: Printspot.macAddress
 		});
 	});
 
@@ -36,7 +36,7 @@ module.exports = function(config)
 	{
 		if(auth.message == 'OK')
 		{
-			global.Printspot.eventbus.emit('internalSuccess', {
+			Printspot.eventbus.emit('internalSuccess', {
 				type: 'cloud',
 				data: {
 					url: config.url
@@ -79,30 +79,35 @@ global.comm.online.on('dashboard_push_printer_printjob', function(data)
 	});
 */
 
-	global.Printspot.config.get('channels.dashboard').forEach(function(method)
+	Printspot.config.get('channels.dashboard').forEach(function(method)
 	{
 		(function(realMethod)
 		{
 			cloud.on(realMethod, function(data)
 			{
 				// check if incoming message is really meant for this printer
-				if(data.printerID == global.Printspot.macAddress)
+				if(data.printerID == Printspot.macAddress)
 				{
 					var json = {
 						"type": realMethod,
 						"data": data
 					};
 
-					global.Printspot.eventbus.emit('cloudPush', json);
+					Printspot.eventbus.emit('cloudPush', json);
 				}
 			});
 		})(method);
 	});
 
-	global.Printspot.eventbus.on('printerStatus', function(status)
+	Printspot.eventbus.on('printerStatus', function(status)
 	{
-		status.data.printerID = global.Printspot.macAddress;
+		status.data.printerID = Printspot.macAddress;
 		cloud.emit(status.type, status.data);
+	});
+
+	Printspot.eventbus.on('notification', function(notification)
+	{
+		cloud.emit('client_push_notification', notification.message);
 	});
 
 	return cloud;

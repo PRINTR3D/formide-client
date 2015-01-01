@@ -14,7 +14,7 @@
 
 module.exports = function(macAddress)
 {
-	var dashboard = require('socket.io').listen(global.Printspot.server);
+	var dashboard = require('socket.io').listen(Printspot.server);
 
 	dashboard.on('connection', function(socket)
 	{
@@ -26,10 +26,10 @@ module.exports = function(macAddress)
 		{
 			if(data.type == 'dashboard')
 			{
-				global.Printspot.eventbus.emit('internalSuccess', {
+				Printspot.eventbus.emit('internalSuccess', {
 					type: 'dashboard',
 					data: {
-						port: global.Printspot.config.get('dashboard.port')
+						port: Printspot.config.get('dashboard.port')
 					}
 				});
 
@@ -40,7 +40,7 @@ module.exports = function(macAddress)
 		// Socket disconnect
 		socket.on('disconnect', function()
 		{
-			global.Printspot.eventbus.emit('internalMessage', {
+			Printspot.eventbus.emit('internalMessage', {
 				type: 'dashboard',
 				data: {
 					message: 'Dashboard disconnected'
@@ -49,7 +49,7 @@ module.exports = function(macAddress)
 		});
 
 		// load channels from config
-		global.Printspot.config.get('channels.dashboard').forEach(function(method)
+		Printspot.config.get('channels.dashboard').forEach(function(method)
 		{
 			(function(realMethod)
 			{
@@ -60,7 +60,7 @@ module.exports = function(macAddress)
 						"data": data
 					};
 
-					global.Printspot.eventbus.emit('dashboardPush', json);
+					Printspot.eventbus.emit('dashboardPush', json);
 				});
 			})(method);
 		});
@@ -75,13 +75,17 @@ module.exports = function(macAddress)
 				"data": data
 			};
 
-			global.Printspot.eventbus.emit('dashboardPush', json);
+			Printspot.eventbus.emit('dashboardPush', json);
 		});
 
-		global.Printspot.eventbus.on('printerStatus', function(status)
+		Printspot.eventbus.on('printerStatus', function(status)
 		{
-			status.data.printerID = macAddress;
 			socket.emit(status.type, status.data);
+		});
+
+		Printspot.eventbus.on('notification', function(notification)
+		{
+			socket.emit('client_push_notification', notification.message);
 		});
 
 		// todo: add listener for other client commands

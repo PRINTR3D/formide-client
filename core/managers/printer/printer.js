@@ -24,7 +24,7 @@ module.exports = function(config)
 		port: config.port
 	}, function() {
 		// emit printer connection success to global eventbus
-		global.Printspot.eventbus.emit('internalSuccess', {
+		Printspot.eventbus.emit('internalSuccess', {
 			type: 'printer',
 			data: {
 				port: config.port
@@ -35,7 +35,7 @@ module.exports = function(config)
 	printer.on('error', function(error)
 	{
 		// emit printer connection error to global eventbus
-		global.Printspot.eventbus.emit('internalError', {
+		Printspot.eventbus.emit('internalError', {
 			type: 'printer',
 			data: error
 		});
@@ -46,11 +46,11 @@ module.exports = function(config)
 		try // try parsing
 		{
 			data = JSON.parse(data.toString());
-			global.Printspot.eventbus.emit('printerStatus', data);
+			Printspot.eventbus.emit('printerStatus', data);
 
 			if(data.type == 'client_push_printer_finished')
 			{
-				global.Printspot.db.Queueitem
+				Printspot.db.Queueitem
 				.find({where: {id: data.data.printjobID}})
 				.success(function(queueitem)
 				{
@@ -69,12 +69,12 @@ module.exports = function(config)
 		}
 	});
 
-	global.Printspot.eventbus.on('cloudPush', function(data)
+	Printspot.eventbus.on('cloudPush', function(data)
 	{
 		printer.write(JSON.stringify(data));
 	});
 
-	global.Printspot.eventbus.on('dashboardPush', function(data)
+	Printspot.eventbus.on('dashboardPush', function(data)
 	{
 		printer.write(JSON.stringify(data));
 	});

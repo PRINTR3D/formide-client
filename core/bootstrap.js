@@ -13,34 +13,26 @@
  */
 
 // require dependencies
-var events = require('events');
 var getMac = require('getmac');
-var express = require('express');
+var config = require('./utils/config.js')();
 
 // define global Printspot object
-global.Printspot = {};
-
-// register global objects
-global.Printspot.eventbus = new events.EventEmitter();
-global.Printspot.register = require('./utils/register.js');
-global.Printspot.config = require('./utils/config.js')();
-global.Printspot.app = express();
-global.Printspot.server = global.Printspot.app.listen(global.Printspot.config.get('app.port'));
+Printspot = require('./Printspot')(config);
 
 getMac.getMac(function(err, macAddress)
 {
-	global.Printspot.macAddress = global.Printspot.config.get('cloud.softMac', macAddress);
+	Printspot.macAddress = Printspot.config.get('cloud.softMac', macAddress);
 
 	// require mandatory modules
-	require('./managers/logger/register.js');
-	require('./managers/database/register.js');
+	require('./managers/logger');
+	require('./managers/database');
 
-	// require communication modules
-	require('./managers/slicer/register.js');
-	require('./managers/printer/register.js');
-	require('./managers/cloud/register.js');
-	require('./managers/dashboard/register.js');
-
-	// require api
-	require('./api/register.js');
+	// require other modules
+	require('./managers/slicer');
+	require('./managers/printer');
+	require('./managers/cloud');
+	require('./managers/dashboard');
+	require('./managers/api');
+	require('./managers/camera');
+	require('./managers/wifi');
 });

@@ -24,7 +24,7 @@ module.exports = function(config)
 		port: config.port
 	}, function() {
 		// emit slicer connection success to global eventbus
-		global.Printspot.eventbus.emit('internalSuccess', {
+		Printspot.eventbus.emit('internalSuccess', {
 			type: 'slicer',
 			data: {
 				port: config.port
@@ -35,7 +35,7 @@ module.exports = function(config)
 	slicer.on('error', function(error)
 	{
 		// emit slicer connection error to global eventbus
-		global.Printspot.eventbus.emit('internalError', {
+		Printspot.eventbus.emit('internalError', {
 			type: 'slicer',
 			data: error
 		});
@@ -49,7 +49,7 @@ module.exports = function(config)
 
 			if(data.status == 200 && data.data.responseID != null)
 			{
-				global.Printspot.db.Printjob
+				Printspot.db.Printjob
 				.find({where: {sliceResponse: data.data.responseID}})
 				.success(function(printjob)
 				{
@@ -57,7 +57,7 @@ module.exports = function(config)
 					.updateAttributes({gcode: data.data.gcode, sliceResponse: JSON.stringify(data.data)})
 					.success(function()
 					{
-						global.Printspot.db.Queueitem
+						Printspot.db.Queueitem
 						.create({
 							origin: 'local',
 							status: 'queued',
@@ -66,11 +66,8 @@ module.exports = function(config)
 						})
 						.success(function(queueitem) {
 							// emit slice finished notification to global eventbus
-							global.Printspot.eventbus.emit('notification', {
-								type: 'slicer',
-								data: {
-									message: 'Slicing finished'
-								}
+							Printspot.eventbus.emit('notification', {
+								message: 'Slicing finished'
 							});
 						})
 					});
@@ -83,7 +80,7 @@ module.exports = function(config)
 		}
 	});
 
-	global.Printspot.eventbus.on('slice', function(slice)
+	Printspot.eventbus.on('slice', function(slice)
 	{
 		console.log(slice); // todo
 		slicer.write(JSON.stringify(slice));

@@ -26,19 +26,19 @@ module.exports = function()
 	    ]
 	});
 
-	global.Printspot.eventbus.on('internalError', function(error)
+	Printspot.eventbus.on('internalError', function(error)
 	{
 		logger.log('debug', error.type, error.data);
 		console.log(error.type + ": " + JSON.stringify(error.data)); // temporarily
 	});
 
-	global.Printspot.eventbus.on('internalSuccess', function(success)
+	Printspot.eventbus.on('internalSuccess', function(success)
 	{
 		logger.log('debug', success.type, success.data);
 		console.log(success.type + ": " + JSON.stringify(success.data)); // temporarily
 	});
 
-	global.Printspot.eventbus.on('internalMessage', function(message)
+	Printspot.eventbus.on('internalMessage', function(message)
 	{
 		logger.log('debug', message.type, message.data);
 		console.log(message.type + ": " + JSON.stringify(message.data)); // temporarily
