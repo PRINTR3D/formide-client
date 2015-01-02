@@ -92,9 +92,9 @@ module.exports = function(app, macAddress)
 			"environment": Printspot.config.__environment,
 			"ports": {
 				"app": Printspot.config.get('app.port'),
-				"client": Printspot.config.get('client.port'),
+				"client": Printspot.config.get('printer.port'),
 				"slicer": Printspot.config.get('slicer.port'),
-				"interface": Printspot.config.get('app.interface')
+				"interface": Printspot.config.get('dashboard.port')
 			},
 			"version": Printspot.config.get('app.version'),
 			"debug": Printspot.config.get('app.debug'),
