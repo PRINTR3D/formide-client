@@ -21,8 +21,7 @@ module.exports = function()
 	logger = new(winston.Logger)({
 		transports:
 	    [
-			new (winston.transports.File)({filename: '../logs/printspot.log', level: 'debug' }),
-			new winston.transports.Console()
+			new (winston.transports.File)({filename: '../logs/printspot.log', level: 'debug' })
 	    ]
 	});
 

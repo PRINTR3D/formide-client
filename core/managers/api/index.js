@@ -19,13 +19,13 @@ var methodOverride	= require('method-override');
 var session 		= require('express-session')
 
 // app configuration
-Printspot.app.use(bodyParser.urlencoded({ 'extended': 'true' }));
-Printspot.app.use(bodyParser.json());
-Printspot.app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
-Printspot.app.use(cookieParser());
-Printspot.app.use(methodOverride());
-Printspot.app.use(session({ secret: 'much_secret_many_safety_wow', resave: true, saveUninitialized: true }));
-Printspot.app.all('/*', function(req, res, next)
+Printspot.manager('app').use(bodyParser.urlencoded({ 'extended': 'true' }));
+Printspot.manager('app').use(bodyParser.json());
+Printspot.manager('app').use(bodyParser.json({ type: 'application/vnd.api+json' }));
+Printspot.manager('app').use(cookieParser());
+Printspot.manager('app').use(methodOverride());
+Printspot.manager('app').use(session({ secret: 'much_secret_many_safety_wow', resave: true, saveUninitialized: true }));
+Printspot.manager('app').all('/*', function(req, res, next)
 {
 	res.header("Access-Control-Allow-Origin", req.headers.origin);
 	res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
@@ -34,7 +34,10 @@ Printspot.app.all('/*', function(req, res, next)
 	next();
 });
 
-require('./resources.js')(Printspot.app, Printspot.db.sequelize);
-require('./files.js')(Printspot.app);
-require('./queue.js')(Printspot.app);
-require('./session.js')(Printspot.app, Printspot.macAddress);
+require('./resources.js')(Printspot.manager('app'), Printspot.manager('db').sequelize);
+require('./files.js')(Printspot.manager('app'));
+require('./queue.js')(Printspot.manager('app'));
+require('./session.js')(Printspot.manager('app'), Printspot.macAddress);
+
+// register api in printspot
+Printspot.register('api', Printspot.app);

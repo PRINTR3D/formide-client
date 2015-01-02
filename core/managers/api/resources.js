@@ -22,37 +22,37 @@ module.exports = function(app, sequelize)
 	});
 
 	restful.resource({
-	    model: Printspot.db.Sliceprofile,
+	    model: Printspot.manager('db').Sliceprofile,
 	    endpoints: ['/api/sliceprofiles', '/api/sliceprofiles/:id']
 	});
 
 	restful.resource({
-	    model: Printspot.db.Printjob,
+	    model: Printspot.manager('db').Printjob,
 	    endpoints: ['/api/printjobs', '/api/printjobs/:id']
 	});
 
 	restful.resource({
-	    model: Printspot.db.Material,
+	    model: Printspot.manager('db').Material,
 	    endpoints: ['/api/materials', '/api/materials/:id']
 	});
 
 	restful.resource({
-	    model: Printspot.db.Printer,
+	    model: Printspot.manager('db').Printer,
 	    endpoints: ['/api/printers', '/api/printers/:id']
 	});
 
 	restful.resource({
-	    model: Printspot.db.User,
+	    model: Printspot.manager('db').User,
 	    endpoints: ['/api/users', '/api/users/:id']
 	});
 
 	restful.resource({
-	    model: Printspot.db.Modelfile,
+	    model: Printspot.manager('db').Modelfile,
 	    endpoints: ['/api/modelfiles', '/api/modelfiles/:id']
 	});
 
 	restful.resource({
-		model: Printspot.db.Queueitem,
+		model: Printspot.manager('db').Queueitem,
 		endpoints: ['/api/queue', '/api/queue/:id']
 	});
 

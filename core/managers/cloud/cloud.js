@@ -19,11 +19,6 @@ module.exports = function(config)
 
 	cloud = require('socket.io-client')(config.url);
 
-	cloud.on('connect', function()
-	{
-
-	});
-
 	cloud.on('handshake', function(handshake)
 	{
 		cloud.emit('typeof', {
@@ -42,6 +37,8 @@ module.exports = function(config)
 					url: config.url
 				}
 			});
+
+			Printspot.debug('Cloud connected');
 		}
 		else
 		{
@@ -105,9 +102,9 @@ global.comm.online.on('dashboard_push_printer_printjob', function(data)
 		cloud.emit(status.type, status.data);
 	});
 
-	Printspot.eventbus.on('notification', function(notification)
+	Printspot.eventbus.on('externalMessage', function(message)
 	{
-		cloud.emit('client_push_notification', notification.message);
+		cloud.emit('client_push_notification', message.message);
 	});
 
 	return cloud;

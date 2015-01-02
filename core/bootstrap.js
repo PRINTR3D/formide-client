@@ -14,10 +14,9 @@
 
 // require dependencies
 var getMac = require('getmac');
-var config = require('./utils/config.js')();
 
 // define global Printspot object
-Printspot = require('./Printspot')(config);
+Printspot = require('./Printspot')();
 
 getMac.getMac(function(err, macAddress)
 {

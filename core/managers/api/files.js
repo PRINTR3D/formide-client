@@ -24,7 +24,7 @@ module.exports = function(app)
 		{
 			if(err)
 			{
-				// log
+				Printspot.debug(err);
 			}
 			else
 			{
@@ -52,11 +52,11 @@ module.exports = function(app)
 			{
 				if(err)
 				{
-					// log
+					Printspot.debug(err);
 				}
 				else
 				{
-					Printspot.db.Modelfile.create(
+					Printspot.manager('db').Modelfile.create(
 					{
 						filename: req.files.file.name,
 						filesize: req.files.file.size,

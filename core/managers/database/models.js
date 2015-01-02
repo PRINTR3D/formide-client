@@ -19,7 +19,8 @@ module.exports = function(config)
 {
 	var sequelize = new Sequelize(config.database, config.username, config.password, {
 		dialect: 'sqlite',
-		storage: config.storage
+		storage: config.storage,
+		logging: config.debug
 	});
 
 	var db = {};

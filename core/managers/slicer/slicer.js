@@ -66,9 +66,9 @@ module.exports = function(config)
 							gcode: printjob.gcode,
 							PrintjobId: printjob.id
 						})
-						.success(function(queueitem) {
-							// emit slice finished notification to global eventbus
-							Printspot.eventbus.emit('notification', {
+						.success(function(queueitem)
+						{
+							Printspot.eventbus.emit('externalMessage', {
 								message: 'Slicing finished'
 							});
 						})
@@ -78,13 +78,12 @@ module.exports = function(config)
 		}
 		catch(e)
 		{
-			// todo
+			Printspot.debug(e);
 		}
 	});
 
 	Printspot.eventbus.on('slice', function(slice)
 	{
-		console.log(slice); // todo
 		slicer.write(JSON.stringify(slice));
 	});
 

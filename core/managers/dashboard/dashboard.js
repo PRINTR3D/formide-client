@@ -26,6 +26,8 @@ module.exports = function(macAddress)
 		{
 			if(data.type == 'dashboard')
 			{
+				socket.emit('auth', {message: 'OK', id: socket.id});
+
 				Printspot.eventbus.emit('internalSuccess', {
 					type: 'dashboard',
 					data: {
@@ -33,7 +35,7 @@ module.exports = function(macAddress)
 					}
 				});
 
-				socket.emit('auth', {message: 'OK', id: socket.id});
+				Printspot.debug('Dashboard connected');
 			}
 		});
 
@@ -46,6 +48,8 @@ module.exports = function(macAddress)
 					message: 'Dashboard disconnected'
 				}
 			});
+
+			Printspot.debug('Dashboard disconnected');
 		});
 
 		// load channels from config
@@ -83,12 +87,10 @@ module.exports = function(macAddress)
 			socket.emit(status.type, status.data);
 		});
 
-		Printspot.eventbus.on('notification', function(notification)
+		Printspot.eventbus.on('externalMessage', function(message)
 		{
-			socket.emit('client_push_notification', notification.message);
+			socket.emit('client_push_notification', message.message);
 		});
-
-		// todo: add listener for other client commands
 	});
 
 	return dashboard;

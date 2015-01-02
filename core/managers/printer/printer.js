@@ -39,6 +39,8 @@ module.exports = function(config)
 			type: 'printer',
 			data: error
 		});
+
+		Printspot.debug(error);
 	});
 
 	printer.on('data', function(data)
@@ -60,7 +62,7 @@ module.exports = function(config)
 						.updateAttributes({status: 'finished'})
 						.success(function()
 						{
-							// todo
+							Printspot.debug('removed item from queue after printing');
 						});
 					}
 				});
@@ -68,7 +70,7 @@ module.exports = function(config)
 		}
 		catch(e)
 		{
-			// todo
+			Printspot.debug(e);
 		}
 	});
 

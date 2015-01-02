@@ -14,51 +14,42 @@
 
 var events = require('events');
 var express = require('express');
-var callerId = require('caller-id');
+var config = require('./utils/config.js')();
+var debug = require('./utils/debug.js')(config);
 
 // define global Printspot object
-module.exports = function(config)
+module.exports = function()
 {
 	var printspot = {};
 
-	// declare global printspot functions
+	// global config
 	printspot.config = config;
+
+	// global events
 	printspot.eventbus = new events.EventEmitter();
+
+	// global app
 	printspot.app = express();
+
+	// global server
 	printspot.server = printspot.app.listen(config.get('app.port'));
 
-	// debug function
-	printspot.debug = function(debug)
-	{
-		if(config.get('app.debug') == true)
-		{
-			var caller = callerId.getData();
-			var callerString = caller.evalOrigin.split('/');
-			var consoleString = '[' + callerString[callerString.length - 2] + '/' + callerString[callerString.length - 1] + '] ' + JSON.stringify(debug);
+	// global debu
+	printspot.debug = debug;
 
-			if(caller.evalOrigin.indexOf('/managers') > -1)
-			{
-				console.log(consoleString.yellow);
-			}
-			else
-			{
-				console.log(consoleString.cyan);
-			}
-		}
-	}
-
-	// register module
+	// register manager
 	printspot.register = function(name, object)
 	{
 		printspot.debug('register manager ' + name);
 		printspot[name] = object;
 	}
 
-	// get registered module
-	printspot.get = function(name)
+	// get registered manager
+	printspot.manager = function(name)
 	{
 		return printspot[name];
 	}
 
+	// return instance of printspot
 	return printspot;
 };
