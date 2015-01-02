@@ -29,20 +29,22 @@ module.exports = function()
 	Printspot.eventbus.on('internalError', function(error)
 	{
 		logger.log('debug', error.type, error.data);
-		console.log(error.type + ": " + JSON.stringify(error.data)); // temporarily
 	});
 
 	Printspot.eventbus.on('internalSuccess', function(success)
 	{
 		logger.log('debug', success.type, success.data);
-		console.log(success.type + ": " + JSON.stringify(success.data)); // temporarily
 	});
 
 	Printspot.eventbus.on('internalMessage', function(message)
 	{
 		logger.log('debug', message.type, message.data);
-		console.log(message.type + ": " + JSON.stringify(message.data)); // temporarily
 	});
+
+	function formatDate(date)
+	{
+		return date.toISOString().replace(/T/, ' ').replace(/\..+/, '')
+	}
 
 	return logger;
 }

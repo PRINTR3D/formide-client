@@ -23,7 +23,7 @@ getMac.getMac(function(err, macAddress)
 {
 	Printspot.macAddress = Printspot.config.get('cloud.softMac', macAddress);
 
-	// require mandatory modules
+	// require mandatory modules, do not change this part!
 	require('./managers/logger');
 	require('./managers/database');
 
@@ -33,6 +33,6 @@ getMac.getMac(function(err, macAddress)
 	require('./managers/cloud');
 	require('./managers/dashboard');
 	require('./managers/api');
-	require('./managers/camera');
-	require('./managers/wifi');
+	//require('./managers/camera');
+	//require('./managers/wifi');
 });

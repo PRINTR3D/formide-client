@@ -39,6 +39,8 @@ module.exports = function(config)
 			type: 'slicer',
 			data: error
 		});
+
+		Printspot.debug(error);
 	});
 
 	slicer.on('data', function(data)
