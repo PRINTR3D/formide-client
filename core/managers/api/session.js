@@ -89,7 +89,7 @@ module.exports = function(app, macAddress)
 	app.get('/device', function(req, res)
 	{
 		var config = {
-			"environment": global.config.__environment,
+			//"environment": global.config.__environment,
 			"ports": {
 				"app": global.config.get('app.port'),
 				"client": global.config.get('client.port'),

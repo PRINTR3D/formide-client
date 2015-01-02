@@ -68,7 +68,7 @@ module.exports = function(macAddress)
 		// push print start
 		socket.on('dashboard_push_printer_start', function(data)
 		{
-			data.hash = __dirname + '/../../uploads/gcode/' + data.hash;
+			data.hash = Printspot.config.get('paths.gcode') + '/' + data.hash;
 
 			var json = {
 				"type": "dashboard_push_printer_start",
