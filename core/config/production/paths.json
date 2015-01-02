@@ -1,5 +1,5 @@
 {
-	"temp": "../uploads/tmp",
-	"modelfile": "../uploads/modelfiles",
+	"temp": "/home/pi/printspot-core/uploads/tmp",
+	"modelfile": "/home/pi/printspot-core/uploads/modelfiles",
 	"gcode": "/home/pi/printspot-core/uploads/gcode"
 }
