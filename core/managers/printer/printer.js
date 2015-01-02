@@ -54,12 +54,15 @@ module.exports = function(config)
 				.find({where: {id: data.data.printjobID}})
 				.success(function(queueitem)
 				{
-					queueitem
-					.updateAttributes({status: 'finished'})
-					.success(function()
+					if(queueitem != null)
 					{
-						// todo
-					});
+						queueitem
+						.updateAttributes({status: 'finished'})
+						.success(function()
+						{
+							// todo
+						});
+					}
 				});
 			}
 		}
