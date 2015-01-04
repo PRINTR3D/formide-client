@@ -13,41 +13,34 @@
  */
 
 var events = require('events');
-var express = require('express');
 var config = require('./utils/config.js')();
 var debug = require('./utils/debug.js')(config);
+var register = require('./utils/register.js');
 
 // define global Printspot object
 module.exports = function()
 {
 	var printspot = {};
 
+	// global object to hold managers
+	printspot.managers = {};
+
 	// global config
 	printspot.config = config;
 
 	// global events
-	printspot.eventbus = new events.EventEmitter();
-
-	// global app
-	printspot.app = express();
-
-	// global server
-	printspot.server = printspot.app.listen(config.get('app.port'));
+	printspot.events = new events.EventEmitter();
 
 	// global debu
 	printspot.debug = debug;
 
 	// register manager
-	printspot.register = function(name, object)
-	{
-		printspot.debug('register manager ' + name);
-		printspot[name] = object;
-	}
+	printspot.register = register;
 
 	// get registered manager
 	printspot.manager = function(name)
 	{
-		return printspot[name];
+		return printspot.managers[name];
 	}
 
 	// return instance of printspot

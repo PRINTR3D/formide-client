@@ -16,15 +16,6 @@ function readlines(stream,cb)
     return stream;
 }
 
-if(!argv.interface)
-{
-    console.error('No interface given, defaulted to FormideOS');
-}
-else
-{
-	manufacturer_d = argv.interface;
-}
-
 if(argv.driver)
 {
 	var client = spawn('node', ['index.js'], {cwd: 'printspot-qclient-simulator', stdio: 'pipe'});
@@ -36,7 +27,6 @@ if(argv.slicer)
 }
 
 var core = spawn('node', ['bootstrap.js'], {cwd: 'core', stdio: 'pipe'});
-var manufacturer = spawn('node', ['index.js'], {cwd: 'interfaces/' + manufacturer_d, stdio: 'pipe'});
 
 if(argv.driver)
 {
@@ -52,9 +42,6 @@ if(argv.slicer)
 
 core.on('exit',function(code) { console.error('core exited', code); });
 core.on('error',function(err) { console.log('core error',err); });
-
-manufacturer.on('exit',function(code) { console.error('manufacturer exited', code); });
-manufacturer.on('error',function(err) { console.log('manufacturer error',err); });
 
 if(argv.dev)
 {
@@ -74,7 +61,4 @@ if(argv.dev)
 
     readlines(core.stdout, console.log.bind(null,'core:'));
     readlines(core.stderr, console.error.bind(null,'core:'));
-
-    readlines(manufacturer.stdout, console.log.bind(null,'manufacturer:'));
-    readlines(manufacturer.stderr, console.error.bind(null,'manufacturer:'));
 }

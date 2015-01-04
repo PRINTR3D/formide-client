@@ -22,7 +22,7 @@ passport.serializeUser(function(user, done)
 
 passport.deserializeUser(function(id, done)
 {
-  	Printspot.manager('db').User.find({where: {id: id}})
+  	Printspot.manager('database').db.User.find({where: {id: id}})
   	.success(function(user)
   	{
     	done(null, user);
@@ -36,7 +36,7 @@ passport.deserializeUser(function(id, done)
 passport.use(new LocalStrategy(
 	function(username, password, done)
 	{
-   		Printspot.manager('db').User.find({ where: { username: username }})
+   		Printspot.manager('database').db.User.find({ where: { username: username }})
    		.success(function(user)
    		{
    			if (!user)
@@ -117,7 +117,7 @@ module.exports = function(app, macAddress)
 	{
 		if(req.body.password)
 		{
-			Printspot.manager('db').User.find({where: {id: req.user.id}})
+			Printspot.manager('database').db.User.find({where: {id: req.user.id}})
 		  	.success(function(user)
 		  	{
 			  	user.updateAttributes({ password: req.body.password }, ['password']).success(function()

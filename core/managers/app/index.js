@@ -12,9 +12,14 @@
  *
  */
 
-module.exports = function()
-{
-	var wireless = {};
+var express = require('express');
 
-	return wireless;
-}
+module.exports =
+{
+	app: {},
+
+	init: function(config)
+	{
+		this.app = express();
+	}
+};

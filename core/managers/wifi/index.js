@@ -12,8 +12,17 @@
  *
  */
 
-// setup new wifi connection
-var wifi = require('./wifi.js')();
+module.exports =
+{
+	wireless: {},
 
-// register wifi in printspot
-Printspot.register('wifi', wifi);
+	init: function()
+	{
+
+	},
+
+	on:
+	{
+
+	}
+}

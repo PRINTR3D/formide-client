@@ -40,7 +40,7 @@ module.exports = function(app)
 			if(req.body.slicemethod == 'local')
 			{
 				// create printjob in DB
-				Printspot.manager('db').Printjob
+				Printspot.manager('database').db.Printjob
 				.create(
 				{
 					ModelfileId: req.body.modelfile.id,
@@ -54,7 +54,7 @@ module.exports = function(app)
 				.success(function(printjob)
 				{
 					// send slice request to local slicer
-					Printspot.eventbus.emit('slice', json);
+					Printspot.events.emit('slice', json);
 					return res.json('OK');
 				});
 			}
@@ -65,10 +65,10 @@ module.exports = function(app)
 	{
 		if(req.body.printjobID)
 		{
-			Printspot.manager('db').Printjob.find({where: {id: req.body.printjobID}})
+			Printspot.manager('database').db.Printjob.find({where: {id: req.body.printjobID}})
 			.success(function(printjob)
 			{
-				Printspot.manager('db').Queueitem
+				Printspot.manager('database').db.Queueitem
 				.create({
 					origin: 'local',
 					status: 'queued',
@@ -85,8 +85,8 @@ module.exports = function(app)
 
 	app.get('/getqueue', function(req, res)
 	{
-		Printspot.manager('db').Queueitem
-		.findAll({where: {status: 'queued'}, include: [{model: Printspot.manager('db').Printjob, include: [{model: Printspot.manager('db').Modelfile}]}]})
+		Printspot.manager('database').db.Queueitem
+		.findAll({where: {status: 'queued'}, include: [{model: Printspot.manager('database').db.Printjob, include: [{model: Printspot.manager('database').db.Modelfile}]}]})
 		.success(function(queue)
 		{
 			return res.json(queue);

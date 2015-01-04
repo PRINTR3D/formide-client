@@ -56,7 +56,7 @@ module.exports = function(app)
 				}
 				else
 				{
-					Printspot.manager('db').Modelfile.create(
+					Printspot.manager('database').db.Modelfile.create(
 					{
 						filename: req.files.file.name,
 						filesize: req.files.file.size,

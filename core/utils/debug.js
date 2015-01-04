@@ -13,6 +13,7 @@
  */
 
 var callerId = require('caller-id');
+var colors = require('colors');
 
 module.exports = function(config)
 {
@@ -25,16 +26,20 @@ module.exports = function(config)
 
 			var date = new Date();
 
-			var timestampString = date.toLocaleTimeString() + '\t';
-			var outputString = '[' + callerString[callerString.length - 2] + '/' + callerString[callerString.length - 1] + ']\t';
+			var timestampString = date.toLocaleTimeString();
+			var outputString = '[' + callerString[callerString.length - 2] + ']\t';
 			outputString += JSON.stringify(debug);
 
 			if(caller.evalOrigin.indexOf('/managers') > -1)
 			{
+				var outputString = '[' + callerString[callerString.length - 2] + ']\t';
+				outputString += JSON.stringify(debug);
 				console.log(timestampString.grey + ' ' + outputString.yellow);
 			}
 			else
 			{
+				var outputString = '[printspot]\t';
+				outputString += JSON.stringify(debug);
 				console.log(timestampString.grey + ' ' + outputString.cyan);
 			}
 		}
