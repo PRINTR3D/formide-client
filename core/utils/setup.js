@@ -20,9 +20,11 @@ var dbConfig = {
 	storage: 'printspot.sqlite',
 	debug: true
 };
-var db = require('./../managers/database')(dbConfig);
+var database = require('./../managers/database');
+database.init(dbConfig);
+var db = database.db;
 
-db.sequelize
+database.sequelize
 	.sync({
 		force: true
 	})
