@@ -12,9 +12,110 @@
  *
  */
 
-// setup new cloud connection
-var cloudConfig = Printspot.config.get('cloud');
-var cloud = require('./cloud.js')(cloudConfig);
+// dependencies
+var net = require('net');
 
-// register cloud in printspot
-Printspot.register('cloud', cloud);
+module.exports =
+{
+	cloud: {},
+
+	init: function(config)
+	{
+		this.cloud = require('socket.io-client')(config.url);
+
+		this.cloud.on('handshake', this.handshake);
+
+		this.cloud.on('auth', this.auth);
+
+		var _this = this;
+
+		Printspot.config.get('channels.dashboard').forEach(function(method)
+		{
+			(function(realMethod)
+			{
+				_this.cloud.on(realMethod, function(data)
+				{
+					// check if incoming message is really meant for this printer
+					if(data.printerID == Printspot.macAddress)
+					{
+						var json = {
+							"type": realMethod,
+							"data": data
+						};
+
+						Printspot.events.emit('cloudPush', json);
+					}
+				});
+			})(method);
+		});
+	},
+
+	on:
+	{
+		'printerStatus': 'printerStatus',
+		'externalMessage': 'notification'
+	},
+
+	// custom functions
+	handshake: function(handshake)
+	{
+		this.emit('typeof', {
+			type: 'client',
+			mac: Printspot.macAddress
+		});
+	},
+
+	auth: function(auth)
+	{
+		if(auth.message == 'OK')
+		{
+			Printspot.debug('Cloud connected');
+		}
+		else
+		{
+			Printspot.debug(auth);
+		}
+	},
+
+	printerStatus: function(status)
+	{
+		status.data.printerID = Printspot.macAddress;
+		this.cloud.emit(status.type, status.data);
+	},
+
+	notification: function(message)
+	{
+		this.cloud.emit('client_push_notification', message.message);
+	}
+
+	// send online printjob to client
+	/*
+global.comm.online.on('dashboard_push_printer_printjob', function(data)
+	{
+		if(data.printerID == macAddress)
+		{
+			var hash = (Math.random() / +new Date()).toString(36).replace(/[^a-z]+/g, '');
+			var newPath = __dirname + '/' + global.config.get('paths.gcode') + '/' + hash;
+
+			fs.writeFile(newPath, data.gcode, function(err)
+			{
+				if(err)
+				{
+					global.log('error', err, {'path': newPath});
+				}
+				else
+				{
+					global.db.Queueitem.create({
+						slicedata: data.slicesettings,
+						origin: 'online',
+						gcode: hash,
+						printjobID: data.id,
+						status: "queued"
+					});
+				}
+			});
+		}
+	});
+*/
+
+}

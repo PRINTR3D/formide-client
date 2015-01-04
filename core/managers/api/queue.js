@@ -27,36 +27,36 @@ module.exports = function(app)
 
 			var model = {
 				"hash": json.data.model,
-				"bucketIn": __dirname + "/../../../uploads/modelfiles",
+				"bucketIn": Printspot.config.get('paths.modelfile'),
 				"x": 10000,
 				"y": 10000,
 				"z": 0
 			};
 
 			json.data.model = [model];
-			json.data.bucketOut = __dirname + "/../../../uploads/gcode";
+			json.data.bucketOut = Printspot.config.get('paths.gcode');
 			json.data.responseID = hash;
 
 			if(req.body.slicemethod == 'local')
 			{
 				// create printjob in DB
-				Printspot.db.Printjob
-					.create(
-					{
-						ModelfileId: req.body.modelfile.id,
-						printerID: req.body.printer.id,
-						sliceprofileID: req.body.sliceprofile.id,
-						materials: JSON.stringify(req.body.materials),
-						sliceResponse: hash,
-						sliceParams: JSON.stringify(req.body.sliceparams),
-						sliceMethod: 'local'
-					})
-					.success(function(printjob)
-					{
-						// send slice request to local slicer
-						Printspot.eventbus.emit('slice', json);
-						return res.json('OK');
-					});
+				Printspot.manager('database').db.Printjob
+				.create(
+				{
+					ModelfileId: req.body.modelfile.id,
+					printerID: req.body.printer.id,
+					sliceprofileID: req.body.sliceprofile.id,
+					materials: JSON.stringify(req.body.materials),
+					sliceResponse: hash,
+					sliceParams: JSON.stringify(req.body.sliceparams),
+					sliceMethod: 'local'
+				})
+				.success(function(printjob)
+				{
+					// send slice request to local slicer
+					Printspot.events.emit('slice', json);
+					return res.json('OK');
+				});
 			}
 		}
 	});
@@ -65,31 +65,31 @@ module.exports = function(app)
 	{
 		if(req.body.printjobID)
 		{
-			Printspot.db.Printjob.find({where: {id: req.body.printjobID}})
-				.success(function(printjob)
+			Printspot.manager('database').db.Printjob.find({where: {id: req.body.printjobID}})
+			.success(function(printjob)
+			{
+				Printspot.manager('database').db.Queueitem
+				.create({
+					origin: 'local',
+					status: 'queued',
+					gcode: printjob.gcode,
+					PrintjobId: printjob.id
+				})
+				.success(function(queueitem)
 				{
-					Printspot.db.Queueitem
-						.create({
-							origin: 'local',
-							status: 'queued',
-							gcode: printjob.gcode,
-							PrintjobId: printjob.id
-						})
-						.success(function(queueitem)
-						{
-							return res.json('OK');
-						});
+					return res.json('OK');
 				});
+			});
 		}
 	});
 
 	app.get('/getqueue', function(req, res)
 	{
-		Printspot.db.Queueitem
-			.findAll({where: {status: 'queued'}, include: [{model: Printspot.db.Printjob, include: [{model: Printspot.db.Modelfile}]}]})
-			.success(function(queue)
-			{
-				return res.json(queue);
-			});
+		Printspot.manager('database').db.Queueitem
+		.findAll({where: {status: 'queued'}, include: [{model: Printspot.manager('database').db.Printjob, include: [{model: Printspot.manager('database').db.Modelfile}]}]})
+		.success(function(queue)
+		{
+			return res.json(queue);
+		});
 	});
 };

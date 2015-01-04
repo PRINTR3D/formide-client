@@ -12,8 +12,13 @@
  *
  */
 
-// setup new dashboard server
-var dashboard = require('./dashboard.js')(Printspot.macAddress);
 
-// register dashboard in printspot
-Printspot.register('dashboard', dashboard);
+module.exports =
+{
+	server: null,
+
+	init: function(config)
+	{
+		this.server = Printspot.manager('app').app.listen(config.port);
+	}
+};

@@ -12,8 +12,41 @@
  *
  */
 
-// setup new logger
-var logger = require('./logger.js')();
+var winston = require('winston');
 
-// register logger in printspot
-Printspot.register('logger', logger);
+module.exports =
+{
+	logger: {},
+
+	init: function()
+	{
+		this.logger = new(winston.Logger)({
+			transports:
+		    [
+				new (winston.transports.File)({filename: '../logs/printspot.log', level: 'debug' })
+		    ]
+		});
+	},
+
+	on:
+	{
+		'internalError': 'logError',
+		'internalSuccess': 'logSuccess',
+		'internalMessage': 'logMessage'
+	},
+
+	logError: function(error)
+	{
+		this.logger.log('debug', error.type, error.data);
+	},
+
+	logSuccess: function(success)
+	{
+		this.logger.log('debug', success.type, success.data);
+	},
+
+	logMessage: function(message)
+	{
+		this.logger.log('debug', message.type, message.data);
+	}
+}

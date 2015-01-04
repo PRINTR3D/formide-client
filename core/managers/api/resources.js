@@ -14,47 +14,46 @@
 
 var restful = require('epilogue');
 
-module.exports = function(app, sequelize)
+module.exports = function(app, db, sequelize)
 {
+
 	restful.initialize({
 		app: app,
 		sequelize: sequelize
 	});
 
 	restful.resource({
-	    model: Printspot.db.Sliceprofile,
+	    model: db.Sliceprofile,
 	    endpoints: ['/api/sliceprofiles', '/api/sliceprofiles/:id']
 	});
 
 	restful.resource({
-	    model: Printspot.db.Printjob,
+	    model: db.Printjob,
 	    endpoints: ['/api/printjobs', '/api/printjobs/:id']
 	});
 
 	restful.resource({
-	    model: Printspot.db.Material,
+	    model: db.Material,
 	    endpoints: ['/api/materials', '/api/materials/:id']
 	});
 
 	restful.resource({
-	    model: Printspot.db.Printer,
+	    model: db.Printer,
 	    endpoints: ['/api/printers', '/api/printers/:id']
 	});
 
 	restful.resource({
-	    model: Printspot.db.User,
+	    model: db.User,
 	    endpoints: ['/api/users', '/api/users/:id']
 	});
 
 	restful.resource({
-	    model: Printspot.db.Modelfile,
+	    model: db.Modelfile,
 	    endpoints: ['/api/modelfiles', '/api/modelfiles/:id']
 	});
 
 	restful.resource({
-		model: Printspot.db.Queueitem,
+		model: db.Queueitem,
 		endpoints: ['/api/queue', '/api/queue/:id']
 	});
-
-	return restful;
 };

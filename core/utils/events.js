@@ -12,9 +12,11 @@
  *
  */
 
+var events = require('events');
+
 module.exports = function()
 {
-	var wireless = {};
+	var ee = new events.EventEmitter();
 
-	return wireless;
+	return ee;
 }

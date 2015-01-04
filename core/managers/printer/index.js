@@ -12,9 +12,71 @@
  *
  */
 
-// setup new printer connection
-var printerConfig = Printspot.config.get('printer');
-var printer = require('./printer.js')(printerConfig);
+// dependencies
+var net = require('net');
 
-// register printer in printspot
-Printspot.register('printer', printer);
+module.exports =
+{
+	printer: {},
+
+	init: function(config)
+	{
+		this.printer = net.connect({
+			port: config.port
+		}, function() {
+			Printspot.debug('printer connected');
+		});
+
+		this.printer.on('error', this.printerError);
+
+		this.printer.on('data', this.printerStatus);
+	},
+
+	on:
+	{
+		'cloudPush': 'printerControl',
+		'dashboardPush': 'printerControl'
+	},
+
+	// custom functions
+	printerError: function(error)
+	{
+		Printspot.debug(error);
+	},
+
+	printerStatus: function(printerData)
+	{
+		try // try parsing
+		{
+			data = JSON.parse(printerData.toString());
+			Printspot.events.emit('printerStatus', data);
+
+			if(data.type == 'client_push_printer_finished')
+			{
+				Printspot.manager('database').db.Queueitem
+				.find({where: {id: data.data.printjobID}})
+				.success(function(queueitem)
+				{
+					if(queueitem != null)
+					{
+						queueitem
+						.updateAttributes({status: 'finished'})
+						.success(function()
+						{
+							Printspot.debug('removed item from queue after printing');
+						});
+					}
+				});
+			}
+		}
+		catch(e)
+		{
+			Printspot.debug(e);
+		}
+	},
+
+	printerControl: function(data)
+	{
+		this.printer.write(JSON.stringify(data));
+	}
+}
