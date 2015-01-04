@@ -24,15 +24,18 @@ module.exports = function(managerName)
 			// register listeners
 			if(typeof manager.on === 'object')
 			{
-				for(var ev in manager.on)
+				Object.keys(manager.on).forEach(function(ev)
 				{
-					var callback = manager.on[ev];
-
-					Printspot.events.on(ev, function(data)
+					(function(realEv)
 					{
-						manager[callback](this, data);
-					});
-				}
+						var callback = manager.on[realEv];
+
+						Printspot.events.on(realEv, function(data)
+						{
+							manager[callback](data);
+						});
+					})(ev);
+				});
 			}
 
 			// do init function if exists
@@ -47,7 +50,7 @@ module.exports = function(managerName)
 			}
 			else
 			{
-				Printspot.debug('Manager with name ' + managerName + ' already exists');
+				Printspot.debug('Manager with name ' + managerName + ' already exists', true);
 			}
 		}
 	}

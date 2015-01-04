@@ -17,10 +17,12 @@ var colors = require('colors');
 
 module.exports = function(config)
 {
-	var debug = function(debug)
+	var debug = function(debug, severe)
 	{
 		if(config.get('app.debug') == true)
 		{
+			severe = severe || false;
+
 			var caller = callerId.getData();
 			var callerString = caller.evalOrigin.split('/');
 
@@ -34,13 +36,29 @@ module.exports = function(config)
 			{
 				var outputString = '[' + callerString[callerString.length - 2] + ']\t';
 				outputString += JSON.stringify(debug);
-				console.log(timestampString.grey + ' ' + outputString.yellow);
+
+				if(severe)
+				{
+					console.log(timestampString.grey + ' ' + outputString.red);
+				}
+				else
+				{
+					console.log(timestampString.grey + ' ' + outputString.yellow);
+				}
 			}
 			else
 			{
 				var outputString = '[printspot]\t';
 				outputString += JSON.stringify(debug);
-				console.log(timestampString.grey + ' ' + outputString.cyan);
+
+				if(severe)
+				{
+					console.log(timestampString.grey + ' ' + outputString.red);
+				}
+				else
+				{
+					console.log(timestampString.grey + ' ' + outputString.cyan);
+				}
 			}
 		}
 	}

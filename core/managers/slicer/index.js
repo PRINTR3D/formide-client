@@ -47,7 +47,7 @@ module.exports =
 	{
 		try // try parsing
 		{
-			data = JSON.parse(data.toString()); // convert binary stream to json object
+			data = JSON.parse(responseData.toString()); // convert binary stream to json object
 
 			if(data.status == 200 && data.data.responseID != null)
 			{
@@ -78,12 +78,12 @@ module.exports =
 		}
 		catch(e)
 		{
-			Printspot.debug(e);
+			Printspot.debug(e, true);
 		}
 	},
 
 	slicerError: function(error)
 	{
-		Printspot.debug(error);
+		Printspot.debug(error, true);
 	}
 }

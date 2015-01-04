@@ -48,7 +48,7 @@ module.exports =
 	{
 		try // try parsing
 		{
-			data = JSON.parse(data.toString());
+			data = JSON.parse(printerData.toString());
 			Printspot.events.emit('printerStatus', data);
 
 			if(data.type == 'client_push_printer_finished')

@@ -18,7 +18,7 @@ module.exports =
 
 	init: function()
 	{
-		this.websocket = require('socket.io').listen(Printspot.server);
+		this.websocket = require('socket.io').listen(Printspot.manager('http').server);
 
 		this.websocket.on('connection', function(socket)
 		{
@@ -32,7 +32,7 @@ module.exports =
 				{
 					socket.emit('auth', {message: 'OK', id: socket.id});
 
-					Printspot.eventbus.emit('internalSuccess', {
+					Printspot.events.emit('internalSuccess', {
 						type: 'dashboard',
 						data: {
 							port: Printspot.config.get('dashboard.port')
@@ -46,7 +46,7 @@ module.exports =
 			// Socket disconnect
 			socket.on('disconnect', function()
 			{
-				Printspot.eventbus.emit('internalMessage', {
+				Printspot.events.emit('internalMessage', {
 					type: 'dashboard',
 					data: {
 						message: 'Dashboard disconnected'
@@ -68,7 +68,7 @@ module.exports =
 							"data": data
 						};
 
-						Printspot.eventbus.emit('dashboardPush', json);
+						Printspot.events.emit('dashboardPush', json);
 					});
 				})(method);
 			});
@@ -83,7 +83,7 @@ module.exports =
 					"data": data
 				};
 
-				Printspot.eventbus.emit('dashboardPush', json);
+				Printspot.events.emit('dashboardPush', json);
 			});
 		});
 	},
@@ -97,7 +97,7 @@ module.exports =
 	// custom functions
 	printerStatus: function(statusData)
 	{
-		this.websocket.emit(status.type, status.data);
+		this.websocket.emit(statusData.type, statusData.data);
 	},
 
 	notification: function(message)

@@ -17,9 +17,10 @@ var dbConfig = {
 	username: 'root',
 	password: null,
 	database: 'printspot',
-	storage: 'printspot.sqlite'
+	storage: 'printspot.sqlite',
+	debug: true
 };
-var db = require('./../managers/database/models.js')(dbConfig);
+var db = require('./../managers/database')(dbConfig);
 
 db.sequelize
 	.sync({

@@ -15,8 +15,10 @@
 
 module.exports =
 {
+	server: null,
+
 	init: function(config)
 	{
-		Printspot.manager('app').app.listen(config.port);
+		this.server = Printspot.manager('app').app.listen(config.port);
 	}
 };

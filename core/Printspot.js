@@ -12,7 +12,7 @@
  *
  */
 
-var events = require('events');
+var events = require('./utils/events.js')();
 var config = require('./utils/config.js')();
 var debug = require('./utils/debug.js')(config);
 var register = require('./utils/register.js');
@@ -29,7 +29,7 @@ module.exports = function()
 	printspot.config = config;
 
 	// global events
-	printspot.events = new events.EventEmitter();
+	printspot.events = events;
 
 	// global debu
 	printspot.debug = debug;
@@ -40,7 +40,14 @@ module.exports = function()
 	// get registered manager
 	printspot.manager = function(name)
 	{
-		return printspot.managers[name];
+		if(!(name in Printspot.managers))
+		{
+			Printspot.debug('Manager with name ' + name + ' is not registered', true);
+		}
+		else
+		{
+			return printspot.managers[name];
+		}
 	}
 
 	// return instance of printspot
