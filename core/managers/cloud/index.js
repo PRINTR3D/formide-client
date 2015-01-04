@@ -27,27 +27,9 @@ module.exports =
 
 		this.cloud.on('auth', this.auth);
 
-		var _this = this;
+		this.loadChannels();
 
-		Printspot.config.get('channels.dashboard').forEach(function(method)
-		{
-			(function(realMethod)
-			{
-				_this.cloud.on(realMethod, function(data)
-				{
-					// check if incoming message is really meant for this printer
-					if(data.printerID == Printspot.macAddress)
-					{
-						var json = {
-							"type": realMethod,
-							"data": data
-						};
-
-						Printspot.events.emit('cloudPush', json);
-					}
-				});
-			})(method);
-		});
+		this.cloud.on('dashboard_push_printer_printjob', this.pushPrintjob);
 	},
 
 	on:
@@ -77,6 +59,58 @@ module.exports =
 		}
 	},
 
+	loadChannels: function()
+	{
+		var _this = this;
+
+		Printspot.config.get('channels.dashboard').forEach(function(method)
+		{
+			(function(realMethod)
+			{
+				_this.cloud.on(realMethod, function(data)
+				{
+					// check if incoming message is really meant for this printer
+					if(data.printerID == Printspot.macAddress)
+					{
+						var json = {
+							"type": realMethod,
+							"data": data
+						};
+
+						Printspot.events.emit('cloudPush', json);
+					}
+				});
+			})(method);
+		});
+	},
+
+	pushPrintjob: function(printjob)
+	{
+		if(printjob.printerID == macAddress)
+		{
+			var hash = (Math.random() / +new Date()).toString(36).replace(/[^a-z]+/g, '');
+			var newPath = __dirname + '/' + global.config.get('paths.gcode') + '/' + hash;
+
+			fs.writeFile(newPath, printjob.gcode, function(err)
+			{
+				if(err)
+				{
+					global.log('error', err, {'path': newPath});
+				}
+				else
+				{
+					global.db.Queueitem.create({
+						slicedata: printjob.slicesettings,
+						origin: 'online',
+						gcode: hash,
+						printjobID: printjob.id,
+						status: "queued"
+					});
+				}
+			});
+		}
+	},
+
 	printerStatus: function(status)
 	{
 		status.data.printerID = Printspot.macAddress;
@@ -87,35 +121,4 @@ module.exports =
 	{
 		this.cloud.emit('client_push_notification', message.message);
 	}
-
-	// send online printjob to client
-	/*
-global.comm.online.on('dashboard_push_printer_printjob', function(data)
-	{
-		if(data.printerID == macAddress)
-		{
-			var hash = (Math.random() / +new Date()).toString(36).replace(/[^a-z]+/g, '');
-			var newPath = __dirname + '/' + global.config.get('paths.gcode') + '/' + hash;
-
-			fs.writeFile(newPath, data.gcode, function(err)
-			{
-				if(err)
-				{
-					global.log('error', err, {'path': newPath});
-				}
-				else
-				{
-					global.db.Queueitem.create({
-						slicedata: data.slicesettings,
-						origin: 'online',
-						gcode: hash,
-						printjobID: data.id,
-						status: "queued"
-					});
-				}
-			});
-		}
-	});
-*/
-
 }
