@@ -28,10 +28,10 @@ module.exports = function(app)
 			var model = {
 				"hash": json.data.model,
 				"bucketIn": Printspot.config.get('paths.modelfile'),
-				"x": 10000,
-				"y": 10000,
+				"x": 100000,
+				"y": 100000,
 				"z": 0
-			};
+			}; // hardcoded to 10 by 10 cm
 
 			json.data.model = [model];
 			json.data.bucketOut = Printspot.config.get('paths.gcode');

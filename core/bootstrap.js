@@ -38,5 +38,6 @@ getMac.getMac(function(err, macAddress)
 	Printspot.register('websocket').init();
 	Printspot.register('interface').init();
 
+	// other modules
 	//Printspot.register('update').init();
 });
