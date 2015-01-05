@@ -4,3 +4,6 @@ printspot
 Printspot is the internal name for the node.js part of FormideOS. This includes the communication between the online socketserver, the qclient, katana (slicing) and all the different interfaces for manufacturers.
 
 check the wiki for detailed information on installation and functionality
+
+## Contributing
+To contribute to this repository as non-printer developer, please make a private fork and submit a pull request with your changes. Printer developers can make a branch for a new feature and push to that branch and so a pull request on the development branch (which an admin will merge with master if it's stable enough).
