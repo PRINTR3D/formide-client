@@ -178,9 +178,9 @@ database.sequelize
 						"brimLines": 0
 					},
 					"gcode": {
-						"startGcode":"",
-						"endGcode":"",
-						"gcodeflavour":"MACH3"
+						"startGcode": ["G21", "M107", "M104 S195", "G28", "G1 Z5 F5000", "M109 S195", "G90", "G92 E0", "M82", "G1 F1800.000 E-1.00000", "G92 E0"],
+						"endGcode": ["G92 E0", "M107", "M104 S0", "G28 X0", "M84"],
+						"gcodeFlavour":"MACH3"
 					},
 					"plugins": []
 				})

@@ -85,13 +85,19 @@ module.exports =
 
 				Printspot.events.emit('dashboardPush', json);
 			});
+
+			socket.on('dashboard_push_update', function(data)
+			{
+				Printspot.events.emit('update', data);
+			});
 		});
 	},
 
 	on:
 	{
 		'printerStatus': 'printerStatus',
-		'externalMessage': 'notification'
+		'externalMessage': 'notification',
+		'updateProgress': 'updateProgress'
 	},
 
 	// custom functions
@@ -103,5 +109,11 @@ module.exports =
 	notification: function(message)
 	{
 		this.websocket.emit('client_push_notification', message.message);
+	},
+
+	updateProgress: function(progress)
+	{
+		console.log(progress);
+		this.websocket.emit('client_push_update_progress', progress);
 	}
 }

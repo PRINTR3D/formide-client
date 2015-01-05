@@ -27,9 +27,17 @@ module.exports =
 
 		this.cloud.on('auth', this.auth);
 
-		this.loadChannels();
-
 		this.cloud.on('dashboard_push_printer_printjob', this.pushPrintjob);
+
+		this.cloud.on('error', this.onError);
+
+		this.cloud.on('connect_failed', this.onError);
+
+		this.cloud.on('disconnect', this.onError);
+
+		this.cloud.on('reconnect_error', this.onError);
+
+		this.loadChannels();
 	},
 
 	on:
@@ -39,6 +47,11 @@ module.exports =
 	},
 
 	// custom functions
+	onError: function(error)
+	{
+		Printspot.debug(error, true);
+	},
+
 	handshake: function(handshake)
 	{
 		this.emit('typeof', {
@@ -55,7 +68,7 @@ module.exports =
 		}
 		else
 		{
-			Printspot.debug(auth);
+			Printspot.debug(auth, true);
 		}
 	},
 
