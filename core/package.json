@@ -30,6 +30,7 @@
     "passport-local": "^1.0.0",
     "polo": "^0.7.1",
     "request": "2.40.0",
+    "semver": "^4.2.0",
     "sequelize": "~1.7.0-rc6",
     "socket.io": "1.1.0",
     "socket.io-client": "1.1.0",

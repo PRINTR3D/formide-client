@@ -15,37 +15,46 @@
 // dependencies
 var Download = require('download');
 var progress = require('download-status');
+var semver = require('semver');
 
 module.exports =
 {
-	installs: {
-		'ClientDriver': 'https://s3.amazonaws.com/node-webkit/v0.7.5/node-webkit-v0.7.5-win-ia32.zip',
-		'Test2': 'http://nodejs.org/dist/v0.10.35/node-v0.10.35.tar.gz'
-	},
+	updates: [
+		/*
+{
+			'name': 'driver',
+			'version': '1.0.1',
+			'url': 'http://nodejs.org/dist/v0.10.35/node-v0.10.35.tar.gz'
+		},
+		{
+			'name': 'interface',
+			'manufacturer': 'printspot-formide-dashboard',
+			'version': '1.0.1',
+			'url': 'http://printr.nl/wp-content/uploads/2014/11/Printr_presskit.zip'
+		}
+*/
+	],
 
 	init: function()
 	{
 		// check versions
-		this.checkVersion('ClientDriver');
-	},
-
-	on: {
-		'update': 'update'
-	},
-
-	update: function()
-	{
-		for(var i in this.installs)
+		for(var i in this.updates)
 		{
-			this.download(this.installs[i]);
+			this.checkVersion(this.updates[i]);
 		}
 	},
 
-	download: function(installURL)
+	on:
 	{
-		Printspot.debug('downloading ' + installURL);
+
+	},
+
+	download: function(update)
+	{
+		Printspot.debug('downloading ' + update.name + ' from ' + update.url);
+
 		new Download({ strip: 1, mode: '755' })
-		.get(installURL)
+		.get(update.url)
 		.dest('dest')
 		.use(this.progress)
 		.run(function(err, files, stream)
@@ -83,13 +92,47 @@ module.exports =
 
 		res.on('end', function()
 		{
-
 			// check download and replace current file
 		});
 	},
 
-	checkVersion: function(type)
+	checkVersion: function(update)
 	{
-
+		if(update.name == 'driver')
+		{
+			var currentInstall = require('../../../../formidium/package.json');
+			if(semver.lt(currentInstall.version, update.version))
+			{
+				Printspot.debug('Driver update');
+				this.download(update);
+			}
+		}
+		else if(update.name == 'slicer')
+		{
+			var currentInstall = require('../../../../katana-slicer/package.json');
+			if(semver.lt(currentInstall.version, update.version))
+			{
+				Printspot.debug('Slicer update');
+				this.download(update);
+			}
+		}
+		else if(update.name == 'core')
+		{
+			var currentInstall = require('../../package.json');
+			if(semver.lt(currentInstall.version, update.version))
+			{
+				Printspot.debug('Core update');
+				this.download(update);
+			}
+		}
+		else if(update.name == 'interface')
+		{
+			var currentInstall = require('../../../interfaces/' + update.manufacturer + '/package.json');
+			if(semver.lt(currentInstall.version, update.version))
+			{
+				Printspot.debug('Interface update');
+				this.download(update);
+			}
+		}
 	}
 }

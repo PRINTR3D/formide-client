@@ -37,13 +37,16 @@ module.exports =
 
 		this.cloud.on('reconnect_error', this.onError);
 
+		this.cloud.on('updates', this.sendUpdates);
+
 		this.loadChannels();
 	},
 
 	on:
 	{
 		'printerStatus': 'printerStatus',
-		'externalMessage': 'notification'
+		'externalMessage': 'notification',
+		'checkForUpdates': 'checkForUpdates'
 	},
 
 	// custom functions
@@ -108,7 +111,7 @@ module.exports =
 			{
 				if(err)
 				{
-					global.log('error', err, {'path': newPath});
+					Printspot.debug(err, true);
 				}
 				else
 				{
@@ -133,5 +136,15 @@ module.exports =
 	notification: function(message)
 	{
 		this.cloud.emit('client_push_notification', message.message);
+	},
+
+	checkForUpdates: function()
+	{
+		this.cloud.emit('client_push_updates');
+	},
+
+	sendUpdates: function(updates)
+	{
+		Printspot.events.emit('newUpdates', updates);
 	}
 }

@@ -18,7 +18,7 @@ module.exports =
 {
 	app: {},
 
-	init: function(config)
+	init: function()
 	{
 		this.app = express();
 	}

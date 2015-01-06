@@ -41,7 +41,7 @@ module.exports =
 	// custom functions
 	printerError: function(error)
 	{
-		Printspot.debug(error);
+		Printspot.debug(error, true);
 	},
 
 	printerStatus: function(printerData)
@@ -71,7 +71,7 @@ module.exports =
 		}
 		catch(e)
 		{
-			Printspot.debug(e);
+			Printspot.debug(e, true);
 		}
 	},
 

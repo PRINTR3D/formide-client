@@ -20,7 +20,15 @@ module.exports =
 
 	init: function()
 	{
-		this.interface = spawn('node', ['index.js'], {cwd: '../interfaces/printspot-formide-dashboard', stdio: 'pipe'});
+		if(!Printspot.args.interface)
+		{
+			Printspot.debug('No interface given, defaulting to FormideOS');
+			this.interface = spawn('node', ['index.js'], {cwd: '../interfaces/printspot-formide-dashboard', stdio: 'pipe'});
+		}
+		else
+		{
+			this.interface = spawn('node', ['index.js'], {cwd: '../interfaces/' + Printspot.args.interface, stdio: 'pipe'});
+		}
 
 		this.interface.stdout.setEncoding('utf8');
 
