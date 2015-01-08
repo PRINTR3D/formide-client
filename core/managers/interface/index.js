@@ -13,6 +13,7 @@
  */
 
 var spawn = require('child_process').spawn;
+var fs = require('fs');
 
 module.exports =
 {
@@ -23,11 +24,21 @@ module.exports =
 		if(!Printspot.args.interface)
 		{
 			Printspot.debug('No interface given, defaulting to FormideOS');
-			this.interface = spawn('node', ['index.js'], {cwd: '../interfaces/formide', stdio: 'pipe'});
+			this.interface = spawn('node', ['index.js'], {cwd: Printspot.config.get('paths.interfaces') + '/formide', stdio: 'pipe'});
 		}
 		else
 		{
-			this.interface = spawn('node', ['index.js'], {cwd: '../interfaces/' + Printspot.args.interface, stdio: 'pipe'});
+			fs.exists(Printspot.config.get('paths.interfaces') + '/' + Printspot.args.interface + '/index.js', function(exists)
+			{
+				if(exists)
+				{
+					this.interface = spawn('node', ['index.js'], {cwd: Printspot.config.get('paths.interfaces') + '/' + Printspot.args.interface, stdio: 'pipe'});
+				}
+				else
+				{
+					Printspot.debug('interface directory not found', true);
+				}
+			});
 		}
 
 		this.interface.stdout.setEncoding('utf8');
