@@ -28,7 +28,7 @@ module.exports =
 		}
 		else
 		{
-			fs.exists(Printspot.config.get('paths.interfaces') + '/' + Printspot.args.interface + '/index.js', function(exists)
+			fs.exists(Printspot.config.get('paths.interfaces') + '/' + Printspot.args.interface, function(exists)
 			{
 				if(exists)
 				{
