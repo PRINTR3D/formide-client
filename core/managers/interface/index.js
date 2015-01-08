@@ -21,7 +21,7 @@ module.exports =
 
 	init: function()
 	{
-		if(!Printspot.args.interface)
+		if(!Printspot.manager('process').args.interface)
 		{
 			Printspot.debug('No interface given, defaulting to FormideOS');
 			this.interface = spawn('node', ['index.js'], {cwd: Printspot.config.get('paths.interfaces') + '/formide', stdio: 'pipe'});

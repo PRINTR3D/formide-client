@@ -24,6 +24,7 @@
     "lodash": "2.4.1",
     "method-override": "~2.1.1",
     "minimist": "^1.1.0",
+    "node-schedule": "^0.1.15",
     "node-wifiscanner": "^0.1.0",
     "nodejs-config": "1.0.0",
     "passport": "^0.2.1",
