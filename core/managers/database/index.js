@@ -46,7 +46,6 @@ module.exports = {
 		});
 
 		this.db.Printjob = this.sequelize.define('Printjob', {
-			//"modelfileID": "INTEGER",
 			"userID": "INTEGER",
 			"printerID": "INTEGER",
 			"sliceprofileID": "INTEGER",

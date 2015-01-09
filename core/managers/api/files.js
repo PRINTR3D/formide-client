@@ -24,7 +24,7 @@ module.exports = function(app)
 		{
 			if(err)
 			{
-				Printspot.debug(err);
+				Printspot.debug(err, true);
 			}
 			else
 			{

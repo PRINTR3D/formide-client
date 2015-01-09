@@ -23,8 +23,23 @@ getMac.getMac(function(err, macAddress)
 	Printspot.macAddress = Printspot.config.get('cloud.softMac', macAddress);
 
 	// always include these
-	Printspot.register('logger').init();
+	Printspot.register('device').init();
+	Printspot.register('process').init();
 	Printspot.register('database').init(Printspot.config.get('database'));
+
+	// load CLI initiated modules
+	if(Printspot.manager('process').args.setup) // setup mode
+	{
+		Printspot.register('setup').init();
+	}
+	if(Printspot.manager('process').args.driver) // simulated driver mode
+	{
+		Printspot.register('simdriver').init();
+	}
+	if(Printspot.manager('process').args.slicer) // simulated slicer mode
+	{
+		Printspot.register('simslicer').init();
+	}
 
 	// server & http
 	Printspot.register('app').init();
@@ -32,9 +47,14 @@ getMac.getMac(function(err, macAddress)
 	Printspot.register('api').init();
 
 	// real time modules
+	Printspot.register('logger').init();
 	Printspot.register('printer').init(Printspot.config.get('printer'));
 	Printspot.register('slicer').init(Printspot.config.get('slicer'));
 	Printspot.register('cloud').init(Printspot.config.get('cloud'));
 	Printspot.register('websocket').init();
 	Printspot.register('interface').init();
+	// Printspot.register('cron').init();
+
+	// special modules
+	// Printspot.register('update').init();
 });

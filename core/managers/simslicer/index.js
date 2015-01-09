@@ -13,7 +13,6 @@
  */
 
 var spawn = require('child_process').spawn;
-var fs = require('fs');
 
 module.exports =
 {
@@ -21,25 +20,7 @@ module.exports =
 
 	init: function()
 	{
-		if(!Printspot.manager('process').args.interface)
-		{
-			Printspot.debug('No interface given, defaulting to FormideOS');
-			this.interface = spawn('node', ['index.js'], {cwd: Printspot.config.get('paths.interfaces') + '/formide', stdio: 'pipe'});
-		}
-		else
-		{
-			fs.exists(Printspot.config.get('paths.interfaces') + '/' + Printspot.args.interface, function(exists)
-			{
-				if(exists)
-				{
-					this.interface = spawn('node', ['index.js'], {cwd: Printspot.config.get('paths.interfaces') + '/' + Printspot.args.interface, stdio: 'pipe'});
-				}
-				else
-				{
-					Printspot.debug('interface directory not found', true);
-				}
-			});
-		}
+		this.interface = spawn('node', ['index.js'], {cwd: '../printspot-katana-simulator', stdio: 'pipe'});
 
 		this.interface.stdout.setEncoding('utf8');
 

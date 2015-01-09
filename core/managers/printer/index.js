@@ -18,6 +18,7 @@ var net = require('net');
 module.exports =
 {
 	printer: {},
+	status: null,
 
 	init: function(config)
 	{
@@ -35,13 +36,14 @@ module.exports =
 	on:
 	{
 		'cloudPush': 'printerControl',
-		'dashboardPush': 'printerControl'
+		'dashboardPush': 'printerControl',
+		'scheduledPrintjob': 'printerControl'
 	},
 
 	// custom functions
 	printerError: function(error)
 	{
-		Printspot.debug(error);
+		Printspot.debug(error, true);
 	},
 
 	printerStatus: function(printerData)
@@ -50,6 +52,11 @@ module.exports =
 		{
 			data = JSON.parse(printerData.toString());
 			Printspot.events.emit('printerStatus', data);
+
+			if(data.type == 'client_push_printer_status')
+			{
+				this.status = data.data.status;
+			}
 
 			if(data.type == 'client_push_printer_finished')
 			{
@@ -71,7 +78,7 @@ module.exports =
 		}
 		catch(e)
 		{
-			Printspot.debug(e);
+			Printspot.debug(e, true);
 		}
 	},
 

@@ -34,7 +34,12 @@ module.exports = function(config)
 
 			if(caller.evalOrigin.indexOf('/managers') > -1)
 			{
-				var outputString = '[' + callerString[callerString.length - 2] + ']\t';
+				var outputString = '[' + callerString[callerString.length - 2] + ']';
+				if(outputString.length < 12)
+				{
+					outputString += '\u0020\u0020';
+				}
+				outputString += '\t';
 				outputString += JSON.stringify(debug);
 
 				if(severe)

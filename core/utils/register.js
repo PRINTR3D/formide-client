@@ -41,7 +41,14 @@ module.exports = function(managerName)
 			// do init function if exists
 			if(typeof manager.init === 'function')
 			{
-				manager.init(data);
+				if(manager.init.length !== arguments.length)
+				{
+					Printspot.debug('manager ' + managerName + ' takes '+ manager.init.length + ' arguments but ' + arguments.length + ' were given', true);
+				}
+				else
+				{
+					manager.init(data);
+				}
 			}
 
 			if(!(managerName in Printspot.managers))
