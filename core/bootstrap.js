@@ -55,6 +55,6 @@ getMac.getMac(function(err, macAddress)
 	Printspot.register('interface').init();
 	Printspot.register('cron').init();
 
-	// other modules
+	// special modules
 	Printspot.register('update').init();
 });
