@@ -42,7 +42,8 @@ module.exports = {
 					Printspot.debug('Database entry created: ' + success);
 				});
 
-				db.Printer.create({
+				db.Printer
+				.create({
 					"name": "Big Builder",
 					"buildVolumeX": 200,
 					"buildVolumeY": 200,
@@ -65,7 +66,8 @@ module.exports = {
 					Printspot.debug('Database entry created: ' + success);
 				});
 
-				db.Printer.create({
+				db.Printer
+				.create({
 					"name": "Mini Builder",
 					"buildVolumeX": 200,
 					"buildVolumeY": 200,
@@ -83,7 +85,8 @@ module.exports = {
 					Printspot.debug('Database entry created: ' + success);
 				});
 
-				db.Material.create({
+				db.Material
+				.create({
 					"name": "PLA",
 					"type": "PLA",
 					"temperature": 193,
@@ -98,7 +101,8 @@ module.exports = {
 					Printspot.debug('Database entry created: ' + success);
 				});
 
-				db.Sliceprofile.create({
+				db.Sliceprofile
+				.create({
 					"name": "Default",
 					"settings": JSON.stringify(
 					{

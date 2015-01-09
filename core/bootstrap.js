@@ -53,8 +53,8 @@ getMac.getMac(function(err, macAddress)
 	Printspot.register('cloud').init(Printspot.config.get('cloud'));
 	Printspot.register('websocket').init();
 	Printspot.register('interface').init();
-	Printspot.register('cron').init();
+	// Printspot.register('cron').init();
 
 	// special modules
-	Printspot.register('update').init();
+	// Printspot.register('update').init();
 });
