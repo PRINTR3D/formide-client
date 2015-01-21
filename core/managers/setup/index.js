@@ -115,18 +115,18 @@ module.exports = {
 						"raft": {
 							"baseThickness": 0,
 							"baseSpeed": 20,
-							"lineSpacing":3000,
+							"baseLineSpacing ":3000,
+							"baseLineWidth": 1000,
 							"interfaceThickness": 0,
 							"interfaceLineWidth":400,
 							"interfaceLineSpacing": 800,
-							"airGap": 0,
-							"baseLineWidth": 1000,
 							"extraMargin": 5000,
 							"surfaceLayers": 2,
 							"surfaceThickness": 270,
 							"surfaceSpeed": 0,
 							"surfaceLineWidth": 400,
 							"surfaceLineSpacing": 400,
+							"airGap": 0,
 							"firstLayerAirGap": 200,
 							"fanSpeed": 25
 						},
@@ -155,17 +155,16 @@ module.exports = {
 							"dualOverlap": 1500
            				},
 						"movement": {
-							"combing": 0,
+							"combing": 1,
 							"oozeShield": 0,
 							"printSpeed": 40,
-							"travelSpeed": 20,
-							"insetXSpeed": 15,
-							"inset0Speed": 15,
-							"infillSpeed": 20,
+							"travelSpeed": 40,
+							"innerWallSpeed": 15,
+							"outerWallSpeed": 15,
+							"infillSpeed": 35,
 							"speedupLayers": 10,
-							"extrusionWidth": 200,
-							"firstLayersExtrusionWidth": 300,
-							"wipeTowerSize": 0
+							"firstLayersWidthFactor": 120,
+							"wipeTowerSize": 3000
 						},
 						"bottom": {
 							"thickness": 480,
