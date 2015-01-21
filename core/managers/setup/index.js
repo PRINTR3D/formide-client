@@ -115,7 +115,7 @@ module.exports = {
 						"raft": {
 							"baseThickness": 0,
 							"baseSpeed": 20,
-							"baseLineSpacing ":3000,
+							"baseLineSpacing": 3000,
 							"baseLineWidth": 1000,
 							"interfaceThickness": 0,
 							"interfaceLineWidth":400,
