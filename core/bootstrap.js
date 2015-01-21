@@ -30,14 +30,17 @@ getMac.getMac(function(err, macAddress)
 	// load CLI initiated modules
 	if(Printspot.manager('process').args.setup) // setup mode
 	{
+		Printspot.debug('Run setup');
 		Printspot.register('setup').init();
 	}
 	if(Printspot.manager('process').args.driver) // simulated driver mode
 	{
+		Printspot.debug('Simulate driver');
 		Printspot.register('simdriver').init();
 	}
 	if(Printspot.manager('process').args.slicer) // simulated slicer mode
 	{
+		Printspot.debug('Simulate slicer');
 		Printspot.register('simslicer').init();
 	}
 

@@ -131,27 +131,29 @@ module.exports = {
 							"fanSpeed": 25
 						},
 						"infill": {
-							"sparseInfillLineDistance": 2000,
 							"amount": 50,
 							"pattern": "grid",
 							"overlap": 15
 						},
 						"support": {
+							"fillRate": 15,
 							"angle": 45,
-							"supportModel": 1,
+							"supportEverywhere": 1,
 							"supportPlatform": 1,
-							"extruder": -1,
+							"extruder": "-1",
 							"XYDistance": 700,
-							"lineDistance": 2000
+							"ZDistance": 150
 						},
 						"skirt": {
 							"lineCount": 1,
 							"distance": 3000,
 							"minLenght": 150000
 						},
-						"dualExtrude": {
+						"multiExtrusion": {
+							"preSwitchCode": ";WE ARE GOING TO CHANGE THE EXTRUDER :D",
+							"postSwitchCode": "; WE JUST CHANGED THE EXTRUDER. I HOPE IT WORKED D: D: D: D: D:",
 							"dualOverlap": 1500
-						},
+           				},
 						"movement": {
 							"combing": 0,
 							"oozeShield": 0,
@@ -197,7 +199,7 @@ module.exports = {
 						"gcode": {
 							"startGcode": ["G21", "M107", "M104 S195", "G28", "G1 Z5 F5000", "M109 S195", "G90", "G92 E0", "M82", "G1 F1800.000 E-1.00000", "G92 E0"],
 							"endGcode": ["G92 E0", "M107", "M104 S0", "G28 X0", "M84"],
-							"gcodeFlavour":"MACH3"
+							"gcodeFlavour":"GCODE_FLAVOR_MACH3"
 						},
 						"plugins": []
 					})
