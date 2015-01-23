@@ -14,7 +14,6 @@
 
 // require dependencies
 var getMac = require('getmac');
-var argv = require('minimist')(process.argv.slice(2));
 
 // define global Printspot object
 Printspot = require('./Printspot')();
@@ -22,22 +21,26 @@ Printspot = require('./Printspot')();
 getMac.getMac(function(err, macAddress)
 {
 	Printspot.macAddress = Printspot.config.get('cloud.softMac', macAddress);
-	Printspot.args = argv;
 
 	// always include these
-	Printspot.register('logger').init();
+	Printspot.register('device').init();
+	Printspot.register('process').init();
 	Printspot.register('database').init(Printspot.config.get('database'));
 
-	if(Printspot.args.setup) // setup mode
+	// load CLI initiated modules
+	if(Printspot.manager('process').args.setup) // setup mode
 	{
+		Printspot.debug('Run setup');
 		Printspot.register('setup').init();
 	}
-	if(Printspot.args.driver) // simulated driver mode
+	if(Printspot.manager('process').args.driver) // simulated driver mode
 	{
+		Printspot.debug('Simulate driver');
 		Printspot.register('simdriver').init();
 	}
-	if(Printspot.args.slicer) // simulated slicer mode
+	if(Printspot.manager('process').args.slicer) // simulated slicer mode
 	{
+		Printspot.debug('Simulate slicer');
 		Printspot.register('simslicer').init();
 	}
 
@@ -47,12 +50,18 @@ getMac.getMac(function(err, macAddress)
 	Printspot.register('api').init();
 
 	// real time modules
+	Printspot.register('logger').init();
 	Printspot.register('printer').init(Printspot.config.get('printer'));
 	Printspot.register('slicer').init(Printspot.config.get('slicer'));
 	Printspot.register('cloud').init(Printspot.config.get('cloud'));
 	Printspot.register('websocket').init();
 	Printspot.register('interface').init();
+	// Printspot.register('cron').init();
 
+<<<<<<< HEAD
 	// other modules
+=======
+	// special modules
+>>>>>>> FETCH_HEAD
 	// Printspot.register('update').init();
 });

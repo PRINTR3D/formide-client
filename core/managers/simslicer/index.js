@@ -29,9 +29,11 @@ module.exports =
 		this.interface.stdout.on('error', this.onError);
 
 		this.interface.stdout.on('data', this.onData);
+	},
 
-		process.on('exit', this.stop);
-		process.on('SIGINT', this.stop);
+	on:
+	{
+		'processExit': 'stop'
 	},
 
 	onExit: function(exit)

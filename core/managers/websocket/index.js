@@ -86,6 +86,11 @@ module.exports =
 				Printspot.events.emit('dashboardPush', json);
 			});
 
+			socket.on('dashboard_push_schedule_start', function(data)
+			{
+				Printspot.events.emit('schedulePrintjob', data);
+			});
+
 			socket.on('dashboard_push_update', function(data)
 			{
 				Printspot.events.emit('update', data);

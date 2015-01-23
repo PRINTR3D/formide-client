@@ -42,7 +42,8 @@ module.exports = {
 					Printspot.debug('Database entry created: ' + success);
 				});
 
-				db.Printer.create({
+				db.Printer
+				.create({
 					"name": "Big Builder",
 					"buildVolumeX": 200,
 					"buildVolumeY": 200,
@@ -65,7 +66,8 @@ module.exports = {
 					Printspot.debug('Database entry created: ' + success);
 				});
 
-				db.Printer.create({
+				db.Printer
+				.create({
 					"name": "Mini Builder",
 					"buildVolumeX": 200,
 					"buildVolumeY": 200,
@@ -83,7 +85,8 @@ module.exports = {
 					Printspot.debug('Database entry created: ' + success);
 				});
 
-				db.Material.create({
+				db.Material
+				.create({
 					"name": "PLA",
 					"type": "PLA",
 					"temperature": 193,
@@ -98,7 +101,8 @@ module.exports = {
 					Printspot.debug('Database entry created: ' + success);
 				});
 
-				db.Sliceprofile.create({
+				db.Sliceprofile
+				.create({
 					"name": "Default",
 					"settings": JSON.stringify(
 					{
@@ -111,55 +115,56 @@ module.exports = {
 						"raft": {
 							"baseThickness": 0,
 							"baseSpeed": 20,
-							"lineSpacing":3000,
+							"baseLineSpacing": 3000,
+							"baseLineWidth": 1000,
 							"interfaceThickness": 0,
 							"interfaceLineWidth":400,
 							"interfaceLineSpacing": 800,
-							"airGap": 0,
-							"baseLineWidth": 1000,
 							"extraMargin": 5000,
 							"surfaceLayers": 2,
 							"surfaceThickness": 270,
 							"surfaceSpeed": 0,
 							"surfaceLineWidth": 400,
 							"surfaceLineSpacing": 400,
+							"airGap": 0,
 							"firstLayerAirGap": 200,
 							"fanSpeed": 25
 						},
 						"infill": {
-							"sparseInfillLineDistance": 2000,
 							"amount": 50,
 							"pattern": "grid",
 							"overlap": 15
 						},
 						"support": {
+							"fillRate": 15,
 							"angle": 45,
-							"supportModel": 1,
+							"supportEverywhere": 1,
 							"supportPlatform": 1,
-							"extruder": -1,
+							"extruder": "-1",
 							"XYDistance": 700,
-							"lineDistance": 2000
+							"ZDistance": 150
 						},
 						"skirt": {
 							"lineCount": 1,
 							"distance": 3000,
 							"minLenght": 150000
 						},
-						"dualExtrude": {
+						"multiExtrusion": {
+							"preSwitchCode": ";WE ARE GOING TO CHANGE THE EXTRUDER :D",
+							"postSwitchCode": "; WE JUST CHANGED THE EXTRUDER. I HOPE IT WORKED D: D: D: D: D:",
 							"dualOverlap": 1500
-						},
+           				},
 						"movement": {
-							"combing": 0,
+							"combing": 1,
 							"oozeShield": 0,
 							"printSpeed": 40,
-							"travelSpeed": 20,
-							"insetXSpeed": 15,
-							"inset0Speed": 15,
-							"infillSpeed": 20,
+							"travelSpeed": 40,
+							"innerWallSpeed": 15,
+							"outerWallSpeed": 15,
+							"infillSpeed": 35,
 							"speedupLayers": 10,
-							"extrusionWidth": 200,
-							"firstLayersExtrusionWidth": 300,
-							"wipeTowerSize": 0
+							"firstLayersWidthFactor": 120,
+							"wipeTowerSize": 3000
 						},
 						"bottom": {
 							"thickness": 480,
@@ -193,7 +198,7 @@ module.exports = {
 						"gcode": {
 							"startGcode": ["G21", "M107", "M104 S195", "G28", "G1 Z5 F5000", "M109 S195", "G90", "G92 E0", "M82", "G1 F1800.000 E-1.00000", "G92 E0"],
 							"endGcode": ["G92 E0", "M107", "M104 S0", "G28 X0", "M84"],
-							"gcodeFlavour":"MACH3"
+							"gcodeFlavour":"GCODE_FLAVOR_MACH3"
 						},
 						"plugins": []
 					})

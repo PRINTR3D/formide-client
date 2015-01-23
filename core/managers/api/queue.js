@@ -30,8 +30,10 @@ module.exports = function(app)
 				"bucketIn": Printspot.config.get('paths.modelfile'),
 				"x": 100000,
 				"y": 100000,
-				"z": 0
-			}; // hardcoded to 10 by 10 cm
+				"z": 0,
+				"extruder": "extruder1"
+			};
+			// TODO: still hardcoded to 10 by 10 cm and with extruder 1
 
 			json.data.model = [model];
 			json.data.bucketOut = Printspot.config.get('paths.gcode');
