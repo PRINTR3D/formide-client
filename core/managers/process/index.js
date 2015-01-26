@@ -59,7 +59,7 @@ module.exports =
 		return this.process.uptime();
 	},
 
-	processExit: function()
+	processExit: function(err)
 	{
 		Printspot.events.emit('processExit');
 	},
