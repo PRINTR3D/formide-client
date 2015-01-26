@@ -28,11 +28,11 @@ module.exports =
 		}
 		else
 		{
-			fs.exists(Printspot.config.get('paths.interfaces') + '/' + Printspot.args.interface, function(exists)
+			fs.exists(Printspot.config.get('paths.interfaces') + '/' + Printspot.manager('process').args.interface, function(exists)
 			{
 				if(exists)
 				{
-					this.interface = spawn('node', ['index.js'], {cwd: Printspot.config.get('paths.interfaces') + '/' + Printspot.args.interface, stdio: 'pipe'});
+					this.interface = spawn('node', ['index.js'], {cwd: Printspot.config.get('paths.interfaces') + '/' + Printspot.manager('process').args.interface, stdio: 'pipe'});
 				}
 				else
 				{
