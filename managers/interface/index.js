@@ -13,6 +13,7 @@
  */
 
 var spawn = require('child_process').spawn;
+var fs = require('fs');
 
 module.exports =
 {
@@ -20,7 +21,7 @@ module.exports =
 
 	init: function()
 	{
-		this.interface = spawn('node', ['index.js'], {cwd: '../printspot-qclient-simulator', stdio: 'pipe'});
+		this.interface = spawn('node', ['index.js'], {cwd: Printspot.config.get('dashboard.path'), stdio: 'pipe'});
 
 		this.interface.stdout.setEncoding('utf8');
 
@@ -29,9 +30,6 @@ module.exports =
 		this.interface.stdout.on('error', this.onError);
 
 		this.interface.stdout.on('data', this.onData);
-
-		process.on('exit', this.stop);
-		process.on('SIGINT', this.stop);
 	},
 
 	on:

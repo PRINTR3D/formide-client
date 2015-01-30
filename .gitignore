@@ -31,19 +31,8 @@ core/printspot.sqlite
 # Uploads
 uploads
 
-# Interfaces
-interfaces
-
 # Config
 core/config/development
 
-# Slicer
-katana
-settings.json
-firstoutput.stl
-svgdump.html
-
 # Logs
 logs
-
-core/config/development

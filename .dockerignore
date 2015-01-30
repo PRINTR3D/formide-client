@@ -1,0 +1,4 @@
+.git
+.DS_Store
+core/node_modules
+core/config/development
