@@ -20,19 +20,12 @@ build/Release
 
 # Dependency directory
 node_modules
-core/node_modules
 
 # Users Environment Variables
 .lock-wscript
 
-# Database
-core/printspot.sqlite
-
-# Uploads
-uploads
-
-# Config
-core/config/development
+# Development
+config/development
 
 # Logs
 logs
