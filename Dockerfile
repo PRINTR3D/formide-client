@@ -1,12 +1,7 @@
-FROM 		nodesource/node:wheezy
+FROM node
 
-ADD 		. /home/formideos/core
+ADD . /opt/formideos/client
+WORKDIR /opt/formideos/client
+RUN npm install
 
-WORKDIR 	/home/formideos/core
-
-RUN			npm install
-
-EXPOSE 		1336
-EXPOSE 		1337
-
-ENTRYPOINT	[ "npm", "start" ]
+EXPOSE 1337

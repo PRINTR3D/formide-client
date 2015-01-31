@@ -29,6 +29,7 @@ module.exports =
 		Printspot.manager('app').app.use(cookieParser());
 		Printspot.manager('app').app.use(methodOverride());
 		Printspot.manager('app').app.use(session({ secret: 'much_secret_many_safety_wow', resave: true, saveUninitialized: true }));
+
 		Printspot.manager('app').app.all('/*', function(req, res, next)
 		{
 			res.header("Access-Control-Allow-Origin", req.headers.origin);

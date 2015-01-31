@@ -43,6 +43,6 @@
   },
   "scripts": {
 	  "setup": "node bootstrap.js --setup",
-	  "start": "node bootstrap.js"
+	  "start": "node bootstrap.js --slicer --driver"
   }
 }
