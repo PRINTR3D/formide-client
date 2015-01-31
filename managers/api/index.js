@@ -39,7 +39,7 @@ module.exports =
 			next();
 		});
 
-		require('./resources.js')(Printspot.manager('app').app, Printspot.manager('database').db, Printspot.manager('database').sequelize);
+		require('./rest')(Printspot.manager('app').app, Printspot.manager('database').db, Printspot.manager('database').sequelize);
 		require('./files.js')(Printspot.manager('app').app);
 		require('./queue.js')(Printspot.manager('app').app);
 		require('./session.js')(Printspot.manager('app').app, Printspot.macAddress);
