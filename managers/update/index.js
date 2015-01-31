@@ -19,29 +19,9 @@ var semver = require('semver');
 
 module.exports =
 {
-	updates: [
-		/*
-{
-			'name': 'driver',
-			'version': '1.0.1',
-			'url': 'http://nodejs.org/dist/v0.10.35/node-v0.10.35.tar.gz'
-		},
-		{
-			'name': 'interface',
-			'manufacturer': 'printspot-formide-dashboard',
-			'version': '1.0.1',
-			'url': 'http://printr.nl/wp-content/uploads/2014/11/Printr_presskit.zip'
-		}
-*/
-	],
-
 	init: function()
 	{
-		// check versions
-		for(var i in this.updates)
-		{
-			this.checkVersion(this.updates[i]);
-		}
+
 	},
 
 	on:
@@ -94,45 +74,5 @@ module.exports =
 		{
 			// check download and replace current file
 		});
-	},
-
-	checkVersion: function(update)
-	{
-		if(update.name == 'driver')
-		{
-			var currentInstall = require('../../../../formidium/package.json');
-			if(semver.lt(currentInstall.version, update.version))
-			{
-				Printspot.debug('Driver update');
-				this.download(update);
-			}
-		}
-		else if(update.name == 'slicer')
-		{
-			var currentInstall = require('../../../../katana-slicer/package.json');
-			if(semver.lt(currentInstall.version, update.version))
-			{
-				Printspot.debug('Slicer update');
-				this.download(update);
-			}
-		}
-		else if(update.name == 'core')
-		{
-			var currentInstall = require('../../package.json');
-			if(semver.lt(currentInstall.version, update.version))
-			{
-				Printspot.debug('Core update');
-				this.download(update);
-			}
-		}
-		else if(update.name == 'interface')
-		{
-			var currentInstall = require('../../../interfaces/' + update.manufacturer + '/package.json');
-			if(semver.lt(currentInstall.version, update.version))
-			{
-				Printspot.debug('Interface update');
-				this.download(update);
-			}
-		}
 	}
 }
