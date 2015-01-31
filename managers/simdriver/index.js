@@ -20,7 +20,7 @@ module.exports =
 
 	init: function()
 	{
-		this.interface = spawn('node', ['index.js'], {cwd: '../printspot-katana-simulator', stdio: 'pipe'});
+		this.interface = spawn('node', ['index.js'], {cwd: 'printspot-qclient-simulator', stdio: 'pipe'});
 
 		this.interface.stdout.setEncoding('utf8');
 
@@ -29,19 +29,21 @@ module.exports =
 		this.interface.stdout.on('error', this.onError);
 
 		this.interface.stdout.on('data', this.onData);
+	},
 
-		process.on('exit', this.stop);
-		process.on('SIGINT', this.stop);
+	on:
+	{
+		'processExit': 'stop'
 	},
 
 	onExit: function(exit)
 	{
-		Printspot.debug(exit);
+		Printspot.debug(exit, true);
 	},
 
 	onError: function(error)
 	{
-		Printspot.debug(error);
+		Printspot.debug(error, true);
 	},
 
 	onData: function(data)

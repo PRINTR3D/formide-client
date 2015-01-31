@@ -1,0 +1,7 @@
+{
+	"debug": true,
+	"timezone": "UTC",
+	"url": "localhost",
+	"port": 1337,
+	"version": "0.4.0"
+}

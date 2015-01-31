@@ -23,6 +23,10 @@ module.exports =
 	{
 		this.process = process;
 		this.args = argv(this.process.argv.slice(2));
+
+		this.process.on('exit', this.processExit);
+
+		this.process.on('uncaughtException', this.processError);
 	},
 
 	getProcess: function()
@@ -53,5 +57,15 @@ module.exports =
 	getUptime: function()
 	{
 		return this.process.uptime();
+	},
+
+	processExit: function(err)
+	{
+		Printspot.events.emit('processExit');
+	},
+
+	processError: function(err)
+	{
+		Printspot.debug(err, true);
 	}
 };
