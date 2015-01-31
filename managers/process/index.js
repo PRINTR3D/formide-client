@@ -66,6 +66,7 @@ module.exports =
 
 	processError: function(err)
 	{
+		err = err.toString();
 		Printspot.debug(err, true);
 	}
 };

@@ -2,6 +2,6 @@
 	"username": "root",
 	"password": null,
 	"database": "printspot",
-	"storage": "printspot.sqlite",
+	"storage": "/Volumes/Macintosh_HDD/Chris/Sites/printr/github/formideOS/storage/printspot.sqlite",
 	"debug": false
 }

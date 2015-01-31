@@ -20,6 +20,11 @@ module.exports =
 	{
 		this.websocket = require('socket.io').listen(Printspot.manager('http').server);
 
+		this.websocket.set('authorization', function(data, cb)
+		{
+
+		});
+
 		this.websocket.on('connection', function(socket)
 		{
 			socket.emit('handshake', {

@@ -17,19 +17,25 @@ var fs = require('fs');
 
 module.exports =
 {
-	interface: null,
+	dashboard: null,
 
 	init: function()
 	{
-		this.interface = spawn('node', ['index.js'], {cwd: Printspot.config.get('dashboard.path'), stdio: 'pipe'});
-
-		this.interface.stdout.setEncoding('utf8');
-
-		this.interface.stdout.on('exit', this.onExit);
-
-		this.interface.stdout.on('error', this.onError);
-
-		this.interface.stdout.on('data', this.onData);
+		fs.exists(Printspot.config.get('dashboard.path'), function(exists)
+		{
+			if(exists)
+			{
+				this.dashboard = spawn('node', ['index.js'], {cwd: Printspot.config.get('dashboard.path'), stdio: 'pipe'});
+				this.dashboard.stdout.setEncoding('utf8');
+				this.dashboard.stdout.on('exit', this.onExit);
+				this.dashboard.stdout.on('error', this.onError);
+				this.dashboard.stdout.on('data', this.onData);
+			}
+			else
+			{
+				Printspot.debug('interface directory not found', true);
+			}
+		}.bind(this));
 	},
 
 	on:
@@ -52,7 +58,7 @@ module.exports =
 		Printspot.debug(data);
 	},
 
-	stop: function()
+	stop: function(stop)
 	{
 		this.kill('SIGINT');
 	}
