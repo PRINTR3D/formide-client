@@ -13,24 +13,30 @@
  */
 
 // dependencies
+var express 		= require('express');
 var bodyParser		= require('body-parser');
 var cookieParser 	= require('cookie-parser');
 var methodOverride	= require('method-override');
 var session 		= require('express-session');
+var app 			= express();
 
 module.exports =
 {
-	init: function()
-	{
-		// app configuration
-		Printspot.manager('app').app.use(bodyParser.urlencoded({ 'extended': 'true' }));
-		Printspot.manager('app').app.use(bodyParser.json());
-		Printspot.manager('app').app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
-		Printspot.manager('app').app.use(cookieParser());
-		Printspot.manager('app').app.use(methodOverride());
-		Printspot.manager('app').app.use(session({ secret: 'much_secret_many_safety_wow', resave: true, saveUninitialized: true }));
+	server: null,
 
-		Printspot.manager('app').app.all('/*', function(req, res, next)
+	init: function(config)
+	{
+		this.server = app.listen(config.port);
+
+		// app configuration
+		app.use(bodyParser.urlencoded({ 'extended': 'true' }));
+		app.use(bodyParser.json());
+		app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
+		app.use(cookieParser());
+		app.use(methodOverride());
+		app.use(session({ secret: 'much_secret_many_safety_wow', resave: true, saveUninitialized: true }));
+
+		app.all('/*', function(req, res, next)
 		{
 			res.header("Access-Control-Allow-Origin", req.headers.origin);
 			res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
@@ -39,9 +45,9 @@ module.exports =
 			next();
 		});
 
-		require('./rest')(Printspot.manager('app').app, Printspot.manager('database').db, Printspot.manager('database').sequelize);
-		require('./files.js')(Printspot.manager('app').app);
-		require('./queue.js')(Printspot.manager('app').app);
-		require('./session.js')(Printspot.manager('app').app, Printspot.macAddress);
+		require('./rest')(app, Printspot.manager('database').db, Printspot.manager('database').sequelize);
+		require('./files.js')(app);
+		require('./queue.js')(app);
+		require('./session.js')(app, Printspot.macAddress);
 	}
 }

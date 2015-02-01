@@ -44,20 +44,14 @@ getMac.getMac(function(err, macAddress)
 		Printspot.register('simslicer').init();
 	}
 
-	// server & http
-	Printspot.register('app').init();
-	Printspot.register('http').init(Printspot.config.get('app'));
-	Printspot.register('api').init();
-
-	// real time modules
+	// managers
+	Printspot.register('api').init(Printspot.config.get('app'));
+	Printspot.register('websocket').init();
 	Printspot.register('logger').init();
 	Printspot.register('printer').init(Printspot.config.get('printer'));
 	Printspot.register('slicer').init(Printspot.config.get('slicer'));
 	Printspot.register('cloud').init(Printspot.config.get('cloud'));
-	Printspot.register('websocket').init();
 	Printspot.register('interface').init();
 	// Printspot.register('cron').init();
-
-	// other modules
 	Printspot.register('update').init();
 });
