@@ -48,10 +48,6 @@
     "wireless": "^0.3.2",
     "wireless-osx": "0.0.1"
   },
-  "scripts": {
-    "setup": "node bootstrap.js --setup",
-    "start": "node bootstrap.js --slicer --driver"
-  },
   "engineStrict": [
     "darwin",
     "linux"
