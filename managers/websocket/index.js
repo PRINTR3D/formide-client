@@ -64,43 +64,44 @@ this.websocket.set('authorization', function(data, cb)
 			});
 
 			// load channels from config
-			Printspot.config.get('channels.dashboard').forEach(function(method)
+			Object.keys(Printspot.config.get('channels.dashboard')).forEach(function(method)
 			{
 				(function(realMethod)
 				{
 					socket.on(realMethod, function(data)
 					{
-						var json = {
-							"type": realMethod,
-							"data": data
-						};
+						var expected = Printspot.config.get('channels.dashboard')[realMethod];
+						var given = data;
+						var correct = true;
 
-						Printspot.events.emit('dashboardPush', json);
+						for(key in expected)
+						{
+							if(!given.hasOwnProperty(expected[key]))
+							{
+								correct = false;
+							}
+						}
+
+						if(correct)
+						{
+							if(realMethod == 'start')
+							{
+								data.hash = Printspot.config.get('paths.gcode') + '/' + data.hash;
+							}
+
+							var json = {
+								"type": realMethod,
+								"data": data
+							};
+
+							Printspot.events.emit('dashboardPush', json);
+						}
+						else
+						{
+							Printspot.debug('Dashboard tried to send command to printer but arguments were invalid', true);
+						}
 					});
 				})(method);
-			});
-
-			// push print start
-			socket.on('dashboard_push_printer_start', function(data)
-			{
-				data.hash = Printspot.config.get('paths.gcode') + '/' + data.hash;
-
-				var json = {
-					"type": "dashboard_push_printer_start",
-					"data": data
-				};
-
-				Printspot.events.emit('dashboardPush', json);
-			});
-
-			socket.on('dashboard_push_schedule_start', function(data)
-			{
-				Printspot.events.emit('schedulePrintjob', data);
-			});
-
-			socket.on('dashboard_push_update', function(data)
-			{
-				Printspot.events.emit('update', data);
 			});
 		});
 	},
@@ -125,7 +126,6 @@ this.websocket.set('authorization', function(data, cb)
 
 	updateProgress: function(progress)
 	{
-		console.log(progress);
 		this.websocket.emit('client_push_update_progress', progress);
 	}
 }

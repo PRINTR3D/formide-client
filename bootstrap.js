@@ -26,32 +26,28 @@ getMac.getMac(function(err, macAddress)
 	Printspot.register('device').init();
 	Printspot.register('process').init();
 	Printspot.register('database').init(Printspot.config.get('database'));
+	Printspot.register('api').init(Printspot.config.get('app'));
 
 	// load CLI initiated modules
 	if(Printspot.manager('process').args.setup) // setup mode
 	{
-		Printspot.debug('Run setup');
 		Printspot.register('setup').init();
 	}
 	if(Printspot.manager('process').args.driver) // simulated driver mode
 	{
-		Printspot.debug('Simulate driver');
 		Printspot.register('simdriver').init();
 	}
 	if(Printspot.manager('process').args.slicer) // simulated slicer mode
 	{
-		Printspot.debug('Simulate slicer');
 		Printspot.register('simslicer').init();
 	}
 
 	// managers
-	Printspot.register('api').init(Printspot.config.get('app'));
 	Printspot.register('websocket').init();
 	Printspot.register('logger').init();
 	Printspot.register('printer').init(Printspot.config.get('printer'));
 	Printspot.register('slicer').init(Printspot.config.get('slicer'));
-	Printspot.register('cloud').init(Printspot.config.get('cloud'));
+	// Printspot.register('cloud').init(Printspot.config.get('cloud'));
 	Printspot.register('interface').init();
 	// Printspot.register('cron').init();
-	Printspot.register('update').init();
 });

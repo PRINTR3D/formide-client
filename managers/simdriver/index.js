@@ -20,7 +20,7 @@ module.exports =
 
 	init: function()
 	{
-		this.interface = spawn('node', ['index.js'], {cwd: 'printspot-qclient-simulator', stdio: 'pipe'});
+		this.interface = spawn('node', ['index.js'], {cwd: 'driver-simulator', stdio: 'pipe'});
 
 		this.interface.stdout.setEncoding('utf8');
 

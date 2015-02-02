@@ -18,7 +18,6 @@ var net = require('net');
 module.exports =
 {
 	printer: {},
-	status: null,
 
 	init: function(config)
 	{
@@ -43,7 +42,7 @@ module.exports =
 	// custom functions
 	printerError: function(error)
 	{
-		Printspot.debug(error, true);
+		Printspot.debug(error.toString(), true);
 	},
 
 	printerStatus: function(printerData)
@@ -53,12 +52,12 @@ module.exports =
 			data = JSON.parse(printerData.toString());
 			Printspot.events.emit('printerStatus', data);
 
-			if(data.type == 'client_push_printer_status')
+			if(data.type == 'status')
 			{
-				this.status = data.data.status;
+				this.status = data.data;
 			}
 
-			if(data.type == 'client_push_printer_finished')
+			if(data.type == 'finished')
 			{
 				Printspot.manager('database').db.Queueitem
 				.find({where: {id: data.data.printjobID}})
@@ -78,7 +77,7 @@ module.exports =
 		}
 		catch(e)
 		{
-			Printspot.debug(e, true);
+			Printspot.debug(e.toString(), true);
 		}
 	},
 

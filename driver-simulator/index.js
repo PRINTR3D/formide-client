@@ -14,23 +14,23 @@ var server = net.createServer(function(client)
 		console.log(data.toString());
 		data = JSON.parse(data);
 
-		if(data.type == 'dashboard_push_printer_temp_ext')
+		if(data.type == 'temp_extruder')
 		{
 			targetTemp = data.data.temp;
 		}
 
-		if(data.type == 'dashboard_push_printer_temp_bed')
+		if(data.type == 'temp_bed')
 		{
 			targetBedTemp = data.data.temp;
 		}
 
-		if(data.type == 'dashboard_push_printer_start')
+		if(data.type == 'start')
 		{
 			printjobID = data.data.printjobID;
 			printerStatus = 'printing';
 		}
 
-		if(data.type == 'dashboard_push_printer_stop')
+		if(data.type == 'stop')
 		{
 			progress = 0;
 			printerStatus = 'online';
@@ -44,7 +44,7 @@ var server = net.createServer(function(client)
 		setInterval(function()
 		{
 			var json = {
-			   "type": "client_push_printer_status",
+			   "type": "status",
 			   "data": {
 				   "status": printerStatus,
 				   "progress": progress,
@@ -99,7 +99,7 @@ var server = net.createServer(function(client)
 				progress = 0;
 
 				var json2 = {
-				   "type": "client_push_printer_finished",
+				   "type": "finished",
 				   "data": {
 					   "printjobID": printjobID
 				   }

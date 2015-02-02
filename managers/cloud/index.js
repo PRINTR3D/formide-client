@@ -79,6 +79,7 @@ module.exports =
 	{
 		var _this = this;
 
+		// TODO: rewrite
 		Printspot.config.get('channels.dashboard').forEach(function(method)
 		{
 			(function(realMethod)
