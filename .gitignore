@@ -31,3 +31,4 @@ config/development
 logs
 
 interfaces
+.DS_Store
