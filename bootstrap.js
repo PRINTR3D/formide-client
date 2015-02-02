@@ -25,8 +25,6 @@ getMac.getMac(function(err, macAddress)
 	// always include these
 	Printspot.register('device').init();
 	Printspot.register('process').init();
-	Printspot.register('database').init(Printspot.config.get('database'));
-	Printspot.register('api').init(Printspot.config.get('app'));
 
 	// load CLI initiated modules
 	if(Printspot.manager('process').args.setup) // setup mode
@@ -43,6 +41,9 @@ getMac.getMac(function(err, macAddress)
 	}
 
 	// managers
+	Printspot.register('files').init();
+	Printspot.register('session').init();
+	Printspot.register('rest').init();
 	Printspot.register('websocket').init();
 	Printspot.register('logger').init();
 	Printspot.register('printer').init(Printspot.config.get('printer'));

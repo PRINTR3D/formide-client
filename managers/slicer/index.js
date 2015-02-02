@@ -51,7 +51,7 @@ module.exports =
 
 			if(data.status == 200 && data.data.responseID != null)
 			{
-				Printspot.manager('database').db.Printjob
+				Printspot.db.Printjob
 				.find({where: {sliceResponse: data.data.responseID}})
 				.success(function(printjob)
 				{
@@ -59,7 +59,7 @@ module.exports =
 					.updateAttributes({gcode: data.data.gcode, sliceResponse: JSON.stringify(data.data)})
 					.success(function()
 					{
-						Printspot.manager('database').db.Queueitem
+						Printspot.db.Queueitem
 						.create({
 							origin: 'local',
 							status: 'queued',

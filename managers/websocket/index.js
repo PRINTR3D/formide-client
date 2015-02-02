@@ -18,7 +18,7 @@ module.exports =
 
 	init: function()
 	{
-		this.websocket = require('socket.io').listen(Printspot.manager('api').server);
+		this.websocket = require('socket.io').listen(Printspot.http.server);
 
 		/*
 this.websocket.set('authorization', function(data, cb)

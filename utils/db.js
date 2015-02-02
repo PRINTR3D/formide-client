@@ -15,37 +15,26 @@
 var Sequelize 	= require('sequelize');
 var lodash    	= require('lodash');
 
-module.exports = {
+module.exports = function(config)
+{
+	var config = config.get('database');
+	var db = {};
+	var sequelize = null;
 
-	db: {},
+	sequelize = new Sequelize(config.database, config.username, config.password, {
+		dialect: 'sqlite',
+		storage: config.storage,
+		logging: config.debug
+	});
 
-	sequelize: null,
-
-	init: function(config)
+	var registerModels = function()
 	{
-		this.sequelize = new Sequelize(config.database, config.username, config.password, {
-			dialect: 'sqlite',
-			storage: config.storage,
-			logging: config.debug
-		});
-
-		this.registerModels();
-		this.registerAssociations();
-
-		return lodash.extend({
-			sequelize: this.sequelize,
-			Sequelize: Sequelize
-		}, this.db);
-	},
-
-	registerModels: function()
-	{
-		this.db.User = this.sequelize.define('User', {
+		db.User = sequelize.define('User', {
 		    "username": "STRING",
 		    "password": "STRING"
 		});
 
-		this.db.Printjob = this.sequelize.define('Printjob', {
+		db.Printjob = sequelize.define('Printjob', {
 			"userID": "INTEGER",
 			"printerID": "INTEGER",
 			"sliceprofileID": "INTEGER",
@@ -57,21 +46,21 @@ module.exports = {
 			"ModelfileId": "INTEGER"
 		});
 
-		this.db.Queueitem = this.sequelize.define('Queueitem', {
+		db.Queueitem = sequelize.define('Queueitem', {
 			"origin": "STRING",
 			"gcode": "STRING",
 			"status": "STRING",
 			"PrintjobId": "INTEGER"
 		});
 
-		this.db.Modelfile = this.sequelize.define('Modelfile', {
+		db.Modelfile = sequelize.define('Modelfile', {
 			"filename": "STRING",
 			"filesize": "INTEGER",
 			"hash": "STRING",
 			"userID": "INTEGER"
 		});
 
-		this.db.Printer = this.sequelize.define('Printer', {
+		db.Printer = sequelize.define('Printer', {
 			"name": "STRING",
 			"buildVolumeX": "INTEGER",
 			"buildVolumeY": "INTEGER",
@@ -80,7 +69,7 @@ module.exports = {
 			"extruders": "TEXT"
 		});
 
-		this.db.Material = this.sequelize.define('Material', {
+		db.Material = sequelize.define('Material', {
 			"name": "STRING",
 			"type": "STRING",
 			"filamentDiameter": "INTEGER",
@@ -91,26 +80,33 @@ module.exports = {
 			"feedrate": "INTEGER"
 		});
 
-		this.db.Sliceprofile = this.sequelize.define('Sliceprofile', {
+		db.Sliceprofile = sequelize.define('Sliceprofile', {
 			"name": "STRING",
 			"settings": "TEXT"
 		});
-	},
+	};
 
-	registerAssociations: function()
+	var registerAssociations = function()
 	{
-		var _this = this;
 
-		Object.keys(_this.db).forEach(function(modelName) {
-		  	if ('associate' in _this.db[modelName]) {
-		    	_this.db[modelName].associate(_this.db)
+		Object.keys(db).forEach(function(modelName) {
+		  	if ('associate' in db[modelName]) {
+		    	db[modelName].associate(db)
 		  	}
 		});
 
-		this.db.Printjob.hasMany(this.db.Queueitem);
-		this.db.Queueitem.belongsTo(this.db.Printjob);
+		db.Printjob.hasMany(db.Queueitem);
+		db.Queueitem.belongsTo(db.Printjob);
 
-		this.db.Modelfile.hasMany(this.db.Printjob);
-		this.db.Printjob.belongsTo(this.db.Modelfile);
-	}
+		db.Modelfile.hasMany(db.Printjob);
+		db.Printjob.belongsTo(db.Modelfile);
+	};
+
+	registerModels();
+	registerAssociations();
+
+	return lodash.extend({
+		sequelize: sequelize,
+		Sequelize: Sequelize
+	}, db);
 }

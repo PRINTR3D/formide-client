@@ -17,8 +17,8 @@ module.exports = {
 	init: function()
 	{
 		// setup new db connection
-		var database = Printspot.manager('database');
-		var db = database.db;
+		var database = Printspot.sequelize;
+		var db = Printspot.db;
 
 		database.sequelize
 		.sync({

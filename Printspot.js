@@ -14,8 +14,11 @@
 
 var events = require('./utils/events.js')();
 var config = require('./utils/config.js')();
-var debug = require('./utils/debug.js')(config);
 var register = require('./utils/register.js');
+
+var debug = require('./utils/debug.js')(config);
+var http = require('./utils/http.js')(config);
+var db = require('./utils/db.js')(config);
 
 // define global Printspot object
 module.exports = function()
@@ -31,8 +34,13 @@ module.exports = function()
 	// global events
 	printspot.events = events;
 
-	// global debu
+	// global debug
 	printspot.debug = debug;
+
+	// global http app
+	printspot.http = http;
+
+	printspot.db = db
 
 	// register manager
 	printspot.register = register;

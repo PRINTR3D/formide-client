@@ -59,7 +59,7 @@ module.exports =
 
 			if(data.type == 'finished')
 			{
-				Printspot.manager('database').db.Queueitem
+				Printspot.db.Queueitem
 				.find({where: {id: data.data.printjobID}})
 				.success(function(queueitem)
 				{
