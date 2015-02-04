@@ -94,7 +94,7 @@ module.exports = function(server)
 
 							var json = {
 								"type": realMethod,
-								"data": req.query
+								"data": params
 							};
 
 							Printspot.events.emit('dashboardPush', json);
