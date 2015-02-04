@@ -35,7 +35,7 @@ module.exports =
 				this.process1.stdout.on('error', this.onError);
 				this.process1.stdout.on('data', this.onData);
 
-				this.process2 = spawn('./FormideOS', [], {cwd: config.path, stdio: 'pipe'});
+				this.process2 = spawn('./formideOS', [], {cwd: config.path, stdio: 'pipe'});
 				this.process2.stdout.setEncoding('utf8');
 				this.process2.stdout.on('exit', this.onExit);
 				this.process2.stdout.on('error', this.onError);
