@@ -40,6 +40,7 @@ module.exports = function()
 	// global http app
 	printspot.http = http;
 
+	// global database
 	printspot.db = db
 
 	// register manager

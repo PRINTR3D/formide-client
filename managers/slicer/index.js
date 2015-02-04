@@ -13,28 +13,76 @@
  */
 
 // dependencies
+var spawn = require('child_process').spawn;
+var fs = require('fs');
 var net = require('net');
 
 module.exports =
 {
+	process: null,
 	slicer: {},
 
 	init: function(config)
 	{
-		this.slicer = net.connect({
-			port: config.port
-		}, function() {
-			Printspot.debug('slicer connected');
-		});
+		fs.exists(config.path, function(exists)
+		{
+			if(exists && config.simulated == false)
+			{
+				this.process = spawn('node', ['./katana'], {cwd: config.path, stdio: 'pipe'});
+				this.process.stdout.setEncoding('utf8');
+				this.process.stdout.on('exit', this.onExit);
+				this.process.stdout.on('error', this.onError);
+				this.process.stdout.on('data', this.onData);
+			}
+			else
+			{
+				this.process = spawn('node', ['index.js'], {cwd: 'slicer-simulator', stdio: 'pipe'});
+				this.process.stdout.setEncoding('utf8');
+				this.process.stdout.on('exit', this.onExit);
+				this.process.stdout.on('error', this.onError);
+				this.process.stdout.on('data', this.onData);
+			}
 
-		this.slicer.on('error', this.slicerError);
+			setTimeout(function()
+			{
+				this.slicer = net.connect({
+					port: config.port
+				}, function() {
+					Printspot.debug('slicer connected');
+				});
 
-		this.slicer.on('data', this.sliceResponse);
+				this.slicer.on('error', this.slicerError);
+				this.slicer.on('data', this.sliceResponse);
+
+			}.bind(this), 500);
+
+		}.bind(this));
 	},
 
 	on:
 	{
-		'slice': 'slice'
+		'slice': 'slice',
+		'processExit': 'stop'
+	},
+
+	onExit: function(exit)
+	{
+		Printspot.debug(exit, true);
+	},
+
+	onError: function(error)
+	{
+		Printspot.debug(error, true);
+	},
+
+	onData: function(data)
+	{
+		Printspot.debug(data);
+	},
+
+	stop: function(stop)
+	{
+		this.process.kill('SIGINT');
 	},
 
 	// custom functions

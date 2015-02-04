@@ -58,7 +58,7 @@ module.exports = function(managerName)
 
 				if(fs.existsSync('managers/' + managerName + '/api.js'))
 				{
-					require('../managers/' + managerName + '/api.js')(Printspot.http.app);
+					require('../managers/' + managerName + '/api.js')(Printspot.http.server);
 				}
 
 				if(!(managerName in Printspot.managers))

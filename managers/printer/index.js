@@ -13,30 +13,87 @@
  */
 
 // dependencies
+var spawn = require('child_process').spawn;
+var fs = require('fs');
 var net = require('net');
 
 module.exports =
 {
+	process1: null,
+	process2: null,
 	printer: {},
 
 	init: function(config)
 	{
-		this.printer = net.connect({
-			port: config.port
-		}, function() {
-			Printspot.debug('printer connected');
-		});
+		fs.exists(config.path, function(exists)
+		{
+			if(exists && config.simulated == false)
+			{
+				this.process1 = spawn('./ClientDriver', [], {cwd: config.path, stdio: 'pipe'});
+				this.process1.stdout.setEncoding('utf8');
+				this.process1.stdout.on('exit', this.onExit);
+				this.process1.stdout.on('error', this.onError);
+				this.process1.stdout.on('data', this.onData);
 
-		this.printer.on('error', this.printerError);
+				this.process2 = spawn('./FormideOS', [], {cwd: config.path, stdio: 'pipe'});
+				this.process2.stdout.setEncoding('utf8');
+				this.process2.stdout.on('exit', this.onExit);
+				this.process2.stdout.on('error', this.onError);
+				this.process2.stdout.on('data', this.onData);
+			}
+			else
+			{
+				this.process1 = spawn('node', ['index.js'], {cwd: 'driver-simulator', stdio: 'pipe'});
+				this.process1.stdout.setEncoding('utf8');
+				this.process1.stdout.on('exit', this.onExit);
+				this.process1.stdout.on('error', this.onError);
+				this.process1.stdout.on('data', this.onData);
+			}
 
-		this.printer.on('data', this.printerStatus);
+			setTimeout(function()
+			{
+				this.printer = net.connect({
+					port: config.port
+				}, function() {
+					Printspot.debug('printer connected');
+				});
+
+				this.printer.on('error', this.printerError);
+				this.printer.on('data', this.printerStatus);
+
+			}.bind(this), 500);
+
+		}.bind(this));
 	},
 
 	on:
 	{
 		'cloudPush': 'printerControl',
 		'dashboardPush': 'printerControl',
-		'scheduledPrintjob': 'printerControl'
+		'scheduledPrintjob': 'printerControl',
+		'processExit': 'stop'
+	},
+
+	onExit: function(exit)
+	{
+		Printspot.debug(exit, true);
+	},
+
+	onError: function(error)
+	{
+		Printspot.debug(error, true);
+	},
+
+	onData: function(data)
+	{
+		Printspot.debug(data);
+	},
+
+	stop: function(stop)
+	{
+		console.log('test');
+		this.process1.kill('SIGINT');
+		this.process2.kill('SIGINT');
 	},
 
 	// custom functions

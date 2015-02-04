@@ -14,7 +14,7 @@
 
 var restful = require('epilogue');
 
-module.exports = function()
+module.exports = function(server)
 {
 	restful.initialize({
 		app: Printspot.http.app,

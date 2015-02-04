@@ -18,7 +18,16 @@ module.exports =
 
 	init: function()
 	{
-		this.websocket = require('socket.io').listen(Printspot.http.server);
+		Printspot.http.server.register(
+		{
+		    register: require('hapio'),
+	    },
+	    function(err)
+	    {
+	        if (err) throw err;
+		});
+
+		this.websocket = Printspot.http.server.plugins.hapio.io;
 
 		/*
 this.websocket.set('authorization', function(data, cb)

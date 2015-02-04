@@ -19,7 +19,7 @@ module.exports = function()
 	var config = Config(
 		__dirname + '/..',
 		{
-			development: ['chris.local', 'bouke.local', 'bouke', 'wlan234197.mobiel.utwente.nl'],
+			development: ['chris.local', 'bouke.local', 'bouke', 'wlan236210.mobiel.utwente.nl'],
 			production: ['raspberrypi']
 		}
 	);

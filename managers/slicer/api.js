@@ -12,9 +12,47 @@
  *
  */
 
-module.exports = function(app)
+module.exports = function(server)
 {
-	app.post('/slicing', function(req, res)
+	/**
+	 * Slice!
+	 */
+	server.route({
+		method: 'POST',
+		path: '/slicing',
+		handler: function(req, res)
+		{
+
+		}
+	});
+
+	/**
+	 * Add existing printjob to queue
+	 */
+	server.route({
+		method: 'POST',
+		path: '/adddtoqueue',
+		handler: function(req, res)
+		{
+
+		}
+	});
+
+	/**
+	 * Get queue with associations
+	 */
+	server.route({
+		method: 'GET',
+		path: '/getqueue',
+		handler: function(req, res)
+		{
+
+		}
+	});
+
+
+	/*
+app.post('/slicing', function(req, res)
 	{
 		if(req.body.sliceparams && req.body.modelfile && req.body.sliceprofile && req.body.materials && req.body.printer && req.body.slicemethod)
 		{
@@ -94,4 +132,5 @@ module.exports = function(app)
 			return res.json(queue);
 		});
 	});
+*/
 };

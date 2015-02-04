@@ -12,102 +12,112 @@
  *
  */
 
-var fs 					= require('fs');
-var multipart 			= require('connect-multiparty');
-var multipartMiddleware = multipart();
+var fs = require('fs');
 
-module.exports = function(app)
+module.exports = function(server)
 {
 	/**
 	 * Download a modelfile
 	 */
-	app.get('/download', function(req, res)
-	{
-		// TODO: check if file exists
-
-		fs.readFile(Printspot.config.get('paths.modelfile') + '/' + req.query.hash, function(err, data)
+	server.route({
+		method: 'GET',
+		path: '/download',
+		handler: function(req, res)
 		{
-			if(err)
+			// TODO: check if file exists
+
+			fs.readFile(Printspot.config.get('paths.modelfile') + '/' + req.query.hash, function(err, data)
 			{
-				Printspot.debug(err, true);
-			}
-			else
-			{
-				if(req.query.encoding == 'false')
+				if(err)
 				{
-					return res.send(data);
+					Printspot.debug(err, true);
 				}
 				else
 				{
-					var base64File = new Buffer(data, 'binary').toString('base64');
-					return res.send(base64File);
+					if(req.query.encoding == 'false')
+					{
+						res(data);
+					}
+					else
+					{
+						var base64File = new Buffer(data, 'binary').toString('base64');
+						res(base64File);
+					}
 				}
-			}
-		});
+			});
+		}
 	});
 
 	/**
 	 * Upload a modelfile
 	 */
-	app.post('/upload', multipartMiddleware, function(req, res)
-	{
-		// TODO: check if valid 3D file
-
-		fs.readFile(req.files.file.path, function(err, data)
+	server.route({
+		method: 'POST',
+		path: '/upload',
+		handler: function(req, res)
 		{
-			var hash = (Math.random() / +new Date()).toString(36).replace(/[^a-z]+/g, '');
-			var newPath = Printspot.config.get('paths.modelfile') + '/' + hash;
+			// TODO: check if valid 3D file
 
-			fs.writeFile(newPath, data, function(err)
+			fs.readFile(req.files.file.path, function(err, data)
 			{
-				if(err)
-				{
-					Printspot.debug(err);
-				}
-				else
-				{
-					Printspot.manager('database').db.Modelfile.create(
-					{
-						filename: req.files.file.name,
-						filesize: req.files.file.size,
-						hash: hash
-					});
+				var hash = (Math.random() / +new Date()).toString(36).replace(/[^a-z]+/g, '');
+				var newPath = Printspot.config.get('paths.modelfile') + '/' + hash;
 
-					res.json('OK');
-				}
+				fs.writeFile(newPath, data, function(err)
+				{
+					if(err)
+					{
+						Printspot.debug(err);
+					}
+					else
+					{
+						Printspot.db.Modelfile.create(
+						{
+							filename: req.files.file.name,
+							filesize: req.files.file.size,
+							hash: hash
+						});
+
+						res('OK');
+					}
+				});
 			});
-		});
+		}
 	});
 
 	/**
 	 * Upload a gcode file (add to queue as 'custom')
 	 */
-	app.post('/uploadgcode', multipartMiddleware, function(req, res)
-	{
-		// TODO: check if valid gcode file
-
-		fs.readFile(req.files.file.path, function(err, data)
+	server.route({
+		method: 'POST',
+		path: '/uploadgcode',
+		handler: function(req, res)
 		{
-			var hash = (Math.random() / +new Date()).toString(36).replace(/[^a-z]+/g, '');
-			var newPath = Printspot.config.get('paths.gcode') + '/' + hash;
+			// TODO: check if valid gcode file
 
-			fs.writeFile(newPath, data, function(err)
+			fs.readFile(req.files.file.path, function(err, data)
 			{
-				if(err)
-				{
-					Printspot.debug(err);
-				}
-				else
-				{
-					Printspot.manager('database').db.Printjob.create(
-					{
-						gcode: hash,
-						sliceMethod: 'custom'
-					});
+				var hash = (Math.random() / +new Date()).toString(36).replace(/[^a-z]+/g, '');
+				var newPath = Printspot.config.get('paths.gcode') + '/' + hash;
 
-					res.json('OK');
-				}
+				fs.writeFile(newPath, data, function(err)
+				{
+					if(err)
+					{
+						Printspot.debug(err);
+					}
+					else
+					{
+						Printspot.db.Printjob.create(
+						{
+							gcode: hash,
+							sliceMethod: 'custom'
+						});
+
+						res('OK');
+					}
+				});
 			});
-		});
+		}
 	});
 }

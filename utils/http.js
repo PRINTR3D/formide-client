@@ -13,34 +13,32 @@
  */
 
 // dependencies
-var express 		= require('express');
-var bodyParser		= require('body-parser');
-var cookieParser 	= require('cookie-parser');
-var methodOverride	= require('method-override');
-var session 		= require('express-session');
+var Hapi = require('hapi');
 
 module.exports = function(config)
 {
 	var http = {};
 
-	http.app = express();
-	http.server = http.app.listen(config.get('app.port'));
+	http.server = new Hapi.Server();
 
-	// app configuration
-	http.app.use(bodyParser.urlencoded({ 'extended': 'true' }));
-	http.app.use(bodyParser.json());
-	http.app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
-	http.app.use(cookieParser());
-	http.app.use(methodOverride());
-	http.app.use(session({ secret: 'much_secret_many_safety_wow', resave: true, saveUninitialized: true }));
-
-	http.app.all('/*', function(req, res, next)
+	http.server.connection(
 	{
-		res.header("Access-Control-Allow-Origin", req.headers.origin);
-		res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-		res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-		res.header("Access-Control-Allow-Credentials", "true");
-		next();
+		port: config.get('app.port'),
+		routes:
+		{
+			cors:
+			{
+				"origin": ["*"],
+				"methods": ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
+				"headers": ["Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"],
+				"credentials": true
+			}
+		}
+	});
+
+	http.server.start(function()
+	{
+		Printspot.debug('http server running on port ' + http.server.info.uri );
 	});
 
 	return http;
