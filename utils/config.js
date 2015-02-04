@@ -20,7 +20,7 @@ module.exports = function()
 		__dirname + '/..',
 		{
 			development: ['chris.local', 'bouke.local', 'bouke', 'wlan236210.mobiel.utwente.nl'],
-			production: ['raspberrypi']
+			production: ['raspberrypi', 'the-element']
 		}
 	);
 
