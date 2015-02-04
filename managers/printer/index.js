@@ -61,7 +61,7 @@ module.exports =
 				this.printer.on('error', this.printerError);
 				this.printer.on('data', this.printerStatus);
 
-			}.bind(this), 500);
+			}.bind(this), 1500);
 
 		}.bind(this));
 	},
@@ -91,7 +91,6 @@ module.exports =
 
 	stop: function(stop)
 	{
-		console.log('test');
 		this.process1.kill('SIGINT');
 		this.process2.kill('SIGINT');
 	},
