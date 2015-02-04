@@ -41,6 +41,6 @@ getMac.getMac(function(err, macAddress)
 	Printspot.register('printer').init(Printspot.config.get('printer'));
 	Printspot.register('slicer').init(Printspot.config.get('slicer'));
 	//Printspot.register('cloud').init(Printspot.config.get('cloud'));
-	Printspot.register('interface').init();
+	Printspot.register('interface').init(Printspot.config.get('dashboard'));
 	//Printspot.register('cron').init();
 });

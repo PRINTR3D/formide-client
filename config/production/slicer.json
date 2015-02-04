@@ -1,4 +1,5 @@
 {
 	"port": 1339,
-	"path": ""
+	"path": "/home/debian/formideOS/katana-slicer",
+	"simulated": false
 }

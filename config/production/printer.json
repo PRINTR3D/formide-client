@@ -1,4 +1,5 @@
 {
 	"port": 1338,
-	"path": ""
+	"path": "/home/debian/formideOS/formidium",
+	"simulated": false
 }
