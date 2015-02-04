@@ -86,7 +86,7 @@ module.exports =
 
 	onData: function(data)
 	{
-		Printspot.debug(data);
+		//Printspot.debug(data);
 	},
 
 	stop: function(stop)
