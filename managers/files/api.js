@@ -33,14 +33,14 @@ module.exports = function(server)
 				}
 				else
 				{
-					if(req.query.encoding == 'false')
-					{
-						res(data);
-					}
-					else
+					if(req.query.encoding == 'base64')
 					{
 						var base64File = new Buffer(data, 'binary').toString('base64');
 						res(base64File);
+					}
+					else
+					{
+						res(data);
 					}
 				}
 			});
