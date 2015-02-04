@@ -90,8 +90,6 @@ module.exports = function(server)
 								}
 							});
 
-							console.log(params);
-
 							var json = {
 								"type": realMethod,
 								"data": params
