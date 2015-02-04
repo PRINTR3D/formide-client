@@ -35,11 +35,11 @@ getMac.getMac(function(err, macAddress)
 
 	// managers
 	Printspot.register('files').init();
-	//Printspot.register('session').init();
-	//Printspot.register('rest').init();
+	Printspot.register('session').init();
+	Printspot.register('rest').init();
 	Printspot.register('websocket').init();
 	Printspot.register('printer').init(Printspot.config.get('printer'));
-	//Printspot.register('slicer').init(Printspot.config.get('slicer'));
+	Printspot.register('slicer').init(Printspot.config.get('slicer'));
 	//Printspot.register('cloud').init(Printspot.config.get('cloud'));
 	Printspot.register('interface').init(Printspot.config.get('dashboard'));
 	//Printspot.register('cron').init();

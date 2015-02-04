@@ -12,10 +12,34 @@
  *
  */
 
-module.exports = function(db, restful)
+module.exports = function(db, server)
 {
-	restful.resource({
-	    model: db.Sliceprofile,
-	    endpoints: ['/api/sliceprofiles', '/api/sliceprofiles/:id']
-	});
+	server.route([
+		{
+			method: 'GET',
+			path: '/api/sliceprofiles',
+			handler: function(req, res)
+			{
+				db.Sliceprofile
+				.findAll()
+				.then(function(sliceprofiles)
+				{
+					res(sliceprofiles);
+				});
+			}
+		},
+		{
+			method: 'GET',
+			path: '/api/sliceprofiles/{id}',
+			handler: function(req, res)
+			{
+				db.Sliceprofile
+				.find({ id: req.params.id })
+				.then(function(sliceprofile)
+				{
+					res(sliceprofile);
+				});
+			}
+		}
+	]);
 };

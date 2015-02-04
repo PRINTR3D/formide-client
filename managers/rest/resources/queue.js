@@ -12,10 +12,34 @@
  *
  */
 
-module.exports = function(db, restful)
+module.exports = function(db, server)
 {
-	restful.resource({
-		model: db.Queueitem,
-		endpoints: ['/api/queue', '/api/queue/:id']
-	});
+	server.route([
+		{
+			method: 'GET',
+			path: '/api/queue',
+			handler: function(req, res)
+			{
+				db.Queueitem
+				.findAll()
+				.then(function(queueitems)
+				{
+					res(queueitems);
+				});
+			}
+		},
+		{
+			method: 'GET',
+			path: '/api/queue/{id}',
+			handler: function(req, res)
+			{
+				db.Queueitem
+				.find({ id: req.params.id })
+				.then(function(queueitem)
+				{
+					res(queueitem);
+				});
+			}
+		}
+	]);
 };

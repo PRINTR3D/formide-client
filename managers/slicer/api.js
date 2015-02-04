@@ -46,7 +46,12 @@ module.exports = function(server)
 		path: '/getqueue',
 		handler: function(req, res)
 		{
-
+			Printspot.db.Queueitem
+			.findAll({where: {status: 'queued'}, include: [{model: Printspot.db.Printjob, include: [{model: Printspot.db.Modelfile}]}]})
+			.success(function(queue)
+			{
+				res(queue);
+			});
 		}
 	});
 
@@ -121,16 +126,6 @@ app.post('/slicing', function(req, res)
 				});
 			});
 		}
-	});
-
-	app.get('/getqueue', function(req, res)
-	{
-		Printspot.db.Queueitem
-		.findAll({where: {status: 'queued'}, include: [{model: Printspot.db.Printjob, include: [{model: Printspot.db.Modelfile}]}]})
-		.success(function(queue)
-		{
-			return res.json(queue);
-		});
 	});
 */
 };

@@ -26,7 +26,7 @@ app.use(passport.initialize());
 		{
 			//console.log(req.payload);
 		}
-	})
+	});
 
 	/*
 app.post('/login', passport.authenticate('local'), function(req, res)
@@ -42,7 +42,7 @@ app.post('/login', passport.authenticate('local'), function(req, res)
 		{
 			res(false);
 		}
-	})
+	});
 
 	/*
 	app.get('/session', function(req, res)

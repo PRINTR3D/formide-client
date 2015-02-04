@@ -12,10 +12,34 @@
  *
  */
 
-module.exports = function(db, restful)
+module.exports = function(db, server)
 {
-	restful.resource({
-	    model: db.Material,
-	    endpoints: ['/api/materials', '/api/materials/:id']
-	});
+	server.route([
+		{
+			method: 'GET',
+			path: '/api/materials',
+			handler: function(req, res)
+			{
+				db.Material
+				.findAll()
+				.then(function(materials)
+				{
+					res(materials);
+				});
+			}
+		},
+		{
+			method: 'GET',
+			path: '/api/materials/{id}',
+			handler: function(req, res)
+			{
+				db.Material
+				.find({ id: req.params.id })
+				.then(function(material)
+				{
+					res(material);
+				});
+			}
+		}
+	]);
 };

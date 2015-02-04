@@ -12,20 +12,13 @@
  *
  */
 
-var restful = require('epilogue');
-
 module.exports = function(server)
 {
-	restful.initialize({
-		app: Printspot.http.app,
-		sequelize: Printspot.db.sequelize
-	});
-
-	require('./resources/material.js')(Printspot.db, restful);
-	require('./resources/modelfile.js')(Printspot.db, restful);
-	require('./resources/printer.js')(Printspot.db, restful);
-	require('./resources/printjob.js')(Printspot.db, restful);
-	require('./resources/queue.js')(Printspot.db, restful);
-	require('./resources/sliceprofile.js')(Printspot.db, restful);
-	require('./resources/user.js')(Printspot.db, restful);
+	require('./resources/material.js')(Printspot.db, server);
+	require('./resources/modelfile.js')(Printspot.db, server);
+	require('./resources/printer.js')(Printspot.db, server);
+	require('./resources/printjob.js')(Printspot.db, server);
+	require('./resources/queue.js')(Printspot.db, server);
+	require('./resources/sliceprofile.js')(Printspot.db, server);
+	require('./resources/user.js')(Printspot.db, server);
 };

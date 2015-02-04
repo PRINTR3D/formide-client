@@ -12,10 +12,34 @@
  *
  */
 
-module.exports = function(db, restful)
+module.exports = function(db, server)
 {
-	restful.resource({
-	    model: db.Modelfile,
-	    endpoints: ['/api/modelfiles', '/api/modelfiles/:id']
-	});
+	server.route([
+		{
+			method: 'GET',
+			path: '/api/modelfiles',
+			handler: function(req, res)
+			{
+				db.Modelfile
+				.findAll()
+				.then(function(modelfiles)
+				{
+					res(modelfiles);
+				});
+			}
+		},
+		{
+			method: 'GET',
+			path: '/api/modelfiles/{id}',
+			handler: function(req, res)
+			{
+				db.Modelfile
+				.find({ id: req.params.id })
+				.then(function(modelfile)
+				{
+					res(modelfile);
+				});
+			}
+		}
+	]);
 };

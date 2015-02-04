@@ -15,7 +15,6 @@
 var events = require('./utils/events.js')();
 var config = require('./utils/config.js')();
 var register = require('./utils/register.js');
-
 var debug = require('./utils/debug.js')(config);
 var http = require('./utils/http.js')(config);
 var db = require('./utils/db.js')(config);
