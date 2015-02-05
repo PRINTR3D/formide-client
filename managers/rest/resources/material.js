@@ -40,6 +40,61 @@ module.exports = function(db, server)
 					res(material);
 				});
 			}
+		},
+		{
+			method: 'POST',
+			path: '/api/materials',
+			handler: function(req, res)
+			{
+				db.Material
+				.create(req.payload)
+				.success(function()
+				{
+					res('OK')
+				});
+			}
+		},
+		{
+			method: 'PUT',
+			path: '/api/materials/{id}',
+			handler: function(req, res)
+			{
+				db.Material
+				.find({ id: req.params.id })
+				.on('success', function( material )
+				{
+					if(material)
+					{
+						material
+						.updateAttributes(req.payload)
+						.success(function()
+						{
+							res('OK');
+						});
+					}
+				});
+			}
+		},
+		{
+			method: 'DELETE',
+			path: '/api/materials/{id}',
+			handler: function(req, res)
+			{
+				db.Material
+				.find({ id: req.params.id })
+				.on('success', function( material )
+				{
+					if(material)
+					{
+						material
+						.destroy()
+						.success(function()
+						{
+							res('OK');
+						});
+					}
+				});
+			}
 		}
 	]);
 };

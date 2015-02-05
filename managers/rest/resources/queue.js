@@ -40,6 +40,27 @@ module.exports = function(db, server)
 					res(queueitem);
 				});
 			}
+		},
+		{
+			method: 'DELETE',
+			path: '/api/queue/{id}',
+			handler: function(req, res)
+			{
+				db.Queueitem
+				.find({ id: req.params.id })
+				.on('success', function( queueitem )
+				{
+					if(queueitem)
+					{
+						queueitem
+						.destroy()
+						.success(function()
+						{
+							res('OK');
+						});
+					}
+				});
+			}
 		}
 	]);
 };

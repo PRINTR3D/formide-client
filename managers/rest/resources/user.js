@@ -40,6 +40,61 @@ module.exports = function(db, server)
 					res(user);
 				});
 			}
+		},
+		{
+			method: 'POST',
+			path: '/api/users',
+			handler: function(req, res)
+			{
+				db.User
+				.create(req.payload)
+				.success(function()
+				{
+					res('OK')
+				});
+			}
+		},
+		{
+			method: 'PUT',
+			path: '/api/users/{id}',
+			handler: function(req, res)
+			{
+				db.User
+				.find({ id: req.params.id })
+				.on('success', function( user )
+				{
+					if(user)
+					{
+						user
+						.updateAttributes(req.payload)
+						.success(function()
+						{
+							res('OK');
+						});
+					}
+				});
+			}
+		},
+		{
+			method: 'DELETE',
+			path: '/api/users/{id}',
+			handler: function(req, res)
+			{
+				db.User
+				.find({ id: req.params.id })
+				.on('success', function( user )
+				{
+					if(user)
+					{
+						user
+						.destroy()
+						.success(function()
+						{
+							res('OK');
+						});
+					}
+				});
+			}
 		}
 	]);
 };

@@ -40,6 +40,27 @@ module.exports = function(db, server)
 					res(modelfile);
 				});
 			}
+		},
+		{
+			method: 'DELETE',
+			path: '/api/modelfiles/{id}',
+			handler: function(req, res)
+			{
+				db.Modelfile
+				.find({ id: req.params.id })
+				.on('success', function( modelfile )
+				{
+					if(modelfile)
+					{
+						modelfile
+						.destroy()
+						.success(function()
+						{
+							res('OK');
+						});
+					}
+				});
+			}
 		}
 	]);
 };

@@ -40,6 +40,61 @@ module.exports = function(db, server)
 					res(sliceprofile);
 				});
 			}
+		},
+		{
+			method: 'POST',
+			path: '/api/sliceprofiles',
+			handler: function(req, res)
+			{
+				db.Sliceprofile
+				.create(req.payload)
+				.success(function()
+				{
+					res('OK')
+				});
+			}
+		},
+		{
+			method: 'PUT',
+			path: '/api/sliceprofiles/{id}',
+			handler: function(req, res)
+			{
+				db.Sliceprofile
+				.find({ id: req.params.id })
+				.on('success', function( sliceprofile )
+				{
+					if(sliceprofile)
+					{
+						sliceprofile
+						.updateAttributes(req.payload)
+						.success(function()
+						{
+							res('OK');
+						});
+					}
+				});
+			}
+		},
+		{
+			method: 'DELETE',
+			path: '/api/sliceprofiles/{id}',
+			handler: function(req, res)
+			{
+				db.Sliceprofile
+				.find({ id: req.params.id })
+				.on('success', function( sliceprofile )
+				{
+					if(sliceprofile)
+					{
+						sliceprofile
+						.destroy()
+						.success(function()
+						{
+							res('OK');
+						});
+					}
+				});
+			}
 		}
 	]);
 };

@@ -40,6 +40,27 @@ module.exports = function(db, server)
 					res(printjob);
 				});
 			}
+		},
+		{
+			method: 'DELETE',
+			path: '/api/printjobs/{id}',
+			handler: function(req, res)
+			{
+				db.Printjob
+				.find({ id: req.params.id })
+				.on('success', function( printjob )
+				{
+					if(printjob)
+					{
+						printjob
+						.destroy()
+						.success(function()
+						{
+							res('OK');
+						});
+					}
+				});
+			}
 		}
 	]);
 };

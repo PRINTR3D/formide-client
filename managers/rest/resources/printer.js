@@ -40,6 +40,61 @@ module.exports = function(db, server)
 					res(printer);
 				});
 			}
+		},
+		{
+			method: 'POST',
+			path: '/api/printers',
+			handler: function(req, res)
+			{
+				db.Printer
+				.create(req.payload)
+				.success(function()
+				{
+					res('OK')
+				});
+			}
+		},
+		{
+			method: 'PUT',
+			path: '/api/printers/{id}',
+			handler: function(req, res)
+			{
+				db.Printer
+				.find({ id: req.params.id })
+				.on('success', function( printer )
+				{
+					if(printer)
+					{
+						printer
+						.updateAttributes(req.payload)
+						.success(function()
+						{
+							res('OK');
+						});
+					}
+				});
+			}
+		},
+		{
+			method: 'DELETE',
+			path: '/api/printers/{id}',
+			handler: function(req, res)
+			{
+				db.Printer
+				.find({ id: req.params.id })
+				.on('success', function( printer )
+				{
+					if(printer)
+					{
+						printer
+						.destroy()
+						.success(function()
+						{
+							res('OK');
+						});
+					}
+				});
+			}
 		}
 	]);
 };
