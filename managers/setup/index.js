@@ -127,7 +127,8 @@ module.exports = {
 							"surfaceLineSpacing": 400,
 							"airGap": 0,
 							"firstLayerAirGap": 200,
-							"fanSpeed": 25
+							"fanSpeed": 25,
+							"extruder": "extruder1"
 						},
 						"infill": {
 							"amount": 50,
@@ -195,8 +196,8 @@ module.exports = {
 							"brimLines": 0
 						},
 						"gcode": {
-							"startGcode": ["G21", "M107", "M104 S195", "G28", "G1 Z5 F5000", "M109 S195", "G90", "G92 E0", "M82", "G1 F1800.000 E-1.00000", "G92 E0"],
-							"endGcode": ["G92 E0", "M107", "M104 S0", "G28 X0", "M84"],
+							"startGcode": ["G21", "G28", "G1 Z5 F5000", "G90", "G92 E0", "M82", "G1 F1800.000 E-1.00000", "G92 E0"],
+							"endGcode": ["G92 E0", "M104 S0", "G28 X0", "M84"],
 							"gcodeFlavour":"GCODE_FLAVOR_MACH3"
 						},
 						"plugins": []

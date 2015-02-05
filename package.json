@@ -22,6 +22,7 @@
     "minimist": "^1.1.0",
     "node-schedule": "^0.1.15",
     "nodejs-config": "1.0.0",
+    "nodejs-leds": "0.0.1",
     "passport": "^0.2.1",
     "passport-local": "^1.0.0",
     "polo": "^0.7.1",

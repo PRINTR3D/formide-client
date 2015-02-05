@@ -61,7 +61,7 @@ module.exports =
 				this.printer.on('error', this.printerError);
 				this.printer.on('data', this.printerStatus);
 
-			}.bind(this), 1500);
+			}.bind(this), 2500);
 
 		}.bind(this));
 	},
