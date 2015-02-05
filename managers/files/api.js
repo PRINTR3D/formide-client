@@ -14,7 +14,7 @@
 
 var fs = require('fs');
 
-module.exports = function(server)
+module.exports = function(server, module)
 {
 	/**
 	 * Download a modelfile

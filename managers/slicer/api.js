@@ -12,7 +12,7 @@
  *
  */
 
-module.exports = function(server)
+module.exports = function(server, module)
 {
 	/**
 	 * Slice!

@@ -12,19 +12,20 @@
  *
  */
 
-module.exports = function(server)
+module.exports = function(server, module)
 {
 	/**
 	 * Set led rgb color
 	 */
-	server.route({
-		method: 'GET',
-		path: '/api/led/rgb/{r}/{g}/{b}',
-		handler: function(req, res)
+	server.route([
 		{
-			var led = Printspot.manager('led').led;
-			led.rgb(req.params.r, req.params.g, req.params.b);
-			res({status: 200, message: 'OK'});
+			method: 'GET',
+			path: '/api/led/rgb/{r}/{g}/{b}',
+			handler: function(req, res)
+			{
+				module.led.rgb(req.params.r, req.params.g, req.params.b);
+				res({status: 200, message: 'OK'});
+			}.bind(this)
 		}
-	});
+	]);
 }

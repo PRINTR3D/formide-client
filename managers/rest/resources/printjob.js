@@ -21,7 +21,7 @@ module.exports = function(db, server)
 			handler: function(req, res)
 			{
 				db.Printjob
-				.findAll()
+				.findAll({ include: [ { model: Printspot.db.Modelfile } ] })
 				.then(function(printjobs)
 				{
 					res(printjobs);
@@ -34,7 +34,7 @@ module.exports = function(db, server)
 			handler: function(req, res)
 			{
 				db.Printjob
-				.find({ id: req.params.id })
+				.find({ where: {id: req.params.id }, include: [ { model: Printspot.db.Modelfile } ] })
 				.then(function(printjob)
 				{
 					res(printjob);
