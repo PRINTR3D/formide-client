@@ -107,19 +107,9 @@ module.exports =
 					.updateAttributes({gcode: data.data.gcode, sliceResponse: JSON.stringify(data.data)})
 					.success(function()
 					{
-						Printspot.db.Queueitem
-						.create({
-							origin: 'local',
-							status: 'queued',
-							gcode: printjob.gcode,
-							PrintjobId: printjob.id
-						})
-						.success(function(queueitem)
-						{
-							Printspot.events.emit('externalMessage', {
-								message: 'Slicing finished'
-							});
-						})
+						Printspot.events.emit('externalMessage', {
+							message: 'Slicing finished'
+						});
 					});
 				});
 			}
