@@ -19,7 +19,7 @@ module.exports =
 {
 	led: null,
 
-	init: function(config)
+	init: function()
 	{
 		this.led = new Led();
 	},

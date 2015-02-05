@@ -19,7 +19,7 @@ module.exports = function(server)
 	 */
 	server.route({
 		method: 'GET',
-		path: '/api/led/rgb/:r/:g/:b',
+		path: '/api/led/rgb/{r}/{g}/{b}',
 		handler: function(req, res)
 		{
 			var led = Printspot.manager('led').led;
