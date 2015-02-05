@@ -24,6 +24,7 @@ module.exports = function(server)
 		{
 			var led = Printspot.manager('led').led;
 			led.rgb(req.params.r, req.params.g, req.params.b);
+			res({status: 200, message: 'OK'});
 		}
 	});
 }
