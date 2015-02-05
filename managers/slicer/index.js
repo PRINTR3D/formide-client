@@ -54,7 +54,7 @@ module.exports =
 				this.slicer.on('error', this.slicerError);
 				this.slicer.on('data', this.sliceResponse);
 
-			}.bind(this), 500);
+			}.bind(this), 1500);
 
 		}.bind(this));
 	},
