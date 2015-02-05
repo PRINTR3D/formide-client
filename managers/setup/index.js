@@ -17,10 +17,9 @@ module.exports = {
 	init: function()
 	{
 		// setup new db connection
-		var database = Printspot.sequelize;
 		var db = Printspot.db;
 
-		database.sequelize
+		db.sequelize
 		.sync({
 			force: true
 		})
@@ -150,8 +149,8 @@ module.exports = {
 							"minLenght": 150000
 						},
 						"multiExtrusion": {
-							"preSwitchCode": ";WE ARE GOING TO CHANGE THE EXTRUDER :D",
-							"postSwitchCode": "; WE JUST CHANGED THE EXTRUDER. I HOPE IT WORKED D: D: D: D: D:",
+							"preSwitchCode": "",
+							"postSwitchCode": "",
 							"dualOverlap": 1500
            				},
 						"movement": {
