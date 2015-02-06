@@ -40,6 +40,8 @@ module.exports = function(server, module)
 					"extruder": "extruder1"
 				};
 
+				console.log(req.payload.modelfile);
+
 				// TODO: still hardcoded to 10 by 10 cm and with extruder 1
 
 				json.data.model = [model];

@@ -34,7 +34,7 @@ module.exports = function(db, server)
 			handler: function(req, res)
 			{
 				db.Material
-				.find({ id: req.params.id })
+				.find({ where: {id: req.params.id } })
 				.then(function(material)
 				{
 					res(material);
@@ -60,7 +60,7 @@ module.exports = function(db, server)
 			handler: function(req, res)
 			{
 				db.Material
-				.find({ id: req.params.id })
+				.find({ where: {id: req.params.id } })
 				.on('success', function( material )
 				{
 					if(material)
@@ -81,7 +81,7 @@ module.exports = function(db, server)
 			handler: function(req, res)
 			{
 				db.Material
-				.find({ id: req.params.id })
+				.find({ where: {id: req.params.id } })
 				.on('success', function( material )
 				{
 					if(material)

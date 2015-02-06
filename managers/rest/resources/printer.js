@@ -34,7 +34,7 @@ module.exports = function(db, server)
 			handler: function(req, res)
 			{
 				db.Printer
-				.find({ id: req.params.id })
+				.find({ where: {id: req.params.id } })
 				.then(function(printer)
 				{
 					res(printer);
@@ -60,7 +60,7 @@ module.exports = function(db, server)
 			handler: function(req, res)
 			{
 				db.Printer
-				.find({ id: req.params.id })
+				.find({ where: {id: req.params.id } })
 				.on('success', function( printer )
 				{
 					if(printer)
@@ -81,7 +81,7 @@ module.exports = function(db, server)
 			handler: function(req, res)
 			{
 				db.Printer
-				.find({ id: req.params.id })
+				.find({ where: {id: req.params.id } })
 				.on('success', function( printer )
 				{
 					if(printer)

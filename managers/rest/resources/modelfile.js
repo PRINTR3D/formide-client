@@ -34,7 +34,7 @@ module.exports = function(db, server)
 			handler: function(req, res)
 			{
 				db.Modelfile
-				.find({ id: req.params.id })
+				.find({ where: {id: req.params.id } })
 				.then(function(modelfile)
 				{
 					res(modelfile);
@@ -47,7 +47,7 @@ module.exports = function(db, server)
 			handler: function(req, res)
 			{
 				db.Modelfile
-				.find({ id: req.params.id })
+				.find({ where: {id: req.params.id } })
 				.on('success', function( modelfile )
 				{
 					if(modelfile)

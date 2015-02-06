@@ -34,7 +34,7 @@ module.exports = function(db, server)
 			handler: function(req, res)
 			{
 				db.Sliceprofile
-				.find({ id: req.params.id })
+				.find({ where: {id: req.params.id } })
 				.then(function(sliceprofile)
 				{
 					res(sliceprofile);
@@ -60,7 +60,7 @@ module.exports = function(db, server)
 			handler: function(req, res)
 			{
 				db.Sliceprofile
-				.find({ id: req.params.id })
+				.find({ where: {id: req.params.id } })
 				.on('success', function( sliceprofile )
 				{
 					if(sliceprofile)
@@ -81,7 +81,7 @@ module.exports = function(db, server)
 			handler: function(req, res)
 			{
 				db.Sliceprofile
-				.find({ id: req.params.id })
+				.find({ where: {id: req.params.id } })
 				.on('success', function( sliceprofile )
 				{
 					if(sliceprofile)
