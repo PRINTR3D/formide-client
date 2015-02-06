@@ -27,7 +27,7 @@ module.exports =
 
 		this.cloud.on('auth', this.auth);
 
-		this.cloud.on('dashboard_push_printer_printjob', this.pushPrintjob);
+		this.cloud.on('printjob', this.pushPrintjob);
 
 		this.cloud.on('error', this.onError);
 
@@ -37,16 +37,13 @@ module.exports =
 
 		this.cloud.on('reconnect_error', this.onError);
 
-		this.cloud.on('updates', this.sendUpdates);
-
 		this.loadChannels();
 	},
 
 	on:
 	{
 		'printerStatus': 'printerStatus',
-		'externalMessage': 'notification',
-		'checkForUpdates': 'checkForUpdates'
+		'externalMessage': 'notification'
 	},
 
 	// custom functions
@@ -80,7 +77,7 @@ module.exports =
 		var _this = this;
 
 		// TODO: rewrite
-		Printspot.config.get('channels.dashboard').forEach(function(method)
+		Object.keys(Printspot.config.get('channels.dashboard')).forEach(function(method)
 		{
 			(function(realMethod)
 			{
@@ -136,16 +133,6 @@ module.exports =
 
 	notification: function(message)
 	{
-		this.cloud.emit('client_push_notification', message.message);
-	},
-
-	checkForUpdates: function()
-	{
-		this.cloud.emit('client_push_updates');
-	},
-
-	sendUpdates: function(updates)
-	{
-		Printspot.events.emit('newUpdates', updates);
+		this.cloud.emit('notification', message.message);
 	}
 }
