@@ -198,7 +198,7 @@ module.exports = {
 						"gcode": {
 							"startGcode": ["G21", "G28", "G1 Z5 F5000", "G90", "G92 E0", "M82", "G1 F1800.000 E-1.00000", "G92 E0"],
 							"endGcode": ["G92 E0", "M104 S0", "G28 X0", "M84"],
-							"gcodeFlavour":"GCODE_FLAVOR_MACH3"
+							"gcodeFlavour":"GCODE_FLAVOUR_ULTIGCODE"
 						},
 						"plugins": []
 					})
