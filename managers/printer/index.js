@@ -29,7 +29,8 @@ module.exports =
 		{
 			if(exists && config.simulated == false)
 			{
-				this.process1 = spawn('./ClientDriver', [], {cwd: config.path + '/ClientDriver/Debug', stdio: 'pipe'});
+				/*
+this.process1 = spawn('./ClientDriver', [], {cwd: config.path + '/ClientDriver/Debug', stdio: 'pipe'});
 				this.process1.stdout.setEncoding('utf8');
 				this.process1.stdout.on('exit', this.onExit);
 				this.process1.stdout.on('error', this.onError);
@@ -40,6 +41,7 @@ module.exports =
 				this.process2.stdout.on('exit', this.onExit);
 				this.process2.stdout.on('error', this.onError);
 				this.process2.stdout.on('data', this.onData);
+*/
 			}
 			else
 			{
