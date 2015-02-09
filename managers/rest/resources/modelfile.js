@@ -18,6 +18,9 @@ module.exports = function(db, server)
 		{
 			method: 'GET',
 			path: '/api/modelfiles',
+			config: {
+	            auth: 'session'
+	        },
 			handler: function(req, res)
 			{
 				db.Modelfile
@@ -31,6 +34,9 @@ module.exports = function(db, server)
 		{
 			method: 'GET',
 			path: '/api/modelfiles/{id}',
+			config: {
+	            auth: 'session'
+	        },
 			handler: function(req, res)
 			{
 				db.Modelfile
@@ -44,6 +50,9 @@ module.exports = function(db, server)
 		{
 			method: 'DELETE',
 			path: '/api/modelfiles/{id}',
+			config: {
+	            auth: 'session'
+	        },
 			handler: function(req, res)
 			{
 				db.Modelfile

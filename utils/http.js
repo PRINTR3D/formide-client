@@ -30,7 +30,7 @@ module.exports = function(config)
 			{
 				"origin": ["*"],
 				"methods": ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
-				"headers": ["Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"],
+				"headers": ["Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization", "DNT", "Accept-Encoding"],
 				"credentials": true
 			}
 		}

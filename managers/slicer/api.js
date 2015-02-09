@@ -20,6 +20,9 @@ module.exports = function(server, module)
 	server.route({
 		method: 'POST',
 		path: '/slicing',
+		config: {
+            auth: 'session'
+        },
 		handler: function(req, res)
 		{
 			if(req.payload.sliceparams && req.payload.modelfile && req.payload.sliceprofile && req.payload.materials && req.payload.printer && req.payload.slicemethod)
@@ -79,6 +82,9 @@ module.exports = function(server, module)
 	server.route({
 		method: 'POST',
 		path: '/addtoqueue',
+		config: {
+            auth: 'session'
+        },
 		handler: function(req, res)
 		{
 			if(req.payload.printjobID)
@@ -103,7 +109,7 @@ module.exports = function(server, module)
 	});
 
 	/**
-	 * Get queue with associations
+	 * Get queue with associations. duplicates api/queue
 	 */
 	server.route({
 		method: 'GET',

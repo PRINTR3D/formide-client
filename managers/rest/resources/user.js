@@ -18,6 +18,9 @@ module.exports = function(db, server)
 		{
 			method: 'GET',
 			path: '/api/users',
+			config: {
+	            auth: 'session'
+	        },
 			handler: function(req, res)
 			{
 				db.User
@@ -31,6 +34,9 @@ module.exports = function(db, server)
 		{
 			method: 'GET',
 			path: '/api/users/{id}',
+			config: {
+	            auth: 'session'
+	        },
 			handler: function(req, res)
 			{
 				db.User
@@ -44,6 +50,9 @@ module.exports = function(db, server)
 		{
 			method: 'POST',
 			path: '/api/users',
+			config: {
+	            auth: 'session'
+	        },
 			handler: function(req, res)
 			{
 				db.User
@@ -57,6 +66,9 @@ module.exports = function(db, server)
 		{
 			method: 'PUT',
 			path: '/api/users/{id}',
+			config: {
+	            auth: 'session'
+	        },
 			handler: function(req, res)
 			{
 				db.User
@@ -78,6 +90,9 @@ module.exports = function(db, server)
 		{
 			method: 'DELETE',
 			path: '/api/users/{id}',
+			config: {
+	            auth: 'session'
+	        },
 			handler: function(req, res)
 			{
 				db.User

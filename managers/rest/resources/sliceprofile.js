@@ -18,6 +18,9 @@ module.exports = function(db, server)
 		{
 			method: 'GET',
 			path: '/api/sliceprofiles',
+			config: {
+	            auth: 'session'
+	        },
 			handler: function(req, res)
 			{
 				db.Sliceprofile
@@ -31,6 +34,9 @@ module.exports = function(db, server)
 		{
 			method: 'GET',
 			path: '/api/sliceprofiles/{id}',
+			config: {
+	            auth: 'session'
+	        },
 			handler: function(req, res)
 			{
 				db.Sliceprofile
@@ -44,6 +50,9 @@ module.exports = function(db, server)
 		{
 			method: 'POST',
 			path: '/api/sliceprofiles',
+			config: {
+	            auth: 'session'
+	        },
 			handler: function(req, res)
 			{
 				db.Sliceprofile
@@ -57,6 +66,9 @@ module.exports = function(db, server)
 		{
 			method: 'PUT',
 			path: '/api/sliceprofiles/{id}',
+			config: {
+	            auth: 'session'
+	        },
 			handler: function(req, res)
 			{
 				db.Sliceprofile
@@ -78,6 +90,9 @@ module.exports = function(db, server)
 		{
 			method: 'DELETE',
 			path: '/api/sliceprofiles/{id}',
+			config: {
+	            auth: 'session'
+	        },
 			handler: function(req, res)
 			{
 				db.Sliceprofile

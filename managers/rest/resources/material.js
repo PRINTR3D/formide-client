@@ -18,6 +18,9 @@ module.exports = function(db, server)
 		{
 			method: 'GET',
 			path: '/api/materials',
+			config: {
+	            auth: 'session'
+	        },
 			handler: function(req, res)
 			{
 				db.Material
@@ -31,6 +34,9 @@ module.exports = function(db, server)
 		{
 			method: 'GET',
 			path: '/api/materials/{id}',
+			config: {
+	            auth: 'session'
+	        },
 			handler: function(req, res)
 			{
 				db.Material
@@ -44,6 +50,9 @@ module.exports = function(db, server)
 		{
 			method: 'POST',
 			path: '/api/materials',
+			config: {
+	            auth: 'session'
+	        },
 			handler: function(req, res)
 			{
 				db.Material
@@ -57,6 +66,9 @@ module.exports = function(db, server)
 		{
 			method: 'PUT',
 			path: '/api/materials/{id}',
+			config: {
+	            auth: 'session'
+	        },
 			handler: function(req, res)
 			{
 				db.Material
@@ -78,6 +90,9 @@ module.exports = function(db, server)
 		{
 			method: 'DELETE',
 			path: '/api/materials/{id}',
+			config: {
+	            auth: 'session'
+	        },
 			handler: function(req, res)
 			{
 				db.Material

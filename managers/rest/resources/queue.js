@@ -18,19 +18,25 @@ module.exports = function(db, server)
 		{
 			method: 'GET',
 			path: '/api/queue',
+			config: {
+	            auth: 'session'
+	        },
 			handler: function(req, res)
 			{
-				db.Queueitem
-				.findAll()
-				.then(function(queueitems)
+				Printspot.db.Queueitem
+				.findAll({where: {status: 'queued'}, include: [{model: Printspot.db.Printjob, include: [{model: Printspot.db.Modelfile}]}]})
+				.success(function(queue)
 				{
-					res(queueitems);
+					res(queue);
 				});
 			}
 		},
 		{
 			method: 'GET',
 			path: '/api/queue/{id}',
+			config: {
+	            auth: 'session'
+	        },
 			handler: function(req, res)
 			{
 				db.Queueitem
@@ -44,6 +50,9 @@ module.exports = function(db, server)
 		{
 			method: 'DELETE',
 			path: '/api/queue/{id}',
+			config: {
+	            auth: 'session'
+	        },
 			handler: function(req, res)
 			{
 				db.Queueitem

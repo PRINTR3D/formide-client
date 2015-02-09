@@ -29,15 +29,15 @@ module.exports = function(server, module)
 			.find({ where: {username: req.payload.username } })
 			.success(function( user )
 			{
-				if( !user || user.password !== req.payload.password )
+				if( !user || user.selectedValues.password !== req.payload.password )
 				{
 					message = 'Invalid username or password';
 					return res(message);
 				}
 				else
 				{
-					req.auth.session.set( user );
-					return res(req.auth.session);
+					req.auth.session.set( user.selectedValues );
+					return res('OK');
 				}
 			});
 		}
@@ -69,15 +69,21 @@ module.exports = function(server, module)
 	server.route({
 		method: 'GET',
 		path: '/session',
+		config: {
+            auth: 'session'
+        },
 		handler: function(req, res)
 		{
-			return res(req.auth);
+			return res(req.auth.isAuthenticated ? req.auth : '0');
 		}
 	});
 
 	server.route({
 		method: 'GET',
 		path: '/device',
+		config: {
+            auth: 'session'
+        },
 		handler: function(req, res)
 		{
 			var config = {
@@ -112,17 +118,23 @@ module.exports = function(server, module)
 	server.route({
 		method: 'POST',
 		path: '/changepassword',
+		config: {
+            auth: 'session'
+        },
 		handler: function(req, res)
 		{
 			if(req.payload.password)
 			{
-				Printspot.db.User.find({where: {id: req.auth.session.id}})
+				Printspot.db.User.find({where: {id: req.auth.credentials.id}})
 			  	.success(function(user)
 			  	{
-				  	user.updateAttributes({ password: req.payload.password }).success(function()
-					{
-						res('OK');
-					});
+				  	if( user )
+				  	{
+					  	user.updateAttributes({ password: req.payload.password }).success(function()
+						{
+							res('OK');
+						});
+					}
 			  	});
 		  	}
 		}

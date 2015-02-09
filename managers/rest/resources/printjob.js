@@ -18,6 +18,9 @@ module.exports = function(db, server)
 		{
 			method: 'GET',
 			path: '/api/printjobs',
+			config: {
+	            auth: 'session'
+	        },
 			handler: function(req, res)
 			{
 				db.Printjob
@@ -31,6 +34,9 @@ module.exports = function(db, server)
 		{
 			method: 'GET',
 			path: '/api/printjobs/{id}',
+			config: {
+	            auth: 'session'
+	        },
 			handler: function(req, res)
 			{
 				db.Printjob
@@ -44,6 +50,9 @@ module.exports = function(db, server)
 		{
 			method: 'DELETE',
 			path: '/api/printjobs/{id}',
+			config: {
+	            auth: 'session'
+	        },
 			handler: function(req, res)
 			{
 				db.Printjob

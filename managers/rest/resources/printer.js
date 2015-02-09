@@ -18,6 +18,9 @@ module.exports = function(db, server)
 		{
 			method: 'GET',
 			path: '/api/printers',
+			config: {
+	            auth: 'session'
+	        },
 			handler: function(req, res)
 			{
 				db.Printer
@@ -31,6 +34,9 @@ module.exports = function(db, server)
 		{
 			method: 'GET',
 			path: '/api/printers/{id}',
+			config: {
+	            auth: 'session'
+	        },
 			handler: function(req, res)
 			{
 				db.Printer
@@ -44,6 +50,9 @@ module.exports = function(db, server)
 		{
 			method: 'POST',
 			path: '/api/printers',
+			config: {
+	            auth: 'session'
+	        },
 			handler: function(req, res)
 			{
 				db.Printer
@@ -57,6 +66,9 @@ module.exports = function(db, server)
 		{
 			method: 'PUT',
 			path: '/api/printers/{id}',
+			config: {
+	            auth: 'session'
+	        },
 			handler: function(req, res)
 			{
 				db.Printer
@@ -78,6 +90,9 @@ module.exports = function(db, server)
 		{
 			method: 'DELETE',
 			path: '/api/printers/{id}',
+			config: {
+	            auth: 'session'
+	        },
 			handler: function(req, res)
 			{
 				db.Printer
