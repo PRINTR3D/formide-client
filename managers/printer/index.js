@@ -29,13 +29,13 @@ module.exports =
 		{
 			if(exists && config.simulated == false)
 			{
-				this.process1 = spawn('./ClientDriver', {cwd: config.path + '/ClientDriver/Debug', stdio: 'pipe'});
+				this.process1 = spawn('./ClientDriver', [], {cwd: config.path + '/ClientDriver/Debug', stdio: 'pipe'});
 				this.process1.stdout.setEncoding('utf8');
 				this.process1.stdout.on('exit', this.onExit);
 				this.process1.stdout.on('error', this.onError);
 				this.process1.stdout.on('data', this.onData);
 
-				this.process2 = spawn('./formideOS', {cwd: config.path + '/formideOS/Debug', stdio: 'pipe'});
+				this.process2 = spawn('./formideOS', [], {cwd: config.path + '/formideOS/Debug', stdio: 'pipe'});
 				this.process2.stdout.setEncoding('utf8');
 				this.process2.stdout.on('exit', this.onExit);
 				this.process2.stdout.on('error', this.onError);
@@ -43,7 +43,7 @@ module.exports =
 			}
 			else
 			{
-				this.process1 = spawn('node index.js', {cwd: 'driver-simulator', stdio: 'pipe'});
+				this.process1 = spawn('node', ['index.js'], {cwd: 'driver-simulator', stdio: 'pipe'});
 				this.process1.stdout.setEncoding('utf8');
 				this.process1.stdout.on('exit', this.onExit);
 				this.process1.stdout.on('error', this.onError);
