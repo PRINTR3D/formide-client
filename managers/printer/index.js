@@ -43,7 +43,9 @@ module.exports =
 
 			setTimeout(function()
 			{
-				this.printer = net.connect({
+				this.printer = new net.Socket();
+
+				this.printer.connect({
 					port: config.port
 				}, function() {
 					Printspot.debug('printer connected');
