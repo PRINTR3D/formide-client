@@ -27,11 +27,12 @@ module.exports =
 	{
 		fs.exists(config.path, function(exists)
 		{
-			if(exists && config.simulated == false)
+			if(!exists)
 			{
 				Printspot.debug('Printer driver folder not found!', true); // give warning when folder not found
 			}
-			else
+
+			if(config.simulated)
 			{
 				this.process1 = spawn('node', ['index.js'], {cwd: 'driver-simulator', stdio: 'pipe'});
 				this.process1.stdout.setEncoding('utf8');

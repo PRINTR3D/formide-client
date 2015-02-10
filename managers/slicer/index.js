@@ -26,11 +26,12 @@ module.exports =
 	{
 		fs.exists(config.path, function(exists)
 		{
-			if(exists && config.simulated == false)
+			if(!exists)
 			{
 				Printspot.debug('Slicer folder not found!', true); // give warning when folder not found
 			}
-			else
+
+			if(config.simulated)
 			{
 				this.process = spawn('node', ['index.js'], {cwd: 'slicer-simulator', stdio: 'pipe'});
 				this.process.stdout.setEncoding('utf8');
