@@ -97,7 +97,7 @@ module.exports =
 			if(data.status == 200 && data.data.responseID != null)
 			{
 				Printspot.db.Printjob
-				.find({where: {sliceResponse: data.data.responseID}})
+				.find({where: {sliceResponse: "{" + data.data.responseID + "}"}})
 				.success(function(printjob)
 				{
 					printjob

@@ -43,8 +43,6 @@ module.exports = function(server, module)
 					"extruder": "extruder1"
 				};
 
-				console.log(req.payload.modelfile);
-
 				// TODO: still hardcoded to 10 by 10 cm and with extruder 1
 
 				json.data.model = [model];
@@ -61,7 +59,7 @@ module.exports = function(server, module)
 						printerID: req.payload.printer.id,
 						sliceprofileID: req.payload.sliceprofile.id,
 						materials: JSON.stringify(req.payload.materials),
-						sliceResponse: hash,
+						sliceResponse: "{" + hash + "}",
 						sliceParams: JSON.stringify(req.payload.sliceparams),
 						sliceMethod: 'local'
 					})
