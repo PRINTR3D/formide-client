@@ -25,7 +25,10 @@ var server = net.createServer(function(client)
 			}
 		}
 
-		client.write(JSON.stringify(json));
+		setTimeout(function()
+		{
+			client.write(JSON.stringify(json));
+		}, 5000);
 	});
 
 	console.log('katana simulator running');
