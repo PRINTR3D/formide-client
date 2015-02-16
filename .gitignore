@@ -29,3 +29,6 @@ config/development
 
 # Logs
 logs
+
+interfaces
+.DS_Store

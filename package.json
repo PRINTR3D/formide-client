@@ -34,10 +34,6 @@
     "sqlite3": "2.1.19",
     "winston": "^0.8.1"
   },
-  "scripts": {
-    "setup": "node bootstrap.js --setup",
-    "start": "node bootstrap.js --slicer --driver"
-  },
   "engineStrict": [
     "darwin",
     "linux"
