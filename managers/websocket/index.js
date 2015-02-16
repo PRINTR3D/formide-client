@@ -18,12 +18,23 @@ module.exports =
 
 	init: function()
 	{
-		this.websocket = require('socket.io').listen(Printspot.manager('http').server);
+		Printspot.http.server.register(
+		{
+		    register: require('hapio'),
+	    },
+	    function(err)
+	    {
+	        if (err) throw err;
+		});
 
-		this.websocket.set('authorization', function(data, cb)
+		this.websocket = Printspot.http.server.plugins.hapio.io;
+
+		/*
+this.websocket.set('authorization', function(data, cb)
 		{
 
 		});
+*/
 
 		this.websocket.on('connection', function(socket)
 		{
@@ -62,43 +73,44 @@ module.exports =
 			});
 
 			// load channels from config
-			Printspot.config.get('channels.dashboard').forEach(function(method)
+			Object.keys(Printspot.config.get('channels.dashboard')).forEach(function(method)
 			{
 				(function(realMethod)
 				{
 					socket.on(realMethod, function(data)
 					{
-						var json = {
-							"type": realMethod,
-							"data": data
-						};
+						var expected = Printspot.config.get('channels.dashboard')[realMethod];
+						var given = data;
+						var correct = true;
 
-						Printspot.events.emit('dashboardPush', json);
+						for(key in expected)
+						{
+							if(!given.hasOwnProperty(expected[key]))
+							{
+								correct = false;
+							}
+						}
+
+						if(correct)
+						{
+							if(realMethod == 'start')
+							{
+								data.hash = Printspot.config.get('paths.gcode') + '/' + data.hash;
+							}
+
+							var json = {
+								"type": realMethod,
+								"data": data
+							};
+
+							Printspot.events.emit('dashboardPush', json);
+						}
+						else
+						{
+							Printspot.debug('Dashboard tried to send command to printer but arguments were invalid', true);
+						}
 					});
 				})(method);
-			});
-
-			// push print start
-			socket.on('dashboard_push_printer_start', function(data)
-			{
-				data.hash = Printspot.config.get('paths.gcode') + '/' + data.hash;
-
-				var json = {
-					"type": "dashboard_push_printer_start",
-					"data": data
-				};
-
-				Printspot.events.emit('dashboardPush', json);
-			});
-
-			socket.on('dashboard_push_schedule_start', function(data)
-			{
-				Printspot.events.emit('schedulePrintjob', data);
-			});
-
-			socket.on('dashboard_push_update', function(data)
-			{
-				Printspot.events.emit('update', data);
 			});
 		});
 	},
@@ -106,8 +118,7 @@ module.exports =
 	on:
 	{
 		'printerStatus': 'printerStatus',
-		'externalMessage': 'notification',
-		'updateProgress': 'updateProgress'
+		'externalMessage': 'notification'
 	},
 
 	// custom functions
@@ -118,12 +129,6 @@ module.exports =
 
 	notification: function(message)
 	{
-		this.websocket.emit('client_push_notification', message.message);
-	},
-
-	updateProgress: function(progress)
-	{
-		console.log(progress);
-		this.websocket.emit('client_push_update_progress', progress);
+		this.websocket.emit('notification', message.message);
 	}
 }

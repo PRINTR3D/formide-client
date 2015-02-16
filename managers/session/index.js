@@ -12,17 +12,19 @@
  *
  */
 
-var Config = require('nodejs-config');
-
-module.exports = function()
+module.exports =
 {
-	var config = Config(
-		__dirname + '/..',
+	init: function()
+	{
+		Printspot.http.server.register(require('hapi-auth-cookie'), function (err)
 		{
-			development: ['chris.local', 'bouke.local', 'bouke', 'wlan225230.mobiel.utwente.nl'],
-			production: ['raspberrypi', 'the-element']
-		}
-	);
-
-	return config;
+		    Printspot.http.server.auth.strategy('session', 'cookie',
+		    {
+		        password: 'secret',
+		        cookie: 'cookie',
+		        redirectTo: '/login',
+		        isSecure: false
+		    });
+		});
+	}
 }

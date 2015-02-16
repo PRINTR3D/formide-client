@@ -12,17 +12,20 @@
  *
  */
 
-var Config = require('nodejs-config');
-
-module.exports = function()
+module.exports = function(server, module)
 {
-	var config = Config(
-		__dirname + '/..',
+	/**
+	 * Send a custom notification to the dashboards
+	 */
+	server.route([
 		{
-			development: ['chris.local', 'bouke.local', 'bouke', 'wlan225230.mobiel.utwente.nl'],
-			production: ['raspberrypi', 'the-element']
+			method: 'GET',
+			path: '/api/notification/{message}',
+			handler: function(req, res)
+			{
+				module.notification({ message: req.params.message});
+				res({status: 200, message: 'OK'});
+			}.bind(this)
 		}
-	);
-
-	return config;
+	]);
 }

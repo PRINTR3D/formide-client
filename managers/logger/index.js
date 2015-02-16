@@ -18,12 +18,12 @@ module.exports =
 {
 	logger: {},
 
-	init: function()
+	init: function(config)
 	{
 		this.logger = new(winston.Logger)({
 			transports:
 		    [
-				new (winston.transports.File)({filename: 'logs/printspot.log', level: 'debug' })
+				new (winston.transports.File)({filename: config.path + '/printspot.log', level: 'debug' })
 		    ]
 		});
 	},

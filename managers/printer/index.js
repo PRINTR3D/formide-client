@@ -13,37 +13,74 @@
  */
 
 // dependencies
+var spawn = require('child_process').spawn;
+var fs = require('fs');
 var net = require('net');
 
 module.exports =
 {
+	process1: null,
 	printer: {},
-	status: null,
 
 	init: function(config)
 	{
-		this.printer = net.connect({
-			port: config.port
-		}, function() {
-			Printspot.debug('printer connected');
-		});
+		if(config.simulated)
+		{
+			this.process1 = spawn('node', ['index.js'], {cwd: 'driver-simulator', stdio: 'pipe'});
+			this.process1.stdout.setEncoding('utf8');
+			this.process1.stdout.on('exit', this.onExit);
+			this.process1.stdout.on('error', this.onError);
+			this.process1.stdout.on('data', this.onData);
+		}
 
-		this.printer.on('error', this.printerError);
+		setTimeout(function()
+		{
+			this.printer = new net.Socket();
 
-		this.printer.on('data', this.printerStatus);
+			this.printer.connect({
+				port: config.port
+			}, function() {
+				Printspot.debug('printer connected');
+			});
+
+			this.printer.on('error', this.printerError);
+			this.printer.on('data', this.printerStatus);
+
+		}.bind(this), 2500);
 	},
 
 	on:
 	{
 		'cloudPush': 'printerControl',
 		'dashboardPush': 'printerControl',
-		'scheduledPrintjob': 'printerControl'
+		'scheduledPrintjob': 'printerControl',
+		'processExit': 'stop'
+	},
+
+	onExit: function(exit)
+	{
+		Printspot.debug(exit, true);
+	},
+
+	onError: function(error)
+	{
+		Printspot.debug(error, true);
+	},
+
+	onData: function(data)
+	{
+		Printspot.debug(data);
+	},
+
+	stop: function(stop)
+	{
+		this.process1.kill('SIGINT');
 	},
 
 	// custom functions
 	printerError: function(error)
 	{
-		Printspot.debug(error, true);
+		Printspot.debug(error.toString(), true);
 	},
 
 	printerStatus: function(printerData)
@@ -53,14 +90,14 @@ module.exports =
 			data = JSON.parse(printerData.toString());
 			Printspot.events.emit('printerStatus', data);
 
-			if(data.type == 'client_push_printer_status')
+			if(data.type == 'status')
 			{
-				this.status = data.data.status;
+				this.status = data.data;
 			}
 
-			if(data.type == 'client_push_printer_finished')
+			if(data.type == 'finished')
 			{
-				Printspot.manager('database').db.Queueitem
+				Printspot.db.Queueitem
 				.find({where: {id: data.data.printjobID}})
 				.success(function(queueitem)
 				{
@@ -78,7 +115,7 @@ module.exports =
 		}
 		catch(e)
 		{
-			Printspot.debug(e, true);
+			Printspot.debug(e.toString(), true);
 		}
 	},
 

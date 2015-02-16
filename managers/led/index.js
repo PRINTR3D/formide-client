@@ -12,17 +12,20 @@
  *
  */
 
-var Config = require('nodejs-config');
+// dependencies
+var Led = require('nodejs-leds');
 
-module.exports = function()
+module.exports =
 {
-	var config = Config(
-		__dirname + '/..',
-		{
-			development: ['chris.local', 'bouke.local', 'bouke', 'wlan225230.mobiel.utwente.nl'],
-			production: ['raspberrypi', 'the-element']
-		}
-	);
+	led: null,
 
-	return config;
+	init: function()
+	{
+		this.led = new Led();
+	},
+
+	on:
+	{
+
+	},
 }

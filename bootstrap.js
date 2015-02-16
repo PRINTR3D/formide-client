@@ -25,39 +25,23 @@ getMac.getMac(function(err, macAddress)
 	// always include these
 	Printspot.register('device').init();
 	Printspot.register('process').init();
-	Printspot.register('database').init(Printspot.config.get('database'));
+	Printspot.register('logger').init(Printspot.config.get('log'));
 
 	// load CLI initiated modules
 	if(Printspot.manager('process').args.setup) // setup mode
 	{
-		Printspot.debug('Run setup');
 		Printspot.register('setup').init();
 	}
-	if(Printspot.manager('process').args.driver) // simulated driver mode
-	{
-		Printspot.debug('Simulate driver');
-		Printspot.register('simdriver').init();
-	}
-	if(Printspot.manager('process').args.slicer) // simulated slicer mode
-	{
-		Printspot.debug('Simulate slicer');
-		Printspot.register('simslicer').init();
-	}
 
-	// server & http
-	Printspot.register('app').init();
-	Printspot.register('http').init(Printspot.config.get('app'));
-	Printspot.register('api').init();
-
-	// real time modules
-	Printspot.register('logger').init();
+	// managers
+	Printspot.register('files').init();
+	Printspot.register('session').init();
+	Printspot.register('rest').init();
+	Printspot.register('websocket').init();
 	Printspot.register('printer').init(Printspot.config.get('printer'));
 	Printspot.register('slicer').init(Printspot.config.get('slicer'));
 	Printspot.register('cloud').init(Printspot.config.get('cloud'));
-	Printspot.register('websocket').init();
-	Printspot.register('interface').init();
-	// Printspot.register('cron').init();
-
-	// other modules
-	// Printspot.register('update').init();
+	Printspot.register('interface').init(Printspot.config.get('dashboard'));
+	//Printspot.register('cron').init();
+	Printspot.register('led').init();
 });

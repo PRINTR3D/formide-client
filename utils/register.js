@@ -12,6 +12,8 @@
  *
  */
 
+var fs = require('fs');
+
 module.exports = function(managerName)
 {
 	return {
@@ -19,45 +21,58 @@ module.exports = function(managerName)
 		init: function(data) {
 
 			Printspot.debug('Loading manager: ' + managerName);
-			var manager = require('../managers/' + managerName);
 
-			// register listeners
-			if(typeof manager.on === 'object')
+			if(fs.existsSync('managers/' + managerName + '/index.js'))
 			{
-				Object.keys(manager.on).forEach(function(ev)
+				var manager = require('../managers/' + managerName + '/index.js');
+
+				// register listeners
+				if(typeof manager.on === 'object')
 				{
-					(function(realEv)
+					Object.keys(manager.on).forEach(function(ev)
 					{
-						var callback = manager.on[realEv];
-
-						Printspot.events.on(realEv, function(data)
+						(function(realEv)
 						{
-							manager[callback](data);
-						});
-					})(ev);
-				});
-			}
+							var callback = manager.on[realEv];
 
-			// do init function if exists
-			if(typeof manager.init === 'function')
-			{
-				if(manager.init.length !== arguments.length)
+							Printspot.events.on(realEv, function(data)
+							{
+								manager[callback](data);
+							});
+						})(ev);
+					});
+				}
+
+				// do init function if exists
+				if(typeof manager.init === 'function')
 				{
-					Printspot.debug('manager ' + managerName + ' takes '+ manager.init.length + ' arguments but ' + arguments.length + ' were given', true);
+					if(manager.init.length !== arguments.length)
+					{
+						Printspot.debug('manager ' + managerName + ' takes '+ manager.init.length + ' arguments but ' + arguments.length + ' were given', true);
+					}
+					else
+					{
+						manager.init(data);
+					}
+				}
+
+				if(fs.existsSync('managers/' + managerName + '/api.js'))
+				{
+					require('../managers/' + managerName + '/api.js')(Printspot.http.server, manager);
+				}
+
+				if(!(managerName in Printspot.managers))
+				{
+					Printspot.managers[managerName] = manager;
 				}
 				else
 				{
-					manager.init(data);
+					Printspot.debug('Manager with name ' + managerName + ' already exists', true);
 				}
-			}
-
-			if(!(managerName in Printspot.managers))
-			{
-				Printspot.managers[managerName] = manager;
 			}
 			else
 			{
-				Printspot.debug('Manager with name ' + managerName + ' already exists', true);
+				Printspot.debug('manager does not have an index.js file', true);
 			}
 		}
 	}

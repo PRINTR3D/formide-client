@@ -13,28 +13,64 @@
  */
 
 // dependencies
+var spawn = require('child_process').spawn;
+var fs = require('fs');
 var net = require('net');
 
 module.exports =
 {
+	process: null,
 	slicer: {},
 
 	init: function(config)
 	{
-		this.slicer = net.connect({
-			port: config.port
-		}, function() {
-			Printspot.debug('slicer connected');
-		});
+		if(config.simulated)
+		{
+			this.process = spawn('node', ['index.js'], {cwd: 'slicer-simulator', stdio: 'pipe'});
+			this.process.stdout.setEncoding('utf8');
+			this.process.stdout.on('exit', this.onExit);
+			this.process.stdout.on('error', this.onError);
+			this.process.stdout.on('data', this.onData);
+		}
 
-		this.slicer.on('error', this.slicerError);
+		setTimeout(function()
+		{
+			this.slicer = net.connect({
+				port: config.port
+			}, function() {
+				Printspot.debug('slicer connected');
+			});
 
-		this.slicer.on('data', this.sliceResponse);
+			this.slicer.on('error', this.slicerError);
+			this.slicer.on('data', this.sliceResponse);
+
+		}.bind(this), 2500);
 	},
 
 	on:
 	{
-		'slice': 'slice'
+		'slice': 'slice',
+		'processExit': 'stop'
+	},
+
+	onExit: function(exit)
+	{
+		Printspot.debug(exit, true);
+	},
+
+	onError: function(error)
+	{
+		Printspot.debug(error, true);
+	},
+
+	onData: function(data)
+	{
+		Printspot.debug(data);
+	},
+
+	stop: function(stop)
+	{
+		this.process.kill('SIGINT');
 	},
 
 	// custom functions
@@ -51,27 +87,17 @@ module.exports =
 
 			if(data.status == 200 && data.data.responseID != null)
 			{
-				Printspot.manager('database').db.Printjob
-				.find({where: {sliceResponse: data.data.responseID}})
+				Printspot.db.Printjob
+				.find({where: {sliceResponse: "{" + data.data.responseID + "}"}})
 				.success(function(printjob)
 				{
 					printjob
 					.updateAttributes({gcode: data.data.gcode, sliceResponse: JSON.stringify(data.data)})
 					.success(function()
 					{
-						Printspot.manager('database').db.Queueitem
-						.create({
-							origin: 'local',
-							status: 'queued',
-							gcode: printjob.gcode,
-							PrintjobId: printjob.id
-						})
-						.success(function(queueitem)
-						{
-							Printspot.events.emit('externalMessage', {
-								message: 'Slicing finished'
-							});
-						})
+						Printspot.events.emit('externalMessage', {
+							message: 'Slicing finished'
+						});
 					});
 				});
 			}

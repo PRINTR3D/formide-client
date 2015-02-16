@@ -17,19 +17,19 @@ var fs = require('fs');
 
 module.exports =
 {
-	dashboard: null,
+	process: null,
 
-	init: function()
+	init: function(config)
 	{
-		fs.exists(Printspot.config.get('dashboard.path'), function(exists)
+		fs.exists(config.path, function(exists)
 		{
 			if(exists)
 			{
-				this.dashboard = spawn('node', ['index.js'], {cwd: Printspot.config.get('dashboard.path'), stdio: 'pipe'});
-				this.dashboard.stdout.setEncoding('utf8');
-				this.dashboard.stdout.on('exit', this.onExit);
-				this.dashboard.stdout.on('error', this.onError);
-				this.dashboard.stdout.on('data', this.onData);
+				this.process = spawn('node', ['index.js'], {cwd: config.path, stdio: 'pipe'});
+				this.process.stdout.setEncoding('utf8');
+				this.process.stdout.on('exit', this.onExit);
+				this.process.stdout.on('error', this.onError);
+				this.process.stdout.on('data', this.onData);
 			}
 			else
 			{
@@ -60,6 +60,6 @@ module.exports =
 
 	stop: function(stop)
 	{
-		this.kill('SIGINT');
+		this.process.kill('SIGINT');
 	}
 }

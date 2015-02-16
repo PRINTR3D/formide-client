@@ -15,6 +15,13 @@
 var callerId = require('caller-id');
 var colors = require('colors');
 
+function addZero(i) {
+    if (i < 10) {
+        i = "0" + i;
+    }
+    return i;
+}
+
 module.exports = function(config)
 {
 	var debug = function(debug, severe)
@@ -28,7 +35,7 @@ module.exports = function(config)
 
 			var date = new Date();
 
-			var timestampString = date.toLocaleTimeString();
+			var timestampString = addZero(date.getHours()) + ":" + addZero(date.getMinutes()) + ":" + addZero(date.getSeconds()) + ":" + addZero(date.getMilliseconds()) + '\t';
 			var outputString = '[' + callerString[callerString.length - 2] + ']\t';
 			outputString += JSON.stringify(debug);
 
