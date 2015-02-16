@@ -1,5 +1,5 @@
 {
-	"temp": "/home/debian/formideOS/uploads/tmp",
-	"modelfile": "/home/debian/formideOS/uploads/modelfiles",
-	"gcode": "/home/debian/formideOS/uploads/gcode"
+	"temp": "../uploads/tmp",
+	"modelfile": "../uploads/modelfiles",
+	"gcode": "../uploads/gcode"
 }

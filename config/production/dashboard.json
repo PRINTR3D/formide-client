@@ -1,4 +1,4 @@
 {
 	"port": 1336,
-	"path": "/home/debian/formideOS/formideOS-interface"
+	"path": "../formideOS-interface"
 }
