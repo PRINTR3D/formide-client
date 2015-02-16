@@ -95,7 +95,7 @@ this.websocket.set('authorization', function(data, cb)
 						{
 							if(realMethod == 'start')
 							{
-								data.hash = Printspot.config.get('paths.gcode') + '/' + data.hash;
+								data.hash = Printspot.appRoot + Printspot.config.get('paths.gcode') + '/' + data.hash;
 							}
 
 							var json = {

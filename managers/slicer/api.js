@@ -36,7 +36,7 @@ module.exports = function(server, module)
 
 				var model = {
 					"hash": json.data.model,
-					"bucketIn": Printspot.config.get('paths.modelfile'),
+					"bucketIn": Printspot.appRoot + Printspot.config.get('paths.modelfile'),
 					"x": 100000,
 					"y": 100000,
 					"z": 0,
@@ -46,7 +46,7 @@ module.exports = function(server, module)
 				// TODO: still hardcoded to 10 by 10 cm and with extruder 1
 
 				json.data.model = [model];
-				json.data.bucketOut = Printspot.config.get('paths.gcode');
+				json.data.bucketOut = Printspot.appRoot + Printspot.config.get('paths.gcode');
 				json.data.responseID = hash;
 
 				if(req.payload.slicemethod == 'local')
