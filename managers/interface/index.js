@@ -25,7 +25,7 @@ module.exports =
 		{
 			if(exists)
 			{
-				this.process = spawn('node', ['index.js'], {cwd: config.path, stdio: 'pipe'});
+				this.process = spawn('node', ['index.js'], {cwd: Printspot.appRoot + config.path, stdio: 'pipe'});
 				this.process.stdout.setEncoding('utf8');
 				this.process.stdout.on('exit', this.onExit);
 				this.process.stdout.on('error', this.onError);

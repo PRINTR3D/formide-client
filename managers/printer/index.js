@@ -26,7 +26,7 @@ module.exports =
 	{
 		if(config.simulated)
 		{
-			this.process1 = spawn('node', ['index.js'], {cwd: 'driver-simulator', stdio: 'pipe'});
+			this.process1 = spawn('node', ['index.js'], {cwd: Printspot.appRoot + 'driver-simulator', stdio: 'pipe'});
 			this.process1.stdout.setEncoding('utf8');
 			this.process1.stdout.on('exit', this.onExit);
 			this.process1.stdout.on('error', this.onError);

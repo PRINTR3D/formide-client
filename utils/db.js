@@ -15,7 +15,7 @@
 var Sequelize 	= require('sequelize');
 var lodash    	= require('lodash');
 
-module.exports = function(config)
+module.exports = function(config, rootDir)
 {
 	var config = config.get('database');
 	var db = {};
@@ -23,7 +23,7 @@ module.exports = function(config)
 
 	sequelize = new Sequelize(config.database, config.username, config.password, {
 		dialect: 'sqlite',
-		storage: config.storage,
+		storage: rootDir + config.storage,
 		logging: config.debug
 	});
 

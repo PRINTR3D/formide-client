@@ -12,38 +12,36 @@
  *
  */
 
-var events = require('./utils/events.js')();
-var config = require('./utils/config.js')();
-var register = require('./utils/register.js');
-var debug = require('./utils/debug.js')(config);
-var http = require('./utils/http.js')(config);
-var db = require('./utils/db.js')(config);
+var path = require('path');
 
 // define global Printspot object
 module.exports = function()
 {
 	var printspot = {};
 
+	// global app root directory
+	printspot.appRoot = path.resolve(__dirname) + '/';
+
 	// global object to hold managers
 	printspot.managers = {};
 
 	// global config
-	printspot.config = config;
+	printspot.config = require('./utils/config.js')();
 
 	// global events
-	printspot.events = events;
+	printspot.events = require('./utils/events.js')();
 
 	// global debug
-	printspot.debug = debug;
+	printspot.debug = require('./utils/debug.js')(printspot.config);
 
 	// global http app
-	printspot.http = http;
+	printspot.http = require('./utils/http.js')(printspot.config);
 
 	// global database
-	printspot.db = db
+	printspot.db = require('./utils/db.js')(printspot.config, printspot.appRoot);
 
 	// register manager
-	printspot.register = register;
+	printspot.register = require('./utils/register.js');
 
 	// get registered manager
 	printspot.manager = function(name)
