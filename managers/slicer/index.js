@@ -24,36 +24,27 @@ module.exports =
 
 	init: function(config)
 	{
-		fs.exists(config.path, function(exists)
+		if(config.simulated)
 		{
-			if(!exists)
-			{
-				Printspot.debug('Slicer folder not found!', true); // give warning when folder not found
-			}
+			this.process = spawn('node', ['index.js'], {cwd: 'slicer-simulator', stdio: 'pipe'});
+			this.process.stdout.setEncoding('utf8');
+			this.process.stdout.on('exit', this.onExit);
+			this.process.stdout.on('error', this.onError);
+			this.process.stdout.on('data', this.onData);
+		}
 
-			if(config.simulated)
-			{
-				this.process = spawn('node', ['index.js'], {cwd: 'slicer-simulator', stdio: 'pipe'});
-				this.process.stdout.setEncoding('utf8');
-				this.process.stdout.on('exit', this.onExit);
-				this.process.stdout.on('error', this.onError);
-				this.process.stdout.on('data', this.onData);
-			}
+		setTimeout(function()
+		{
+			this.slicer = net.connect({
+				port: config.port
+			}, function() {
+				Printspot.debug('slicer connected');
+			});
 
-			setTimeout(function()
-			{
-				this.slicer = net.connect({
-					port: config.port
-				}, function() {
-					Printspot.debug('slicer connected');
-				});
+			this.slicer.on('error', this.slicerError);
+			this.slicer.on('data', this.sliceResponse);
 
-				this.slicer.on('error', this.slicerError);
-				this.slicer.on('data', this.sliceResponse);
-
-			}.bind(this), 2500);
-
-		}.bind(this));
+		}.bind(this), 2500);
 	},
 
 	on:

@@ -20,43 +20,33 @@ var net = require('net');
 module.exports =
 {
 	process1: null,
-	process2: null,
 	printer: {},
 
 	init: function(config)
 	{
-		fs.exists(config.path, function(exists)
+		if(config.simulated)
 		{
-			if(!exists)
-			{
-				Printspot.debug('Printer driver folder not found!', true); // give warning when folder not found
-			}
+			this.process1 = spawn('node', ['index.js'], {cwd: 'driver-simulator', stdio: 'pipe'});
+			this.process1.stdout.setEncoding('utf8');
+			this.process1.stdout.on('exit', this.onExit);
+			this.process1.stdout.on('error', this.onError);
+			this.process1.stdout.on('data', this.onData);
+		}
 
-			if(config.simulated)
-			{
-				this.process1 = spawn('node', ['index.js'], {cwd: 'driver-simulator', stdio: 'pipe'});
-				this.process1.stdout.setEncoding('utf8');
-				this.process1.stdout.on('exit', this.onExit);
-				this.process1.stdout.on('error', this.onError);
-				this.process1.stdout.on('data', this.onData);
-			}
+		setTimeout(function()
+		{
+			this.printer = new net.Socket();
 
-			setTimeout(function()
-			{
-				this.printer = new net.Socket();
+			this.printer.connect({
+				port: config.port
+			}, function() {
+				Printspot.debug('printer connected');
+			});
 
-				this.printer.connect({
-					port: config.port
-				}, function() {
-					Printspot.debug('printer connected');
-				});
+			this.printer.on('error', this.printerError);
+			this.printer.on('data', this.printerStatus);
 
-				this.printer.on('error', this.printerError);
-				this.printer.on('data', this.printerStatus);
-
-			}.bind(this), 2500);
-
-		}.bind(this));
+		}.bind(this), 2500);
 	},
 
 	on:
@@ -85,7 +75,6 @@ module.exports =
 	stop: function(stop)
 	{
 		this.process1.kill('SIGINT');
-		this.process2.kill('SIGINT');
 	},
 
 	// custom functions
