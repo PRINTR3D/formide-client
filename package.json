@@ -17,11 +17,13 @@
     "epilogue": "0.3.2",
     "getmac": "~1.0.6",
     "hapi": "^8.1.0",
+    "hapi-auth-cookie": "^2.0.0",
     "hapio": "^1.1.0",
     "lodash": "2.4.1",
     "minimist": "^1.1.0",
     "node-schedule": "^0.1.15",
     "nodejs-config": "1.0.0",
+    "nodejs-leds": "0.0.3",
     "passport": "^0.2.1",
     "passport-local": "^1.0.0",
     "polo": "^0.7.1",
@@ -32,6 +34,7 @@
     "socket.io-client": "1.1.0",
     "socket.io-stream": "^0.6.0",
     "sqlite3": "2.1.19",
+    "sudo": "^1.0.3",
     "winston": "^0.8.1"
   },
   "engineStrict": [

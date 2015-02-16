@@ -12,19 +12,20 @@
  *
  */
 
+// dependencies
+var Led = require('nodejs-leds');
+
 module.exports =
 {
+	led: null,
+
 	init: function()
 	{
-		Printspot.http.server.register(require('hapi-auth-cookie'), function (err)
-		{
-		    Printspot.http.server.auth.strategy('session', 'cookie',
-		    {
-		        password: 'secret',
-		        cookie: 'cookie',
-		        redirectTo: '/login',
-		        isSecure: false
-		    });
-		});
-	}
+		this.led = new Led();
+	},
+
+	on:
+	{
+
+	},
 }

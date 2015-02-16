@@ -118,8 +118,7 @@ this.websocket.set('authorization', function(data, cb)
 	on:
 	{
 		'printerStatus': 'printerStatus',
-		'externalMessage': 'notification',
-		'updateProgress': 'updateProgress'
+		'externalMessage': 'notification'
 	},
 
 	// custom functions
@@ -130,11 +129,6 @@ this.websocket.set('authorization', function(data, cb)
 
 	notification: function(message)
 	{
-		this.websocket.emit('client_push_notification', message.message);
-	},
-
-	updateProgress: function(progress)
-	{
-		this.websocket.emit('client_push_update_progress', progress);
+		this.websocket.emit('notification', message.message);
 	}
 }

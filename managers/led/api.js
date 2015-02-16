@@ -14,11 +14,18 @@
 
 module.exports = function(server, module)
 {
-	require('./resources/material.js')(Printspot.db, server);
-	require('./resources/modelfile.js')(Printspot.db, server);
-	require('./resources/printer.js')(Printspot.db, server);
-	require('./resources/printjob.js')(Printspot.db, server);
-	require('./resources/queue.js')(Printspot.db, server);
-	require('./resources/sliceprofile.js')(Printspot.db, server);
-	require('./resources/user.js')(Printspot.db, server);
-};
+	/**
+	 * Set led rgb color
+	 */
+	server.route([
+		{
+			method: 'GET',
+			path: '/api/led/rgb/{r}/{g}/{b}',
+			handler: function(req, res)
+			{
+				module.led.rgb(req.params.r, req.params.g, req.params.b);
+				res({status: 200, message: 'OK'});
+			}.bind(this)
+		}
+	]);
+}

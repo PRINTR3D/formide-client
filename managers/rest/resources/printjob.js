@@ -12,10 +12,64 @@
  *
  */
 
-module.exports = function(db, restful)
+module.exports = function(db, server)
 {
-	restful.resource({
-	    model: db.Printjob,
-	    endpoints: ['/api/printjobs', '/api/printjobs/:id']
-	});
+	server.route([
+		{
+			method: 'GET',
+			path: '/api/printjobs',
+			config: {
+	            auth: 'session'
+	        },
+			handler: function(req, res)
+			{
+				db.Printjob
+				.findAll({ include: [ { model: Printspot.db.Modelfile } ] })
+				.then(function(printjobs)
+				{
+					res(printjobs);
+				});
+			}
+		},
+		{
+			method: 'GET',
+			path: '/api/printjobs/{id}',
+			config: {
+	            auth: 'session'
+	        },
+			handler: function(req, res)
+			{
+				db.Printjob
+				.find({ where: {id: req.params.id }, include: [ { model: Printspot.db.Modelfile } ] })
+				.then(function(printjob)
+				{
+					res(printjob);
+				});
+			}
+		},
+		{
+			method: 'DELETE',
+			path: '/api/printjobs/{id}',
+			config: {
+	            auth: 'session'
+	        },
+			handler: function(req, res)
+			{
+				db.Printjob
+				.find({ where: {id: req.params.id } })
+				.on('success', function( printjob )
+				{
+					if(printjob)
+					{
+						printjob
+						.destroy()
+						.success(function()
+						{
+							res('OK');
+						});
+					}
+				});
+			}
+		}
+	]);
 };

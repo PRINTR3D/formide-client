@@ -12,10 +12,104 @@
  *
  */
 
-module.exports = function(db, restful)
+module.exports = function(db, server)
 {
-	restful.resource({
-	    model: db.Sliceprofile,
-	    endpoints: ['/api/sliceprofiles', '/api/sliceprofiles/:id']
-	});
+	server.route([
+		{
+			method: 'GET',
+			path: '/api/sliceprofiles',
+			config: {
+	            auth: 'session'
+	        },
+			handler: function(req, res)
+			{
+				db.Sliceprofile
+				.findAll()
+				.then(function(sliceprofiles)
+				{
+					res(sliceprofiles);
+				});
+			}
+		},
+		{
+			method: 'GET',
+			path: '/api/sliceprofiles/{id}',
+			config: {
+	            auth: 'session'
+	        },
+			handler: function(req, res)
+			{
+				db.Sliceprofile
+				.find({ where: {id: req.params.id } })
+				.then(function(sliceprofile)
+				{
+					res(sliceprofile);
+				});
+			}
+		},
+		{
+			method: 'POST',
+			path: '/api/sliceprofiles',
+			config: {
+	            auth: 'session'
+	        },
+			handler: function(req, res)
+			{
+				db.Sliceprofile
+				.create(req.payload)
+				.success(function()
+				{
+					res('OK')
+				});
+			}
+		},
+		{
+			method: 'PUT',
+			path: '/api/sliceprofiles/{id}',
+			config: {
+	            auth: 'session'
+	        },
+			handler: function(req, res)
+			{
+				db.Sliceprofile
+				.find({ where: {id: req.params.id } })
+				.on('success', function( sliceprofile )
+				{
+					if(sliceprofile)
+					{
+						sliceprofile
+						.updateAttributes(req.payload)
+						.success(function()
+						{
+							res('OK');
+						});
+					}
+				});
+			}
+		},
+		{
+			method: 'DELETE',
+			path: '/api/sliceprofiles/{id}',
+			config: {
+	            auth: 'session'
+	        },
+			handler: function(req, res)
+			{
+				db.Sliceprofile
+				.find({ where: {id: req.params.id } })
+				.on('success', function( sliceprofile )
+				{
+					if(sliceprofile)
+					{
+						sliceprofile
+						.destroy()
+						.success(function()
+						{
+							res('OK');
+						});
+					}
+				});
+			}
+		}
+	]);
 };

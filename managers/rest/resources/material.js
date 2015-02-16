@@ -12,10 +12,104 @@
  *
  */
 
-module.exports = function(db, restful)
+module.exports = function(db, server)
 {
-	restful.resource({
-	    model: db.Material,
-	    endpoints: ['/api/materials', '/api/materials/:id']
-	});
+	server.route([
+		{
+			method: 'GET',
+			path: '/api/materials',
+			config: {
+	            auth: 'session'
+	        },
+			handler: function(req, res)
+			{
+				db.Material
+				.findAll()
+				.then(function(materials)
+				{
+					res(materials);
+				});
+			}
+		},
+		{
+			method: 'GET',
+			path: '/api/materials/{id}',
+			config: {
+	            auth: 'session'
+	        },
+			handler: function(req, res)
+			{
+				db.Material
+				.find({ where: {id: req.params.id } })
+				.then(function(material)
+				{
+					res(material);
+				});
+			}
+		},
+		{
+			method: 'POST',
+			path: '/api/materials',
+			config: {
+	            auth: 'session'
+	        },
+			handler: function(req, res)
+			{
+				db.Material
+				.create(req.payload)
+				.success(function()
+				{
+					res('OK')
+				});
+			}
+		},
+		{
+			method: 'PUT',
+			path: '/api/materials/{id}',
+			config: {
+	            auth: 'session'
+	        },
+			handler: function(req, res)
+			{
+				db.Material
+				.find({ where: {id: req.params.id } })
+				.on('success', function( material )
+				{
+					if(material)
+					{
+						material
+						.updateAttributes(req.payload)
+						.success(function()
+						{
+							res('OK');
+						});
+					}
+				});
+			}
+		},
+		{
+			method: 'DELETE',
+			path: '/api/materials/{id}',
+			config: {
+	            auth: 'session'
+	        },
+			handler: function(req, res)
+			{
+				db.Material
+				.find({ where: {id: req.params.id } })
+				.on('success', function( material )
+				{
+					if(material)
+					{
+						material
+						.destroy()
+						.success(function()
+						{
+							res('OK');
+						});
+					}
+				});
+			}
+		}
+	]);
 };

@@ -12,7 +12,7 @@
  *
  */
 
-module.exports = function(server)
+module.exports = function(server, module)
 {
 	/**
 	 * Slice!
@@ -20,117 +20,57 @@ module.exports = function(server)
 	server.route({
 		method: 'POST',
 		path: '/slicing',
+		config: {
+            auth: 'session'
+        },
 		handler: function(req, res)
 		{
-
-		}
-	});
-
-	/**
-	 * Add existing printjob to queue
-	 */
-	server.route({
-		method: 'POST',
-		path: '/adddtoqueue',
-		handler: function(req, res)
-		{
-
-		}
-	});
-
-	/**
-	 * Get queue with associations
-	 */
-	server.route({
-		method: 'GET',
-		path: '/getqueue',
-		handler: function(req, res)
-		{
-
-		}
-	});
-
-
-	/*
-app.post('/slicing', function(req, res)
-	{
-		if(req.body.sliceparams && req.body.modelfile && req.body.sliceprofile && req.body.materials && req.body.printer && req.body.slicemethod)
-		{
-			var hash = (Math.random() / +new Date()).toString(36).replace(/[^a-z]+/g, '');
-
-			var json = {
-				"type": "slice",
-				"data": req.body.sliceparams
-			};
-
-			var model = {
-				"hash": json.data.model,
-				"bucketIn": Printspot.config.get('paths.modelfile'),
-				"x": 100000,
-				"y": 100000,
-				"z": 0,
-				"extruder": "extruder1"
-			};
-			// TODO: still hardcoded to 10 by 10 cm and with extruder 1
-
-			json.data.model = [model];
-			json.data.bucketOut = Printspot.config.get('paths.gcode');
-			json.data.responseID = hash;
-
-			if(req.body.slicemethod == 'local')
+			if(req.payload.sliceparams && req.payload.modelfile && req.payload.sliceprofile && req.payload.materials && req.payload.printer && req.payload.slicemethod)
 			{
-				// create printjob in DB
-				Printspot.db.Printjob
-				.create(
+				var hash = (Math.random() / +new Date()).toString(36).replace(/[^a-z]+/g, '');
+
+				var json = {
+					"type": "slice",
+					"data": req.payload.sliceparams
+				};
+
+				var model = {
+					"hash": json.data.model,
+					"bucketIn": Printspot.config.get('paths.modelfile'),
+					"x": 100000,
+					"y": 100000,
+					"z": 0,
+					"extruder": "extruder1"
+				};
+
+				// TODO: still hardcoded to 10 by 10 cm and with extruder 1
+
+				json.data.model = [model];
+				json.data.bucketOut = Printspot.config.get('paths.gcode');
+				json.data.responseID = hash;
+
+				if(req.payload.slicemethod == 'local')
 				{
-					ModelfileId: req.body.modelfile.id,
-					printerID: req.body.printer.id,
-					sliceprofileID: req.body.sliceprofile.id,
-					materials: JSON.stringify(req.body.materials),
-					sliceResponse: hash,
-					sliceParams: JSON.stringify(req.body.sliceparams),
-					sliceMethod: 'local'
-				})
-				.success(function(printjob)
-				{
-					// send slice request to local slicer
-					Printspot.events.emit('slice', json);
-					return res.json('OK');
-				});
+					// create printjob in DB
+					Printspot.db.Printjob
+					.create(
+					{
+						ModelfileId: req.payload.modelfile.id,
+						printerID: req.payload.printer.id,
+						sliceprofileID: req.payload.sliceprofile.id,
+						materials: JSON.stringify(req.payload.materials),
+						sliceResponse: "{" + hash + "}",
+						sliceParams: JSON.stringify(req.payload.sliceparams),
+						sliceMethod: 'local'
+					})
+					.success(function(printjob)
+					{
+						// send slice request to local slicer
+						Printspot.events.emit('slice', json);
+						res('OK');
+					});
+				}
 			}
 		}
 	});
-
-	app.post('/addtoqueue', function(req, res)
-	{
-		if(req.body.printjobID)
-		{
-			Printspot.db.Printjob.find({where: {id: req.body.printjobID}})
-			.success(function(printjob)
-			{
-				Printspot.db.Queueitem
-				.create({
-					origin: 'local',
-					status: 'queued',
-					gcode: printjob.gcode,
-					PrintjobId: printjob.id
-				})
-				.success(function(queueitem)
-				{
-					return res.json('OK');
-				});
-			});
-		}
-	});
-
-	app.get('/getqueue', function(req, res)
-	{
-		Printspot.db.Queueitem
-		.findAll({where: {status: 'queued'}, include: [{model: Printspot.db.Printjob, include: [{model: Printspot.db.Modelfile}]}]})
-		.success(function(queue)
-		{
-			return res.json(queue);
-		});
-	});
-*/
 };

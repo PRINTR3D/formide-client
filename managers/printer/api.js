@@ -12,7 +12,7 @@
  *
  */
 
-module.exports = function(server)
+module.exports = function(server, module)
 {
 	/**
 	 * Get a list of printer commands
@@ -75,9 +75,24 @@ module.exports = function(server)
 								req.query.hash = Printspot.config.get('paths.gcode') + '/' + req.query.hash;
 							}
 
+							var params = JSON.stringify(req.query);
+							params = JSON.parse(params, function( k, v )
+							{
+								if(k === "") return v;
+
+								if(!parseInt(v))
+								{
+									return v;
+								}
+								else
+								{
+									return parseInt(v);
+								}
+							});
+
 							var json = {
 								"type": realMethod,
-								"data": req.query
+								"data": params
 							};
 
 							Printspot.events.emit('dashboardPush', json);

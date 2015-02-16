@@ -14,11 +14,18 @@
 
 module.exports = function(server, module)
 {
-	require('./resources/material.js')(Printspot.db, server);
-	require('./resources/modelfile.js')(Printspot.db, server);
-	require('./resources/printer.js')(Printspot.db, server);
-	require('./resources/printjob.js')(Printspot.db, server);
-	require('./resources/queue.js')(Printspot.db, server);
-	require('./resources/sliceprofile.js')(Printspot.db, server);
-	require('./resources/user.js')(Printspot.db, server);
-};
+	/**
+	 * Send a custom notification to the dashboards
+	 */
+	server.route([
+		{
+			method: 'GET',
+			path: '/api/notification/{message}',
+			handler: function(req, res)
+			{
+				module.notification({ message: req.params.message});
+				res({status: 200, message: 'OK'});
+			}.bind(this)
+		}
+	]);
+}

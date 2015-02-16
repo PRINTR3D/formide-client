@@ -12,48 +12,78 @@
  *
  */
 
-module.exports = function(server)
+module.exports = function(server, module)
 {
-	/*
-app.use(passport.initialize());
-	app.use(passport.session());
-*/
+	var login = function(req, res)
+	{
+		var message = '';
+
+		if(!req.payload.username || !req.payload.password)
+		{
+			message = "Missing username or password";
+			return res(message);
+		}
+		else
+		{
+			Printspot.db.User
+			.find({ where: {username: req.payload.username } })
+			.success(function( user )
+			{
+				if( !user || user.selectedValues.password !== req.payload.password )
+				{
+					message = 'Invalid username or password';
+					return res(message);
+				}
+				else
+				{
+					req.auth.session.set( user.selectedValues );
+					return res('OK');
+				}
+			});
+		}
+	}
+
+	var logout = function(req, res)
+	{
+		req.auth.session.clear();
+		return res('OK');
+	}
 
 	server.route({
 		method: 'POST',
 		path: '/login',
-		handler: function(req, res)
-		{
-			//console.log(req.payload);
+		config: {
+			handler: login,
+			auth: {
+				mode: 'try',
+				strategy: 'session'
+			},
+			plugins: {
+				'hapi-auth-cookie': {
+					redirectTo: false
+				}
+			}
 		}
-	})
-
-	/*
-app.post('/login', passport.authenticate('local'), function(req, res)
-	{
-		res.send(req.user);
 	});
-	*/
 
 	server.route({
 		method: 'GET',
 		path: '/session',
+		config: {
+            auth: 'session'
+        },
 		handler: function(req, res)
 		{
-			res(false);
+			return res(req.auth.isAuthenticated ? req.auth : '0');
 		}
-	})
-
-	/*
-	app.get('/session', function(req, res)
-	{
-		res.send(req.isAuthenticated() ? req.user : '0');
 	});
-	*/
 
 	server.route({
 		method: 'GET',
 		path: '/device',
+		config: {
+            auth: 'session'
+        },
 		handler: function(req, res)
 		{
 			var config = {
@@ -67,8 +97,7 @@ app.post('/login', passport.authenticate('local'), function(req, res)
 				version: Printspot.config.get('app.version'),
 				debug: Printspot.config.get('app.debug'),
 				cloud: {
-					url: Printspot.config.get('cloud.url'),
-					port: Printspot.config.get('cloud.port')
+					url: Printspot.config.get('cloud.url')
 				},
 				mac: Printspot.macAddress
 			}
@@ -80,62 +109,34 @@ app.post('/login', passport.authenticate('local'), function(req, res)
 	server.route({
 		method: 'POST',
 		path: '/logout',
-		handler: function(req, res)
-		{
-
-		}
+		config: {
+            handler: logout,
+            auth: 'session'
+        }
 	});
-
-	/*
-	app.post('/logout', function(req, res)
-	{
-		req.logOut();
-		res.send(200);
-	});
-	*/
 
 	server.route({
 		method: 'POST',
 		path: '/changepassword',
+		config: {
+            auth: 'session'
+        },
 		handler: function(req, res)
 		{
-
+			if(req.payload.password)
+			{
+				Printspot.db.User.find({where: {id: req.auth.credentials.id}})
+			  	.success(function(user)
+			  	{
+				  	if( user )
+				  	{
+					  	user.updateAttributes({ password: req.payload.password }).success(function()
+						{
+							res('OK');
+						});
+					}
+			  	});
+		  	}
 		}
 	});
-
-	/*
-	app.post('/changepassword', function(req, res)
-	{
-		if(req.body.password)
-		{
-			Printspot.db.User.find({where: {id: req.user.id}})
-		  	.success(function(user)
-		  	{
-			  	user.updateAttributes({ password: req.body.password }, ['password']).success(function()
-				{
-					res.send('OK');
-				});
-		  	});
-	  	}
-	});
-	*/
-
-	server.route({
-		method: 'POST',
-		path: '/settings',
-		handler: function(req, res)
-		{
-
-		}
-	});
-
-	/*
-	app.post('/settings', function(req, res)
-	{
-		if(req.isAuthenticated())
-		{
-			// do something with user settings
-		}
-	});
-*/
 };

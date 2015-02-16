@@ -12,10 +12,104 @@
  *
  */
 
-module.exports = function(db, restful)
+module.exports = function(db, server)
 {
-	restful.resource({
-	    model: db.Printer,
-	    endpoints: ['/api/printers', '/api/printers/:id']
-	});
+	server.route([
+		{
+			method: 'GET',
+			path: '/api/printers',
+			config: {
+	            auth: 'session'
+	        },
+			handler: function(req, res)
+			{
+				db.Printer
+				.findAll()
+				.then(function(printers)
+				{
+					res(printers);
+				});
+			}
+		},
+		{
+			method: 'GET',
+			path: '/api/printers/{id}',
+			config: {
+	            auth: 'session'
+	        },
+			handler: function(req, res)
+			{
+				db.Printer
+				.find({ where: {id: req.params.id } })
+				.then(function(printer)
+				{
+					res(printer);
+				});
+			}
+		},
+		{
+			method: 'POST',
+			path: '/api/printers',
+			config: {
+	            auth: 'session'
+	        },
+			handler: function(req, res)
+			{
+				db.Printer
+				.create(req.payload)
+				.success(function()
+				{
+					res('OK')
+				});
+			}
+		},
+		{
+			method: 'PUT',
+			path: '/api/printers/{id}',
+			config: {
+	            auth: 'session'
+	        },
+			handler: function(req, res)
+			{
+				db.Printer
+				.find({ where: {id: req.params.id } })
+				.on('success', function( printer )
+				{
+					if(printer)
+					{
+						printer
+						.updateAttributes(req.payload)
+						.success(function()
+						{
+							res('OK');
+						});
+					}
+				});
+			}
+		},
+		{
+			method: 'DELETE',
+			path: '/api/printers/{id}',
+			config: {
+	            auth: 'session'
+	        },
+			handler: function(req, res)
+			{
+				db.Printer
+				.find({ where: {id: req.params.id } })
+				.on('success', function( printer )
+				{
+					if(printer)
+					{
+						printer
+						.destroy()
+						.success(function()
+						{
+							res('OK');
+						});
+					}
+				});
+			}
+		}
+	]);
 };

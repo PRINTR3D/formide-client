@@ -17,10 +17,9 @@ module.exports = {
 	init: function()
 	{
 		// setup new db connection
-		var database = Printspot.sequelize;
 		var db = Printspot.db;
 
-		database.sequelize
+		db.sequelize
 		.sync({
 			force: true
 		})
@@ -128,7 +127,8 @@ module.exports = {
 							"surfaceLineSpacing": 400,
 							"airGap": 0,
 							"firstLayerAirGap": 200,
-							"fanSpeed": 25
+							"fanSpeed": 25,
+							"extruder": "extruder1"
 						},
 						"infill": {
 							"amount": 50,
@@ -150,8 +150,8 @@ module.exports = {
 							"minLenght": 150000
 						},
 						"multiExtrusion": {
-							"preSwitchCode": ";WE ARE GOING TO CHANGE THE EXTRUDER :D",
-							"postSwitchCode": "; WE JUST CHANGED THE EXTRUDER. I HOPE IT WORKED D: D: D: D: D:",
+							"preSwitchCode": "",
+							"postSwitchCode": "",
 							"dualOverlap": 1500
            				},
 						"movement": {
@@ -196,9 +196,9 @@ module.exports = {
 							"brimLines": 0
 						},
 						"gcode": {
-							"startGcode": ["G21", "M107", "M104 S195", "G28", "G1 Z5 F5000", "M109 S195", "G90", "G92 E0", "M82", "G1 F1800.000 E-1.00000", "G92 E0"],
-							"endGcode": ["G92 E0", "M107", "M104 S0", "G28 X0", "M84"],
-							"gcodeFlavour":"GCODE_FLAVOR_MACH3"
+							"startGcode": ["G21", "G28", "G1 Z5 F5000", "G90", "G92 E0", "M82", "G1 F1800.000 E-1.00000", "G92 E0"],
+							"endGcode": ["G92 E0", "M104 S0", "G28 X0", "M84"],
+							"gcodeFlavour":"GCODE_FLAVOUR_ULTIGCODE"
 						},
 						"plugins": []
 					})

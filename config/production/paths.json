@@ -1,5 +1,5 @@
 {
-	"temp": "/home/pi/printspot-core/uploads/tmp",
-	"modelfile": "/home/pi/printspot-core/uploads/modelfiles",
-	"gcode": "/home/pi/printspot-core/uploads/gcode"
+	"temp": "/home/debian/formideOS/uploads/tmp",
+	"modelfile": "/home/debian/formideOS/uploads/modelfiles",
+	"gcode": "/home/debian/formideOS/uploads/gcode"
 }

@@ -12,10 +12,104 @@
  *
  */
 
-module.exports = function(db, restful)
+module.exports = function(db, server)
 {
-	restful.resource({
-	    model: db.User,
-	    endpoints: ['/api/users', '/api/users/:id']
-	});
+	server.route([
+		{
+			method: 'GET',
+			path: '/api/users',
+			config: {
+	            auth: 'session'
+	        },
+			handler: function(req, res)
+			{
+				db.User
+				.findAll()
+				.then(function(users)
+				{
+					res(users);
+				});
+			}
+		},
+		{
+			method: 'GET',
+			path: '/api/users/{id}',
+			config: {
+	            auth: 'session'
+	        },
+			handler: function(req, res)
+			{
+				db.User
+				.find({ where: {id: req.params.id } })
+				.then(function(user)
+				{
+					res(user);
+				});
+			}
+		},
+		{
+			method: 'POST',
+			path: '/api/users',
+			config: {
+	            auth: 'session'
+	        },
+			handler: function(req, res)
+			{
+				db.User
+				.create(req.payload)
+				.success(function()
+				{
+					res('OK')
+				});
+			}
+		},
+		{
+			method: 'PUT',
+			path: '/api/users/{id}',
+			config: {
+	            auth: 'session'
+	        },
+			handler: function(req, res)
+			{
+				db.User
+				.find({ where: {id: req.params.id } })
+				.on('success', function( user )
+				{
+					if(user)
+					{
+						user
+						.updateAttributes(req.payload)
+						.success(function()
+						{
+							res('OK');
+						});
+					}
+				});
+			}
+		},
+		{
+			method: 'DELETE',
+			path: '/api/users/{id}',
+			config: {
+	            auth: 'session'
+	        },
+			handler: function(req, res)
+			{
+				db.User
+				.find({ where: {id: req.params.id } })
+				.on('success', function( user )
+				{
+					if(user)
+					{
+						user
+						.destroy()
+						.success(function()
+						{
+							res('OK');
+						});
+					}
+				});
+			}
+		}
+	]);
 };

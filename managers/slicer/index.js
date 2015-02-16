@@ -24,39 +24,27 @@ module.exports =
 
 	init: function(config)
 	{
-		fs.exists(config.path, function(exists)
+		if(config.simulated)
 		{
-			if(exists && config.simulated == false)
-			{
-				this.process = spawn('node', ['./katana'], {cwd: config.path, stdio: 'pipe'});
-				this.process.stdout.setEncoding('utf8');
-				this.process.stdout.on('exit', this.onExit);
-				this.process.stdout.on('error', this.onError);
-				this.process.stdout.on('data', this.onData);
-			}
-			else
-			{
-				this.process = spawn('node', ['index.js'], {cwd: 'slicer-simulator', stdio: 'pipe'});
-				this.process.stdout.setEncoding('utf8');
-				this.process.stdout.on('exit', this.onExit);
-				this.process.stdout.on('error', this.onError);
-				this.process.stdout.on('data', this.onData);
-			}
+			this.process = spawn('node', ['index.js'], {cwd: 'slicer-simulator', stdio: 'pipe'});
+			this.process.stdout.setEncoding('utf8');
+			this.process.stdout.on('exit', this.onExit);
+			this.process.stdout.on('error', this.onError);
+			this.process.stdout.on('data', this.onData);
+		}
 
-			setTimeout(function()
-			{
-				this.slicer = net.connect({
-					port: config.port
-				}, function() {
-					Printspot.debug('slicer connected');
-				});
+		setTimeout(function()
+		{
+			this.slicer = net.connect({
+				port: config.port
+			}, function() {
+				Printspot.debug('slicer connected');
+			});
 
-				this.slicer.on('error', this.slicerError);
-				this.slicer.on('data', this.sliceResponse);
+			this.slicer.on('error', this.slicerError);
+			this.slicer.on('data', this.sliceResponse);
 
-			}.bind(this), 500);
-
-		}.bind(this));
+		}.bind(this), 2500);
 	},
 
 	on:
@@ -100,26 +88,16 @@ module.exports =
 			if(data.status == 200 && data.data.responseID != null)
 			{
 				Printspot.db.Printjob
-				.find({where: {sliceResponse: data.data.responseID}})
+				.find({where: {sliceResponse: "{" + data.data.responseID + "}"}})
 				.success(function(printjob)
 				{
 					printjob
 					.updateAttributes({gcode: data.data.gcode, sliceResponse: JSON.stringify(data.data)})
 					.success(function()
 					{
-						Printspot.db.Queueitem
-						.create({
-							origin: 'local',
-							status: 'queued',
-							gcode: printjob.gcode,
-							PrintjobId: printjob.id
-						})
-						.success(function(queueitem)
-						{
-							Printspot.events.emit('externalMessage', {
-								message: 'Slicing finished'
-							});
-						})
+						Printspot.events.emit('externalMessage', {
+							message: 'Slicing finished'
+						});
 					});
 				});
 			}
