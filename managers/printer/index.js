@@ -43,6 +43,7 @@ module.exports =
 				Printspot.debug('printer connected');
 			});
 
+			this.printer.setTimeout(10);
 			this.printer.on('error', this.printerError);
 			this.printer.on('data', this.printerStatus);
 
