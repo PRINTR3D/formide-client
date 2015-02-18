@@ -1,0 +1,33 @@
+#!/bin/bash
+
+### BEGIN INIT INFO
+# Provides:             formideos
+# Required-Start:
+# Required-Stop:
+# Default-Start:
+# Default-Stop:
+# Short-Description:    FormideOS client, driver, slicer and dashboard
+### END INIT INFO
+
+case "$1" in
+
+    start)
+        cd /home/pi/formideOS/formideOS-drivers/ClientDriver/Debug
+        sudo ./ClientDriver &
+
+        cd /home/pi/formideOS/formideOS-drivers/formideOS/Debug
+        sudo ./formideOS &
+
+        cd /home/pi/formideOS/katana-slicer/katana/Debug
+        sudo ./katana &
+
+        cd /home/pi/formideOS/formideOS-client
+        node bootstrap.js
+    ;;
+
+    *)
+		echo "Usage: /etc/init.d/formideos {start}"
+		exit 1
+	;;
+
+esac
