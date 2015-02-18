@@ -12,17 +12,17 @@
 case "$1" in
 
     start)
-        cd /home/pi/formideOS/formideOS-drivers/ClientDriver/Debug
+        cd /home/debian/formideOS/formideOS-drivers/ClientDriver/Debug
         sudo ./ClientDriver &
 
-        cd /home/pi/formideOS/formideOS-drivers/formideOS/Debug
+        cd /home/debian/formideOS/formideOS-drivers/formideOS/Debug
         sudo ./formideOS &
 
-        cd /home/pi/formideOS/katana-slicer/katana/Debug
+        cd /home/debian/formideOS/katana-slicer/katana/Debug
         sudo ./katana &
 
-        cd /home/pi/formideOS/formideOS-client
-        node bootstrap.js
+        cd /home/debian/formideOS/formideOS-client
+        sudo node bootstrap.js
     ;;
 
     *)
