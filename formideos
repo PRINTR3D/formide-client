@@ -13,6 +13,7 @@
 DAEMON_PATH="/home/debian/formideOS/formideOS-drivers/ClientDriver/Debug"
 
 DAEMON=ClientDriver
+DAEMONOPTS=""
 
 NAME=FormideOS
 PIDFILE=/var/run/$NAME.pid
@@ -23,7 +24,7 @@ start()
 	printf "%-50s" "Starting $NAME..."
 
 	cd $DAEMON_PATH
-	PID=`$DAEMON`
+	PID=`$DAEMON $DAEMONOPTS > /dev/null 2>&1 & echo $!`
 	if [ -z $PID ]; then
             printf "%s\n" "Fail"
     else
