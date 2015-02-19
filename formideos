@@ -10,32 +10,55 @@
 # Short-Description:    FormideOS client, driver, slicer and dashboard
 ### END INIT INFO
 
-prog="FormideOS"
+DAEMON_PATH="/home/debian/formideOS/formideOS-drivers/ClientDriver/Debug"
+
+DAEMON=ClientDriver
+
+NAME=FormideOS
+PIDFILE=/var/run/$NAME.pid
+SCRIPTNAME=/etc/init.d/$NAME
 
 start()
 {
-	echo -n $"Starting $prog:"
+	printf "%-50s" "Starting $NAME..."
 
-	cd /home/debian/formideOS/formideOS-drivers/ClientDriver/Debug
-    sudo ./ClientDriver &
+	cd $DAEMON_PATH
+	PID=`$DAEMON`
+	if [ -z $PID ]; then
+            printf "%s\n" "Fail"
+    else
+        echo $PID > $PIDFILE
+        printf "%s\n" "Ok"
+    fi
+}
 
-    cd /home/debian/formideOS/formideOS-drivers/formideOS/Debug
-    sudo ./formideOS &
-
-    cd /home/debian/formideOS/katana-slicer/katana/Debug
-    sudo ./katana &
-
-    cd /home/debian/formideOS/formideOS-client
-    sudo node bootstrap.js &
+status()
+{
+	printf "%-50s" "Checking $NAME..."
+    if [ -f $PIDFILE ]; then
+        PID=`cat $PIDFILE`
+        if [ -z "`ps axf | grep ${PID} | grep -v grep`" ]; then
+            printf "%s\n" "Process dead but pidfile exists"
+        else
+            echo "Running"
+        fi
+    else
+        printf "%s\n" "Service not running"
+    fi
 }
 
 stop()
 {
-	echo -n $"Stopping $prog:"
-
-	killproc ClientDriver
-	killproc formideOs
-	killproc node
+	printf "%-50s" "Stopping $NAME"
+        PID=`cat $PIDFILE`
+        cd $DAEMON_PATH
+    if [ -f $PIDFILE ]; then
+        kill -HUP $PID
+        printf "%s\n" "Ok"
+        rm -f $PIDFILE
+    else
+        printf "%s\n" "pidfile not found"
+    fi
 }
 
 case "$1" in
@@ -48,13 +71,17 @@ case "$1" in
 		stop
 		;;
 
+	status)
+		status
+		;;
+
 	restart)
 		stop
 		start
 		;;
 
     *)
-		echo "Usage: /etc/init.d/formideos {start|stop|restart}"
+		echo "Usage: $SCRIPTNAME {start|stop|restart|status}"
 		exit 1
 	;;
 
