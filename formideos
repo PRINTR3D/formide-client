@@ -1,4 +1,4 @@
-#!/bin/bash
+#! /bin/sh
 
 ### BEGIN INIT INFO
 # Provides:             formideos
@@ -6,27 +6,55 @@
 # Required-Stop:
 # Default-Start:
 # Default-Stop:
+# pidfile: 				/var/run/formideos.pid
 # Short-Description:    FormideOS client, driver, slicer and dashboard
 ### END INIT INFO
+
+prog="FormideOS"
+
+start()
+{
+	echo -n $"Starting $prog:"
+
+	cd /home/debian/formideOS/formideOS-drivers/ClientDriver/Debug
+    sudo ./ClientDriver &
+
+    cd /home/debian/formideOS/formideOS-drivers/formideOS/Debug
+    sudo ./formideOS &
+
+    cd /home/debian/formideOS/katana-slicer/katana/Debug
+    sudo ./katana &
+
+    cd /home/debian/formideOS/formideOS-client
+    sudo node bootstrap.js &
+}
+
+stop()
+{
+	echo -n $"Stopping $prog:"
+
+	killproc ClientDriver
+	killproc formideOs
+	killproc node
+}
 
 case "$1" in
 
     start)
-        cd /home/debian/formideOS/formideOS-drivers/ClientDriver/Debug
-        sudo ./ClientDriver &
+    	start
+		;;
 
-        cd /home/debian/formideOS/formideOS-drivers/formideOS/Debug
-        sudo ./formideOS &
+	stop)
+		stop
+		;;
 
-        cd /home/debian/formideOS/katana-slicer/katana/Debug
-        sudo ./katana &
-
-        cd /home/debian/formideOS/formideOS-client
-        sudo node bootstrap.js
-    ;;
+	restart)
+		stop
+		start
+		;;
 
     *)
-		echo "Usage: /etc/init.d/formideos {start}"
+		echo "Usage: /etc/init.d/formideos {start|stop|restart}"
 		exit 1
 	;;
 
