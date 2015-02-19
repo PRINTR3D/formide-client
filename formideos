@@ -24,9 +24,9 @@ start()
 	printf "%-50s" "Starting $NAME..."
 
 	cd $DAEMON_PATH
-	PID=`$DAEMON $DAEMONOPTS > /dev/null 2>&1 & echo $!`
+	PID=`sudo $DAEMON $DAEMONOPTS > /dev/null 2>&1 & echo $!`
 	if [ -z $PID ]; then
-            printf "%s\n" "Fail"
+        printf "%s\n" "Fail"
     else
         echo $PID > $PIDFILE
         printf "%s\n" "Ok"
