@@ -14,15 +14,26 @@
 
 module.exports =
 {
-	wireless: {},
+	connection: {},
 
 	init: function()
 	{
+		this.connection = new Wireless({
+			iface: 'wlan0'
+		});
 
+		this.connection.enable(function( err )
+		{
+			this.connection.start();
+		}.bind(this));
 	},
 
-	on:
+	connect: function( SSID, passwd, callback )
 	{
-
+		this.connection.join( SSID, passwd, function( err )
+		{
+			callback( err );
+			console.log( err );
+		});
 	}
 }

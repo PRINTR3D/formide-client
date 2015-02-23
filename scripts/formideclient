@@ -1,35 +1,34 @@
 #! /bin/sh
 
 ### BEGIN INIT INFO
-# Provides:             formideos
+# Provides:             formideOS-client
 # Required-Start:
 # Required-Stop:
 # Default-Start:
 # Default-Stop:
-# pidfile: 				/var/run/formideos.pid
-# Short-Description:    FormideOS client, driver, slicer and dashboard
+# Short-Description:    FormideOS client (nodejs)
 ### END INIT INFO
 
-DAEMON_PATH="/home/debian/formideOS/formideOS-drivers/ClientDriver/Debug"
+DAEMON_PATH="/home/debian/formideOS/formideOS-client"
 
-DAEMON=ClientDriver
+DAEMON=node bootstrap.js
 DAEMONOPTS=""
 
-NAME=FormideOS
+NAME=$DAEMON
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
 
 start()
 {
-	printf "%-50s" "Starting $NAME..."
+        printf "%-50s" "Starting $NAME..."
 
-	cd $DAEMON_PATH
-	PID=`sudo $DAEMON $DAEMONOPTS > /dev/null 2>&1 & echo $!`
-	if [ -z $PID ]; then
+        cd $DAEMON_PATH
+        PID=`sudo $DAEMON $DAEMONOPTS > /dev/null 2>&1 & echo $!`
+        if [ -z $PID ]; then
         printf "%s\n" "Fail"
     else
         echo $PID > $PIDFILE
-        printf "%s\n" "Ok"
+        printf "%s\n" "Ok $PID"
     fi
 }
 
