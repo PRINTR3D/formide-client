@@ -31,6 +31,7 @@ getMac.getMac(function(err, macAddress)
 	if(Printspot.manager('process').args.setup) // setup mode
 	{
 		Printspot.register('setup').init();
+		//Printspot.register('dbsetup').init();
 	}
 
 	// managers

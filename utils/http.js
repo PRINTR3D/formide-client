@@ -15,7 +15,7 @@
 // dependencies
 var Hapi = require('hapi');
 
-module.exports = function(config)
+module.exports = function(config, debug)
 {
 	var http = {};
 
@@ -38,7 +38,7 @@ module.exports = function(config)
 
 	http.server.start(function()
 	{
-		Printspot.debug('http server running on port ' + http.server.info.uri );
+		debug('http server running on port ' + http.server.info.uri );
 	});
 
 	return http;

@@ -18,25 +18,7 @@ module.exports =
 
 	init: function()
 	{
-		Printspot.http.server.register(
-		{
-		    register: require('hapio'),
-	    },
-	    function(err)
-	    {
-	        if (err) throw err;
-		});
-
-		this.websocket = Printspot.http.server.plugins.hapio.io;
-
-		/*
-this.websocket.set('authorization', function(data, cb)
-		{
-
-		});
-*/
-
-		this.websocket.on('connection', function(socket)
+		Printspot.websocket.on('connection', function(socket)
 		{
 			socket.emit('handshake', {
 				id:socket.id
@@ -124,11 +106,11 @@ this.websocket.set('authorization', function(data, cb)
 	// custom functions
 	printerStatus: function(statusData)
 	{
-		this.websocket.emit(statusData.type, statusData.data);
+		Printspot.websocket.emit(statusData.type, statusData.data);
 	},
 
 	notification: function(message)
 	{
-		this.websocket.emit('notification', message.message);
+		Printspot.websocket.emit('notification', message.message);
 	}
 }

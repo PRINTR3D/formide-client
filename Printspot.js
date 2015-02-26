@@ -35,7 +35,10 @@ module.exports = function()
 	printspot.debug = require('./utils/debug.js')(printspot.config);
 
 	// global http app
-	printspot.http = require('./utils/http.js')(printspot.config);
+	printspot.http = require('./utils/http.js')(printspot.config, printspot.debug);
+
+	// global websocket connection
+	printspot.websocket = require('./utils/websocket.js')(printspot.http, printspot.debug);
 
 	// global database
 	printspot.db = require('./utils/db.js')(printspot.config, printspot.appRoot);
