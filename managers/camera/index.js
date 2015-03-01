@@ -21,7 +21,7 @@ module.exports =
 	init: function( config )
 	{
 		this.config = config;
-		setInterval(this.takeSnapshot, config.interval);
+		setInterval(this.takeSnapshot.bind(this), config.interval);
 	},
 
 	takeSnapshot: function()
@@ -37,6 +37,6 @@ module.exports =
 			{
 				Printspot.debug(stderr);
 			}
-		});
+		}.bind(this));
 	}
 }
