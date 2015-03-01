@@ -16,7 +16,7 @@ var exec = require('child_process').exec;
 
 module.exports =
 {
-	command: "fswebcam -d /dev/video0 -r 320x240 image.jpg",
+	command: "fswebcam -d /dev/video0 -r 320x240 /home/debian/formideOS/uploads/images/image.jpg",
 	interval: 2000,
 
 	init: function()
