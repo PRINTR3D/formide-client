@@ -32,10 +32,29 @@ module.exports = function(server, module)
 	 */
 	server.route({
 		method: 'GET',
+		path: '/api/camera/src',
+		handler: function(req, res)
+		{
+			return res.file('../uploads/images/image.jpg');
+		}
+	});
+
+	/**
+	 * Get 'real-time' feed
+	 */
+	server.route({
+		method: 'GET',
 		path: '/api/camera/preview',
 		handler: function(req, res)
 		{
-			return res.file('../uploads/images/image.jpg').header('Refresh', '2');
+			var page = "<html><head>" +
+			"<script>setInterval( function() { var image = document.getElementById('image'); image.src = '/api/camera/src'; }, 2000);</script>" +
+			"<title>FormideOS Camera Feed</title>\n" +
+			"</head><body>\n" +
+			"<img id='image'/>" +
+			"</body>\n" +
+			"</html>\n";
+			return res(page);
 		}
 	});
 }
