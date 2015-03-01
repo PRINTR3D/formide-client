@@ -35,7 +35,7 @@ module.exports = function(server, module)
 		path: '/api/camera/preview',
 		handler: function(req, res)
 		{
-			res.file('../uploads/images/image.jpg');
+			return res.file('../uploads/images/image.jpg').header('Refresh', '2');
 		}
 	});
 }
