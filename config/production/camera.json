@@ -1,0 +1,4 @@
+{
+	"command": "fswebcam -d /dev/video0 -r 320x240 /home/debian/formideOS/uploads/images/image.jpg",
+	"interval": 2000
+}

@@ -45,6 +45,6 @@ getMac.getMac(function(err, macAddress)
 	Printspot.register('interface').init(Printspot.config.get('dashboard'));
 	//Printspot.register('cron').init();
 	Printspot.register('led').init();
-	Printspot.register('camera').init();
+	Printspot.register('camera').init(Printspot.config.get('camera'));
 	//Printspot.register('wifi').init();
 });

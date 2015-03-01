@@ -16,17 +16,17 @@ var exec = require('child_process').exec;
 
 module.exports =
 {
-	command: "fswebcam -d /dev/video0 -r 320x240 /home/debian/formideOS/uploads/images/image.jpg",
-	interval: 2000,
+	config: {},
 
-	init: function()
+	init: function( config )
 	{
-		//setInterval(this.takeSnapshot, this.interval);
+		this.config = config;
+		setInterval(this.takeSnapshot, config.interval);
 	},
 
 	takeSnapshot: function()
 	{
-		exec(this.command, { cwd: __dirname }, function(err, stdout, stderr)
+		exec(this.config.command, { cwd: __dirname }, function(err, stdout, stderr)
 		{
 			if(err)
 			{
