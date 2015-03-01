@@ -12,8 +12,31 @@
  *
  */
 
-// setup new dashboard server
-var camera = require('./camera.js')();
+var exec = require('child_process').exec;
 
-// register dashboard in printspot
-Printspot.register('camera', camera);
+module.exports =
+{
+	command: "fswebcam -d /dev/video0 -r 320x240 image.jpg",
+	interval: 2000,
+
+	init: function()
+	{
+		//setInterval(this.takeSnapshot, this.interval);
+	},
+
+	takeSnapshot: function()
+	{
+		exec(this.command, { cwd: __dirname }, function(err, stdout, stderr)
+		{
+			if(err)
+			{
+				Printspot.debug(err);
+			}
+
+			if(stderr)
+			{
+				Printspot.debug(stderr);
+			}
+		});
+	}
+}

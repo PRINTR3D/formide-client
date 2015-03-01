@@ -12,13 +12,21 @@
  *
  */
 
+var os = require('os');
+
 module.exports = {
 
 	network: {},
-	cloud: {},
 
 	init: function()
 	{
+		this.registerToCloud('chris@printr.nl', 'password', function( response )
+		{
+
+		});
+
+
+/*
 		this.startAP();
 
 		Printspot.websocket.on('connection', function(socket)
@@ -52,7 +60,10 @@ module.exports = {
 				}.bind(this));
 			}.bind(this));
 
+			socket.on('get_networks', this.listNetworks);
+
 		}.bind(this));
+*/
 	},
 
 	startAP: function()
@@ -72,10 +83,33 @@ module.exports = {
 		// connect to wifi
 	},
 
-	registerToCloud: function( callback )
+	registerToCloud: function( username, password, callback )
 	{
-		callback( 'OK' );
-		// register on formide api
+		var formide = require('formide')({
+			apiUrl: 'http://localhost:8000',
+			apiKey: 'FORMIDE',
+			apiSecret: 'FORMIDESECRET',
+			redirectURI: 'http://localhost:8080/auth/redirect',
+			scope: 'user.user'
+		});
+
+		formide.auth.login(username, password, function( session )
+		{
+			formide.apiproxy.call('POST', '/cauth/v1/register', {
+				ip_int: '',
+				ip_ext: '',
+				mac: ''
+			}, function( success )
+			{
+				console.log(success);
+				// get client session
+			});
+		});
+	},
+
+	listNetworks: function( callback )
+	{
+
 	}
 }
 
