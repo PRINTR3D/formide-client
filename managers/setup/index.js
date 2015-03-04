@@ -16,112 +16,54 @@ var os = require('os');
 
 module.exports = {
 
-	network: {},
-
-	init: function()
-	{
-		this.registerToCloud('chris@printr.nl', 'password', function( response )
-		{
-
-		});
-
-
-/*
-		this.startAP();
-
-		Printspot.websocket.on('connection', function(socket)
-		{
-			socket.on('setup_wifi', function( network )
-			{
-				this.network = network;
-			}.bind(this));
-
-			socket.on('setup_cloud', function( cloud )
-			{
-				this.cloud = cloud;
-			}.bind(this));
-
-			socket.on('setup_run', function()
-			{
-				this.stopAP();
-				this.connectToWifi(function( err )
-				{
-					if( err )
-					{
-						this.startAP();
-					}
-					else
-					{
-						this.registerToCloud(function()
-						{
-
-						});
-					}
-				}.bind(this));
-			}.bind(this));
-
-			socket.on('get_networks', this.listNetworks);
-
-		}.bind(this));
-*/
-	},
-
 	startAP: function()
 	{
-
 		// start access point
 	},
 
 	stopAP: function()
 	{
-
+		// stop access point
 	},
 
-	connectToWifi: function( callback )
+	connectToWifi: function( ssid, password, callback )
 	{
 		callback( 'OK' );
-		// connect to wifi
 	},
 
-	registerToCloud: function( username, password, callback )
+	registerToCloud: function( ssid, password, token, callback )
 	{
+		// connect to wifi, otherwise, back to AP
+
 		var formide = require('formide')({
-			apiUrl: 'http://localhost:8000',
+			apiUrl: 'http://formide.local',
 			apiKey: 'FORMIDE',
 			apiSecret: 'FORMIDESECRET',
 			redirectURI: 'http://localhost:8080/auth/redirect',
 			scope: 'user.user'
 		});
 
-		formide.auth.login(username, password, function( session )
+		formide.apiproxy.call('POST', '/cauth/v1/token', {
+			ip_int: '',
+			ip_ext: '',
+			mac: Printspot.macAddress,
+			hostname: '',
+			token: token
+		}, function( success )
 		{
-			formide.apiproxy.call('POST', '/cauth/v1/register', {
-				ip_int: '',
-				ip_ext: '',
-				mac: ''
-			}, function( success )
-			{
-				console.log(success);
-				// get client session
-			});
-		});
+			callback( success );
+		}.bind(this));
 	},
 
 	listNetworks: function( callback )
 	{
-
+		networks = [
+			{
+				"ssid": "Printhom",
+				"security": "WPA2",
+				"signal": "70"
+			}
+		];
+		callback( networks );
 	}
 }
-
-
-/*
-
-1) Send out AP
-2) Receive formide credentials and WiFi credentials
-3) Connect with Wifi
-	1) On success: register device in cloud and pass along local IP
-	2) On fail: go back to AP mode
-4)
-
-
-*/

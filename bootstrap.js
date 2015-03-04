@@ -31,7 +31,7 @@ getMac.getMac(function(err, macAddress)
 	if(Printspot.manager('process').args.setup) // setup mode
 	{
 		Printspot.register('setup').init();
-		Printspot.register('dbsetup').init();
+		//Printspot.register('dbsetup').init();
 	}
 
 	// managers
@@ -44,7 +44,7 @@ getMac.getMac(function(err, macAddress)
 	Printspot.register('cloud').init(Printspot.config.get('cloud'));
 	Printspot.register('interface').init(Printspot.config.get('dashboard'));
 	//Printspot.register('cron').init();
-	Printspot.register('led').init();
-	Printspot.register('camera').init(Printspot.config.get('camera'));
+	//Printspot.register('led').init();
+	//Printspot.register('camera').init(Printspot.config.get('camera'));
 	//Printspot.register('wifi').init();
 });
