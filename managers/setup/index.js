@@ -61,7 +61,12 @@ module.exports = {
 			{
 				"ssid": "Printhom",
 				"security": "WPA2",
-				"signal": "70"
+				"signal": 70
+			},
+			{
+				"ssid": "MyWifiNetwork",
+				"security": "WPA",
+				"signal": 65
 			}
 		];
 		callback( networks );
