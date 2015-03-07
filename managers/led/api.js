@@ -12,20 +12,17 @@
  *
  */
 
-module.exports = function(server, module)
+module.exports = function(routes, module)
 {
 	/**
 	 * Set led rgb color
 	 */
-	server.route([
-		{
-			method: 'GET',
-			path: '/api/led/rgb/{r}/{g}/{b}',
-			handler: function(req, res)
-			{
-				module.led.rgb(req.params.r, req.params.g, req.params.b);
-				res({status: 200, message: 'OK'});
-			}.bind(this)
-		}
-	]);
+	routes.get('/rgb/:r/:g/:b', function( req, res )
+	{
+		module.led.rgb(req.params,r, req.params.g, req.params.b);
+		res.send({
+			status: 200,
+			message: 'OK';
+		});
+	});
 }

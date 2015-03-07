@@ -12,8 +12,11 @@
  *
  */
 
-module.exports = function(server, module)
+module.exports = function(routes, module)
 {
+	require('./types/material.js')(routes, Printspot.db);
+
+/*
 	require('./resources/material.js')(Printspot.db, server);
 	require('./resources/modelfile.js')(Printspot.db, server);
 	require('./resources/printer.js')(Printspot.db, server);
@@ -21,4 +24,5 @@ module.exports = function(server, module)
 	require('./resources/queue.js')(Printspot.db, server);
 	require('./resources/sliceprofile.js')(Printspot.db, server);
 	require('./resources/user.js')(Printspot.db, server);
+*/
 };

@@ -13,32 +13,17 @@
  */
 
 // dependencies
-var Hapi = require('hapi');
+express = require('express');
 
 module.exports = function(config, debug)
 {
 	var http = {};
 
-	http.server = new Hapi.Server();
-
-	http.server.connection(
+	http.app = express();
+	http.server = require('http').Server(http.app);
+	http.server.listen( config.get('app.port'), function()
 	{
-		port: config.get('app.port'),
-		routes:
-		{
-			cors:
-			{
-				"origin": ["*"],
-				"methods": ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
-				"headers": ["Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization", "DNT", "Accept-Encoding"],
-				"credentials": true
-			}
-		}
-	});
-
-	http.server.start(function()
-	{
-		debug('http server running on port ' + http.server.info.uri );
+		debug('http server running on port ' + http.server.address().port );
 	});
 
 	return http;

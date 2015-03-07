@@ -12,49 +12,42 @@
  *
  */
 
-module.exports = function(server, module)
+module.exports = function(routes, module)
 {
 	/**
 	 * Take a snapshot of the printer
 	 */
-	server.route({
-		method: 'GET',
-		path: '/api/camera/snapshot',
-		handler: function(req, res)
-		{
-			module.takeSnapshot();
-			res('OK');
-		}
+	routes.get('/snapshot', function( req, res )
+	{
+		module.takeSnapshot();
+		res.send({
+			status: 200,
+			message: 'OK'
+		});
 	});
 
 	/**
 	 * Get latest snapshot of the printer
 	 */
-	server.route({
-		method: 'GET',
-		path: '/api/camera/src',
-		handler: function(req, res)
-		{
-			return res.file('../uploads/images/image.jpg');
-		}
+	routes.get('/src', function( req, res )
+	{
+// 		return res.file('../uploads/images/image.jpg');
 	});
 
 	/**
 	 * Get 'real-time' feed
 	 */
-	server.route({
-		method: 'GET',
-		path: '/api/camera/preview',
-		handler: function(req, res)
-		{
-			var page = "<html><head>" +
-			"<script>setInterval( function() { var image = document.getElementById('image'); image.src = '/api/camera/src'; }, 2000);</script>" +
-			"<title>FormideOS Camera Feed</title>\n" +
-			"</head><body>\n" +
-			"<img id='image'/>" +
-			"</body>\n" +
-			"</html>\n";
-			return res(page);
-		}
+	routes.get('/preview', function( req, res )
+	{
+/*
+		var page = "<html><head>" +
+		"<script>setInterval( function() { var image = document.getElementById('image'); image.src = '/api/camera/src'; }, 2000);</script>" +
+		"<title>FormideOS Camera Feed</title>\n" +
+		"</head><body>\n" +
+		"<img id='image'/>" +
+		"</body>\n" +
+		"</html>\n";
+		return res(page);
+*/
 	});
 }

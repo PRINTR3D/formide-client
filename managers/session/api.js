@@ -12,8 +12,35 @@
  *
  */
 
-module.exports = function(server, module)
+module.exports = function(routes, module)
 {
+	routes.post('/login', function( req, res )
+	{
+
+	});
+
+	routes.post('/logout', function( req, res )
+	{
+
+	});
+
+	routes.get('/session', function( req, res )
+	{
+
+	});
+
+	routes.get('/token', function( req, res )
+	{
+
+	});
+
+	routes.delete('/token/:token', function( req, res )
+	{
+
+	});
+
+
+/*
 	var login = function(req, res)
 	{
 		var message = '';
@@ -139,4 +166,5 @@ module.exports = function(server, module)
 		  	}
 		}
 	});
+*/
 };

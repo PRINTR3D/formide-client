@@ -66,7 +66,8 @@ module.exports = function(config, rootDir)
 			"buildVolumeY": "INTEGER",
 			"buildVolumeZ": "INTEGER",
 			"bed": "BOOLEAN",
-			"extruders": "TEXT"
+			"extruders": "TEXT",
+			"port": "STRING"
 		});
 
 		db.Material = sequelize.define('Material', {

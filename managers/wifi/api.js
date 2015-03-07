@@ -12,31 +12,18 @@
  *
  */
 
-module.exports = function(server, module)
+module.exports = function(routes, module)
 {
-	server.route([
-
+	routes.get('/client/:ssid/:password', function( req, res )
+	{
+		module.connect(req.params.ssid, req.params,password, function( response )
 		{
-			method: 'GET',
-			path: '/api/wifi/client/{ssid}/{password}'
-			handler: function(req, res)
-			{
-				module.connect(req.params.ssid, req.params,password, function( response )
-				{
-					res( response );
-				})
-				// set wifi to client mode and connect to certain ssid with password
-			}
-		},
+			res.send( response );
+		})
+	});
 
-		{
-			method: 'GET',
-			path: '/api/wifi/ap/{ssid}/{password}'
-			handler: function(req, res)
-			{
-				// set wifi to AP mode with certain ssid and password
-			}
-		}
+	routes.get('/ap/:ssid/:password', function( req, res )
+	{
 
-	]);
+	});
 }

@@ -43,35 +43,12 @@ module.exports = {
 
 				db.Printer
 				.create({
-					"name": "Big Builder",
-					"buildVolumeX": 200,
-					"buildVolumeY": 200,
-					"buildVolumeZ": 600,
-					"bed": true,
-					"extruders": JSON.stringify([
-					{
-						"id":0,
-						"name":"extruder1",
-						"nozzleSize":30
-					},
-					{
-						"id":1,
-						"name":"extruder2",
-						"nozzleSize":30
-					}])
-				})
-				.success(function(success)
-				{
-					Printspot.debug('Database entry created: ' + success);
-				});
-
-				db.Printer
-				.create({
 					"name": "Mini Builder",
 					"buildVolumeX": 200,
 					"buildVolumeY": 200,
 					"buildVolumeZ": 200,
 					"bed": false,
+					"port": "/dev/tty1",
 					"extruders": JSON.stringify([
 					{
 						"id":0,

@@ -12,20 +12,20 @@
  *
  */
 
-module.exports = function(server, module)
+module.exports = function(routes, module)
 {
 	/**
 	 * Send a custom notification to the dashboards
 	 */
-	server.route([
-		{
-			method: 'GET',
-			path: '/api/notification/{message}',
-			handler: function(req, res)
-			{
-				module.notification({ message: req.params.message});
-				res({status: 200, message: 'OK'});
-			}.bind(this)
-		}
-	]);
+	routes.get('/notification', function( req, res )
+	{
+		module.notification({
+			message: req.params.message
+		});
+
+		res.send({
+			status: 200,
+			message: 'OK'
+		});
+	});
 }

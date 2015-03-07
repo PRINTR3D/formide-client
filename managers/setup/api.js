@@ -12,36 +12,27 @@
  *
  */
 
-module.exports = function(server, module)
+module.exports = function(routes, module)
 {
 	/**
 	 * Get list of networks
 	 */
-	server.route({
-		method: 'GET',
-		path: '/api/setup/networks',
-		handler: function(req, res)
+	routes.get('/networks', function( req, res )
+	{
+		module.listNetworks(function( networks )
 		{
-			module.listNetworks(function( networks )
-			{
-				return res( networks );
-			});
-		}
+			res.send( networks );
+		});
 	});
 
 	/**
 	 * Send token and wifi credentials
 	 */
-	server.route({
-		method: 'POST',
-		path: '/api/setup/token',
-		handler: function(req, res)
+	routes.post('/token', function( req, res )
+	{
+		module.registerToCloud( req.payload.wifi_ssid, req.payload.wifi_password, req.payload.token, function( response )
 		{
-			// pass wifi credentials
-			module.registerToCloud( req.payload.wifi_ssid, req.payload.wifi_password, req.payload.token, function( response )
-			{
-				return res( response );
-			});
-		}
+			res.send( response );
+		});
 	});
 };

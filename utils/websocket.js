@@ -12,27 +12,9 @@
  *
  */
 
+var io = require('socket.io');
+
 module.exports = function(http, debug)
 {
-	var connection = {};
-
-	http.server.register(
-	{
-	    register: require('hapio'),
-    },
-    function(err)
-    {
-        if(err)
-        {
-			throw err;
-	    }
-	    else
-	    {
-		    debug('websockets running on port ' + http.server.info.uri );
-	    }
-	}.bind(this));
-
-	connection = http.server.plugins.hapio.io;
-
-	return connection;
+	return io( http.server );
 }

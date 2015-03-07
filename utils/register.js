@@ -58,7 +58,9 @@ module.exports = function(managerName)
 
 				if(fs.existsSync('managers/' + managerName + '/api.js'))
 				{
-					require('../managers/' + managerName + '/api.js')(Printspot.http.server, manager);
+					var routes = express();
+					require('../managers/' + managerName + '/api.js')(routes, manager);
+					Printspot.http.app.use('/api/' + managerName, routes); // register as sub-app in express server
 				}
 
 				if(!(managerName in Printspot.managers))

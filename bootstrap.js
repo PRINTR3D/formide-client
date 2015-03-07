@@ -36,7 +36,7 @@ getMac.getMac(function(err, macAddress)
 	// managers
 	Printspot.register('files').init();
 	Printspot.register('session').init();
-	Printspot.register('rest').init();
+	Printspot.register('resources').init();
 	Printspot.register('websocket').init();
 	Printspot.register('printer').init(Printspot.config.get('printer'));
 	Printspot.register('slicer').init(Printspot.config.get('slicer'));
@@ -47,4 +47,5 @@ getMac.getMac(function(err, macAddress)
 	//Printspot.register('led').init();
 	//Printspot.register('camera').init(Printspot.config.get('camera'));
 	//Printspot.register('wifi').init();
+	//Printspot.register('update').init();
 });

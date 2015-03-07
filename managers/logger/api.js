@@ -14,14 +14,11 @@
 
 module.exports = function(routes, module)
 {
-	routes.post('/start', function( req, res )
+	/**
+	 * Set led rgb color
+	 */
+	routes.get('/get/:type', function( req, res )
 	{
-		module.download();
-		res.send('OK');
-	});
-
-	ruoutes.get('/progress', function( req, res )
-	{
-		res.send(module.progress);
+		// get logs from certain type
 	});
 }
