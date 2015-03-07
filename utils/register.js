@@ -20,7 +20,7 @@ module.exports = function(managerName)
 
 		init: function(data) {
 
-			Printspot.debug('Loading manager: ' + managerName);
+			FormideOS.debug('Loading manager: ' + managerName);
 
 			if(fs.existsSync('managers/' + managerName + '/index.js'))
 			{
@@ -35,7 +35,7 @@ module.exports = function(managerName)
 						{
 							var callback = manager.on[realEv];
 
-							Printspot.events.on(realEv, function(data)
+							FormideOS.events.on(realEv, function(data)
 							{
 								manager[callback](data);
 							});
@@ -48,7 +48,7 @@ module.exports = function(managerName)
 				{
 					if(manager.init.length !== arguments.length)
 					{
-						Printspot.debug('manager ' + managerName + ' takes '+ manager.init.length + ' arguments but ' + arguments.length + ' were given', true);
+						FormideOS.debug('manager ' + managerName + ' takes '+ manager.init.length + ' arguments but ' + arguments.length + ' were given', true);
 					}
 					else
 					{
@@ -60,21 +60,21 @@ module.exports = function(managerName)
 				{
 					var routes = express();
 					require('../managers/' + managerName + '/api.js')(routes, manager);
-					Printspot.http.app.use('/api/' + managerName, routes); // register as sub-app in express server
+					FormideOS.http.app.use('/api/' + managerName, routes); // register as sub-app in express server
 				}
 
-				if(!(managerName in Printspot.managers))
+				if(!(managerName in FormideOS.managers))
 				{
-					Printspot.managers[managerName] = manager;
+					FormideOS.managers[managerName] = manager;
 				}
 				else
 				{
-					Printspot.debug('Manager with name ' + managerName + ' already exists', true);
+					FormideOS.debug('Manager with name ' + managerName + ' already exists', true);
 				}
 			}
 			else
 			{
-				Printspot.debug('manager does not have an index.js file', true);
+				FormideOS.debug('manager does not have an index.js file', true);
 			}
 		}
 	}

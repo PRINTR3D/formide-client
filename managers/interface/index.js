@@ -25,7 +25,7 @@ module.exports =
 		{
 			if(exists)
 			{
-				this.process = spawn('node', ['index.js'], {cwd: Printspot.appRoot + config.path, stdio: 'pipe'});
+				this.process = spawn('node', ['index.js'], {cwd: FormideOS.appRoot + config.path, stdio: 'pipe'});
 				this.process.stdout.setEncoding('utf8');
 				this.process.stdout.on('exit', this.onExit);
 				this.process.stdout.on('error', this.onError);
@@ -33,7 +33,7 @@ module.exports =
 			}
 			else
 			{
-				Printspot.debug('interface directory not found', true);
+				FormideOS.debug('interface directory not found', true);
 			}
 		}.bind(this));
 	},
@@ -45,17 +45,17 @@ module.exports =
 
 	onExit: function(exit)
 	{
-		Printspot.debug(exit, true);
+		FormideOS.debug(exit, true);
 	},
 
 	onError: function(error)
 	{
-		Printspot.debug(error, true);
+		FormideOS.debug(error, true);
 	},
 
 	onData: function(data)
 	{
-		Printspot.debug(data);
+		FormideOS.debug(data);
 	},
 
 	stop: function(stop)

@@ -30,12 +30,12 @@ module.exports =
 		{
 			if(err)
 			{
-				Printspot.debug(err);
+				FormideOS.debug(err);
 			}
 
 			if(stderr)
 			{
-				Printspot.debug(stderr);
+				FormideOS.debug(stderr);
 			}
 		}.bind(this));
 	}

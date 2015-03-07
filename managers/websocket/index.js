@@ -18,7 +18,7 @@ module.exports =
 
 	init: function()
 	{
-		Printspot.websocket.on('connection', function(socket)
+		FormideOS.websocket.on('connection', function(socket)
 		{
 			socket.emit('handshake', {
 				id:socket.id
@@ -30,38 +30,38 @@ module.exports =
 				{
 					socket.emit('auth', {message: 'OK', id: socket.id});
 
-					Printspot.events.emit('internalSuccess', {
+					FormideOS.events.emit('internalSuccess', {
 						type: 'dashboard',
 						data: {
-							port: Printspot.config.get('dashboard.port')
+							port: FormideOS.config.get('dashboard.port')
 						}
 					});
 
-					Printspot.debug('Dashboard connected');
+					FormideOS.debug('Dashboard connected');
 				}
 			});
 
 			// Socket disconnect
 			socket.on('disconnect', function()
 			{
-				Printspot.events.emit('internalMessage', {
+				FormideOS.events.emit('internalMessage', {
 					type: 'dashboard',
 					data: {
 						message: 'Dashboard disconnected'
 					}
 				});
 
-				Printspot.debug('Dashboard disconnected');
+				FormideOS.debug('Dashboard disconnected');
 			});
 
 			// load channels from config
-			Object.keys(Printspot.config.get('channels.dashboard')).forEach(function(method)
+			Object.keys(FormideOS.config.get('channels.dashboard')).forEach(function(method)
 			{
 				(function(realMethod)
 				{
 					socket.on(realMethod, function(data)
 					{
-						var expected = Printspot.config.get('channels.dashboard')[realMethod];
+						var expected = FormideOS.config.get('channels.dashboard')[realMethod];
 						var given = data;
 						var correct = true;
 
@@ -77,7 +77,7 @@ module.exports =
 						{
 							if(realMethod == 'start')
 							{
-								data.hash = Printspot.appRoot + Printspot.config.get('paths.gcode') + '/' + data.hash;
+								data.hash = FormideOS.appRoot + FormideOS.config.get('paths.gcode') + '/' + data.hash;
 							}
 
 							var json = {
@@ -85,11 +85,11 @@ module.exports =
 								"data": data
 							};
 
-							Printspot.events.emit('dashboardPush', json);
+							FormideOS.events.emit('dashboardPush', json);
 						}
 						else
 						{
-							Printspot.debug('Dashboard tried to send command to printer but arguments were invalid', true);
+							FormideOS.debug('Dashboard tried to send command to printer but arguments were invalid', true);
 						}
 					});
 				})(method);
@@ -106,11 +106,11 @@ module.exports =
 	// custom functions
 	printerStatus: function(statusData)
 	{
-		Printspot.websocket.emit(statusData.type, statusData.data);
+		FormideOS.websocket.emit(statusData.type, statusData.data);
 	},
 
 	notification: function(message)
 	{
-		Printspot.websocket.emit('notification', message.message);
+		FormideOS.websocket.emit('notification', message.message);
 	}
 }

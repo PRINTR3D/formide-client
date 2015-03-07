@@ -46,7 +46,7 @@ module.exports = {
 		formide.apiproxy.call('POST', '/cauth/v1/token', {
 			ip_int: '',
 			ip_ext: '',
-			mac: Printspot.macAddress,
+			mac: FormideOS.macAddress,
 			hostname: '',
 			token: token
 		}, function( success )

@@ -15,37 +15,37 @@
 // require dependencies
 var getMac = require('getmac');
 
-// define global Printspot object
-Printspot = require('./Printspot')();
+// define global FormideOS object
+FormideOS = require('./FormideOS')();
 
 getMac.getMac(function(err, macAddress)
 {
-	Printspot.macAddress = Printspot.config.get('cloud.softMac', macAddress);
+	FormideOS.macAddress = FormideOS.config.get('cloud.softMac', macAddress);
 
 	// always include these
-	Printspot.register('device').init();
-	Printspot.register('process').init();
-	Printspot.register('logger').init(Printspot.config.get('log'));
+	FormideOS.register('device').init();
+	FormideOS.register('process').init();
+	FormideOS.register('logger').init(FormideOS.config.get('log'));
 
 	// load CLI initiated modules
-	if(Printspot.manager('process').args.setup) // setup mode
+	if(FormideOS.manager('process').args.setup) // setup mode
 	{
-		Printspot.register('dbsetup').init();
+		FormideOS.register('dbsetup').init();
 	}
 
 	// managers
-	Printspot.register('files').init();
-	Printspot.register('session').init();
-	Printspot.register('resources').init();
-	Printspot.register('websocket').init();
-	Printspot.register('printer').init(Printspot.config.get('printer'));
-	Printspot.register('slicer').init(Printspot.config.get('slicer'));
-	Printspot.register('cloud').init(Printspot.config.get('cloud'));
-	Printspot.register('interface').init(Printspot.config.get('dashboard'));
-	Printspot.register('setup').init();
-	//Printspot.register('cron').init();
-	//Printspot.register('led').init();
-	//Printspot.register('camera').init(Printspot.config.get('camera'));
-	//Printspot.register('wifi').init();
-	//Printspot.register('update').init();
+	FormideOS.register('files').init();
+	FormideOS.register('auth').init();
+	FormideOS.register('resources').init();
+	FormideOS.register('websocket').init();
+	FormideOS.register('printer').init(FormideOS.config.get('printer'));
+	FormideOS.register('slicer').init(FormideOS.config.get('slicer'));
+	FormideOS.register('cloud').init(FormideOS.config.get('cloud'));
+	FormideOS.register('interface').init(FormideOS.config.get('dashboard'));
+	FormideOS.register('setup').init();
+	//FormideOS.register('cron').init();
+	//FormideOS.register('led').init();
+	//FormideOS.register('camera').init(FormideOS.config.get('camera'));
+	//FormideOS.register('wifi').init();
+	//FormideOS.register('update').init();
 });

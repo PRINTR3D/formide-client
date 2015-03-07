@@ -17,7 +17,7 @@ module.exports = {
 	init: function()
 	{
 		// setup new db connection
-		var db = Printspot.db;
+		var db = FormideOS.db;
 
 		db.sequelize
 		.sync({
@@ -27,18 +27,18 @@ module.exports = {
 		{
 			if(err)
 			{
-				Printspot.debug(err, true);
+				FormideOS.debug(err, true);
 			}
 			else
 			{
 				db.User
 				.create({
-					"username": "login@printspot.local",
+					"username": "login@FormideOS.local",
 					"password": "password"
 				})
 				.success(function(success)
 				{
-					Printspot.debug('Database entry created: ' + success);
+					FormideOS.debug('Database entry created: ' + success);
 				});
 
 				db.Printer
@@ -58,7 +58,7 @@ module.exports = {
 				})
 				.success(function(success)
 				{
-					Printspot.debug('Database entry created: ' + success);
+					FormideOS.debug('Database entry created: ' + success);
 				});
 
 				db.Material
@@ -74,7 +74,7 @@ module.exports = {
 				})
 				.success(function(success)
 				{
-					Printspot.debug('Database entry created: ' + success);
+					FormideOS.debug('Database entry created: ' + success);
 				});
 
 				db.Sliceprofile
@@ -175,7 +175,7 @@ module.exports = {
 				})
 				.success(function(success)
 				{
-					Printspot.debug('Database entry created: ' + success);
+					FormideOS.debug('Database entry created: ' + success);
 				});
 			}
 		});

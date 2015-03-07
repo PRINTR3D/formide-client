@@ -26,7 +26,7 @@ module.exports =
 	{
 		if(config.simulated)
 		{
-			this.process = spawn('node', ['index.js'], {cwd: Printspot.appRoot + 'slicer-simulator', stdio: 'pipe'});
+			this.process = spawn('node', ['index.js'], {cwd: FormideOS.appRoot + 'slicer-simulator', stdio: 'pipe'});
 			this.process.stdout.setEncoding('utf8');
 			this.process.stdout.on('exit', this.onExit);
 			this.process.stdout.on('error', this.onError);
@@ -38,7 +38,7 @@ module.exports =
 			this.slicer = net.connect({
 				port: config.port
 			}, function() {
-				Printspot.debug('slicer connected');
+				FormideOS.debug('slicer connected');
 			});
 
 			this.slicer.on('error', this.slicerError);
@@ -55,17 +55,17 @@ module.exports =
 
 	onExit: function(exit)
 	{
-		Printspot.debug(exit, true);
+		FormideOS.debug(exit, true);
 	},
 
 	onError: function(error)
 	{
-		Printspot.debug(error, true);
+		FormideOS.debug(error, true);
 	},
 
 	onData: function(data)
 	{
-		Printspot.debug(data);
+		FormideOS.debug(data);
 	},
 
 	stop: function(stop)
@@ -87,7 +87,7 @@ module.exports =
 
 			if(data.status == 200 && data.data.responseID != null)
 			{
-				Printspot.db.Printjob
+				FormideOS.db.Printjob
 				.find({where: {sliceResponse: "{" + data.data.responseID + "}"}})
 				.success(function(printjob)
 				{
@@ -95,7 +95,7 @@ module.exports =
 					.updateAttributes({gcode: data.data.gcode, sliceResponse: JSON.stringify(data.data)})
 					.success(function()
 					{
-						Printspot.events.emit('externalMessage', {
+						FormideOS.events.emit('externalMessage', {
 							message: 'Slicing finished'
 						});
 					});
@@ -104,12 +104,12 @@ module.exports =
 		}
 		catch(e)
 		{
-			Printspot.debug(e, true);
+			FormideOS.debug(e, true);
 		}
 	},
 
 	slicerError: function(error)
 	{
-		Printspot.debug(error, true);
+		FormideOS.debug(error, true);
 	}
 }

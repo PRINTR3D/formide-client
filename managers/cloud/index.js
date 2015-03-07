@@ -49,14 +49,14 @@ module.exports =
 	// custom functions
 	onError: function(error)
 	{
-		Printspot.debug(error, true);
+		FormideOS.debug(error, true);
 	},
 
 	handshake: function(handshake)
 	{
 		this.emit('typeof', {
 			type: 'client',
-			mac: Printspot.macAddress
+			mac: FormideOS.macAddress
 		});
 	},
 
@@ -64,11 +64,11 @@ module.exports =
 	{
 		if(auth.message == 'OK')
 		{
-			Printspot.debug('Cloud connected');
+			FormideOS.debug('Cloud connected');
 		}
 		else
 		{
-			Printspot.debug(auth, true);
+			FormideOS.debug(auth, true);
 		}
 	},
 
@@ -77,21 +77,21 @@ module.exports =
 		var _this = this;
 
 		// TODO: rewrite
-		Object.keys(Printspot.config.get('channels.dashboard')).forEach(function(method)
+		Object.keys(FormideOS.config.get('channels.dashboard')).forEach(function(method)
 		{
 			(function(realMethod)
 			{
 				_this.cloud.on(realMethod, function(data)
 				{
 					// check if incoming message is really meant for this printer
-					if(data.printerID == Printspot.macAddress)
+					if(data.printerID == FormideOS.macAddress)
 					{
 						var json = {
 							"type": realMethod,
 							"data": data
 						};
 
-						Printspot.events.emit('cloudPush', json);
+						FormideOS.events.emit('cloudPush', json);
 					}
 				});
 			})(method);
@@ -109,7 +109,7 @@ module.exports =
 			{
 				if(err)
 				{
-					Printspot.debug(err, true);
+					FormideOS.debug(err, true);
 				}
 				else
 				{
@@ -127,7 +127,7 @@ module.exports =
 
 	printerStatus: function(status)
 	{
-		status.data.printerID = Printspot.macAddress;
+		status.data.printerID = FormideOS.macAddress;
 		this.cloud.emit(status.type, status.data);
 	},
 

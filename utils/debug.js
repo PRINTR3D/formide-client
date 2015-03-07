@@ -60,7 +60,7 @@ module.exports = function(config)
 			}
 			else
 			{
-				var outputString = '[printspot]\t';
+				var outputString = '[FormideOS]\t';
 				outputString += JSON.stringify(debug);
 
 				if(severe)

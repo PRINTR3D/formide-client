@@ -13,11 +13,11 @@
  */
 
 /*
-Printspot.manager('cron').schedulePrintjob(new Date(2015, 0, 8, 21, 38, 0), {
+FormideOS.manager('cron').schedulePrintjob(new Date(2015, 0, 8, 21, 38, 0), {
 	"type": "dashboard_push_printer_start",
 	"data": {
 		"printjobID": 1,
-		"hash": "/Volumes/Macintosh HDD/Chris/Sites/printr/github/printspot/uploads/gcode/GCODE_FILE_LOCATION"
+		"hash": "/Volumes/Macintosh HDD/Chris/Sites/printr/github/FormideOS/uploads/gcode/GCODE_FILE_LOCATION"
 	}
 });
 */
@@ -42,9 +42,9 @@ module.exports =
 	{
 		var cron = schedule.scheduleJob(date, function()
 		{
-			Printspot.debug('starting scheduled printjob');
+			FormideOS.debug('starting scheduled printjob');
 
-			Printspot.events.emit('scheduledPrintjob', data);
+			FormideOS.events.emit('scheduledPrintjob', data);
 		});
 
 		this.jobs.push(cron);

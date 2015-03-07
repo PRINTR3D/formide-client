@@ -20,11 +20,11 @@ module.exports = function(routes, module)
 	{
 		// TODO: check if file exists
 /*
-		fs.readFile(Printspot.config.get('paths.modelfile') + '/' + req.query.hash, function(err, data)
+		fs.readFile(FormideOS.config.get('paths.modelfile') + '/' + req.query.hash, function(err, data)
 		{
 			if(err)
 			{
-				Printspot.debug(err, true);
+				FormideOS.debug(err, true);
 			}
 			else
 			{
@@ -47,11 +47,11 @@ module.exports = function(routes, module)
 		// TODO: check if valid 3D file
 /*
 		var hash = (Math.random() / +new Date()).toString(36).replace(/[^a-z]+/g, '');
-		var newPath = Printspot.config.get('paths.modelfile') + '/' + hash;
+		var newPath = FormideOS.config.get('paths.modelfile') + '/' + hash;
 
 		req.payload['file'].pipe(fs.createWriteStream(newPath));
 
-		Printspot.db.Modelfile.create(
+		FormideOS.db.Modelfile.create(
 		{
 			filename: req.payload.file.hapi.filename,
 			filesize: parseInt(req.headers['content-length']),
@@ -68,11 +68,11 @@ module.exports = function(routes, module)
 		// TODO: add gcode filesize to printjobs table
 /*
 		var hash = (Math.random() / +new Date()).toString(36).replace(/[^a-z]+/g, '');
-		var newPath = Printspot.config.get('paths.gcode') + '/' + hash;
+		var newPath = FormideOS.config.get('paths.gcode') + '/' + hash;
 
 		req.payload['file'].pipe(fs.createWriteStream(newPath));
 
-		Printspot.db.Printjob.create(
+		FormideOS.db.Printjob.create(
 		{
 			gcode: hash,
 			sliceMethod: 'custom'

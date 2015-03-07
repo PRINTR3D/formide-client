@@ -14,15 +14,11 @@
 
 module.exports = function(routes, module)
 {
-	require('./types/material.js')(routes, Printspot.db);
-
-/*
-	require('./resources/material.js')(Printspot.db, server);
-	require('./resources/modelfile.js')(Printspot.db, server);
-	require('./resources/printer.js')(Printspot.db, server);
-	require('./resources/printjob.js')(Printspot.db, server);
-	require('./resources/queue.js')(Printspot.db, server);
-	require('./resources/sliceprofile.js')(Printspot.db, server);
-	require('./resources/user.js')(Printspot.db, server);
-*/
+	require('./types/material.js')(routes, FormideOS.db);
+	require('./types/modelfile.js')(routes, FormideOS.db);
+	require('./types/printer.js')(routes, FormideOS.db);
+	require('./types/printjob.js')(routes, FormideOS.db);
+	require('./types/queue.js')(routes, FormideOS.db);
+	require('./types/sliceprofile.js')(routes, FormideOS.db);
+	require('./types/user.js')(routes, FormideOS.db);
 };

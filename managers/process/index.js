@@ -61,12 +61,12 @@ module.exports =
 
 	processExit: function(err)
 	{
-		Printspot.events.emit('processExit');
+		FormideOS.events.emit('processExit');
 	},
 
 	processError: function(err)
 	{
 		err = err.toString();
-		Printspot.debug(err, true);
+		FormideOS.debug(err, true);
 	}
 };

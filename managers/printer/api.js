@@ -19,7 +19,7 @@ module.exports = function(routes, module)
 	 */
 	routes.get('/list', function( req, res )
 	{
-		res.send(Printspot.config.get('channels.dashboard'));
+		res.send(FormideOS.config.get('channels.dashboard'));
 	});
 
 	/**
@@ -27,7 +27,7 @@ module.exports = function(routes, module)
 	 */
 	routes.get('/status', function( req, res )
 	{
-		Printspot.events.once('printerStatus', function( status )
+		FormideOS.events.once('printerStatus', function( status )
 		{
 			res.send( status.data );
 		});
@@ -39,13 +39,13 @@ module.exports = function(routes, module)
 	routes.get('/control/:command', function( req, res )
 	{
 		// load channels from config
-		Object.keys(Printspot.config.get('channels.dashboard')).forEach(function(method)
+		Object.keys(FormideOS.config.get('channels.dashboard')).forEach(function(method)
 		{
 			(function(realMethod)
 			{
 				if(req.params.command == realMethod)
 				{
-					var expected = Printspot.config.get('channels.dashboard')[realMethod];
+					var expected = FormideOS.config.get('channels.dashboard')[realMethod];
 					var given = req.query;
 					var correct = true;
 
@@ -61,7 +61,7 @@ module.exports = function(routes, module)
 					{
 						if(req.params.command == 'start')
 						{
-							req.query.hash = Printspot.config.get('paths.gcode') + '/' + req.query.hash;
+							req.query.hash = FormideOS.config.get('paths.gcode') + '/' + req.query.hash;
 						}
 
 						var params = JSON.stringify(req.query);
@@ -84,7 +84,7 @@ module.exports = function(routes, module)
 							"data": params
 						};
 
-						Printspot.events.emit('dashboardPush', json);
+						FormideOS.events.emit('dashboardPush', json);
 						res.send({
 							status: 200,
 							message: 'OK'

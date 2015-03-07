@@ -52,7 +52,7 @@ module.exports = function(routes, module)
 		}
 		else
 		{
-			Printspot.db.User
+			FormideOS.db.User
 			.find({ where: {username: req.payload.username } })
 			.success(function( user )
 			{
@@ -114,19 +114,19 @@ module.exports = function(routes, module)
 		handler: function(req, res)
 		{
 			var config = {
-				environment: Printspot.config.__environment,
+				environment: FormideOS.config.__environment,
 				ports: {
-					app: Printspot.config.get('app.port'),
-					client: Printspot.config.get('printer.port'),
-					slicer: Printspot.config.get('slicer.port'),
-					interface: Printspot.config.get('dashboard.port')
+					app: FormideOS.config.get('app.port'),
+					client: FormideOS.config.get('printer.port'),
+					slicer: FormideOS.config.get('slicer.port'),
+					interface: FormideOS.config.get('dashboard.port')
 				},
-				version: Printspot.config.get('app.version'),
-				debug: Printspot.config.get('app.debug'),
+				version: FormideOS.config.get('app.version'),
+				debug: FormideOS.config.get('app.debug'),
 				cloud: {
-					url: Printspot.config.get('cloud.url')
+					url: FormideOS.config.get('cloud.url')
 				},
-				mac: Printspot.macAddress
+				mac: FormideOS.macAddress
 			}
 
 			res(config);
@@ -152,7 +152,7 @@ module.exports = function(routes, module)
 		{
 			if(req.payload.password)
 			{
-				Printspot.db.User.find({where: {id: req.auth.credentials.id}})
+				FormideOS.db.User.find({where: {id: req.auth.credentials.id}})
 			  	.success(function(user)
 			  	{
 				  	if( user )

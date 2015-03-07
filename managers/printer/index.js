@@ -26,7 +26,7 @@ module.exports =
 	{
 		if(config.simulated)
 		{
-			this.process1 = spawn('node', ['index.js'], {cwd: Printspot.appRoot + 'driver-simulator', stdio: 'pipe'});
+			this.process1 = spawn('node', ['index.js'], {cwd: FormideOS.appRoot + 'driver-simulator', stdio: 'pipe'});
 			this.process1.stdout.setEncoding('utf8');
 			this.process1.stdout.on('exit', this.onExit);
 			this.process1.stdout.on('error', this.onError);
@@ -40,7 +40,7 @@ module.exports =
 			this.printer.connect({
 				port: config.port
 			}, function() {
-				Printspot.debug('printer connected');
+				FormideOS.debug('printer connected');
 			});
 
 			this.printer.setTimeout(10);
@@ -61,17 +61,17 @@ module.exports =
 
 	onExit: function(exit)
 	{
-		Printspot.debug(exit, true);
+		FormideOS.debug(exit, true);
 	},
 
 	onError: function(error)
 	{
-		Printspot.debug(error, true);
+		FormideOS.debug(error, true);
 	},
 
 	onData: function(data)
 	{
-		Printspot.debug(data);
+		FormideOS.debug(data);
 	},
 
 	stop: function(stop)
@@ -82,7 +82,7 @@ module.exports =
 	// custom functions
 	printerError: function(error)
 	{
-		Printspot.debug(error.toString(), true);
+		FormideOS.debug(error.toString(), true);
 	},
 
 	printerStatus: function(printerData)
@@ -90,7 +90,7 @@ module.exports =
 		try // try parsing
 		{
 			data = JSON.parse(printerData.toString());
-			Printspot.events.emit('printerStatus', data);
+			FormideOS.events.emit('printerStatus', data);
 
 			if(data.type == 'status')
 			{
@@ -99,7 +99,7 @@ module.exports =
 
 			if(data.type == 'finished')
 			{
-				Printspot.db.Queueitem
+				FormideOS.db.Queueitem
 				.find({where: {id: data.data.printjobID}})
 				.success(function(queueitem)
 				{
@@ -109,7 +109,7 @@ module.exports =
 						.updateAttributes({status: 'finished'})
 						.success(function()
 						{
-							Printspot.debug('removed item from queue after printing');
+							FormideOS.debug('removed item from queue after printing');
 						});
 					}
 				});
@@ -117,7 +117,7 @@ module.exports =
 		}
 		catch(e)
 		{
-			Printspot.debug(e.toString(), true);
+			FormideOS.debug(e.toString(), true);
 		}
 	},
 

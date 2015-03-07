@@ -23,7 +23,7 @@ module.exports =
 		this.logger = new(winston.Logger)({
 			transports:
 		    [
-				new (winston.transports.File)({filename: Printspot.appRoot + config.path + '/printspot.log', level: 'debug' })
+				new (winston.transports.File)({filename: FormideOS.appRoot + config.path + '/FormideOS.log', level: 'debug' })
 		    ]
 		});
 	},
