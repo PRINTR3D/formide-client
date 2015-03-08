@@ -29,119 +29,26 @@ module.exports = function(routes, module)
 		res.send( req.user );
 	});
 
-	routes.get('/token', function( req, res )
+	routes.get('/tokens', module.authenticate(['bearer', 'local'], { session: false }), function( req, res )
 	{
-
+		res.send( module.accessTokens );
 	});
 
-	routes.delete('/token/:token', function( req, res )
+	routes.post('/tokens', function( req, res )
 	{
-
+		module.generateAccessToken( function( token )
+		{
+			res.send( token );
+		});
 	});
 
+	routes.delete('/tokens/:token', module.authenticate(['bearer', 'local'], { session: false }), function( req, res )
+	{
+		module.removeAccessToken( req.params.token );
+		res.send('OK');
+	});
 
 /*
-	var login = function(req, res)
-	{
-		var message = '';
-
-		if(!req.payload.username || !req.payload.password)
-		{
-			message = "Missing username or password";
-			return res(message);
-		}
-		else
-		{
-			FormideOS.db.User
-			.find({ where: {username: req.payload.username } })
-			.success(function( user )
-			{
-				if( !user || user.selectedValues.password !== req.payload.password )
-				{
-					message = 'Invalid username or password';
-					return res(message);
-				}
-				else
-				{
-					req.auth.session.set( user.selectedValues );
-					return res('OK');
-				}
-			});
-		}
-	}
-
-	var logout = function(req, res)
-	{
-		req.auth.session.clear();
-		return res('OK');
-	}
-
-	server.route({
-		method: 'POST',
-		path: '/login',
-		config: {
-			handler: login,
-			auth: {
-				mode: 'try',
-				strategy: 'session'
-			},
-			plugins: {
-				'hapi-auth-cookie': {
-					redirectTo: false
-				}
-			}
-		}
-	});
-
-	server.route({
-		method: 'GET',
-		path: '/session',
-		config: {
-            auth: 'session'
-        },
-		handler: function(req, res)
-		{
-			return res(req.auth.isAuthenticated ? req.auth : '0');
-		}
-	});
-
-	server.route({
-		method: 'GET',
-		path: '/device',
-		config: {
-            auth: 'session'
-        },
-		handler: function(req, res)
-		{
-			var config = {
-				environment: FormideOS.config.__environment,
-				ports: {
-					app: FormideOS.config.get('app.port'),
-					client: FormideOS.config.get('printer.port'),
-					slicer: FormideOS.config.get('slicer.port'),
-					interface: FormideOS.config.get('dashboard.port')
-				},
-				version: FormideOS.config.get('app.version'),
-				debug: FormideOS.config.get('app.debug'),
-				cloud: {
-					url: FormideOS.config.get('cloud.url')
-				},
-				mac: FormideOS.macAddress
-			}
-
-			res(config);
-		}
-	});
-
-	server.route({
-		method: 'POST',
-		path: '/logout',
-		config: {
-            handler: logout,
-            auth: 'session'
-        }
-	});
-
 	server.route({
 		method: 'POST',
 		path: '/changepassword',
@@ -167,4 +74,5 @@ module.exports = function(routes, module)
 		}
 	});
 */
+
 };

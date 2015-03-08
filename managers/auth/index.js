@@ -14,9 +14,11 @@
 
 var passport 		= require('passport');
 var LocalStrategy 	= require('passport-local').Strategy;
+var BearerStrategy 	= require('passport-http-bearer').Strategy;
 var bodyParser 		= require('body-parser');
 var session 		= require('express-session');
 var MemoryStore 	= session.MemoryStore;
+var uuid 			= require('node-uuid');
 
 FormideOS.http.app.use( bodyParser.json() );
 FormideOS.http.app.use( bodyParser.urlencoded({extended: true}) );
@@ -29,6 +31,23 @@ FormideOS.http.app.use( session({
 }) );
 FormideOS.http.app.use( passport.initialize() );
 FormideOS.http.app.use( passport.session() );
+
+passport.accessTokens = [];
+
+passport.generateAccessToken = function( callback )
+{
+	var token = uuid.v4();
+
+  	passport.accessTokens.push( token );
+
+  	return callback( token );
+};
+
+passport.removeAccessToken = function( token )
+{
+	var index = array.indexOf(token);
+	passport.accessTokens.splice(index, 1);
+};
 
 passport.serializeUser(function(user, done)
 {
@@ -68,6 +87,15 @@ passport.use( new LocalStrategy(function( username, password, callback )
 
 		return callback(null, user);
 	});
+}));
+
+passport.use( new BearerStrategy({}, function( token, callback )
+{
+	if(passport.accessTokens.indexOf( token ) > -1)
+	{
+		return callback(null, true);
+	}
+	return callback(null, false);
 }));
 
 module.exports = passport;

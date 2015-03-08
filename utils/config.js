@@ -39,7 +39,9 @@ module.exports = function()
 				obj = obj[part];
   			}
   			return obj;
-		}
+		},
+
+		environment: env
 	};
 
 	return config;
