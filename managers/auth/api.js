@@ -14,19 +14,19 @@
 
 module.exports = function(routes, module)
 {
-	routes.post('/login', function( req, res )
+	routes.post('/login', module.authenticate('local'), function( req, res )
 	{
-
+		res.send( req.user );
 	});
 
-	routes.post('/logout', function( req, res )
+	routes.get('/logout', function( req, res )
 	{
-
+		req.logout();
 	});
 
 	routes.get('/session', function( req, res )
 	{
-
+		res.send( req.user );
 	});
 
 	routes.get('/token', function( req, res )

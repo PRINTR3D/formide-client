@@ -12,17 +12,35 @@
  *
  */
 
-var Config = require('nodejs-config');
-
 module.exports = function()
 {
-	var config = Config(
-		__dirname + '/..',
+	var env = process.env.NODE_ENV || 'development';
+	var cfg = require('../config.' + env + '.json');
+
+	function parts(key)
+	{
+		if (Array.isArray(key)) return key
+		return key.split('.')
+	}
+
+	var config = {
+
+		get: function( key )
 		{
-			development: ['chris.local', 'chris.lan', 'bouke.local', 'bouke', 'wlan235101.mobiel.utwente.nl'],
-			production: ['raspberrypi', 'the-element']
+			var obj = cfg;
+			key = parts(key);
+			for (var i = 0, l = key.length; i < l; i++)
+			{
+				var part = key[i];
+				if( !(part in obj) )
+				{
+					return null;
+				}
+				obj = obj[part];
+  			}
+  			return obj;
 		}
-	);
+	};
 
 	return config;
 }

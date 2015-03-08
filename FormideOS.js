@@ -12,7 +12,7 @@
  *
  */
 
-var path = require('path');
+var path 	= require('path');
 
 // define global formideos object
 module.exports = function()

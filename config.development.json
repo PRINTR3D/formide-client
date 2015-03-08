@@ -1,0 +1,83 @@
+{
+	"app": {
+		"debug": true,
+		"timezone": "UTC",
+		"url": "localhost",
+		"port": 1337,
+		"version": "0.4.0"
+	},
+
+	"camera": {
+		"command": "imagesnap ~/Sites/printr/github/formideOS/uploads/images/image.jpg",
+		"interval": 2000
+	},
+
+	"channels": {
+		"dashboard": {
+			"gcode": [ "code" ],
+			"home": [],
+			"jog": [ "axis", "dist" ],
+			"start": [ "hash", "printjobID" ],
+			"pause": [],
+			"resume": [],
+			"stop": [],
+			"temp_extruder": [ "extnr", "temp" ],
+			"temp_bed": [ "temp" ],
+			"lcd_message": [ "msg" ],
+			"extrude": [ "extnr", "dist" ],
+			"retract": [ "extnr", "dist" ],
+			"fan": [ "fannr", "speed" ],
+			"reconnect": [],
+			"autolevel": [],
+			"door_open": [],
+			"door_close": []
+		},
+
+		"driver": {
+			"status": [ "printjobID", "status", "progress", "extruders", "bed" ],
+			"finished": [ "printjobID" ],
+			"connect": [],
+			"disconnect": [],
+			"error": [ "msg" ],
+			"notification": [ "msg" ]
+		}
+	},
+
+	"cloud": {
+		"url": "http://ws.formide.com:4000",
+		"softMac": "AAABBBCCCDDD"
+	},
+
+	"dashboard": {
+		"port": 8080,
+		"path": "../formideOS-interface"
+	},
+
+	"database": {
+		"username": "root",
+		"password": null,
+		"database": "printspot",
+		"storage": "../storage/printspot.sqlite",
+		"debug": false
+	},
+
+	"log": {
+		"path": "../storage"
+	},
+
+	"paths": {
+		"temp": "../uploads/tmp",
+		"modelfile": "../uploads/modelfiles",
+		"gcode": "../uploads/gcode"
+	},
+
+	"printer": {
+		"port": 1338,
+		"simulated": true
+	},
+
+	"slicer": {
+		"port": 1339,
+		"simulated": true
+	}
+}

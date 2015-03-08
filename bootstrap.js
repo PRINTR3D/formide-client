@@ -15,8 +15,9 @@
 // require dependencies
 var getMac = require('getmac');
 
-// define global FormideOS object
-FormideOS = require('./FormideOS')();
+// define global objects
+FormideOS 	= require('./FormideOS')();
+_ 			= require('underscore');
 
 getMac.getMac(function(err, macAddress)
 {
