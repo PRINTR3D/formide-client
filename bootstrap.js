@@ -23,27 +23,31 @@ getMac.getMac(function(err, macAddress)
 {
 	FormideOS.macAddress = FormideOS.config.get('cloud.softMac', macAddress);
 
-	// always include these
-	FormideOS.register('device').init();
-	FormideOS.register('process').init();
-	FormideOS.register('logger').init(FormideOS.config.get('log'));
+	// required modules
+	FormideOS.register('core.http').init();
+	FormideOS.register('core.events').init();
+	FormideOS.register('core.db').init();
+	FormideOS.register('core.auth').init();
+	FormideOS.register('core.websocket').init();
+	FormideOS.register('core.device').init();
+	FormideOS.register('core.process').init();
 
-	// load CLI initiated modules
-	if(FormideOS.manager('process').args.setup) // setup mode
-	{
-		FormideOS.register('dbsetup').init();
-	}
+	// standard modules
+	FormideOS.register('app.logger').init(FormideOS.config.get('log'));
+	FormideOS.register('app.printer').init(FormideOS.config.get('printer'));
 
-	// managers
+	// optional modules
+
+/*
+
 	FormideOS.register('files').init();
-	FormideOS.register('auth').init();
 	FormideOS.register('resources').init();
-	FormideOS.register('websocket').init();
 	FormideOS.register('printer').init(FormideOS.config.get('printer'));
 	FormideOS.register('slicer').init(FormideOS.config.get('slicer'));
 	FormideOS.register('cloud').init(FormideOS.config.get('cloud'));
 	FormideOS.register('interface').init(FormideOS.config.get('dashboard'));
 	FormideOS.register('setup').init();
+*/
 	//FormideOS.register('cron').init();
 	//FormideOS.register('led').init();
 	//FormideOS.register('camera').init(FormideOS.config.get('camera'));

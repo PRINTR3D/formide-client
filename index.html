@@ -1,0 +1,24 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
+<script>
+
+var printer = io('http://localhost:4000/printer');
+
+printer.on('handshake', function( data )
+{
+	console.log( data );
+});
+
+printer.on('status', function( data )
+{
+	console.log( data );
+});
+
+
+var test = io('http://localhost:4000/test');
+
+test.on('test', function( data )
+{
+	console.log( 'test' );
+});
+
+</script>

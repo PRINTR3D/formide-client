@@ -28,30 +28,20 @@ module.exports = function()
 	// global config
 	formideos.config = require('./utils/config.js')();
 
-	// global events
-	formideos.events = require('./utils/events.js')();
-
-	// global debug
-	formideos.debug = require('./utils/debug.js')(formideos.config);
-
-	// global http app
-	formideos.http = require('./utils/http.js')(formideos.config, formideos.debug);
-
-	// global websocket connection
-	formideos.websocket = require('./utils/websocket.js')(formideos.http, formideos.debug);
-
-	// global database
-	formideos.db = require('./utils/db.js')(formideos.config, formideos.appRoot);
-
 	// register manager
 	formideos.register = require('./utils/register.js');
+
+	// register debug
+	formideos.managers.debug = require('./utils/debug.js');
 
 	// get registered manager
 	formideos.manager = function(name)
 	{
+		name = name.replace('.', '/');
+
 		if(!(name in formideos.managers))
 		{
-			formideos.debug('Manager with name ' + name + ' is not registered', true);
+			FormideOS.manager('debug').log('Manager with name ' + name + ' is not registered', true);
 		}
 		else
 		{

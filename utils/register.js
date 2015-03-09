@@ -20,35 +20,20 @@ module.exports = function(managerName)
 
 		init: function(data) {
 
-			FormideOS.debug('Loading manager: ' + managerName);
+			managerName = managerName.replace('.', '/');
+
+			FormideOS.manager('debug').log('Loading manager: ' + managerName);
 
 			if(fs.existsSync('managers/' + managerName + '/index.js'))
 			{
 				var manager = require('../managers/' + managerName + '/index.js');
-
-				// register listeners
-				if(typeof manager.on === 'object')
-				{
-					Object.keys(manager.on).forEach(function(ev)
-					{
-						(function(realEv)
-						{
-							var callback = manager.on[realEv];
-
-							FormideOS.events.on(realEv, function(data)
-							{
-								manager[callback](data);
-							});
-						})(ev);
-					});
-				}
 
 				// do init function if exists
 				if(typeof manager.init === 'function')
 				{
 					if(manager.init.length !== arguments.length)
 					{
-						FormideOS.debug('manager ' + managerName + ' takes '+ manager.init.length + ' arguments but ' + arguments.length + ' were given', true);
+						FormideOS.manager('debug').log('manager ' + managerName + ' takes '+ manager.init.length + ' arguments but ' + arguments.length + ' were given', true);
 					}
 					else
 					{
@@ -60,7 +45,13 @@ module.exports = function(managerName)
 				{
 					var routes = express();
 					require('../managers/' + managerName + '/api.js')(routes, manager);
-					FormideOS.http.app.use('/api/' + managerName, routes); // register as sub-app in express server
+					FormideOS.manager('core.http').server.app.use('/api/' + managerName, routes); // register as sub-app in express server
+				}
+
+				if(fs.existsSync('managers/' + managerName + '/websocket.js'))
+				{
+					var namespace = FormideOS.manager('core.websocket').connection.of('/' + managerName);
+					require('../managers/' + managerName + '/websocket.js')(namespace, manager);
 				}
 
 				if(!(managerName in FormideOS.managers))
@@ -69,12 +60,12 @@ module.exports = function(managerName)
 				}
 				else
 				{
-					FormideOS.debug('Manager with name ' + managerName + ' already exists', true);
+					FormideOS.manager('debug').log('Manager with name ' + managerName + ' already exists', true);
 				}
 			}
 			else
 			{
-				FormideOS.debug('manager does not have an index.js file', true);
+				FormideOS.manager('debug').log('manager does not have an index.js file', true);
 			}
 		}
 	}

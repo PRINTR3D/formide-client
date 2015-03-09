@@ -22,11 +22,11 @@ function addZero(i) {
     return i;
 }
 
-module.exports = function(config)
-{
-	var debug = function(debug, severe)
+module.exports = {
+
+	log: function(debug, severe)
 	{
-		if(config.get('app.debug') == true)
+		if(FormideOS.config.get('app.debug') == true)
 		{
 			severe = severe || false;
 
@@ -74,6 +74,4 @@ module.exports = function(config)
 			}
 		}
 	}
-
-	return debug;
 }
