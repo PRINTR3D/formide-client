@@ -17,9 +17,9 @@ module.exports = function(routes, module)
 	/**
 	 * Slice!
 	 */
-	routes.post('/slice', function( req, res )
+	routes.all('/slice', function( req, res )
 	{
-		if(req.payload.sliceparams && req.payload.modelfile && req.payload.sliceprofile && req.payload.materials && req.payload.printer && req.payload.slicemethod)
+		if(req.query.sliceparams && req.query.modelfile && req.query.sliceprofile && req.query.materials && req.query.printer && req.query.slicemethod)
 		{
 			var hash = (Math.random() / +new Date()).toString(36).replace(/[^a-z]+/g, '');
 
@@ -46,7 +46,7 @@ module.exports = function(routes, module)
 			if(req.payload.slicemethod == 'local')
 			{
 				// create printjob in DB
-				FormideOS.manager('db').db.Printjob
+				FormideOS.manager('core.db').db.Printjob
 				.create(
 				{
 					ModelfileId: req.payload.modelfile.id,
@@ -60,10 +60,14 @@ module.exports = function(routes, module)
 				.success(function(printjob)
 				{
 					// send slice request to local slicer
-					FormideOS.manager('events').emit('slicer.slice', json);
+					FormideOS.manager('core.events').emit('slicer.slice', json);
 					res.send('OK');
 				});
 			}
+		}
+		else
+		{
+			FormideOS.manager('debug').log('Cannot slice with incomplete parameters', true);
 		}
 	});
 };

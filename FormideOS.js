@@ -31,8 +31,11 @@ module.exports = function()
 	// register manager
 	formideos.register = require('./utils/register.js');
 
+	// register events
+	formideos.managers['core/events'] = require('./utils/events.js');
+
 	// register debug
-	formideos.managers.debug = require('./utils/debug.js');
+	formideos.managers['debug'] = require('./utils/debug.js');
 
 	// get registered manager
 	formideos.manager = function(name)

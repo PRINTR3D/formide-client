@@ -46,8 +46,8 @@ module.exports =
 
 		}.bind(this), 2500);
 
-		FormideOS.manager('events').on('slicer.slice', this.slice);
-		FormideOS.manager('events').on('process.exit', this.stop);
+		FormideOS.manager('core.events').on('slicer.slice', this.slice);
+		FormideOS.manager('core.events').on('process.exit', this.stop);
 	},
 
 	onExit: function(exit)
@@ -84,7 +84,7 @@ module.exports =
 
 			if(data.status == 200 && data.data.responseID != null)
 			{
-				FormideOS.manager('db').db.Printjob
+				FormideOS.manager('core.db').db.Printjob
 				.find({where: {sliceResponse: "{" + data.data.responseID + "}"}})
 				.success(function(printjob)
 				{
@@ -92,7 +92,11 @@ module.exports =
 					.updateAttributes({gcode: data.data.gcode, sliceResponse: JSON.stringify(data.data)})
 					.success(function()
 					{
-						FormideOS.events.emit('externalMessage', {
+						FormideOS.manager('core.events').emit('log.message', {
+							message: 'Slicing finished'
+						});
+
+						FormideOS.manager('core.events').emit('slicer.finished', {
 							message: 'Slicing finished'
 						});
 					});

@@ -36,11 +36,8 @@ module.exports =
 				FormideOS.manager('debug').log('interface directory not found', true);
 			}
 		}.bind(this));
-	},
 
-	on:
-	{
-		'processExit': 'stop'
+		FormideOS.manager('core.events').on('process.exit', this.stop);
 	},
 
 	onExit: function(exit)

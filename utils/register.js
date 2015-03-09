@@ -21,6 +21,7 @@ module.exports = function(managerName)
 		init: function(data) {
 
 			managerName = managerName.replace('.', '/');
+			managerNamespace = managerName.split('/')[1];
 
 			FormideOS.manager('debug').log('Loading manager: ' + managerName);
 
@@ -45,12 +46,12 @@ module.exports = function(managerName)
 				{
 					var routes = express();
 					require('../managers/' + managerName + '/api.js')(routes, manager);
-					FormideOS.manager('core.http').server.app.use('/api/' + managerName, routes); // register as sub-app in express server
+					FormideOS.manager('core.http').server.app.use('/api/' + managerNamespace, routes); // register as sub-app in express server
 				}
 
 				if(fs.existsSync('managers/' + managerName + '/websocket.js'))
 				{
-					var namespace = FormideOS.manager('core.websocket').connection.of('/' + managerName);
+					var namespace = FormideOS.manager('core.websocket').connection.of('/' + managerNamespace);
 					require('../managers/' + managerName + '/websocket.js')(namespace, manager);
 				}
 
