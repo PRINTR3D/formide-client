@@ -32,3 +32,6 @@ logs
 
 interfaces
 .DS_Store
+
+uploads
+*.sqlite
