@@ -16,8 +16,8 @@ module.exports = function(routes, db)
 {
 	routes.get('/queue', function( req, res )
 	{
-		Printspot.db.Queueitem
-		.findAll({where: {status: 'queued'}, include: [{model: Printspot.db.Printjob, include: [{model: Printspot.db.Modelfile}]}]})
+		db.Queueitem
+		.findAll({where: {status: 'queued'}, include: [{model: db.Printjob, include: [{model: db.Modelfile}]}]})
 		.success(function(queue)
 		{
 			res.send(queue);
@@ -38,10 +38,10 @@ module.exports = function(routes, db)
 	{
 		if(req.payload.printjobID)
 		{
-			Printspot.db.Printjob.find({where: {id: req.payload.printjobID}})
+			db.Printjob.find({where: {id: req.payload.printjobID}})
 			.success(function(printjob)
 			{
-				Printspot.db.Queueitem
+				db.Queueitem
 				.create({
 					origin: 'local',
 					status: 'queued',

@@ -17,7 +17,7 @@ module.exports = function(routes, db)
 	routes.get('/printjobs', function( req, res )
 	{
 		db.Printjob
-		.findAll({ include: [ { model: Printspot.db.Modelfile } ] })
+		.findAll({ include: [ { model: db.Modelfile } ] })
 		.then(function(printjobs)
 		{
 			res.send(printjobs);
@@ -27,7 +27,7 @@ module.exports = function(routes, db)
 	routes.get('/printjobs/:id', function( req, res )
 	{
 		db.Printjob
-		.find({ where: {id: req.params.id }, include: [ { model: Printspot.db.Modelfile } ] })
+		.find({ where: {id: req.params.id }, include: [ { model: db.Modelfile } ] })
 		.then(function(printjob)
 		{
 			res.send(printjob);

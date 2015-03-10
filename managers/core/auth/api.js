@@ -48,31 +48,16 @@ module.exports = function(routes, module)
 		res.send('OK');
 	});
 
-/*
-	server.route({
-		method: 'POST',
-		path: '/changepassword',
-		config: {
-            auth: 'session'
-        },
-		handler: function(req, res)
+	routes.post('/password', FormideOS.manager('core.http').server.auth.authenticate(['local']), function( req, res )
+	{
+		if(req.body.password)
 		{
-			if(req.payload.password)
+			module.changePassword(req.body.password, function( response )
 			{
-				FormideOS.manager('db').User.find({where: {id: req.auth.credentials.id}})
-			  	.success(function(user)
-			  	{
-				  	if( user )
-				  	{
-					  	user.updateAttributes({ password: req.payload.password }).success(function()
-						{
-							res('OK');
-						});
-					}
-			  	});
-		  	}
+
+			});
+
+
 		}
 	});
-*/
-
 };

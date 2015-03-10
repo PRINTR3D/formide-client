@@ -12,6 +12,33 @@
  *
  */
 
-module.exports = {
-
+module.exports =
+{
+	changePassword: function( password, callback )
+	{
+		FormideOS.manager('core.db').db.User
+		.find({where: {id: req.user.id}})
+		.success(function( user )
+		{
+			if( user )
+			{
+				user
+				.updateAttributes({ password: password })
+				.success(function()
+				{
+					return callback({
+						status: 200,
+						message: 'OK'
+					});
+				});
+			}
+			else
+			{
+				return callback({
+					status: 402,
+					message: 'cannot change password for unknown user'
+				});
+			}
+		});
+	}
 }
