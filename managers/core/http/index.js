@@ -50,7 +50,9 @@ module.exports =
 		http.app.use( passport.initialize() );
 		http.app.use( passport.session() );
 
-		http.app.use(cors());
+		http.app.use(cors({
+			origin: true
+		}));
 
 		passport.accessTokens = [];
 		passport.generateAccessToken = function( callback )
