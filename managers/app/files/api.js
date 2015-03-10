@@ -16,8 +16,7 @@ module.exports = function(routes, module)
 {
 	routes.get('/download', function( req, res )
 	{
-		var filename = FormideOS.config.get('paths.modelfile') + '/' + req.query.hash;
-		module.downloadModelfile(filename, function( response )
+		module.downloadModelfile(req.query.hash, req.query.encoding, function( response )
 		{
 			res.send( response );
 		});
@@ -25,6 +24,8 @@ module.exports = function(routes, module)
 
 	routes.post('/upload', function( req, res )
 	{
+		module.uploadModelfile()
+
 		// TODO: check if valid 3D file
 /*
 		var hash = (Math.random() / +new Date()).toString(36).replace(/[^a-z]+/g, '');

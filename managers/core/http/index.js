@@ -14,6 +14,7 @@
 
 // dependencies
 express 			= require('express');
+var cors 			= require('cors');
 var passport 		= require('passport');
 var LocalStrategy 	= require('passport-local').Strategy;
 var BearerStrategy 	= require('passport-http-bearer').Strategy;
@@ -49,36 +50,7 @@ module.exports =
 		http.app.use( passport.initialize() );
 		http.app.use( passport.session() );
 
-		http.app.use(function(req, res, next) {
-		    var oneof = false;
-		    if(req.headers.origin) {
-		        res.header('Access-Control-Allow-Origin', req.headers.origin);
-		        oneof = true;
-		    }
-		    if(req.headers['access-control-request-method']) {
-		        res.header('Access-Control-Allow-Methods', req.headers['access-control-request-method']);
-		        oneof = true;
-		    }
-		    if(req.headers['access-control-request-headers']) {
-		        res.header('Access-Control-Allow-Headers', req.headers['access-control-request-headers']);
-		        oneof = true;
-		    }
-		    if(req.headers['access-control-allow-credentials']) {
-			    res.header('Access-Control-Allow-Credentials', req.headers['access-control-allow-credentials']);
-			    oneof = true;
-		    }
-		    if(oneof) {
-		        res.header('Access-Control-Max-Age', 60 * 60 * 24 * 365);
-		    }
-
-		    // intercept OPTIONS method
-		    if (oneof && req.method == 'OPTIONS') {
-		        res.send(200);
-		    }
-		    else {
-		        next();
-		    }
-		});
+		http.app.use(cors());
 
 		passport.accessTokens = [];
 		passport.generateAccessToken = function( callback )

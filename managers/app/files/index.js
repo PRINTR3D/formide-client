@@ -31,8 +31,10 @@ module.exports =
 
 	},
 
-	downloadModelfile: function( filename, callback )
+	downloadModelfile: function( hash, encoding, callback )
 	{
+		var filename = FormideOS.config.get('paths.modelfile') + '/' + hash;
+
 		fs.exists(filename, function( exists )
 		{
 			if(exists)
@@ -45,7 +47,7 @@ module.exports =
 					}
 					else
 					{
-						if(req.query.encoding == 'base64')
+						if(encoding == 'base64')
 						{
 							var base64File = new Buffer(data, 'binary').toString('base64');
 							return callback( base64File );
