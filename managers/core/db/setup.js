@@ -14,12 +14,9 @@
 
 module.exports = {
 
-	init: function()
+	init: function( db, sequelize )
 	{
-		// setup new db connection
-		var db = FormideOS.manager('db');
-
-		db.sequelize
+		sequelize
 		.sync({
 			force: true
 		})
@@ -35,6 +32,16 @@ module.exports = {
 				.create({
 					"username": "login@FormideOS.local",
 					"password": "password"
+				})
+				.success(function(success)
+				{
+					FormideOS.manager('debug').log('Database entry created: ' + success);
+				});
+
+				db.Accesstoken
+				.create({
+					"token": "b518e7f9-9d7f-4de8-a522-68deaea20024",
+					"permissions": "auth,rest"
 				})
 				.success(function(success)
 				{

@@ -29,6 +29,12 @@ module.exports =
 
 		this.registerModels();
 		this.registerAssociations();
+
+		if(FormideOS.manager('core.process').args.setup)
+		{
+			FormideOS.manager('debug').log('Database setup running');
+			require('./setup.js').init( this.db, this.sequelize );
+		}
 	},
 
 	registerModels: function()
@@ -90,9 +96,10 @@ module.exports =
 			"settings": "TEXT"
 		});
 
-		this.db.Accesstoken = this.sequelize.define('AccessToken', {
+		this.db.Accesstoken = this.sequelize.define('Accesstoken', {
 			"token": "STRING",
-			"UserId": "INTEGER"
+			"UserId": "INTEGER",
+			"permissions": "TEXT"
 		});
 	},
 

@@ -69,7 +69,8 @@ module.exports =
 				}
 				else
 				{
-					FormideOS.manager('db').db.Modelfile.create({
+					FormideOS.manager('db').db.Modelfile
+					.create({
 						filename: file.name,
 						filesize: file.size,
 						hash: hash
@@ -124,6 +125,39 @@ module.exports =
 
 	downloadGcode: function( filename, callback )
 	{
+		var filename = FormideOS.config.get('paths.gcode') + '/' + hash;
 
+		fs.exists(filename, function( exists )
+		{
+			if(exists)
+			{
+				fs.readFile(filename, function(err, data)
+				{
+					if(err)
+					{
+						FormideOS.manager('debug').log(err, true);
+					}
+					else
+					{
+						if(encoding == 'base64')
+						{
+							var base64File = new Buffer(data, 'binary').toString('base64');
+							return callback( base64File );
+						}
+						else
+						{
+							return callback( data );
+						}
+					}
+				});
+			}
+			else
+			{
+				return callback({
+					status: 404,
+					message: 'file not found'
+				});
+			}
+		});
 	}
 }

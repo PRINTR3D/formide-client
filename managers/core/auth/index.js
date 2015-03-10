@@ -12,6 +12,8 @@
  *
  */
 
+var uuid = require('node-uuid');
+
 module.exports =
 {
 	changePassword: function( password, callback )
@@ -37,6 +39,56 @@ module.exports =
 				return callback({
 					status: 402,
 					message: 'cannot change password for unknown user'
+				});
+			}
+		});
+	},
+
+	generateAccessToken: function( permissions )
+	{
+		var token = uuid.v4();
+		permissions = permission.toString();
+
+		console.log(permissions);
+
+		FormideOS.manager('core.db').db.Accesstoken
+		.create({
+			token: token,
+			permissions: permissions
+		});
+
+	  	return callback({
+		  	status: 200,
+		  	token: token
+		});
+	},
+
+	getAccessTokens: function( callback )
+	{
+		FormideOS.manager('core.db').db.Accesstoken
+		.findAll()
+		.then( function( tokens )
+		{
+			callback( tokens );
+		});
+	},
+
+	deleteAccessToken: function( token, callback )
+	{
+		FormideOS.manager('core.db').db.Accesstoken
+		.find({ where: {token: token } })
+		.on('success', function( accesstoken )
+		{
+			if(accesstoken)
+			{
+				accesstoken
+				.destroy()
+				.success(function()
+				{
+					callback({
+						status: 200,
+						message: 'OK'
+					});
 				});
 			}
 		});

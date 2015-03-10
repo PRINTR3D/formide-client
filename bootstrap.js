@@ -25,11 +25,11 @@ getMac.getMac(function(err, macAddress)
 
 	// core modules
 	FormideOS.register('core.http').init();
+	FormideOS.register('core.process').init();
 	FormideOS.register('core.db').init();
 	FormideOS.register('core.auth').init();
 	FormideOS.register('core.websocket').init();
 	FormideOS.register('core.device').init();
-	FormideOS.register('core.process').init();
 
 	// app modules
 	FormideOS.register('app.log').init(FormideOS.config.get('log'));

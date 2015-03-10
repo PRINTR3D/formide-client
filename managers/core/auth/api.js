@@ -29,14 +29,17 @@ module.exports = function(routes, module)
 		res.send( req.user );
 	});
 
-	routes.get('/tokens', FormideOS.manager('core.http').server.auth.authenticate(['bearer', 'local'], { session: false }), function( req, res )
+	routes.get('/tokens', function( req, res )
 	{
-		res.send( FormideOS.manager('core.http').server.auth.accessTokens );
+		module.getAccessTokens(function( tokens )
+		{
+			res.send( tokens );
+		});
 	});
 
 	routes.post('/tokens', function( req, res )
 	{
-		module.generateAccessToken( function( token )
+		module.generateAccessToken( ['auth', 'rest'], function( token )
 		{
 			res.send( token );
 		});
@@ -44,8 +47,10 @@ module.exports = function(routes, module)
 
 	routes.delete('/tokens/:token', FormideOS.manager('core.http').server.auth.authenticate(['bearer', 'local'], { session: false }), function( req, res )
 	{
-		FormideOS.manager('core.http').server.auth.removeAccessToken( req.params.token );
-		res.send('OK');
+		module.deleteAccessToken( req.params.token, function( response )
+		{
+			res.send( response );
+		});
 	});
 
 	routes.post('/password', FormideOS.manager('core.http').server.auth.authenticate(['local']), function( req, res )
@@ -54,10 +59,8 @@ module.exports = function(routes, module)
 		{
 			module.changePassword(req.body.password, function( response )
 			{
-
+				res.send( response );
 			});
-
-
 		}
 	});
 };

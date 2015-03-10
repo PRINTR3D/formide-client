@@ -21,7 +21,6 @@ var BearerStrategy 	= require('passport-http-bearer').Strategy;
 var bodyParser 		= require('body-parser');
 var session 		= require('express-session');
 var MemoryStore 	= session.MemoryStore;
-var uuid 			= require('node-uuid');
 
 module.exports =
 {
@@ -54,22 +53,6 @@ module.exports =
 			origin: true,
 			credentials: true
 		}));
-
-		passport.accessTokens = [];
-		passport.generateAccessToken = function( callback )
-		{
-			var token = uuid.v4();
-
-		  	passport.accessTokens.push( token );
-
-		  	return callback( token );
-		};
-
-		passport.removeAccessToken = function( token )
-		{
-			var index = array.indexOf(token);
-			passport.accessTokens.splice(index, 1);
-		};
 
 		passport.serializeUser(function(user, done)
 		{
@@ -113,11 +96,19 @@ module.exports =
 
 		passport.use( new BearerStrategy({}, function( token, callback )
 		{
-			if(passport.accessTokens.indexOf( token ) > -1)
+			FormideOS.manager('debug').log( 'Token login attempt for ' + token );
+
+			FormideOS.manager('core.db').db.Accesstoken
+			.fin({ where: {token: token } })
+			.then(function( token )
 			{
-				return callback(null, true);
-			}
-			return callback(null, false);
+				if( !token )
+				{
+					return callback(null, false, { message: 'Incorrect token.' });
+				}
+
+				return callback(null, token);
+			});
 		}));
 
 		this.server = http;
