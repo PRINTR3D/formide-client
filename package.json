@@ -22,6 +22,7 @@
     "getmac": "~1.0.6",
     "lodash": "2.4.1",
     "minimist": "^1.1.0",
+    "multer": "^0.1.8",
     "node-schedule": "^0.1.15",
     "node-uuid": "^1.4.3",
     "nodejs-config": "1.0.0",

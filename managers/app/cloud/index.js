@@ -16,7 +16,6 @@
 var net 		= require('net');
 var request 	= require('request');
 var socket 		= require('socket.io-client');
-var proxy 		= require('socket.io-proxy');
 
 module.exports =
 {
@@ -25,20 +24,7 @@ module.exports =
 
 	init: function( config )
 	{
-		//this.cloud = socket( config.url );
-
-		proxy.init( config.url );
-		this.cloud = proxy.connect('http://localhost:4000');
-
-		this.cloud.on('handshake', function()
-		{
-			this.emit('typeof', {
-				type: 'client',
-				mac: FormideOS.macAddress
-			});
-		});
-
-		// FormideOS.manager('core.events').on('printer.status', this.socketEmit);
+		this.cloud = socket( config.url );
 
 /*
 		this.http({
@@ -72,6 +58,6 @@ module.exports =
 
 	socketEmit: function( data )
 	{
-
+		this.cloud.emit()
 	}
 }

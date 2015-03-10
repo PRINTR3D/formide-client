@@ -14,5 +14,23 @@
 
 module.exports =
 {
+	uploadModelfile: function()
+	{
 
+	},
+
+	uploadGcode: function()
+	{
+
+	},
+
+	downloadModelfile: function()
+	{
+
+	},
+
+	downloadGcode: function()
+	{
+
+	}
 }

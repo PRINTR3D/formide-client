@@ -67,7 +67,11 @@ module.exports = function(routes, module)
 		}
 		else
 		{
-			FormideOS.manager('debug').log('Cannot slice with incomplete parameters', true);
+			FormideOS.manager('debug').log('attempted slicing with incomplete parameters', true);
+			res.send({
+				status: 402,
+				message: "missing parameters"
+			});
 		}
 	});
 };
