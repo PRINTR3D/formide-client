@@ -51,7 +51,8 @@ module.exports =
 		http.app.use( passport.session() );
 
 		http.app.use(cors({
-			origin: true
+			origin: true,
+			credentials: true
 		}));
 
 		passport.accessTokens = [];
