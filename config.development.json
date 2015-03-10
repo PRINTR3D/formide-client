@@ -51,7 +51,7 @@
 
 	"dashboard": {
 		"port": 8080,
-		"path": "../formideOS-interface"
+		"path": "../printr-nectar-dashboard"
 	},
 
 	"database": {
