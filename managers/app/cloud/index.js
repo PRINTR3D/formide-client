@@ -13,126 +13,65 @@
  */
 
 // dependencies
-var net = require('net');
+var net 		= require('net');
+var request 	= require('request');
+var socket 		= require('socket.io-client');
+var proxy 		= require('socket.io-proxy');
 
 module.exports =
 {
 	cloud: {},
+	clients: [],
 
-	init: function(config)
+	init: function( config )
 	{
-		this.cloud = require('socket.io-client')(config.url);
+		//this.cloud = socket( config.url );
 
-		this.cloud.on('handshake', this.handshake);
+		proxy.init( config.url );
+		this.cloud = proxy.connect('http://localhost:4000');
 
-		this.cloud.on('auth', this.auth);
-
-		this.cloud.on('printjob', this.pushPrintjob);
-
-		this.cloud.on('error', this.onError);
-
-		this.cloud.on('connect_failed', this.onError);
-
-		this.cloud.on('disconnect', this.onError);
-
-		this.cloud.on('reconnect_error', this.onError);
-
-		this.loadChannels();
-	},
-
-	on:
-	{
-		'printerStatus': 'printerStatus',
-		'externalMessage': 'notification'
-	},
-
-	// custom functions
-	onError: function(error)
-	{
-		FormideOS.manager('debug').log(error, true);
-	},
-
-	handshake: function(handshake)
-	{
-		this.emit('typeof', {
-			type: 'client',
-			mac: FormideOS.macAddress
-		});
-	},
-
-	auth: function(auth)
-	{
-		if(auth.message == 'OK')
+		this.cloud.on('handshake', function()
 		{
-			FormideOS.manager('debug').log('Cloud connected');
-		}
-		else
-		{
-			FormideOS.manager('debug').log(auth, true);
-		}
-	},
-
-	loadChannels: function()
-	{
-		var _this = this;
-
-		// TODO: rewrite
-		Object.keys(FormideOS.config.get('channels.dashboard')).forEach(function(method)
-		{
-			(function(realMethod)
-			{
-				_this.cloud.on(realMethod, function(data)
-				{
-					// check if incoming message is really meant for this printer
-					if(data.printerID == FormideOS.macAddress)
-					{
-						var json = {
-							"type": realMethod,
-							"data": data
-						};
-
-						FormideOS.events.emit('cloudPush', json);
-					}
-				});
-			})(method);
-		});
-	},
-
-	pushPrintjob: function(printjob)
-	{
-		if(printjob.printerID == macAddress)
-		{
-			var hash = (Math.random() / +new Date()).toString(36).replace(/[^a-z]+/g, '');
-			var newPath = __dirname + '/' + global.config.get('paths.gcode') + '/' + hash;
-
-			fs.writeFile(newPath, printjob.gcode, function(err)
-			{
-				if(err)
-				{
-					FormideOS.manager('debug').log(err, true);
-				}
-				else
-				{
-					global.db.Queueitem.create({
-						slicedata: printjob.slicesettings,
-						origin: 'online',
-						gcode: hash,
-						printjobID: printjob.id,
-						status: "queued"
-					});
-				}
+			this.emit('typeof', {
+				type: 'client',
+				mac: FormideOS.macAddress
 			});
-		}
+		});
+
+		// FormideOS.manager('core.events').on('printer.status', this.socketEmit);
+
+/*
+		this.http({
+			method: 'GET',
+			url: '/api/printer/status',
+			token: 'ABCABC',
+			callback: console.log
+		});
+*/
 	},
 
-	printerStatus: function(status)
+	http: function( data )
 	{
-		status.data.printerID = FormideOS.macAddress;
-		this.cloud.emit(status.type, status.data);
+		request({
+			method: data.method,
+			uri: 'http://127.0.0.1:' + FormideOS.manager('core.http').server.server.address().port + data.url,
+			auth: {
+				bearer: data.token
+			},
+			form: data.data || {}
+		}, function( error, response, body )
+		{
+			data.callback( body );
+		});
 	},
 
-	notification: function(message)
+	socketOn: function( data )
 	{
-		this.cloud.emit('notification', message.message);
+
+	},
+
+	socketEmit: function( data )
+	{
+
 	}
 }

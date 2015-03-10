@@ -39,9 +39,9 @@ getMac.getMac(function(err, macAddress)
 	FormideOS.register('app.slicer').init(FormideOS.config.get('slicer'));
 	FormideOS.register('app.interface').init(FormideOS.config.get('dashboard'));
 	FormideOS.register('app.setup').init();
+	FormideOS.register('app.cloud').init(FormideOS.config.get('cloud'));
 
 	// under development
-	//FormideOS.register('cloud').init(FormideOS.config.get('cloud'));
 	//FormideOS.register('cron').init();
 	//FormideOS.register('led').init();
 	//FormideOS.register('camera').init(FormideOS.config.get('camera'));

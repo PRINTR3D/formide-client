@@ -23,5 +23,6 @@ module.exports =
 		var server = require('http').createServer();
 		this.connection = io( server );
 		server.listen( FormideOS.config.get('app.websocket') );
+		FormideOS.manager('debug').log('websocket api running on port ' + FormideOS.config.get('app.websocket') );
 	}
 }
