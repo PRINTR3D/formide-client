@@ -12,8 +12,16 @@
  *
  */
 
+var fs 		= require('fs');
+var multer  = require('multer');
+
 module.exports =
 {
+	init: function()
+	{
+
+	},
+
 	uploadModelfile: function()
 	{
 
@@ -24,12 +32,43 @@ module.exports =
 
 	},
 
-	downloadModelfile: function()
+	downloadModelfile: function( filename, callback )
 	{
-
+		fs.exists(filename, function( exists )
+		{
+			if(exists)
+			{
+				fs.readFile(filename, function(err, data)
+				{
+					if(err)
+					{
+						FormideOS.manager('debug').log(err, true);
+					}
+					else
+					{
+						if(req.query.encoding == 'base64')
+						{
+							var base64File = new Buffer(data, 'binary').toString('base64');
+							res.send( base64File );
+						}
+						else
+						{
+							res.send( data );
+						}
+					}
+				});
+			}
+			else
+			{
+				callback({
+					status: 404,
+					message: 'file not found'
+				});
+			}
+		});
 	},
 
-	downloadGcode: function()
+	downloadGcode: function( filename, callback )
 	{
 
 	}

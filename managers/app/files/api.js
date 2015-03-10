@@ -12,47 +12,18 @@
  *
  */
 
-var fs 		= require('fs');
-var multer  = require('multer');
-
 module.exports = function(routes, module)
 {
 	routes.get('/download', function( req, res )
 	{
 		var filename = FormideOS.config.get('paths.modelfile') + '/' + req.query.hash;
 
-		fs.exists(filename, function( exists )
+		module.downloadModelfile(filename, function( response )
 		{
-			if(exists)
-			{
-				fs.readFile(filename, function(err, data)
-				{
-					if(err)
-					{
-						FormideOS.manager('debug').log(err, true);
-					}
-					else
-					{
-						if(req.query.encoding == 'base64')
-						{
-							var base64File = new Buffer(data, 'binary').toString('base64');
-							res.send( base64File );
-						}
-						else
-						{
-							res.send( data );
-						}
-					}
-				});
-			}
-			else
-			{
-				res.send({
-					status: 404,
-					message: 'file not found'
-				});
-			}
+
 		});
+
+
 	});
 
 	routes.post('/upload', function( req, res )

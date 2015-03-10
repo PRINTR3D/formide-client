@@ -73,6 +73,10 @@ module.exports =
 		        res.header('Access-Control-Allow-Headers', req.headers['access-control-request-headers']);
 		        oneof = true;
 		    }
+		    if(req.headers['access-control-allow-credentials']) {
+			    res.header('Access-Control-Allow-Credentials', req.headers['access-control-allow-credentials']);
+			    oneof = true;
+		    }
 		    if(oneof) {
 		        res.header('Access-Control-Max-Age', 60 * 60 * 24 * 365);
 		    }
