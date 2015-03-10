@@ -13,7 +13,6 @@
  */
 
 var fs 		= require('fs');
-var multer  = require('multer');
 
 module.exports =
 {
@@ -49,18 +48,18 @@ module.exports =
 						if(req.query.encoding == 'base64')
 						{
 							var base64File = new Buffer(data, 'binary').toString('base64');
-							res.send( base64File );
+							return callback( base64File );
 						}
 						else
 						{
-							res.send( data );
+							return callback( data );
 						}
 					}
 				});
 			}
 			else
 			{
-				callback({
+				return callback({
 					status: 404,
 					message: 'file not found'
 				});

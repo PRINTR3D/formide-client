@@ -17,13 +17,10 @@ module.exports = function(routes, module)
 	routes.get('/download', function( req, res )
 	{
 		var filename = FormideOS.config.get('paths.modelfile') + '/' + req.query.hash;
-
 		module.downloadModelfile(filename, function( response )
 		{
-
+			res.send( response );
 		});
-
-
 	});
 
 	routes.post('/upload', function( req, res )

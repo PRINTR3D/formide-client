@@ -49,16 +49,6 @@ module.exports =
 		http.app.use( passport.initialize() );
 		http.app.use( passport.session() );
 
-/*
-		http.app.all('/*', function( req, res, next )
-		{
-			res.header( "Access-Control-Allow-Origin", req.headers.origin );
-			res.header( "Access-Control-Allow-Headers", "Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization", "DNT", "Accept-Encoding" );
-			res.header( "Access-Control-Allow-Credentials", true );
-			next();
-		});
-*/
-
 		http.app.use(function(req, res, next) {
 		    var oneof = false;
 		    if(req.headers.origin) {
