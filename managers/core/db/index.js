@@ -24,7 +24,7 @@ module.exports =
 		this.sequelize = new Sequelize(FormideOS.config.get('database.database'), FormideOS.config.get('database.username'), FormideOS.config.get('database.password'), {
 			dialect: 'sqlite',
 			storage: FormideOS.appRoot + FormideOS.config.get('database.storage'),
-			logging: FormideOS.config.get('database.debug')
+			logging: FormideOS.config.get('database.debug') && console.log.bind(console)
 		});
 
 		this.registerModels();
