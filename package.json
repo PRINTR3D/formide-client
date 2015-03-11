@@ -53,5 +53,9 @@
   "engineStrict": [
     "darwin",
     "linux"
-  ]
+  ],
+  "engines": {
+    "node": "~0.10.36",
+    "npm": "~2.7.0"
+  }
 }
