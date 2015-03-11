@@ -19,32 +19,54 @@ var getMac 	= require('getmac');
 FormideOS 	= require('./FormideOS')();
 _ 			= require('underscore');
 
+function registerInit(name/*, ...*/) {
+	// Use argument [1..] for manager.init(/*...*/).
+	var args = Array.prototype.slice.call(arguments, 1);
+
+	// Make domain for this manager so that we can catch errors
+	var domain = require('domain').create();
+	domain.name = name;
+	domain.enter();
+	var manager = FormideOS.register(name);
+	manager.init.apply(manager, args);
+	domain.exit();
+
+	domain.on('error',onDomainError.bind(null,domain));
+
+	return manager;
+}
+
+function onDomainError(domain,error) {
+	console.error('An error occurred in domain "'+domain.name+'": ', error);
+	throw error;
+}
+
 getMac.getMac(function(err, macAddress)
 {
 	FormideOS.macAddress = FormideOS.config.get('cloud.softMac', macAddress);
 
 	// core modules
-	FormideOS.register('core.http').init();
-	FormideOS.register('core.process').init();
-	FormideOS.register('core.db').init();
-	FormideOS.register('core.auth').init();
-	FormideOS.register('core.websocket').init();
-	FormideOS.register('core.device').init();
+	registerInit('core.http');
+	registerInit('core.process');
+	registerInit('core.db');
+	registerInit('core.auth');
+	registerInit('core.websocket');
+	registerInit('core.device');
 
 	// app modules
-	FormideOS.register('app.log').init(FormideOS.config.get('log'));
-	FormideOS.register('app.rest').init();
-	FormideOS.register('app.files').init();
-	FormideOS.register('app.printer').init(FormideOS.config.get('printer'));
-	FormideOS.register('app.slicer').init(FormideOS.config.get('slicer'));
-	FormideOS.register('app.interface').init(FormideOS.config.get('dashboard'));
-	FormideOS.register('app.setup').init();
-	FormideOS.register('app.cloud').init(FormideOS.config.get('cloud'));
+	registerInit('app.log',FormideOS.config.get('log'));
+	registerInit('app.rest');
+	registerInit('app.files');
+	registerInit('app.printer',FormideOS.config.get('printer'));
+	registerInit('app.slicer',FormideOS.config.get('slicer'));
+	registerInit('app.interface',FormideOS.config.get('dashboard'));
+	registerInit('app.setup');
+	registerInit('app.cloud',FormideOS.config.get('cloud'));
 
 	// under development
-	//FormideOS.register('cron').init();
-	//FormideOS.register('led').init();
-	//FormideOS.register('camera').init(FormideOS.config.get('camera'));
-	//FormideOS.register('wifi').init();
-	//FormideOS.register('update').init();
+	//registerInit('cron').init();
+	//registerInit('led').init();
+	//registerInit('camera').init(FormideOS.config.get('camera'));
+	//registerInit('wifi').init();
+	//registerInit('update').init();
 });
