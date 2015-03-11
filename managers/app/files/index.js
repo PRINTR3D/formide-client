@@ -35,7 +35,7 @@ module.exports =
 				}
 				else
 				{
-					FormideOS.manager('db').db.Modelfile.create({
+					FormideOS.manager('core.db').db.Modelfile.create({
 						filename: file.name,
 						filesize: file.size,
 						hash: hash
@@ -69,7 +69,7 @@ module.exports =
 				}
 				else
 				{
-					FormideOS.manager('db').db.Modelfile
+					FormideOS.manager('core.db').db.Modelfile
 					.create({
 						filename: file.name,
 						filesize: file.size,

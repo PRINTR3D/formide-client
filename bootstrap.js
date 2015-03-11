@@ -37,7 +37,7 @@ function registerInit(name/*, ...*/) {
 }
 
 function onDomainError(domain,error) {
-	console.error('An error occurred in domain "'+domain.name+'": ', error);
+	console.error('An error occurred in domain "'+domain.name+'": ', error, error.stack);
 	throw error;
 }
 

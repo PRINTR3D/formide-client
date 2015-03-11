@@ -95,7 +95,7 @@ module.exports =
 
 			if(data.type == 'finished')
 			{
-				FormideOS.manager('db').db.Queueitem
+				FormideOS.manager('core.db').db.Queueitem
 				.find({where: {id: data.data.printjobID}})
 				.success(function(queueitem)
 				{
