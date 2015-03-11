@@ -51,7 +51,8 @@
 
 	"dashboard": {
 		"port": 8080,
-		"path": "../formideOS-interface"
+		"path": "../formideOS-interface",
+		"auto": false
 	},
 
 	"database": {

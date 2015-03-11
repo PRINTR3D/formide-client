@@ -23,17 +23,24 @@ module.exports =
 	{
 		fs.exists(config.path, function(exists)
 		{
-			if(exists)
+			if(config.auto)
 			{
-				this.process = spawn('node', ['index.js'], {cwd: FormideOS.appRoot + config.path, stdio: 'pipe'});
-				this.process.stdout.setEncoding('utf8');
-				this.process.stdout.on('exit', this.onExit);
-				this.process.stdout.on('error', this.onError);
-				this.process.stdout.on('data', this.onData);
+				if(exists)
+				{
+					this.process = spawn('node', ['index.js'], {cwd: FormideOS.appRoot + config.path, stdio: 'pipe'});
+					this.process.stdout.setEncoding('utf8');
+					this.process.stdout.on('exit', this.onExit);
+					this.process.stdout.on('error', this.onError);
+					this.process.stdout.on('data', this.onData);
+				}
+				else
+				{
+					FormideOS.manager('debug').log('interface directory not found', true);
+				}
 			}
 			else
 			{
-				FormideOS.manager('debug').log('interface directory not found', true);
+				FormideOS.manager('debug').log('interface will not start automatically');
 			}
 		}.bind(this));
 
