@@ -18,8 +18,8 @@ module.exports = function(managerName)
 {
 	return {
 
-		init: function(data) {
-
+		init: function( data )
+		{
 			managerName = managerName.replace('.', '/');
 			managerNamespace = managerName.split('/')[1];
 
@@ -38,7 +38,7 @@ module.exports = function(managerName)
 					}
 					else
 					{
-						manager.init(data);
+						manager.init( data );
 					}
 				}
 
