@@ -12,62 +12,63 @@
  *
  */
 
-var fs = require('fs');
+var domain 	= require('domain');
+var fs 		= require('fs');
 
-module.exports = function(managerName)
+module.exports = function( managerName, data )
 {
-	return {
+	var d = domain.create();
+	d.name = managerName;
 
-		init: function( data )
+	d.on('error', function( err )
+	{
+	  	console.log( err.stack );
+	});
+
+	d.add(FormideOS.manager('core.events'));
+
+	d.run(function()
+	{
+		managerName = managerName.replace('.', '/');
+		managerNamespace = managerName.split('/')[1]; // remove core or app for urls
+
+		FormideOS.manager('debug').log('Loading manager: ' + managerName);
+
+		if(fs.existsSync('managers/' + managerName + '/index.js'))
 		{
-			managerName = managerName.replace('.', '/');
-			managerNamespace = managerName.split('/')[1];
+			var manager = require('../managers/' + managerName + '/index.js');
 
-			FormideOS.manager('debug').log('Loading manager: ' + managerName);
-
-			if(fs.existsSync('managers/' + managerName + '/index.js'))
+			// do init function if exists
+			if(typeof manager.init === 'function')
 			{
-				var manager = require('../managers/' + managerName + '/index.js');
+				manager.init( data );
+			}
 
-				// do init function if exists
-				if(typeof manager.init === 'function')
-				{
-					if(manager.init.length !== arguments.length)
-					{
-						FormideOS.manager('debug').log('manager ' + managerName + ' takes '+ manager.init.length + ' arguments but ' + arguments.length + ' were given', true);
-					}
-					else
-					{
-						manager.init( data );
-					}
-				}
+			if(fs.existsSync('managers/' + managerName + '/api.js'))
+			{
+				var routes = express();
+				require('../managers/' + managerName + '/api.js')(routes, manager);
+				FormideOS.manager('core.http').server.app.use('/api/' + managerNamespace, routes); // register as sub-app in express server
+			}
 
-				if(fs.existsSync('managers/' + managerName + '/api.js'))
-				{
-					var routes = express();
-					require('../managers/' + managerName + '/api.js')(routes, manager);
-					FormideOS.manager('core.http').server.app.use('/api/' + managerNamespace, routes); // register as sub-app in express server
-				}
+			if(fs.existsSync('managers/' + managerName + '/websocket.js'))
+			{
+				var namespace = FormideOS.manager('core.websocket').connection.of('/' + managerNamespace);
+				require('../managers/' + managerName + '/websocket.js')(namespace, manager);
+			}
 
-				if(fs.existsSync('managers/' + managerName + '/websocket.js'))
-				{
-					var namespace = FormideOS.manager('core.websocket').connection.of('/' + managerNamespace);
-					require('../managers/' + managerName + '/websocket.js')(namespace, manager);
-				}
-
-				if(!(managerName in FormideOS.managers))
-				{
-					FormideOS.managers[managerName] = manager;
-				}
-				else
-				{
-					FormideOS.manager('debug').log('Manager with name ' + managerName + ' already exists', true);
-				}
+			if(!(managerName in FormideOS.managers))
+			{
+				FormideOS.managers[managerName] = manager;
 			}
 			else
 			{
-				FormideOS.manager('debug').log('manager does not have an index.js file', true);
+				FormideOS.manager('debug').log('Manager with name ' + managerName + ' already exists', true);
 			}
 		}
-	}
+		else
+		{
+			FormideOS.manager('debug').log('manager does not have an index.js file', true);
+		}
+	}.bind( managerName, data ));
 }

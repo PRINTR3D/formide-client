@@ -24,22 +24,22 @@ getMac.getMac(function(err, macAddress)
 	FormideOS.macAddress = FormideOS.config.get('cloud.softMac', macAddress);
 
 	// core modules
-	FormideOS.register('core.http').init();
-	FormideOS.register('core.process').init();
-	FormideOS.register('core.db').init();
-	FormideOS.register('core.auth').init();
-	FormideOS.register('core.websocket').init();
-	FormideOS.register('core.device').init();
+	FormideOS.register('core.http');
+	FormideOS.register('core.process');
+	FormideOS.register('core.db');
+	FormideOS.register('core.auth');
+	FormideOS.register('core.websocket');
+	FormideOS.register('core.device');
 
 	// app modules
-	FormideOS.register('app.log').init(FormideOS.config.get('log'));
-	FormideOS.register('app.rest').init();
-	FormideOS.register('app.files').init();
-	FormideOS.register('app.printer').init(FormideOS.config.get('printer'));
-	FormideOS.register('app.slicer').init(FormideOS.config.get('slicer'));
-	FormideOS.register('app.interface').init(FormideOS.config.get('dashboard'));
-	FormideOS.register('app.setup').init();
-	FormideOS.register('app.cloud').init(FormideOS.config.get('cloud'));
+	FormideOS.register('app.log', FormideOS.config.get('log'));
+	FormideOS.register('app.rest');
+	FormideOS.register('app.files');
+	FormideOS.register('app.printer', FormideOS.config.get('printer'));
+	FormideOS.register('app.slicer', FormideOS.config.get('slicer'));
+	FormideOS.register('app.interface', FormideOS.config.get('dashboard'));
+	FormideOS.register('app.setup');
+	FormideOS.register('app.cloud', FormideOS.config.get('cloud'));
 
 	// under development
 	//registerInit('cron').init();
