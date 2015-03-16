@@ -19,7 +19,7 @@ module.exports = function(routes, module)
 	 */
 	routes.all('/slice', function( req, res )
 	{
-		if(req.query.sliceparams && req.query.modelfile && req.query.sliceprofile && req.query.materials && req.query.printer && req.query.slicemethod)
+		if(req.body.sliceparams && req.body.modelfile && req.body.sliceprofile && req.body.materials && req.body.printer && req.body.slicemethod)
 		{
 			var hash = (Math.random() / +new Date()).toString(36).replace(/[^a-z]+/g, '');
 
