@@ -25,7 +25,7 @@ module.exports = function(routes, module)
 
 			var json = {
 				"type": "slice",
-				"data": req.payload.sliceparams
+				"data": req.body.sliceparams
 			};
 
 			var model = {
@@ -43,18 +43,18 @@ module.exports = function(routes, module)
 			json.data.bucketOut = FormideOS.appRoot + FormideOS.config.get('paths.gcode');
 			json.data.responseID = hash;
 
-			if(req.payload.slicemethod == 'local')
+			if(req.body.slicemethod == 'local')
 			{
 				// create printjob in DB
 				FormideOS.manager('core.db').db.Printjob
 				.create(
 				{
-					ModelfileId: req.payload.modelfile.id,
-					printerID: req.payload.printer.id,
-					sliceprofileID: req.payload.sliceprofile.id,
-					materials: JSON.stringify(req.payload.materials),
+					ModelfileId: req.body.modelfile.id,
+					printerID: req.body.printer.id,
+					sliceprofileID: req.body.sliceprofile.id,
+					materials: JSON.stringify(req.body.materials),
 					sliceResponse: "{" + hash + "}",
-					sliceParams: JSON.stringify(req.payload.sliceparams),
+					sliceParams: JSON.stringify(req.body.sliceparams),
 					sliceMethod: 'local'
 				})
 				.success(function(printjob)
