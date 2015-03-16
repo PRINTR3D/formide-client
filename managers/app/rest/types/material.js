@@ -37,7 +37,7 @@ module.exports = function(routes, db)
 	routes.post('/materials', function( req, res )
 	{
 		db.Material
-		.create(req.payload)
+		.create(req.body)
 		.success(function()
 		{
 			res.send('OK')
@@ -53,7 +53,7 @@ module.exports = function(routes, db)
 			if(material)
 			{
 				material
-				.updateAttributes(req.payload)
+				.updateAttributes(req.body)
 				.success(function()
 				{
 					res.send('OK');

@@ -19,13 +19,13 @@ module.exports = function(routes, module)
 	 */
 	routes.all('/slice', function( req, res )
 	{
-		if(req.query.sliceparams && req.query.modelfile && req.query.sliceprofile && req.query.materials && req.query.printer && req.query.slicemethod)
+		if(req.body.sliceparams && req.body.modelfile && req.body.sliceprofile && req.body.materials && req.body.printer && req.body.slicemethod)
 		{
 			var hash = (Math.random() / +new Date()).toString(36).replace(/[^a-z]+/g, '');
 
 			var json = {
 				"type": "slice",
-				"data": req.payload.sliceparams
+				"data": req.body.sliceparams
 			};
 
 			var model = {
@@ -43,18 +43,18 @@ module.exports = function(routes, module)
 			json.data.bucketOut = FormideOS.appRoot + FormideOS.config.get('paths.gcode');
 			json.data.responseID = hash;
 
-			if(req.payload.slicemethod == 'local')
+			if(req.body.slicemethod == 'local')
 			{
 				// create printjob in DB
 				FormideOS.manager('core.db').db.Printjob
 				.create(
 				{
-					ModelfileId: req.payload.modelfile.id,
-					printerID: req.payload.printer.id,
-					sliceprofileID: req.payload.sliceprofile.id,
-					materials: JSON.stringify(req.payload.materials),
+					ModelfileId: req.body.modelfile.id,
+					printerID: req.body.printer.id,
+					sliceprofileID: req.body.sliceprofile.id,
+					materials: JSON.stringify(req.body.materials),
 					sliceResponse: "{" + hash + "}",
-					sliceParams: JSON.stringify(req.payload.sliceparams),
+					sliceParams: JSON.stringify(req.body.sliceparams),
 					sliceMethod: 'local'
 				})
 				.success(function(printjob)

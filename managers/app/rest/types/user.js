@@ -37,7 +37,7 @@ module.exports = function(routes, db)
 	routes.post('/users', function( req, res )
 	{
 		db.User
-		.create(req.payload)
+		.create(req.body)
 		.success(function()
 		{
 			res.send('OK')
@@ -53,7 +53,7 @@ module.exports = function(routes, db)
 			if(user)
 			{
 				user
-				.updateAttributes(req.payload)
+				.updateAttributes(req.body)
 				.success(function()
 				{
 					res.send('OK');

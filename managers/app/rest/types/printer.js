@@ -37,7 +37,7 @@ module.exports = function(routes, db)
 	routes.post('/printers', function( req, res )
 	{
 		db.Printer
-		.create(req.payload)
+		.create(req.body)
 		.success(function()
 		{
 			res.send('OK')
@@ -53,7 +53,7 @@ module.exports = function(routes, db)
 			if(printer)
 			{
 				printer
-				.updateAttributes(req.payload)
+				.updateAttributes(req.body)
 				.success(function()
 				{
 					res.send('OK');
