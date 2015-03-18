@@ -36,9 +36,9 @@ module.exports = function(routes, db)
 
 	routes.post('/queue', function( req, res )
 	{
-		if(req.payload.printjobID)
+		if(req.body.printjobID)
 		{
-			db.Printjob.find({where: {id: req.payload.printjobID}})
+			db.Printjob.find({where: {id: req.body.printjobID}})
 			.success(function(printjob)
 			{
 				db.Queueitem

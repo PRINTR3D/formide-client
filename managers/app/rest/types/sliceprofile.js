@@ -37,7 +37,7 @@ module.exports = function(routes, db)
 	routes.post('/sliceprofiles', function( req, res )
 	{
 		db.Sliceprofile
-		.create(req.payload)
+		.create(req.body)
 		.success(function()
 		{
 			res.send('OK')
@@ -53,7 +53,7 @@ module.exports = function(routes, db)
 			if(sliceprofile)
 			{
 				sliceprofile
-				.updateAttributes(req.payload)
+				.updateAttributes(req.body)
 				.success(function()
 				{
 					res.send('OK');
