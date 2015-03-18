@@ -30,9 +30,7 @@ module.exports = function(routes, module)
 	 */
 	routes.post('/token', function( req, res )
 	{
-		module.registerToCloud( req.body.wifi_ssid, req.body.wifi_password, req.body.token, function( response )
-		{
-			res.send( response );
-		});
+		module.registerToCloud( req.body.wifi_ssid, req.body.wifi_password, req.body.token );
+		res.send('OK');
 	});
 };

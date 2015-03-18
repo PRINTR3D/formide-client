@@ -13,6 +13,7 @@
  */
 
 var os = require('os');
+var request = require('request');
 
 module.exports = {
 
@@ -31,27 +32,31 @@ module.exports = {
 		callback( 'OK' );
 	},
 
-	registerToCloud: function( ssid, password, token, callback )
+	registerToCloud: function( ssid, password, token )
 	{
 		// connect to wifi, otherwise, back to AP
 
-		var formide = require('formide')({
-			apiUrl: 'http://formide.local',
-			apiKey: 'FORMIDE',
-			apiSecret: 'FORMIDESECRET',
-			redirectURI: 'http://localhost:8080/auth/redirect',
-			scope: 'user.user'
-		});
-
-		formide.apiproxy.call('POST', '/cauth/v1/token', {
-			ip_int: '',
-			ip_ext: '',
-			mac: FormideOS.macAddress,
-			hostname: '',
-			token: token
-		}, function( success )
+		request({
+			method: 'POST',
+			url: 'https://api.formide.com/cauth/v1/token',
+			form:{
+				ip_int: '',
+				ip_ext: '',
+				mac: FormideOS.macAddress,
+				hostname: '',
+				token: token
+			},
+			strictSSL: false
+		}, function( err, httpResponse, body )
 		{
-			callback( success );
+			if( err )
+			{
+				FormideOS.manager('debug').log( err, true );
+			}
+			else
+			{
+				FormideOS.manager('debug').log( body );
+			}
 		}.bind(this));
 	},
 
