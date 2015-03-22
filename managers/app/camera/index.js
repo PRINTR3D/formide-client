@@ -17,11 +17,30 @@ var exec = require('child_process').exec;
 module.exports =
 {
 	config: {},
+	stream: false,
+	interval: null,
 
 	init: function( config )
 	{
 		this.config = config;
-		setInterval(this.takeSnapshot.bind(this), config.interval);
+	},
+
+	startStream: function( socket )
+	{
+		if( !this.stream )
+		{
+			this.interval = setInterval(this.takeSnapshot.bind(this), this.config.interval);
+		}
+	},
+
+	stopStream: function()
+	{
+		if( this.stream )
+		{
+			this.stream = false;
+			clearInterval( this.interval );
+			this.interval = null;
+		}
 	},
 
 	takeSnapshot: function()
@@ -30,13 +49,16 @@ module.exports =
 		{
 			if(err)
 			{
-				FormideOS.manager('debug').log(err);
+				FormideOS.manager('core.debug').log(err);
 			}
 
 			if(stderr)
 			{
-				FormideOS.manager('debug').log(stderr);
+				FormideOS.manager('core.debug').log(stderr);
 			}
+
+			FormideOS.manager('core.events').emit('camera.refresh');
+
 		}.bind(this));
 	}
 }

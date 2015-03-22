@@ -12,14 +12,21 @@
  *
  */
 
+var path = require('path');
+
 module.exports = function(routes, module)
 {
 	/**
-	 * Take a snapshot of the printer
+	 * Register static directory to serve video stream
 	 */
-	routes.get('/snapshot', function( req, res )
+	routes.use('/stream', express.static(path.join(__dirname, 'stream')));
+
+	/**
+	 * Start video stream
+	 */
+	routes.get('/start', function( req, res )
 	{
-		module.takeSnapshot();
+		module.startStream();
 		res.send({
 			status: 200,
 			message: 'OK'
@@ -27,27 +34,14 @@ module.exports = function(routes, module)
 	});
 
 	/**
-	 * Get latest snapshot of the printer
+	 * Start video stream
 	 */
-	routes.get('/src', function( req, res )
+	routes.get('/stop', function( req, res )
 	{
-// 		return res.file('../uploads/images/image.jpg');
-	});
-
-	/**
-	 * Get 'real-time' feed
-	 */
-	routes.get('/preview', function( req, res )
-	{
-/*
-		var page = "<html><head>" +
-		"<script>setInterval( function() { var image = document.getElementById('image'); image.src = '/api/camera/src'; }, 2000);</script>" +
-		"<title>FormideOS Camera Feed</title>\n" +
-		"</head><body>\n" +
-		"<img id='image'/>" +
-		"</body>\n" +
-		"</html>\n";
-		return res(page);
-*/
+		module.stopStream();
+		res.send({
+			status: 200,
+			message: 'OK'
+		});
 	});
 }

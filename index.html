@@ -7,4 +7,11 @@ log.on('debug', function( data )
 	console.log( data );
 });
 
+var camera = io('http://localhost:4000/camera');
+camera.on('stream', function( data )
+{
+	document.getElementById('image').setAttribute('src', "http://localhost:1337/api/camera/stream/" + data);
+});
+
 </script>
+<img id="image" width="200px"/>

@@ -41,10 +41,12 @@ getMac.getMac(function(err, macAddress)
 	FormideOS.register('app.setup');
 	FormideOS.register('app.cloud', FormideOS.config.get('cloud'));
 
+	FormideOS.register('app.camera', FormideOS.config.get('camera'));
+
 	// under development
 	//registerInit('cron').init();
 	//registerInit('led').init();
-	//registerInit('camera').init(FormideOS.config.get('camera'));
+
 	//registerInit('wifi').init();
 	//registerInit('update').init();
 });
