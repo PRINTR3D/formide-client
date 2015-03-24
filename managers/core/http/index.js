@@ -12,16 +12,18 @@
  *
  */
 
-// dependencies
+// global dependencies
 express 				= require('express');
+cookieParser 			= require('cookie-parser');
+session 				= require('express-session')({ secret: 'secret', key: 'express.sid', saveUninitialized: true, resave: true });
+
+// dependencies
 var expressValidator 	= require('express-validator')
 var cors 				= require('cors');
 var passport 			= require('passport');
 var LocalStrategy 		= require('passport-local').Strategy;
 var BearerStrategy 		= require('passport-http-bearer').Strategy;
 var bodyParser 			= require('body-parser');
-var session 			= require('express-session');
-var MemoryStore 		= session.MemoryStore;
 var permissions			= require('./permissions.js');
 
 module.exports =
@@ -43,13 +45,8 @@ module.exports =
 		http.app.use( bodyParser.urlencoded({extended: true}) );
 		http.app.use( expressValidator() );
 
-		http.app.use( session({
-		    key: 'KEY',
-		    secret: 'SECRET331156%^!fafsdaasd',
-		    store: new MemoryStore({reapInterval: 60000 * 10}),
-		    saveUninitialized: true,
-		    resave: false
-		}));
+		http.app.use( cookieParser() );
+		http.app.use( session );
 
 		http.app.use( passport.initialize() );
 		http.app.use( passport.session() );
