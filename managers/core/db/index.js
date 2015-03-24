@@ -41,7 +41,8 @@ module.exports =
 	{
 		this.db.User = this.sequelize.define('User', {
 		    "username": "STRING",
-		    "password": "STRING"
+		    "password": "STRING",
+		    "permissions": "TEXT"
 		});
 
 		this.db.Printjob = this.sequelize.define('Printjob', {

@@ -19,9 +19,13 @@ module.exports = function(routes, module)
 		res.send( req.user );
 	});
 
-	routes.get('/logout', function( req, res )
+	routes.get('/logout', FormideOS.manager('core.http').server.permissions.check('auth'), function( req, res )
 	{
 		req.logout();
+		res.send({
+			status: 200,
+			message: 'logged out'
+		});
 	});
 
 	routes.get('/session', function( req, res )

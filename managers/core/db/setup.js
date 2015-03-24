@@ -30,8 +30,9 @@ module.exports = {
 			{
 				db.User
 				.create({
-					"username": "login@FormideOS.local",
-					"password": "password"
+					"username": "login@printspot.local",
+					"password": "password",
+					"permissions": "auth,rest"
 				})
 				.success(function(success)
 				{

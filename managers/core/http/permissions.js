@@ -17,27 +17,51 @@ module.exports =
 	initialize: function()
 	{
 		var self = this;
-
-		console.log( 'permissions check' );
+		var permissions = ['log', 'slicer'];
 
 		return function( req, res, next )
 		{
+			req._permissions = {};
+			req._permissions.instance = self;
+
+			if(req.user && req.session['permissions'])
+			{
+				FormideOS.manager('debug').log( 'Session set and permissions found' );
+				req._permissions.session = true;
+				req._permissions.permissions = req.session['permissions'];
+			}
+			else if(req.user)
+			{
+				FormideOS.manager('debug').log( 'Session set and permissions fetched from DB' );
+				var permissions = req.user.permissions.split(",");
+				req._permissions.session = true;
+				req.session['permissions'] = permissions;
+				req._permissions.permissions = req.session['permissions'];
+			}
+			else
+			{
+				FormideOS.manager('debug').log( 'Session not set' );
+				req._permissions.session = false;
+			}
+
 			next();
 		}
 	},
 
 	check: function( permission )
 	{
-		var self = this;
-		var permissions = ['slicer'];
-
 		return function( req, res, next )
 		{
-			// check if permission is in user's permissions
-			if( permissions.indexOf( permission ) > -1 )
+			if(req._permissions.session)
 			{
-				return next();
+				if( req._permissions.permissions.indexOf( permission ) > -1 )
+				{
+					FormideOS.manager('debug').log( 'Permissions correct' );
+					return next();
+				}
 			}
+
+			FormideOS.manager('debug').log( 'Permissions incorrect' );
 
 			return res.status(401).send({
 				status: 401,
