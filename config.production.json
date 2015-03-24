@@ -1,6 +1,6 @@
 {
 	"app": {
-		"debug": false,
+		"debug": true,
 		"timezone": "UTC",
 		"url": "localhost",
 		"port": 1337,
@@ -9,7 +9,7 @@
 	},
 
 	"camera": {
-		"command": "fswebcam -d /dev/video0 -r 320x240 /home/debian/formideOS/uploads/images/image.jpg",
+		"command": "fswebcam -d /dev/video0 -r 320x240 stream/image.jpg",
 		"interval": 2000
 	},
 
