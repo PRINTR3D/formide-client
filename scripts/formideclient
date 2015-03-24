@@ -11,10 +11,10 @@
 
 DAEMON_PATH="/home/debian/formideOS/formideOS-client"
 
-DAEMON=NODE_ENV=production node bootstrap.js
+DAEMON="NODE_ENV=production node bootstrap.js"
 DAEMONOPTS=""
 
-NAME=$DAEMON
+NAME="formideos-client"
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
 
