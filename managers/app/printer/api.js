@@ -85,16 +85,16 @@ module.exports = function(routes, module)
 						};
 
 						FormideOS.manager('core.events').emit('dashboard.push', json);
-						res.send({
+						return res.send({
 							status: 200,
 							message: 'OK'
 						});
 					}
 					else
 					{
-						res.send({
+						return res.send({
 							status: 402,
-							message: 'ERR: param missing'
+							errors: 'ERR: param missing'
 						});
 					}
 				}

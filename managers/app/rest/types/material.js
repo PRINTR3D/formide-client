@@ -26,6 +26,17 @@ module.exports = function(routes, db)
 
 	routes.get('/materials/:id', function( req, res )
 	{
+		req.checkParams('id', 'id invalid').notEmpty().isInt();
+
+		var inputErrors = req.validationErrors();
+		if( inputErrors )
+		{
+			return res.status(400).json({
+				status: 400,
+				errors: inputErrors
+			});
+		}
+
 		db.Material
 		.find({ where: {id: req.params.id } })
 		.then(function( material )
@@ -36,16 +47,56 @@ module.exports = function(routes, db)
 
 	routes.post('/materials', function( req, res )
 	{
+		req.checkBody('name', 'name invalid').notEmpty();
+		req.checkBody('type', 'type invalid').notEmpty();
+		req.checkBody('filamentDiameter', 'filamentDiameter invalid').notEmpty().isInt();
+		req.checkBody('temperature', 'temperature invalid').notEmpty().isInt();
+		req.checkBody('firstLayersTemperature', 'firstLayersTemperature invalid').notEmpty().isInt();
+		req.checkBody('bedTemperature', 'bedTemperature invalid').notEmpty().isInt();
+		req.checkBody('firstLayersBedTemperature', 'firstLayersBedTemperature invalid').notEmpty().isInt();
+		req.checkBody('feedrate', 'feedrate invalid').notEmpty().isInt();
+
+		var inputErrors = req.validationErrors();
+		if( inputErrors )
+		{
+			return res.status(400).json({
+				status: 400,
+				errors: inputErrors
+			});
+		}
+
 		db.Material
 		.create(req.body)
 		.success(function()
 		{
-			res.send('OK')
+			return res.send({
+				status: 200,
+				message: 'OK'
+			});
 		});
 	});
 
 	routes.put('/materials/:id', function( req, res )
 	{
+		req.checkParams('id', 'id invalid').notEmpty().isInt();
+		req.checkBody('name', 'name invalid').notEmpty();
+		req.checkBody('type', 'type invalid').notEmpty();
+		req.checkBody('filamentDiameter', 'filamentDiameter invalid').notEmpty().isInt();
+		req.checkBody('temperature', 'temperature invalid').notEmpty().isInt();
+		req.checkBody('firstLayersTemperature', 'firstLayersTemperature invalid').notEmpty().isInt();
+		req.checkBody('bedTemperature', 'bedTemperature invalid').notEmpty().isInt();
+		req.checkBody('firstLayersBedTemperature', 'firstLayersBedTemperature invalid').notEmpty().isInt();
+		req.checkBody('feedrate', 'feedrate invalid').notEmpty().isInt();
+
+		var inputErrors = req.validationErrors();
+		if( inputErrors )
+		{
+			return res.status(400).json({
+				status: 400,
+				errors: inputErrors
+			});
+		}
+
 		db.Material
 		.find({ where: {id: req.params.id } })
 		.on('success', function( material )
@@ -56,7 +107,10 @@ module.exports = function(routes, db)
 				.updateAttributes(req.body)
 				.success(function()
 				{
-					res.send('OK');
+					return res.send({
+						status: 200,
+						message: 'OK'
+					});
 				});
 			}
 		});
@@ -64,6 +118,17 @@ module.exports = function(routes, db)
 
 	routes.delete('/materials/:id', function( req, res )
 	{
+		req.checkParams('id', 'id invalid').notEmpty().isInt();
+
+		var inputErrors = req.validationErrors();
+		if( inputErrors )
+		{
+			return res.status(400).json({
+				status: 400,
+				errors: inputErrors
+			});
+		}
+
 		db.Material
 		.find({ where: {id: req.params.id } })
 		.on('success', function( material )
@@ -74,7 +139,10 @@ module.exports = function(routes, db)
 				.destroy()
 				.success(function()
 				{
-					res.send('OK');
+					return res.send({
+						status: 200,
+						message: 'OK'
+					});
 				});
 			}
 		});

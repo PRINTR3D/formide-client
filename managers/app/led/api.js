@@ -19,10 +19,23 @@ module.exports = function(routes, module)
 	 */
 	routes.get('/rgb/:r/:g/:b', function( req, res )
 	{
-		module.led.rgb(req.params,r, req.params.g, req.params.b);
-		res.send({
+		req.checkParams('r', 'r invalid').notEmpty().isInt();
+		req.checkParams('g', 'g invalid').notEmpty().isInt();
+		req.checkParams('b', 'b invalid').notEmpty().isInt();
+
+		if( req.validationErrors() )
+		{
+			return res.status(400).json({
+				status: 400,
+				errors: req.validationErrors()
+			});
+		}
+
+		module.led.rgb(req.params.r, req.params.g, req.params.b);
+
+		return res.send({
 			status: 200,
-			message: 'OK';
+			message: 'OK'
 		});
 	});
 }
