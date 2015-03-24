@@ -17,7 +17,7 @@ module.exports = function(routes, module)
 	/**
 	 * Set led rgb color
 	 */
-	routes.get('/rgb/:r/:g/:b', function( req, res )
+	routes.get('/rgb/:r/:g/:b', FormideOS.manager('core.http').server.permissions.check('led'), function( req, res )
 	{
 		req.checkParams('r', 'r invalid').notEmpty().isInt();
 		req.checkParams('g', 'g invalid').notEmpty().isInt();

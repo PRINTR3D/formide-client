@@ -24,7 +24,7 @@ module.exports = function(routes, module)
 	/**
 	 * Start video stream
 	 */
-	routes.get('/start', function( req, res )
+	routes.get('/start', FormideOS.manager('core.http').server.permissions.check('camera'), function( req, res )
 	{
 		module.startStream();
 		res.send({
@@ -36,7 +36,7 @@ module.exports = function(routes, module)
 	/**
 	 * Start video stream
 	 */
-	routes.get('/stop', function( req, res )
+	routes.get('/stop', FormideOS.manager('core.http').server.permissions.check('camera'), function( req, res )
 	{
 		module.stopStream();
 		res.send({

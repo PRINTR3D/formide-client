@@ -28,12 +28,12 @@ module.exports = function(routes, module)
 		});
 	});
 
-	routes.get('/session', function( req, res )
+	routes.get('/session', FormideOS.manager('core.http').server.permissions.check('auth'), function( req, res )
 	{
 		res.send( req.user );
 	});
 
-	routes.get('/tokens', function( req, res )
+	routes.get('/tokens', FormideOS.manager('core.http').server.permissions.check('auth'), function( req, res )
 	{
 		module.getAccessTokens(function( tokens )
 		{
@@ -41,7 +41,7 @@ module.exports = function(routes, module)
 		});
 	});
 
-	routes.post('/tokens', function( req, res )
+	routes.post('/tokens', FormideOS.manager('core.http').server.permissions.check('auth'), function( req, res )
 	{
 		req.checkBody('permissions', 'permissions invalid').notEmpty();
 
@@ -60,7 +60,7 @@ module.exports = function(routes, module)
 		});
 	});
 
-	routes.delete('/tokens/:token', function( req, res )
+	routes.delete('/tokens/:token', FormideOS.manager('core.http').server.permissions.check('auth'), function( req, res )
 	{
 		req.checkParams('token', 'token invalid').notEmpty();
 
@@ -79,7 +79,7 @@ module.exports = function(routes, module)
 		});
 	});
 
-	routes.post('/password', FormideOS.manager('core.http').server.auth.authenticate(['local-login']), function( req, res )
+	routes.post('/password', FormideOS.manager('core.http').server.permissions.check('auth'), function( req, res )
 	{
 		if(req.body.password)
 		{

@@ -14,7 +14,7 @@
 
 module.exports = function(routes, db)
 {
-	routes.get('/modelfiles', function( req, res )
+	routes.get('/modelfiles', FormideOS.manager('core.http').server.permissions.check('rest:modelfile'), function( req, res )
 	{
 		db.Modelfile
 		.findAll()
@@ -24,7 +24,7 @@ module.exports = function(routes, db)
 		});
 	});
 
-	routes.get('/modelfiles/:id', function( req, res )
+	routes.get('/modelfiles/:id', FormideOS.manager('core.http').server.permissions.check('rest:modelfile'), function( req, res )
 	{
 		req.checkParams('id', 'id invalid').notEmpty().isInt();
 
@@ -45,7 +45,7 @@ module.exports = function(routes, db)
 		});
 	});
 
-	routes.delete('/modelfiles/:id', function( req, res )
+	routes.delete('/modelfiles/:id', FormideOS.manager('core.http').server.permissions.check('rest:modelfile'), function( req, res )
 	{
 		req.checkParams('id', 'id invalid').notEmpty().isInt();
 

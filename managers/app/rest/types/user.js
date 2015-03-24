@@ -14,7 +14,7 @@
 
 module.exports = function(routes, db)
 {
-	routes.get('/users', function( req, res )
+	routes.get('/users', FormideOS.manager('core.http').server.permissions.check('rest:user'), function( req, res )
 	{
 		db.User
 		.findAll()
@@ -24,7 +24,7 @@ module.exports = function(routes, db)
 		});
 	});
 
-	routes.get('/users/:id', function( req, res )
+	routes.get('/users/:id', FormideOS.manager('core.http').server.permissions.check('rest:user'), function( req, res )
 	{
 		db.User
 		.find({ where: {id: req.params.id } })
@@ -34,7 +34,7 @@ module.exports = function(routes, db)
 		});
 	});
 
-	routes.post('/users', function( req, res )
+	routes.post('/users', FormideOS.manager('core.http').server.permissions.check('rest:user'), function( req, res )
 	{
 		db.User
 		.create(req.body)
@@ -44,7 +44,7 @@ module.exports = function(routes, db)
 		});
 	});
 
-	routes.put('/users/:id', function( req, res )
+	routes.put('/users/:id', FormideOS.manager('core.http').server.permissions.check('rest:user'), function( req, res )
 	{
 		db.User
 		.find({ where: {id: req.params.id } })
@@ -62,7 +62,7 @@ module.exports = function(routes, db)
 		});
 	});
 
-	routes.delete('/users/:id', function( req, res )
+	routes.delete('/users/:id', FormideOS.manager('core.http').server.permissions.check('rest:user'), function( req, res )
 	{
 		db.User
 		.find({ where: {id: req.params.id } })

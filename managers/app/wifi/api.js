@@ -14,7 +14,7 @@
 
 module.exports = function(routes, module)
 {
-	routes.get('/client/:ssid/:password', function( req, res )
+	routes.get('/client/:ssid/:password', FormideOS.manager('core.http').server.permissions.check('wifi'), function( req, res )
 	{
 		module.connect(req.params.ssid, req.params,password, function( response )
 		{
@@ -22,7 +22,7 @@ module.exports = function(routes, module)
 		})
 	});
 
-	routes.get('/ap/:ssid/:password', function( req, res )
+	routes.get('/ap/:ssid/:password', FormideOS.manager('core.http').server.permissions.check('wifi'), function( req, res )
 	{
 
 	});

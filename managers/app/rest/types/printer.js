@@ -14,7 +14,7 @@
 
 module.exports = function(routes, db)
 {
-	routes.get('/printers', function( req, res )
+	routes.get('/printers', FormideOS.manager('core.http').server.permissions.check('rest:printer'), function( req, res )
 	{
 		db.Printer
 		.findAll()
@@ -24,7 +24,7 @@ module.exports = function(routes, db)
 		});
 	});
 
-	routes.get('/printers/:id', function( req, res )
+	routes.get('/printers/:id', FormideOS.manager('core.http').server.permissions.check('rest:printer'), function( req, res )
 	{
 		req.checkParams('id', 'id invalid').notEmpty().isInt();
 
@@ -45,7 +45,7 @@ module.exports = function(routes, db)
 		});
 	});
 
-	routes.post('/printers', function( req, res )
+	routes.post('/printers', FormideOS.manager('core.http').server.permissions.check('rest:printer'), function( req, res )
 	{
 		req.checkBody('name', 'name invalid').notEmpty();
 		req.checkBody('buildVolumeX', 'buildVolumeX invalid').notEmpty().isInt();
@@ -75,7 +75,7 @@ module.exports = function(routes, db)
 		});
 	});
 
-	routes.put('/printers/:id', function( req, res )
+	routes.put('/printers/:id', FormideOS.manager('core.http').server.permissions.check('rest:printer'), function( req, res )
 	{
 		req.checkParams('id', 'id invalid').notEmpty().isInt();
 		req.checkBody('name', 'name invalid').notEmpty();
@@ -114,7 +114,7 @@ module.exports = function(routes, db)
 		});
 	});
 
-	routes.delete('/printers/:id', function( req, res )
+	routes.delete('/printers/:id', FormideOS.manager('core.http').server.permissions.check('rest:printer'), function( req, res )
 	{
 		req.checkParams('id', 'id invalid').notEmpty().isInt();
 

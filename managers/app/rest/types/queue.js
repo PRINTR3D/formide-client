@@ -14,7 +14,7 @@
 
 module.exports = function(routes, db)
 {
-	routes.get('/queue', function( req, res )
+	routes.get('/queue', FormideOS.manager('core.http').server.permissions.check('rest:queue'), function( req, res )
 	{
 		db.Queueitem
 		.findAll({where: {status: 'queued'}, include: [{model: db.Printjob, include: [{model: db.Modelfile}]}]})
@@ -24,7 +24,7 @@ module.exports = function(routes, db)
 		});
 	});
 
-	routes.get('/queue/:id', function( req, res )
+	routes.get('/queue/:id', FormideOS.manager('core.http').server.permissions.check('rest:queue'), function( req, res )
 	{
 		req.checkParams('id', 'id invalid').notEmpty().isInt();
 
@@ -45,7 +45,7 @@ module.exports = function(routes, db)
 		});
 	});
 
-	routes.post('/queue', function( req, res )
+	routes.post('/queue', FormideOS.manager('core.http').server.permissions.check('rest:queue'), function( req, res )
 	{
 		req.checkBody('printjobID', 'printjobID invalid').notEmpty();
 
@@ -88,7 +88,7 @@ module.exports = function(routes, db)
 		});
 	});
 
-	routes.delete('/queue/:id', function( req, res )
+	routes.delete('/queue/:id', FormideOS.manager('core.http').server.permissions.check('rest:queue'), function( req, res )
 	{
 		req.checkParams('id', 'id invalid').notEmpty().isInt();
 

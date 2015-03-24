@@ -14,7 +14,7 @@
 
 module.exports = function(routes, db)
 {
-	routes.get('/sliceprofiles', function( req, res )
+	routes.get('/sliceprofiles', FormideOS.manager('core.http').server.permissions.check('rest:sliceprofile'), function( req, res )
 	{
 		db.Sliceprofile
 		.findAll()
@@ -24,7 +24,7 @@ module.exports = function(routes, db)
 		});
 	});
 
-	routes.get('/sliceprofiles/:id', function( req, res )
+	routes.get('/sliceprofiles/:id', FormideOS.manager('core.http').server.permissions.check('rest:sliceprofile'), function( req, res )
 	{
 		req.checkParams('id', 'id invalid').notEmpty().isInt();
 
@@ -45,7 +45,7 @@ module.exports = function(routes, db)
 		});
 	});
 
-	routes.post('/sliceprofiles', function( req, res )
+	routes.post('/sliceprofiles', FormideOS.manager('core.http').server.permissions.check('rest:sliceprofile'), function( req, res )
 	{
 		req.checkBody('name', 'name invalid').notEmpty();
 		req.checkBody('settings', 'type invalid').notEmpty();
@@ -70,7 +70,7 @@ module.exports = function(routes, db)
 		});
 	});
 
-	routes.put('/sliceprofiles/:id', function( req, res )
+	routes.put('/sliceprofiles/:id', FormideOS.manager('core.http').server.permissions.check('rest:sliceprofile'), function( req, res )
 	{
 		req.checkParams('id', 'id invalid').notEmpty().isInt();
 		req.checkBody('name', 'name invalid').notEmpty();
@@ -104,7 +104,7 @@ module.exports = function(routes, db)
 		});
 	});
 
-	routes.delete('/sliceprofiles/:id', function( req, res )
+	routes.delete('/sliceprofiles/:id', FormideOS.manager('core.http').server.permissions.check('rest:sliceprofile'), function( req, res )
 	{
 		req.checkParams('id', 'id invalid').notEmpty().isInt();
 

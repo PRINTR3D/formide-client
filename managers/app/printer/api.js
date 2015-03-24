@@ -17,7 +17,7 @@ module.exports = function(routes, module)
 	/**
 	 * Get a list of printer commands
 	 */
-	routes.get('/list', function( req, res )
+	routes.get('/list', FormideOS.manager('core.http').server.permissions.check('printer'), function( req, res )
 	{
 		res.send(FormideOS.config.get('channels.dashboard'));
 	});
@@ -25,7 +25,7 @@ module.exports = function(routes, module)
 	/**
 	 * Get the current status of the printer
 	 */
-	routes.get('/status', function( req, res )
+	routes.get('/status', FormideOS.manager('core.http').server.permissions.check('printer'), function( req, res )
 	{
 		FormideOS.manager('core.events').once('printer.status', function( status )
 		{
@@ -36,7 +36,7 @@ module.exports = function(routes, module)
 	/**
 	 * Send a command to the printer
 	 */
-	routes.get('/control/:command', function( req, res )
+	routes.get('/control/:command', FormideOS.manager('core.http').server.permissions.check('printer'), function( req, res )
 	{
 		// load channels from config
 		Object.keys(FormideOS.config.get('channels.dashboard')).forEach(function(method)

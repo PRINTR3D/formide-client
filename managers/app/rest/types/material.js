@@ -14,7 +14,7 @@
 
 module.exports = function(routes, db)
 {
-	routes.get('/materials', function( req, res )
+	routes.get('/materials', FormideOS.manager('core.http').server.permissions.check('rest:material'), function( req, res )
 	{
 		db.Material
 		.findAll()
@@ -24,7 +24,7 @@ module.exports = function(routes, db)
 		});
 	});
 
-	routes.get('/materials/:id', function( req, res )
+	routes.get('/materials/:id', FormideOS.manager('core.http').server.permissions.check('rest:material'), function( req, res )
 	{
 		req.checkParams('id', 'id invalid').notEmpty().isInt();
 
@@ -45,7 +45,7 @@ module.exports = function(routes, db)
 		});
 	});
 
-	routes.post('/materials', function( req, res )
+	routes.post('/materials', FormideOS.manager('core.http').server.permissions.check('rest:material'), function( req, res )
 	{
 		req.checkBody('name', 'name invalid').notEmpty();
 		req.checkBody('type', 'type invalid').notEmpty();
@@ -76,7 +76,7 @@ module.exports = function(routes, db)
 		});
 	});
 
-	routes.put('/materials/:id', function( req, res )
+	routes.put('/materials/:id', FormideOS.manager('core.http').server.permissions.check('rest:material'), function( req, res )
 	{
 		req.checkParams('id', 'id invalid').notEmpty().isInt();
 		req.checkBody('name', 'name invalid').notEmpty();
@@ -116,7 +116,7 @@ module.exports = function(routes, db)
 		});
 	});
 
-	routes.delete('/materials/:id', function( req, res )
+	routes.delete('/materials/:id', FormideOS.manager('core.http').server.permissions.check('rest:material'), function( req, res )
 	{
 		req.checkParams('id', 'id invalid').notEmpty().isInt();
 

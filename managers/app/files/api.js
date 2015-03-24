@@ -17,7 +17,7 @@ var multipartMiddleware = multipart();
 
 module.exports = function(routes, module)
 {
-	routes.get('/download', function( req, res )
+	routes.get('/download', FormideOS.manager('core.http').server.permissions.check('files'), function( req, res )
 	{
 		req.checkQuery('hash', 'hash invalid').notEmpty();
 		req.checkQuery('encoding', 'encoding invalid').notEmpty();
@@ -36,7 +36,7 @@ module.exports = function(routes, module)
 		});
 	});
 
-	routes.get('/downloadgcode', function( req, res )
+	routes.get('/downloadgcode', FormideOS.manager('core.http').server.permissions.check('files'), function( req, res )
 	{
 		req.checkQuery('hash', 'hash invalid').notEmpty();
 		req.checkQuery('encoding', 'encoding invalid').notEmpty();
@@ -55,7 +55,7 @@ module.exports = function(routes, module)
 		});
 	});
 
-	routes.post('/upload', multipartMiddleware, function( req, res )
+	routes.post('/upload', FormideOS.manager('core.http').server.permissions.check('files'), multipartMiddleware, function( req, res )
 	{
 		if( !req.files )
 		{
@@ -71,7 +71,7 @@ module.exports = function(routes, module)
 		});
 	});
 
-	routes.post('/uploadgcode', multipartMiddleware, function( req, res )
+	routes.post('/uploadgcode', FormideOS.manager('core.http').server.permissions.check('files'), multipartMiddleware, function( req, res )
 	{
 		if( !req.files )
 		{

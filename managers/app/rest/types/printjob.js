@@ -14,7 +14,7 @@
 
 module.exports = function(routes, db)
 {
-	routes.get('/printjobs', function( req, res )
+	routes.get('/printjobs', FormideOS.manager('core.http').server.permissions.check('rest:printjob'), function( req, res )
 	{
 		db.Printjob
 		.findAll({ include: [ { model: db.Modelfile } ] })
@@ -24,7 +24,7 @@ module.exports = function(routes, db)
 		});
 	});
 
-	routes.get('/printjobs/:id', function( req, res )
+	routes.get('/printjobs/:id', FormideOS.manager('core.http').server.permissions.check('rest:printjob'), function( req, res )
 	{
 		req.checkParams('id', 'id invalid').notEmpty().isInt();
 
@@ -45,7 +45,7 @@ module.exports = function(routes, db)
 		});
 	});
 
-	routes.delete('/printjobs/:id', function( req, res )
+	routes.delete('/printjobs/:id', FormideOS.manager('core.http').server.permissions.check('rest:printjob'), function( req, res )
 	{
 		req.checkParams('id', 'id invalid').notEmpty().isInt();
 

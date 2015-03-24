@@ -19,7 +19,7 @@ module.exports = function(routes, module)
 	/**
 	 * Slice!
 	 */
-	routes.post('/slice', function( req, res )
+	routes.post('/slice', FormideOS.manager('core.http').server.permissions.check('slicer'), function( req, res )
 	{
 		req.checkBody('sliceparams', 'sliceparams invalid').notEmpty();
 		req.checkBody('modelfile', 'modelfile invalid').notEmpty().isInt();
