@@ -32,7 +32,7 @@ module.exports = {
 				.create({
 					"username": "login@printspot.local",
 					"password": "password",
-					"permissions": "camera,files,led,log,printer,rest:material,rest:modelfile,rest:printer,rest:printjob,rest:queue,rest:sliceprofile,rest:user,slicer,wifi,device"
+					"permissions": "auth,camera,files,led,log,printer,rest:material,rest:modelfile,rest:printer,rest:printjob,rest:queue,rest:sliceprofile,rest:user,slicer,wifi,device"
 				})
 				.success(function(success)
 				{
@@ -42,7 +42,7 @@ module.exports = {
 				db.Accesstoken
 				.create({
 					"token": "b518e7f9-9d7f-4de8-a522-68deaea20024",
-					"permissions": "camera,files,led,log,printer,rest:material,rest:modelfile,rest:printer,rest:printjob,rest:queue,rest:sliceprofile,rest:user,slicer,wifi,device"
+					"permissions": "auth,camera,files,led,log,printer,rest:material,rest:modelfile,rest:printer,rest:printjob,rest:queue,rest:sliceprofile,rest:user,slicer,wifi,device"
 				})
 				.success(function(success)
 				{
