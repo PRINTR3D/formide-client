@@ -123,7 +123,7 @@ module.exports =
 		});
 	},
 
-	downloadGcode: function( filename, callback )
+	downloadGcode: function( hash, encoding, callback )
 	{
 		var filename = FormideOS.config.get('paths.gcode') + '/' + hash;
 

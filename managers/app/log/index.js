@@ -32,6 +32,11 @@ module.exports =
 		FormideOS.manager('core.events').on('log.message', this.logMessage);
 	},
 
+	log: function( type, data )
+	{
+		this.logger.log('debug', type, data);
+	},
+
 	logError: function(error)
 	{
 		this.logger.log('debug', error.type, error.data);

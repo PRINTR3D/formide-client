@@ -51,16 +51,16 @@ module.exports = {
 				db.Printer
 				.create({
 					"name": "Mini Builder",
-					"buildVolumeX": 200,
-					"buildVolumeY": 200,
-					"buildVolumeZ": 200,
+					"buildVolumeX": 220000,
+					"buildVolumeY": 210000,
+					"buildVolumeZ": 210000,
 					"bed": false,
 					"port": "/dev/tty1",
 					"extruders": JSON.stringify([
 					{
-						"id":0,
-						"name":"extruder1",
-						"nozzleSize": 300
+						"id": 0,
+						"name": "extruder1",
+						"nozzleSize": 400
 					}])
 				})
 				.success(function(success)
@@ -95,13 +95,6 @@ module.exports = {
 						   "min": 35,
 						   "max": 90
 						},
-						"bed": {
-						   "xlength": 220000,
-						   "ylength": 210000,
-						   "zlength": 170000,
-						   "temperature": 0,
-						   "firstLayersTemperature": 0
-						},
 						"infill": {
 						   "amount": 10,
 						   "pattern": "grid",
@@ -122,8 +115,8 @@ module.exports = {
 						   "minLenght": 150000
 						},
 						"multiExtrusion": {
-							"preSwitchCode": ";WE ARE GOING TO CHANGE THE EXTRUDER :D",
-							"postSwitchCode": "; WE JUST CHANGED THE EXTRUDER. I HOPE IT WORKED D: D: D: D: D:",
+							"preSwitchCode": [],
+							"postSwitchCode": [],
 							"dualOverlap": 1500
 						},
 						"movement": {
@@ -138,6 +131,25 @@ module.exports = {
 						   "firstLayersWidthFactor": 120,
 						   "wipeTowerSize": 0
 						},
+						"raft": {
+			               "baseThickness": 0,
+			               "baseSpeed": 90,
+			               "baseLineSpacing":1500,
+			               "interfaceThickness": 0,
+			               "interfaceLineWidth":400,
+			               "interfaceLineSpacing": 5000,
+			               "airGap": 200,
+			               "baseLineWidth": 1000,
+			               "extraMargin": 2000,
+			               "surfaceLayers": 4,
+			               "surfaceThickness": 0,
+			               "surfaceSpeed": 20,
+			               "surfaceLineWidth": 400,
+			               "surfaceLineSpacing": 5000,
+			               "firstLayerAirGap": 250,
+			               "fanSpeed": 25,
+						   "extruder":"extruder1"
+			           	},
 						"bottom": {
 						   "thickness": 960,
 						   "layerHeight": 240,
@@ -170,11 +182,12 @@ module.exports = {
 						   "wallThickness": 400
 						},
 						"extra": {
-							   "brimLines": 0
+							"brimLines": 0
 						},
 						"gcode": {
 						   "startGcode": ["G21", "G28", "G1 Z5 F5000", "G90", "G92 E0", "M82", "G92 E0"],
 						   "endGcode": ["G92 E0", "M104 S0", "G28 X0", "M84"],
+						   "changelayerGcode": [],
 						   "gcodeFlavour": "GCODE_FLAVOR_ULTIGCODE"
 						},
 						"plugins": []

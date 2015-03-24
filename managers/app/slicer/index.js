@@ -46,8 +46,8 @@ module.exports =
 
 		}.bind(this), 2500);
 
-		FormideOS.manager('core.events').on('slicer.slice', this.slice);
-		FormideOS.manager('core.events').on('process.exit', this.stop);
+		FormideOS.manager('core.events').on('slicer.slice', this.slice.bind(this));
+		FormideOS.manager('core.events').on('process.exit', this.stop.bind(this));
 	},
 
 	onExit: function(exit)

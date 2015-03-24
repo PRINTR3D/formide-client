@@ -19,18 +19,18 @@ var net = require('net');
 
 module.exports =
 {
-	process1: null,
+	process: null,
 	printer: {},
 
 	init: function(config)
 	{
 		if(config.simulated)
 		{
-			this.process1 = spawn('node', ['index.js'], {cwd: FormideOS.appRoot + 'driver-simulator', stdio: 'pipe'});
-			this.process1.stdout.setEncoding('utf8');
-			this.process1.stdout.on('exit', this.onExit);
-			this.process1.stdout.on('error', this.onError);
-			this.process1.stdout.on('data', this.onData);
+			this.process = spawn('node', ['index.js'], {cwd: FormideOS.appRoot + 'driver-simulator', stdio: 'pipe'});
+			this.process.stdout.setEncoding('utf8');
+			this.process.stdout.on('exit', this.onExit);
+			this.process.stdout.on('error', this.onError);
+			this.process.stdout.on('data', this.onData);
 		}
 
 		setTimeout(function()
@@ -50,9 +50,9 @@ module.exports =
 
 		}.bind(this), 2500);
 
-		FormideOS.manager('core.events').on('cloud.push', this.printerControl);
-		FormideOS.manager('core.events').on('dashboard.push', this.printerControl);
-		FormideOS.manager('core.events').on('process.exit', this.stop);
+		FormideOS.manager('core.events').on('cloud.push', this.printerControl.bind(this));
+		FormideOS.manager('core.events').on('dashboard.push', this.printerControl.bind(this));
+		FormideOS.manager('core.events').on('process.exit', this.stop.bind(this));
 	},
 
 	onExit: function(exit)
@@ -72,7 +72,7 @@ module.exports =
 
 	stop: function(stop)
 	{
-		this.process1.kill('SIGINT');
+		this.process.kill('SIGINT');
 	},
 
 	// custom functions

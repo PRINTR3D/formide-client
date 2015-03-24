@@ -19,7 +19,37 @@ module.exports = function(routes, module)
 {
 	routes.get('/download', function( req, res )
 	{
+		req.checkQuery('hash', 'hash invalid').notEmpty();
+		req.checkQuery('encoding', 'encoding invalid').notEmpty();
+
+		if( req.validationErrors() )
+		{
+			return res.status(400).json({
+				status: 400,
+				errors: req.validationErrors()
+			});
+		}
+
 		module.downloadModelfile(req.query.hash, req.query.encoding, function( response )
+		{
+			res.send( response );
+		});
+	});
+
+	routes.get('/downloadgcode', function( req, res )
+	{
+		req.checkQuery('hash', 'hash invalid').notEmpty();
+		req.checkQuery('encoding', 'encoding invalid').notEmpty();
+
+		if( req.validationErrors() )
+		{
+			return res.status(400).json({
+				status: 400,
+				errors: req.validationErrors()
+			});
+		}
+
+		module.downloadGcode(req.query.hash, req.query.encoding, function( response )
 		{
 			res.send( response );
 		});
@@ -27,15 +57,31 @@ module.exports = function(routes, module)
 
 	routes.post('/upload', multipartMiddleware, function( req, res )
 	{
-		module.uploadModelfile(req.files.file, function( response )
+		if( !req.files )
+		{
+			return res.status(400).json({
+				status: 400,
+				errors: "No files posted"
+			});
+		}
+
+		module.uploadModelfile(req.files.files, function( response )
 		{
 			res.send( response );
 		});
 	});
 
-	routes.post('/uploadgcode', function( req, res )
+	routes.post('/uploadgcode', multipartMiddleware, function( req, res )
 	{
-		module.uploadGcode(req.files.file, function( response )
+		if( !req.files )
+		{
+			return res.status(400).json({
+				status: 400,
+				errors: "No files posted"
+			});
+		}
+
+		module.uploadGcode(req.files.files, function( response )
 		{
 			res.send( response );
 		});
