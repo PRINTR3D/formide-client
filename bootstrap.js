@@ -17,7 +17,6 @@ var getMac 	= require('getmac');
 
 // define global objects
 FormideOS 	= require('./FormideOS')();
-_ 			= require('underscore');
 
 getMac.getMac(function(err, macAddress)
 {
