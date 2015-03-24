@@ -26,6 +26,17 @@ module.exports = function(routes, db)
 
 	routes.get('/printers/:id', function( req, res )
 	{
+		req.checkParams('id', 'id invalid').notEmpty().isInt();
+
+		var inputErrors = req.validationErrors();
+		if( inputErrors )
+		{
+			return res.status(400).json({
+				status: 400,
+				errors: inputErrors
+			});
+		}
+
 		db.Printer
 		.find({ where: {id: req.params.id } })
 		.then(function(printer)
@@ -36,16 +47,54 @@ module.exports = function(routes, db)
 
 	routes.post('/printers', function( req, res )
 	{
+		req.checkBody('name', 'name invalid').notEmpty();
+		req.checkBody('buildVolumeX', 'buildVolumeX invalid').notEmpty().isInt();
+		req.checkBody('buildVolumeY', 'buildVolumeY invalid').notEmpty().isInt();
+		req.checkBody('buildVolumeZ', 'buildVolumeZ invalid').notEmpty().isInt();
+		req.checkBody('bed', 'bed invalid').notEmpty();
+		req.checkBody('extruders', 'name invalid').notEmpty();
+		req.checkBody('port', 'name invalid').notEmpty();
+
+		var inputErrors = req.validationErrors();
+		if( inputErrors )
+		{
+			return res.status(400).json({
+				status: 400,
+				errors: inputErrors
+			});
+		}
+
 		db.Printer
 		.create(req.body)
 		.success(function()
 		{
-			res.send('OK')
+			return res.send({
+				status: 200,
+				message: 'OK'
+			});
 		});
 	});
 
 	routes.put('/printers/:id', function( req, res )
 	{
+		req.checkParams('id', 'id invalid').notEmpty().isInt();
+		req.checkBody('name', 'name invalid').notEmpty();
+		req.checkBody('buildVolumeX', 'buildVolumeX invalid').notEmpty().isInt();
+		req.checkBody('buildVolumeY', 'buildVolumeY invalid').notEmpty().isInt();
+		req.checkBody('buildVolumeZ', 'buildVolumeZ invalid').notEmpty().isInt();
+		req.checkBody('bed', 'bed invalid').notEmpty();
+		req.checkBody('extruders', 'name invalid').notEmpty();
+		req.checkBody('port', 'name invalid').notEmpty();
+
+		var inputErrors = req.validationErrors();
+		if( inputErrors )
+		{
+			return res.status(400).json({
+				status: 400,
+				errors: inputErrors
+			});
+		}
+
 		db.Printer
 		.find({ where: {id: req.params.id } })
 		.on('success', function( printer )
@@ -56,7 +105,10 @@ module.exports = function(routes, db)
 				.updateAttributes(req.body)
 				.success(function()
 				{
-					res.send('OK');
+					return res.send({
+						status: 200,
+						message: 'OK'
+					});
 				});
 			}
 		});
@@ -64,6 +116,17 @@ module.exports = function(routes, db)
 
 	routes.delete('/printers/:id', function( req, res )
 	{
+		req.checkParams('id', 'id invalid').notEmpty().isInt();
+
+		var inputErrors = req.validationErrors();
+		if( inputErrors )
+		{
+			return res.status(400).json({
+				status: 400,
+				errors: inputErrors
+			});
+		}
+
 		db.Printer
 		.find({ where: {id: req.params.id } })
 		.on('success', function( printer )
@@ -74,7 +137,10 @@ module.exports = function(routes, db)
 				.destroy()
 				.success(function()
 				{
-					res.send('OK');
+					return res.send({
+						status: 200,
+						message: 'OK'
+					});
 				});
 			}
 		});

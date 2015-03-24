@@ -51,9 +51,9 @@ module.exports = {
 				db.Printer
 				.create({
 					"name": "Mini Builder",
-					"buildVolumeX": 220000,
-					"buildVolumeY": 210000,
-					"buildVolumeZ": 210000,
+					"buildVolumeX": 200,
+					"buildVolumeY": 200,
+					"buildVolumeZ": 200,
 					"bed": false,
 					"port": "/dev/tty1",
 					"extruders": JSON.stringify([

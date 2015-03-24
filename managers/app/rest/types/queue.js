@@ -26,6 +26,17 @@ module.exports = function(routes, db)
 
 	routes.get('/queue/:id', function( req, res )
 	{
+		req.checkParams('id', 'id invalid').notEmpty().isInt();
+
+		var inputErrors = req.validationErrors();
+		if( inputErrors )
+		{
+			return res.status(400).json({
+				status: 400,
+				errors: inputErrors
+			});
+		}
+
 		db.Queueitem
 		.find({ where: {id: req.params.id } })
 		.then(function(queueitem)
@@ -36,28 +47,60 @@ module.exports = function(routes, db)
 
 	routes.post('/queue', function( req, res )
 	{
-		if(req.body.printjobID)
+		req.checkBody('printjobID', 'printjobID invalid').notEmpty();
+
+		var inputErrors = req.validationErrors();
+		if( inputErrors )
 		{
-			db.Printjob.find({where: {id: req.body.printjobID}})
-			.success(function(printjob)
+			return res.status(400).json({
+				status: 400,
+				errors: inputErrors
+			});
+		}
+
+		db.Printjob.find({where: {id: req.body.printjobID}})
+		.success(function(printjob)
+		{
+			if( printjob )
 			{
 				db.Queueitem
 				.create({
 					origin: 'local',
 					status: 'queued',
-					gcode: printjob.gcode,
+					gcode: printjob.hash,
 					PrintjobId: printjob.id
 				})
 				.success(function(queueitem)
 				{
-					res.send('OK');
+					return res.send({
+						status: 200,
+						message: 'OK'
+					});
 				});
-			});
-		}
+			}
+			else
+			{
+				return res.status(400).json({
+					status: 400,
+					errors: 'printjob with this ID does not exist'
+				});
+			}
+		});
 	});
 
 	routes.delete('/queue/:id', function( req, res )
 	{
+		req.checkParams('id', 'id invalid').notEmpty().isInt();
+
+		var inputErrors = req.validationErrors();
+		if( inputErrors )
+		{
+			return res.status(400).json({
+				status: 400,
+				errors: inputErrors
+			});
+		}
+
 		db.Queueitem
 		.find({ where: {id: req.params.id } })
 		.on('success', function( queueitem )
@@ -68,7 +111,10 @@ module.exports = function(routes, db)
 				.destroy()
 				.success(function()
 				{
-					res.send('OK');
+					return res.send({
+						status: 200,
+						message: 'OK'
+					});
 				});
 			}
 		});

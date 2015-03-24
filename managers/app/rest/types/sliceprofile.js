@@ -26,6 +26,17 @@ module.exports = function(routes, db)
 
 	routes.get('/sliceprofiles/:id', function( req, res )
 	{
+		req.checkParams('id', 'id invalid').notEmpty().isInt();
+
+		var inputErrors = req.validationErrors();
+		if( inputErrors )
+		{
+			return res.status(400).json({
+				status: 400,
+				errors: inputErrors
+			});
+		}
+
 		db.Sliceprofile
 		.find({ where: {id: req.params.id } })
 		.then(function(sliceprofile)
@@ -36,16 +47,44 @@ module.exports = function(routes, db)
 
 	routes.post('/sliceprofiles', function( req, res )
 	{
+		req.checkBody('name', 'name invalid').notEmpty();
+		req.checkBody('settings', 'type invalid').notEmpty();
+
+		var inputErrors = req.validationErrors();
+		if( inputErrors )
+		{
+			return res.status(400).json({
+				status: 400,
+				errors: inputErrors
+			});
+		}
+
 		db.Sliceprofile
 		.create(req.body)
 		.success(function()
 		{
-			res.send('OK')
+			return res.send({
+				status: 200,
+				message: 'OK'
+			});
 		});
 	});
 
 	routes.put('/sliceprofiles/:id', function( req, res )
 	{
+		req.checkParams('id', 'id invalid').notEmpty().isInt();
+		req.checkBody('name', 'name invalid').notEmpty();
+		req.checkBody('settings', 'type invalid').notEmpty();
+
+		var inputErrors = req.validationErrors();
+		if( inputErrors )
+		{
+			return res.status(400).json({
+				status: 400,
+				errors: inputErrors
+			});
+		}
+
 		db.Sliceprofile
 		.find({ where: {id: req.params.id } })
 		.on('success', function( sliceprofile )
@@ -56,7 +95,10 @@ module.exports = function(routes, db)
 				.updateAttributes(req.body)
 				.success(function()
 				{
-					res.send('OK');
+					return res.send({
+						status: 200,
+						message: 'OK'
+					});
 				});
 			}
 		});
@@ -64,6 +106,17 @@ module.exports = function(routes, db)
 
 	routes.delete('/sliceprofiles/:id', function( req, res )
 	{
+		req.checkParams('id', 'id invalid').notEmpty().isInt();
+
+		var inputErrors = req.validationErrors();
+		if( inputErrors )
+		{
+			return res.status(400).json({
+				status: 400,
+				errors: inputErrors
+			});
+		}
+
 		db.Sliceprofile
 		.find({ where: {id: req.params.id } })
 		.on('success', function( sliceprofile )
@@ -74,7 +127,10 @@ module.exports = function(routes, db)
 				.destroy()
 				.success(function()
 				{
-					res.send('OK');
+					return res.send({
+						status: 200,
+						message: 'OK'
+					});
 				});
 			}
 		});
