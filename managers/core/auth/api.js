@@ -39,14 +39,36 @@ module.exports = function(routes, module)
 
 	routes.post('/tokens', function( req, res )
 	{
-		module.generateAccessToken( ['auth', 'rest'], function( token )
+		req.checkBody('permissions', 'permissions invalid').notEmpty();
+
+		var inputErrors = req.validationErrors();
+		if( inputErrors )
+		{
+			return res.status(400).json({
+				status: 400,
+				errors: inputErrors
+			});
+		}
+
+		module.generateAccessToken( req.body.permissions, function( token )
 		{
 			res.send( token );
 		});
 	});
 
-	routes.delete('/tokens/:token', FormideOS.manager('core.http').server.auth.authenticate(['bearer', 'local'], { session: false }), function( req, res )
+	routes.delete('/tokens/:token', function( req, res )
 	{
+		req.checkParams('token', 'token invalid').notEmpty();
+
+		var inputErrors = req.validationErrors();
+		if( inputErrors )
+		{
+			return res.status(400).json({
+				status: 400,
+				errors: inputErrors
+			});
+		}
+
 		module.deleteAccessToken( req.params.token, function( response )
 		{
 			res.send( response );

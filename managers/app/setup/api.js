@@ -30,7 +30,23 @@ module.exports = function(routes, module)
 	 */
 	routes.post('/token', function( req, res )
 	{
+		req.checkBody('wifi_ssid', 'wifi_ssid invalid').notEmpty();
+		req.checkBody('wifi_password', 'wifi_password invalid').notEmpty();
+		req.checkBody('token', 'token invalid').notEmpty();
+
+		var inputErrors = req.validationErrors();
+		if( inputErrors )
+		{
+			return res.status(400).json({
+				status: 400,
+				errors: inputErrors
+			});
+		}
+
 		module.registerToCloud( req.body.wifi_ssid, req.body.wifi_password, req.body.token );
-		res.send('OK');
+		return res.send({
+			status: 200,
+			message: 'OK'
+		});
 	});
 };
