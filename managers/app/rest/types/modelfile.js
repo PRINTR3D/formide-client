@@ -26,6 +26,17 @@ module.exports = function(routes, db)
 
 	routes.get('/modelfiles/:id', function( req, res )
 	{
+		req.checkParams('id', 'id invalid').notEmpty().isInt();
+
+		var inputErrors = req.validationErrors();
+		if( inputErrors )
+		{
+			return res.status(400).json({
+				status: 400,
+				errors: inputErrors
+			});
+		}
+
 		db.Modelfile
 		.find({ where: {id: req.params.id } })
 		.then(function(modelfile)
@@ -36,6 +47,17 @@ module.exports = function(routes, db)
 
 	routes.delete('/modelfiles/:id', function( req, res )
 	{
+		req.checkParams('id', 'id invalid').notEmpty().isInt();
+
+		var inputErrors = req.validationErrors();
+		if( inputErrors )
+		{
+			return res.status(400).json({
+				status: 400,
+				errors: inputErrors
+			});
+		}
+
 		db.Modelfile
 		.find({ where: {id: req.params.id } })
 		.on('success', function( modelfile )
@@ -46,7 +68,10 @@ module.exports = function(routes, db)
 				.destroy()
 				.success(function()
 				{
-					res.send('OK');
+					return res.send({
+						status: 200,
+						message: 'OK'
+					});
 				});
 			}
 		});
