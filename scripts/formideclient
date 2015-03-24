@@ -20,11 +20,11 @@ SCRIPTNAME=/etc/init.d/$NAME
 
 start()
 {
-        printf "%-50s" "Starting $NAME..."
+    printf "%-50s" "Starting $NAME..."
+	cd $DAEMON_PATH
+    PID=`sudo $DAEMON $DAEMONOPTS > /dev/null 2>&1 & echo $!`
 
-        cd $DAEMON_PATH
-        PID=`sudo $DAEMON $DAEMONOPTS > /dev/null 2>&1 & echo $!`
-        if [ -z $PID ]; then
+    if [ -z $PID ]; then
         printf "%s\n" "Fail"
     else
         echo $PID > $PIDFILE
@@ -35,6 +35,7 @@ start()
 status()
 {
 	printf "%-50s" "Checking $NAME..."
+
     if [ -f $PIDFILE ]; then
         PID=`cat $PIDFILE`
         if [ -z "`ps axf | grep ${PID} | grep -v grep`" ]; then
@@ -50,8 +51,9 @@ status()
 stop()
 {
 	printf "%-50s" "Stopping $NAME"
-        PID=`cat $PIDFILE`
-        cd $DAEMON_PATH
+    PID=`cat $PIDFILE`
+	cd $DAEMON_PATH
+
     if [ -f $PIDFILE ]; then
         kill -HUP $PID
         printf "%s\n" "Ok"

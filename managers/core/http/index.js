@@ -22,6 +22,7 @@ var BearerStrategy 		= require('passport-http-bearer').Strategy;
 var bodyParser 			= require('body-parser');
 var session 			= require('express-session');
 var MemoryStore 		= session.MemoryStore;
+var permissions			= require('./permissions.js');
 
 module.exports =
 {
@@ -57,6 +58,8 @@ module.exports =
 			origin: true,
 			credentials: true
 		}));
+
+		http.app.use( permissions.initialize() );
 
 		passport.serializeUser(function(user, done)
 		{
@@ -143,5 +146,6 @@ module.exports =
 
 		this.server = http;
 		this.server.auth = passport;
+		this.server.permissions = permissions;
 	}
 }

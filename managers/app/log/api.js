@@ -17,8 +17,8 @@ module.exports = function(routes, module)
 	/**
 	 * Set led rgb color
 	 */
-	routes.get('/get/:type', function( req, res )
+	routes.get('/get/:type', FormideOS.manager('core.http').server.permissions.check('log'), function( req, res )
 	{
-		// get logs from certain type
+		res.send('OK');
 	});
 }
