@@ -76,7 +76,33 @@ module.exports =
 			});
 		});
 
-		passport.use( new LocalStrategy(function( username, password, callback )
+		passport.use( 'local-signup', new LocalStrategy(function( username, password, callback )
+		{
+			process.nextTick( function()
+			{
+				FormideOS.manager('core.db').db.user
+				.find({ where: {username: username} })
+				.then(function( user )
+				{
+					if( user )
+					{
+						return callback( null, false, { message: 'Username already taken' } );
+					}
+
+					FormideOS.manager('core.db').db.User
+					.create({
+						username: username,
+						password: password
+					})
+					.success(function( user )
+					{
+						return callback( null, user);
+					});
+				});
+			});
+		}));
+
+		passport.use( 'local-login', new LocalStrategy(function( username, password, callback )
 		{
 			FormideOS.manager('debug').log( 'Login attempt for ' + username );
 
@@ -98,7 +124,7 @@ module.exports =
 			});
 		}));
 
-		passport.use( new BearerStrategy({}, function( token, callback )
+		passport.use( 'bearer-login', new BearerStrategy({}, function( token, callback )
 		{
 			FormideOS.manager('debug').log( 'Token login attempt for ' + token );
 

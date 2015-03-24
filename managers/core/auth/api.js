@@ -14,7 +14,7 @@
 
 module.exports = function(routes, module)
 {
-	routes.post('/login', FormideOS.manager('core.http').server.auth.authenticate('local'), function( req, res )
+	routes.post('/login', FormideOS.manager('core.http').server.auth.authenticate('local-login'), function( req, res )
 	{
 		res.send( req.user );
 	});
@@ -75,7 +75,7 @@ module.exports = function(routes, module)
 		});
 	});
 
-	routes.post('/password', FormideOS.manager('core.http').server.auth.authenticate(['local']), function( req, res )
+	routes.post('/password', FormideOS.manager('core.http').server.auth.authenticate(['local-login']), function( req, res )
 	{
 		if(req.body.password)
 		{
