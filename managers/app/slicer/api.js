@@ -59,7 +59,8 @@ module.exports = function(routes, module)
 			"x": 100000,
 			"y": 100000,
 			"z": 0,
-			"extruder": "extruder1"
+			"extruder": "extruder1",
+			"settings": "1"
 		};
 
 		json.data.model = [model];
