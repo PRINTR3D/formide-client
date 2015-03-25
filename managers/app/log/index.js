@@ -27,9 +27,9 @@ module.exports =
 		    ]
 		});
 
-		FormideOS.manager('core.events').on('log.error', this.logError);
-		FormideOS.manager('core.events').on('log.success', this.logSuccess);
-		FormideOS.manager('core.events').on('log.message', this.logMessage);
+		FormideOS.manager('core.events').on('log.error', this.logError.bind(this));
+		FormideOS.manager('core.events').on('log.success', this.logSuccess.bind(this));
+		FormideOS.manager('core.events').on('log.message', this.logMessage.bind(this));
 	},
 
 	log: function( type, data )

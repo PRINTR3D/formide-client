@@ -93,6 +93,7 @@ module.exports =
 					.success(function()
 					{
 						FormideOS.manager('core.events').emit('log.message', {
+							type: 'slicer',
 							message: 'Slicing finished'
 						});
 
