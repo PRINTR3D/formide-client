@@ -65,7 +65,7 @@ module.exports = function(routes, module)
 			});
 		}
 
-		module.uploadModelfile(req.files.files, function( response )
+		module.uploadModelfile(req.files.file, function( response )
 		{
 			res.send( response );
 		});
