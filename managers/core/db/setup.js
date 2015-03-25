@@ -39,6 +39,17 @@ module.exports = {
 					FormideOS.manager('debug').log('Database entry created: ' + success);
 				});
 
+				db.User
+				.create({
+					"username": "nopermissions@printspot.local",
+					"password": "password",
+					"permissions": "auth"
+				})
+				.success(function(success)
+				{
+					FormideOS.manager('debug').log('Database entry created: ' + success);
+				});
+
 				db.Accesstoken
 				.create({
 					"token": "b518e7f9-9d7f-4de8-a522-68deaea20024",
