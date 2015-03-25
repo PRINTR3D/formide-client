@@ -120,7 +120,7 @@ module.exports =
 	{
 		if( data.data == undefined || data.data == null)
 		{
-			delete data.data;
+			data.data = {};
 		}
 
 		this.printer.write(JSON.stringify(data));
