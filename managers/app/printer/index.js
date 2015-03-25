@@ -118,7 +118,11 @@ module.exports =
 
 	printerControl: function(data)
 	{
-		console.log(data);
+		if( data.data == undefined || data.data == null)
+		{
+			delete data.data;
+		}
+
 		this.printer.write(JSON.stringify(data));
 	}
 }

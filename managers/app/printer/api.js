@@ -45,6 +45,8 @@ module.exports = function(routes, module)
 			{
 				if(req.params.command == realMethod)
 				{
+					FormideOS.manager('debug').log('Control printer ' + realMethod);
+
 					var expected = FormideOS.config.get('channels.dashboard')[realMethod];
 					var given = req.query;
 					var correct = true;
