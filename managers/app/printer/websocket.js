@@ -57,6 +57,8 @@ module.exports = function(namespace, module)
 			{
 				socket.on(realMethod, function(data)
 				{
+					FormideOS.manager('debug').log('Control printer ' + realMethod);
+
 					var expected = FormideOS.config.get('channels.dashboard')[realMethod];
 					var given = data;
 					var correct = true;
@@ -81,7 +83,9 @@ module.exports = function(namespace, module)
 							"data": data
 						};
 
-						FormideOS.manager('core.events').emit('interface.command', json);
+						module.printerControl(json);
+
+						//FormideOS.manager('core.events').emit('interface.command', json);
 					}
 					else
 					{
