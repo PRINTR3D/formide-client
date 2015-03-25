@@ -84,8 +84,6 @@ module.exports = function(namespace, module)
 						};
 
 						module.printerControl(json);
-
-						//FormideOS.manager('core.events').emit('interface.command', json);
 					}
 					else
 					{

@@ -84,7 +84,8 @@ module.exports = function(routes, module)
 							"data": params
 						};
 
-						FormideOS.manager('core.events').emit('dashboard.push', json);
+						module.printerControl(json);
+
 						return res.send({
 							status: 200,
 							message: 'OK'

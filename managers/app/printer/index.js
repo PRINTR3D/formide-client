@@ -118,6 +118,7 @@ module.exports =
 
 	printerControl: function(data)
 	{
+		console.log(data);
 		this.printer.write(JSON.stringify(data));
 	}
 }
