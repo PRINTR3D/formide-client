@@ -12,8 +12,9 @@
  *
  */
 
-var io 		= require('socket.io');
-var cookie 	= require('cookie');
+var io 							= require('socket.io');
+var authorizationMiddleware 	= require('./middleware/authorization');
+var permissionsMiddleware 		= require('./middleware/permissions');
 
 module.exports =
 {
@@ -23,25 +24,8 @@ module.exports =
 	{
 		this.connection = io.listen( FormideOS.manager('core.http').server.server );
 
-		this.connection.set('authorization', function( handshakeData, accept )
-		{
-			if( handshakeData.headers.cookie )
-			{
-				handshakeData.cookie = cookie.parse(handshakeData.headers.cookie);
-				handshakeData.sessionID = cookieParser.signedCookie(handshakeData.cookie['express.sid'], 'secret');
-
-				if (handshakeData.cookie['express.sid'] == handshakeData.sessionID)
-				{
-					return accept('Cookie is invalid', false);
-    			}
-			}
-			else
-			{
-				return accept('No cookie transmitted', false);
-			}
-
-			return accept(null, true);
-		});
+		this.connection.use(authorizationMiddleware);
+		this.connection.use(permissionsMiddleware);
 
 		FormideOS.manager('debug').log('websocket api running on port ' + FormideOS.config.get('app.websocket') );
 	}

@@ -14,6 +14,7 @@
 
 // require dependencies
 var getMac 	= require('getmac');
+_ 			= require('underscore');
 
 // define global objects
 FormideOS 	= require('./FormideOS')();

@@ -12,8 +12,8 @@
  *
  */
 
-var domain 	= require('domain');
-var fs 		= require('fs');
+var domain 					= require('domain');
+var fs 						= require('fs');
 
 module.exports = function( managerName, data )
 {

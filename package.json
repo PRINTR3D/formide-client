@@ -50,7 +50,7 @@
     "socket.io-stream": "~0.6.0",
     "sqlite3": "3.0.5",
     "sudo": "~1.0.3",
-    "underscore": "~1.8.2",
+    "underscore": "^1.8.2",
     "winston": "~0.8.1",
     "wireless": "~0.3.2"
   },

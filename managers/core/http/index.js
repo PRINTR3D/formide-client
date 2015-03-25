@@ -12,19 +12,21 @@
  *
  */
 
-// global dependencies
-express 				= require('express');
-cookieParser 			= require('cookie-parser');
-session 				= require('express-session')({ secret: 'secret', key: 'express.sid', saveUninitialized: true, resave: true });
-
 // dependencies
-var expressValidator 	= require('express-validator')
-var cors 				= require('cors');
-var passport 			= require('passport');
-var LocalStrategy 		= require('passport-local').Strategy;
-var BearerStrategy 		= require('passport-http-bearer').Strategy;
-var bodyParser 			= require('body-parser');
-var permissions			= require('./permissions.js');
+express 					= require('express');
+var expressSession			= require('express-session');
+cookieParser 				= require('cookie-parser');
+var MemoryStore 			= expressSession.MemoryStore;
+sessionStore 				= new MemoryStore();
+session 					= expressSession({ store: sessionStore, secret: 'secret', key: 'express.sid', saveUninitialized: false, resave: false });
+
+var expressValidator 		= require('express-validator')
+var cors 					= require('cors');
+var passport 				= require('passport');
+var LocalStrategy 			= require('passport-local').Strategy;
+var BearerStrategy 			= require('passport-http-bearer').Strategy;
+var bodyParser 				= require('body-parser');
+var permissionsMiddleware	= require('./middleware/permissions');
 
 module.exports =
 {
@@ -56,7 +58,7 @@ module.exports =
 			credentials: true
 		}));
 
-		http.app.use( permissions.initialize() );
+		http.app.use( permissionsMiddleware.initialize() );
 
 		passport.serializeUser(function(user, done)
 		{
@@ -143,6 +145,6 @@ module.exports =
 
 		this.server = http;
 		this.server.auth = passport;
-		this.server.permissions = permissions;
+		this.server.permissions = permissionsMiddleware;
 	}
 }
