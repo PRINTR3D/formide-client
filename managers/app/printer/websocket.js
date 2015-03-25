@@ -81,7 +81,7 @@ module.exports = function(namespace, module)
 							"data": data
 						};
 
-						FormideOS.manager('core.events').emit('websocket.command', json);
+						FormideOS.manager('core.events').emit('interface.command', json);
 					}
 					else
 					{
