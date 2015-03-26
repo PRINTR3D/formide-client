@@ -123,6 +123,10 @@ module.exports =
 			data.data = {};
 		}
 
-		this.printer.write(JSON.stringify(data));
+		data = JSON.stringify(data);
+
+		FormideOS.manager('debug').log(data);
+
+		this.printer.write(data);
 	}
 }
