@@ -81,7 +81,7 @@ module.exports = function(routes, module)
 			});
 		}
 
-		module.uploadGcode(req.files.files, function( response )
+		module.uploadGcode(req.files.file, function( response )
 		{
 			res.send( response );
 		});
