@@ -67,7 +67,7 @@ module.exports = function(routes, db)
 				.create({
 					origin: 'local',
 					status: 'queued',
-					gcode: printjob.hash,
+					gcode: printjob.gcode,
 					PrintjobId: printjob.id
 				})
 				.success(function(queueitem)
