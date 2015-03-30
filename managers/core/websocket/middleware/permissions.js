@@ -14,6 +14,7 @@
 
 var permissionsMiddleware = function (socket, next)
 {
+/*
 	_.each( socket.server.nsps, function( nsp )
 	{
 		nsp.once('connection', function( s )
@@ -39,6 +40,7 @@ var permissionsMiddleware = function (socket, next)
 			}
 		});
 	});
+*/
 
 	next(null, true);
 };
