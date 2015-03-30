@@ -16,6 +16,9 @@ var cookie 	= require('cookie');
 
 var authorizationMiddleware = function (socket, next)
 {
+	return next(null, true);
+
+/*
 	var handshakeData = socket.request;
 
 	if (handshakeData.headers.cookie)
@@ -60,6 +63,7 @@ var authorizationMiddleware = function (socket, next)
 	{
 		return next('No cookie found', false);
 	}
+*/
 };
 
 module.exports = authorizationMiddleware;
