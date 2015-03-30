@@ -46,7 +46,6 @@ module.exports =
 
 		}.bind(this), 2500);
 
-		FormideOS.manager('core.events').on('slicer.slice', this.slice.bind(this));
 		FormideOS.manager('core.events').on('process.exit', this.stop.bind(this));
 	},
 
@@ -71,9 +70,52 @@ module.exports =
 	},
 
 	// custom functions
-	slice: function(sliceData)
+	slice: function(sliceparams, modelfile, sliceprofile, materials, printer, callback)
 	{
-		this.slicer.write(JSON.stringify(sliceData));
+		var self = this;
+		var hash = (Math.random() / +new Date()).toString(36).replace(/[^a-z]+/g, '');
+
+		FormideOS.manager('app.log').log( 'debug', sliceparams );
+
+		var sliceData = {
+			"type": "slice",
+			"data": sliceparams
+		};
+
+		// TODO: still hardcoded to 10 by 10 cm and with extruder 1
+		var model = {
+			"hash": modelfile,
+			"bucketIn": FormideOS.appRoot + FormideOS.config.get('paths.modelfile'),
+			"x": 100000,
+			"y": 100000,
+			"z": 0,
+			"extruder": "extruder1",
+			"settings": "1"
+		};
+
+		sliceData.data.model = [model];
+		sliceData.data.bucketOut = FormideOS.appRoot + FormideOS.config.get('paths.gcode');
+		sliceData.data.responseID = hash;
+
+		FormideOS.manager('core.db').db.Printjob
+		.create(
+		{
+			ModelfileId: 	modelfile,
+			printerID: 		printer,
+			sliceprofileID: sliceprofile,
+			materials: 		JSON.stringify( materials ),
+			sliceResponse: 	"{" + hash + "}",
+			sliceParams: 	JSON.stringify( sliceparams ),
+			sliceMethod: 	'local'
+		})
+		.success(function(printjob)
+		{
+			// send slice request to local slicer
+			self.slicer.write(JSON.stringify(sliceData), function() {
+				FormideOS.manager('core.events').emit('slicer.slice', sliceData);
+				return callback(true);
+			});
+		});
 	},
 
 	sliceResponse: function(responseData)
@@ -92,11 +134,6 @@ module.exports =
 					.updateAttributes({gcode: data.data.gcode, sliceResponse: JSON.stringify(data.data)})
 					.success(function()
 					{
-						FormideOS.manager('core.events').emit('log.message', {
-							type: 'slicer',
-							message: 'Slicing finished'
-						});
-
 						FormideOS.manager('core.events').emit('slicer.finished', {
 							message: 'Slicing finished'
 						});

@@ -43,52 +43,22 @@ module.exports = function(routes, module)
 		var _materials = req.body.materials;
 		var _printer = req.body.printer;
 		var _slicemethod = req.body.slicemethod;
-		var _hash = (Math.random() / +new Date()).toString(36).replace(/[^a-z]+/g, '');
-
-		FormideOS.manager('app.log').log( 'debug', _sliceparams );
-
-		var json = {
-			"type": "slice",
-			"data": _sliceparams
-		};
-
-		// TODO: still hardcoded to 10 by 10 cm and with extruder 1
-		var model = {
-			"hash": json.data.model,
-			"bucketIn": FormideOS.appRoot + FormideOS.config.get('paths.modelfile'),
-			"x": 100000,
-			"y": 100000,
-			"z": 0,
-			"extruder": "extruder1",
-			"settings": "1"
-		};
-
-		json.data.model = [model];
-		json.data.bucketOut = FormideOS.appRoot + FormideOS.config.get('paths.gcode');
-		json.data.responseID = _hash;
 
 		if( _slicemethod == 'local' )
 		{
-			// create printjob in DB
-			FormideOS.manager('core.db').db.Printjob
-			.create(
-			{
-				ModelfileId: 	_modelfile,
-				printerID: 		_printer,
-				sliceprofileID: _sliceprofile,
-				materials: 		JSON.stringify( _materials ),
-				sliceResponse: 	"{" + _hash + "}",
-				sliceParams: 	JSON.stringify( _sliceparams ),
-				sliceMethod: 	'local'
-			})
-			.success(function(printjob)
-			{
-				// send slice request to local slicer
-				FormideOS.manager('core.events').emit('slicer.slice', json);
-				return res.send({
-					status: 200,
-					message: 'slicing started'
-				});
+			module.slice(_sliceparams, _modelfile, _sliceprofile, _materials, _printer, function(success) {
+				if (success) {
+					return res.send({
+						status: 200,
+						message: 'slicing started'
+					});
+				}
+				else {
+					return res.send({
+						status: 402,
+						message: "slicing failed"
+					});
+				}
 			});
 		}
 		else
