@@ -22,7 +22,7 @@ var BearerStrategy 		= require('passport-http-bearer').Strategy;
 var bodyParser 			= require('body-parser');
 var session 			= require('express-session');
 var MemoryStore 		= session.MemoryStore;
-var permissions			= require('./permissions.js');
+var permissions			= require('./middleware/permissions.js');
 
 module.exports =
 {

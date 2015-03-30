@@ -50,7 +50,6 @@ module.exports =
 
 		}.bind(this), 2500);
 
-		FormideOS.manager('core.events').on('interface.command', this.printerControl.bind(this));
 		FormideOS.manager('core.events').on('process.exit', this.stop.bind(this));
 	},
 

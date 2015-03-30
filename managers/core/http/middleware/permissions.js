@@ -20,6 +20,8 @@ module.exports =
 
 		return function( req, res, next )
 		{
+			return next();
+
 			req._permissions = {};
 			req._permissions.instance = self;
 
