@@ -23,7 +23,7 @@
     "express-validator": "^2.9.0",
     "getmac": "~1.0.6",
     "install": "~0.1.8",
-    "jsonstorage": "0.0.4",
+    "jsonstorage": "0.0.12",
     "lodash": "2.4.1",
     "minimist": "~1.1.0",
     "multer": "~0.1.8",

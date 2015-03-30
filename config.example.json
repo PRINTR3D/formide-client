@@ -63,6 +63,10 @@
 		"debug": false
 	},
 
+	"store": {
+		"folder": "../storage/db"
+	},
+
 	"log": {
 		"path": "../storage"
 	},
