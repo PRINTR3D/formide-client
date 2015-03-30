@@ -83,8 +83,8 @@ module.exports =
 		};
 
 		FormideOS.manager('core.db').db.Modelfile
-		.find({ where: {id: modelfile} })
-		success(function(dbModelfile)
+		.find({ where: {id: modelfile } })
+		.then(function(dbModelfile)
 		{
 			// TODO: still hardcoded to 10 by 10 cm and with extruder 1
 			var model = {
