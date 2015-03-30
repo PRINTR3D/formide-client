@@ -84,13 +84,13 @@ module.exports =
 
 		// TODO: still hardcoded to 10 by 10 cm and with extruder 1
 		var model = {
-			"hash": modelfile,
+			"hash": hash,
 			"bucketIn": FormideOS.appRoot + FormideOS.config.get('paths.modelfile'),
 			"x": 100000,
 			"y": 100000,
 			"z": 0,
 			"extruder": "extruder1",
-			"settings": "1"
+			"settings": "0"
 		};
 
 		sliceData.data.model = [model];
