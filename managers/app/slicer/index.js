@@ -82,38 +82,43 @@ module.exports =
 			"data": sliceparams
 		};
 
-		// TODO: still hardcoded to 10 by 10 cm and with extruder 1
-		var model = {
-			"hash": hash,
-			"bucketIn": FormideOS.appRoot + FormideOS.config.get('paths.modelfile'),
-			"x": 100000,
-			"y": 100000,
-			"z": 0,
-			"extruder": "extruder1",
-			"settings": "0"
-		};
-
-		sliceData.data.model = [model];
-		sliceData.data.bucketOut = FormideOS.appRoot + FormideOS.config.get('paths.gcode');
-		sliceData.data.responseID = hash;
-
-		FormideOS.manager('core.db').db.Printjob
-		.create(
+		FormideOS.manager('core.db').db.Modelfile
+		.find({ where: {id: modelfile} })
+		then(function(dbModelfile)
 		{
-			ModelfileId: 	modelfile,
-			printerID: 		printer,
-			sliceprofileID: sliceprofile,
-			materials: 		JSON.stringify( materials ),
-			sliceResponse: 	"{" + hash + "}",
-			sliceParams: 	JSON.stringify( sliceparams ),
-			sliceMethod: 	'local'
-		})
-		.success(function(printjob)
-		{
-			// send slice request to local slicer
-			self.slicer.write(JSON.stringify(sliceData), function() {
-				FormideOS.manager('core.events').emit('slicer.slice', sliceData);
-				return callback(true);
+			// TODO: still hardcoded to 10 by 10 cm and with extruder 1
+			var model = {
+				"hash": dbModelfile.hash,
+				"bucketIn": FormideOS.appRoot + FormideOS.config.get('paths.modelfile'),
+				"x": 100000,
+				"y": 100000,
+				"z": 0,
+				"extruder": "extruder1",
+				"settings": "0"
+			};
+
+			sliceData.data.model = [model];
+			sliceData.data.bucketOut = FormideOS.appRoot + FormideOS.config.get('paths.gcode');
+			sliceData.data.responseID = hash;
+
+			FormideOS.manager('core.db').db.Printjob
+			.create(
+			{
+				ModelfileId: 	modelfile,
+				printerID: 		printer,
+				sliceprofileID: sliceprofile,
+				materials: 		JSON.stringify( materials ),
+				sliceResponse: 	"{" + hash + "}",
+				sliceParams: 	JSON.stringify( sliceparams ),
+				sliceMethod: 	'local'
+			})
+			.success(function(printjob)
+			{
+				// send slice request to local slicer
+				self.slicer.write(JSON.stringify(sliceData), function() {
+					FormideOS.manager('core.events').emit('slicer.slice', sliceData);
+					return callback(true);
+				});
 			});
 		});
 	},
