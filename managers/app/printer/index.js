@@ -24,6 +24,8 @@ module.exports =
 
 	init: function(config)
 	{
+		this.config = config;
+
 		if(config.simulated)
 		{
 			this.process = spawn('node', ['index.js'], {cwd: FormideOS.appRoot + 'driver-simulator', stdio: 'pipe'});
@@ -33,24 +35,22 @@ module.exports =
 			this.process.stdout.on('data', this.onData);
 		}
 
-		setTimeout(function()
-		{
-			this.printer = new net.Socket();
-
-			this.printer.connect({
-				port: config.port
-			}, function() {
-				FormideOS.manager('debug').log('printer connected');
-			});
-
-			this.printer.setTimeout(10);
-			this.printer.setNoDelay(true);
-			this.printer.on('error', this.printerError);
-			this.printer.on('data', this.printerStatus);
-
-		}.bind(this), 2500);
+		this.printer = new net.Socket();
+		this.connect();
+		this.printer.on('error', this.printerError.bind(this));
+		this.printer.on('data', this.printerStatus.bind(this));
+		this.printer.on('close', this.printerError.bind(this));
 
 		FormideOS.manager('core.events').on('process.exit', this.stop.bind(this));
+	},
+
+	connect: function() {
+		this.printer.destroy();
+		this.printer.connect({
+			port: this.config.port
+		}, function() {
+			FormideOS.manager('debug').log('printer connected');
+		});
 	},
 
 	onExit: function(exit)
@@ -74,9 +74,13 @@ module.exports =
 	},
 
 	// custom functions
-	printerError: function(error)
-	{
+	printerError: function(error) {
 		FormideOS.manager('debug').log(error.toString(), true);
+		if (error.code == 'ECONNREFUSED' || error == false) {
+			this.printer.setTimeout(2000, function() {
+				this.connect();
+			}.bind(this));
+		}
 	},
 
 	printerStatus: function(printerData)
