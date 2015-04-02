@@ -16,7 +16,7 @@ module.exports = function(routes, module)
 {
 	routes.post('/login', FormideOS.manager('core.http').server.auth.authenticate('local-login'), function( req, res )
 	{
-		res.send( req.user );
+		res.send( req.sessionID );
 	});
 
 	routes.get('/logout', FormideOS.manager('core.http').server.permissions.check('auth'), function( req, res )
@@ -30,7 +30,7 @@ module.exports = function(routes, module)
 
 	routes.get('/session', FormideOS.manager('core.http').server.permissions.check('auth'), function( req, res )
 	{
-		res.send( req.user );
+		res.send( req.sessionID );
 	});
 
 	routes.get('/tokens', FormideOS.manager('core.http').server.permissions.check('auth'), function( req, res )
