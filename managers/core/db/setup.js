@@ -34,7 +34,7 @@ module.exports = {
 				.create({
 					"username": "login@printspot.local",
 					"password": passwordHash.generate("password"),
-					"permissions": "camera,files,led,log,printer,rest:material,rest:modelfile,rest:printer,rest:printjob,rest:queue,rest:sliceprofile,rest:user,slicer,wifi,device"
+					"permissions": "auth,camera,files,led,log,printer,rest:material,rest:modelfile,rest:printer,rest:printjob,rest:queue,rest:sliceprofile,rest:user,slicer,wifi,device"
 				})
 				.success(function(success)
 				{

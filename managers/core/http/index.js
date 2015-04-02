@@ -13,34 +13,20 @@
  */
 
 // dependencies
-<<<<<<< HEAD
 express 				= require('express');
+var expressSession		= require('express-session');
+cookieParser 			= require('cookie-parser');
+var MemoryStore 		= expressSession.MemoryStore;
+sessionStore 			= new MemoryStore();
+session 				= expressSession({ store: sessionStore, secret: 'secret', key: 'express.sid', saveUninitialized: false, resave: false });
 var expressValidator 	= require('express-validator')
 var cors 				= require('cors');
 var passport 			= require('passport');
 var LocalStrategy 		= require('passport-local').Strategy;
 var BearerStrategy 		= require('passport-http-bearer').Strategy;
 var bodyParser 			= require('body-parser');
-var session 			= require('express-session');
-var MemoryStore 		= session.MemoryStore;
-var permissions			= require('./middleware/permissions.js');
-var passwordHash 		= require('password-hash');
-=======
-express 					= require('express');
-var expressSession			= require('express-session');
-cookieParser 				= require('cookie-parser');
-var MemoryStore 			= expressSession.MemoryStore;
-sessionStore 				= new MemoryStore();
-session 					= expressSession({ store: sessionStore, secret: 'secret', key: 'express.sid', saveUninitialized: false, resave: false });
-
-var expressValidator 		= require('express-validator')
-var cors 					= require('cors');
-var passport 				= require('passport');
-var LocalStrategy 			= require('passport-local').Strategy;
-var BearerStrategy 			= require('passport-http-bearer').Strategy;
-var bodyParser 				= require('body-parser');
 var permissionsMiddleware	= require('./middleware/permissions');
->>>>>>> feature/permissions
+var passwordHash 		= require('password-hash');
 
 module.exports =
 {
