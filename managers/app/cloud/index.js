@@ -24,13 +24,14 @@ module.exports =
 
 	init: function( config )
 	{
-		this.cloud = socket( config.url );
+		this.cloud = socket( config.url )
 
 		this.cloud.on('connect', function() {
 
-		});
+		}.bind(this));
 
 		this.cloud.on('http', function(data, callback) {
+			FormideOS.manager('debug').log('Cloud http call: ' + data.url);
 			this.http(data, function(response) {
 				callback(response);
 			});
@@ -43,7 +44,7 @@ module.exports =
 			method: data.method,
 			uri: 'http://127.0.0.1:' + FormideOS.manager('core.http').server.server.address().port + '/api' + data.url,
 			auth: {
-				bearer: FormideOS.settings.cloud.accesstoken //data.token
+				bearer: data.token
 			},
 			form: data.data || {}
 		}, function( error, response, body )
