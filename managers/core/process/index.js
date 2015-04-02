@@ -66,7 +66,7 @@ module.exports =
 
 	processError: function(err)
 	{
-		err = err.toString();
-		FormideOS.manager('debug').log(err, true);
+		FormideOS.manager('core.events').emit('process.error');
+		console.trace( err );
 	}
 };
