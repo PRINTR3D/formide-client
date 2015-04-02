@@ -94,7 +94,7 @@ module.exports =
 				"y": 100000,
 				"z": 0,
 				"extruder": "extruder1",
-				"settings": "0"
+				"settings": "1"
 			};
 
 			sliceData.data.model = [model];
