@@ -12,6 +12,8 @@
  *
  */
 
+var passwordHash = require('password-hash');
+
 module.exports = {
 
 	init: function( db, sequelize )
@@ -31,7 +33,7 @@ module.exports = {
 				db.User
 				.create({
 					"username": "login@printspot.local",
-					"password": "password",
+					"password": passwordHash.generate("password"),
 					"permissions": "camera,files,led,log,printer,rest:material,rest:modelfile,rest:printer,rest:printjob,rest:queue,rest:sliceprofile,rest:user,slicer,wifi,device"
 				})
 				.success(function(success)

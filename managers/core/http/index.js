@@ -23,6 +23,7 @@ var bodyParser 			= require('body-parser');
 var session 			= require('express-session');
 var MemoryStore 		= session.MemoryStore;
 var permissions			= require('./middleware/permissions.js');
+var passwordHash 		= require('password-hash');
 
 module.exports =
 {
@@ -92,10 +93,12 @@ module.exports =
 						return callback( null, false, { message: 'Username already taken' } );
 					}
 
+					var hashedPassword = passwordHash.generate(password);
+
 					FormideOS.manager('core.db').db.User
 					.create({
 						username: username,
-						password: password
+						password: hashedPassword
 					})
 					.success(function( user )
 					{
@@ -118,7 +121,7 @@ module.exports =
 					return callback(null, false, { message: 'Incorrect username.' });
 				}
 
-				if( user.password != password )
+				if( !passwordHash.verify(password, user.password) )
 				{
 					return callback(null, false, { message: 'Incorrect password.' });
 				}
