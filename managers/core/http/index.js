@@ -13,20 +13,21 @@
  */
 
 // dependencies
-express 				= require('express');
-var expressSession		= require('express-session');
-cookieParser 			= require('cookie-parser');
-var MemoryStore 		= expressSession.MemoryStore;
-sessionStore 			= new MemoryStore();
-session 				= expressSession({ store: sessionStore, secret: 'secret', key: 'express.sid', saveUninitialized: false, resave: false });
-var expressValidator 	= require('express-validator')
-var cors 				= require('cors');
-var passport 			= require('passport');
-var LocalStrategy 		= require('passport-local').Strategy;
-var BearerStrategy 		= require('passport-http-bearer').Strategy;
-var bodyParser 			= require('body-parser');
+express 					= require('express');
+var expressSession			= require('express-session');
+cookieParser 				= require('cookie-parser');
+var MemoryStore 			= expressSession.MemoryStore;
+sessionStore 				= new MemoryStore();
+session 					= expressSession({ store: sessionStore, secret: 'secret', key: 'express.sid', saveUninitialized: false, resave: false });
+var expressValidator 		= require('express-validator');
+var cors 					= require('cors');
+var passport 				= require('passport');
+var LocalStrategy 			= require('passport-local').Strategy;
+var BearerStrategy 			= require('passport-http-bearer').Strategy;
+var bodyParser 				= require('body-parser');
 var permissionsMiddleware	= require('./middleware/permissions');
-var passwordHash 		= require('password-hash');
+var passwordHash 			= require('password-hash');
+var bearerToken 			= require('express-bearer-token');
 
 module.exports =
 {
@@ -52,6 +53,8 @@ module.exports =
 
 		http.app.use( passport.initialize() );
 		http.app.use( passport.session() );
+
+		http.app.use(bearerToken());
 
 		http.app.use(cors({
 			origin: true,
@@ -128,6 +131,7 @@ module.exports =
 			});
 		}));
 
+/*
 		passport.use( 'bearer-login', new BearerStrategy({}, function( token, callback )
 		{
 			FormideOS.manager('debug').log( 'Token login attempt for ' + token );
@@ -144,6 +148,7 @@ module.exports =
 				return callback(null, token);
 			});
 		}));
+*/
 
 		this.server = http;
 		this.server.auth = passport;

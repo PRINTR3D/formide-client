@@ -37,6 +37,9 @@ module.exports = function()
 	// register debug
 	formideos.managers['debug'] = require('./utils/debug.js');
 
+	// global user settings
+	formideos.settings = require('./utils/settings.js')(formideos);
+
 	// get registered manager
 	formideos.manager = function(name)
 	{

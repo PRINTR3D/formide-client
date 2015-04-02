@@ -26,28 +26,29 @@ module.exports =
 	{
 		this.cloud = socket( config.url );
 
-/*
-		this.http({
-			method: 'GET',
-			url: '/api/printer/status',
-			token: 'ABCABC',
-			callback: console.log
+		this.cloud.on('connect', function() {
+
 		});
-*/
+
+		this.cloud.on('http', function(data, callback) {
+			this.http(data, function(response) {
+				callback(response);
+			});
+		}.bind(this));
 	},
 
-	http: function( data )
+	http: function( data, callback )
 	{
 		request({
 			method: data.method,
-			uri: 'http://127.0.0.1:' + FormideOS.manager('core.http').server.server.address().port + data.url,
+			uri: 'http://127.0.0.1:' + FormideOS.manager('core.http').server.server.address().port + '/api' + data.url,
 			auth: {
-				bearer: data.token
+				bearer: FormideOS.settings.cloud.accesstoken //data.token
 			},
 			form: data.data || {}
 		}, function( error, response, body )
 		{
-			data.callback( body );
+			callback( body );
 		});
 	},
 
