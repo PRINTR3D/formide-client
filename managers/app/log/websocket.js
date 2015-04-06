@@ -16,6 +16,9 @@ module.exports = function(namespace, module)
 {
 	namespace.on('connection', function( socket )
 	{
+
+
+/*
 		FormideOS.manager('core.events').on('log.error', function( data )
 		{
 			socket.emit('error', data);
@@ -35,5 +38,6 @@ module.exports = function(namespace, module)
 		{
 			socket.emit('debug', data);
 		});
+*/
 	});
 };

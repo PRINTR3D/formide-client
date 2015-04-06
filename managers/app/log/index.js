@@ -23,32 +23,36 @@ module.exports =
 		this.logger = new(winston.Logger)({
 			transports:
 		    [
-				new (winston.transports.File)({filename: FormideOS.appRoot + config.path + '/FormideOS.log', level: 'debug' })
+				new (winston.transports.File)({
+					filename: FormideOS.appRoot + config.path + '/FormideOS.log',
+					level: 'debug'
+				})
 		    ]
 		});
 
+		FormideOS.manager('core.events').on('log.debug', this.logDebug.bind(this));
 		FormideOS.manager('core.events').on('log.error', this.logError.bind(this));
-		FormideOS.manager('core.events').on('log.success', this.logSuccess.bind(this));
-		FormideOS.manager('core.events').on('log.message', this.logMessage.bind(this));
+		FormideOS.manager('core.events').on('log.info', this.logInfo.bind(this));
 	},
 
-	log: function( type, data )
+	get: function(options, callback) {
+		this.logger.query(options, function(err, results) {
+			return callback(results);
+		});
+	},
+
+	logDebug: function(debug)
 	{
-		this.logger.log('debug', type, data);
+		this.logger.log('debug', debug.message, debug.data);
 	},
 
 	logError: function(error)
 	{
-		this.logger.log('debug', error.type, error.data);
+		this.logger.log('error', error.message, error.data);
 	},
 
-	logSuccess: function(success)
+	logInfo: function(info)
 	{
-		this.logger.log('debug', success.type, success.data);
-	},
-
-	logMessage: function(message)
-	{
-		this.logger.log('debug', message.type, message.data);
+		this.logger.log('info', info.message, info.data);
 	}
 }

@@ -22,7 +22,8 @@ module.exports = function( managerName, data )
 
 	d.on('error', function( err )
 	{
-	  	console.log( err.stack );
+		FormideOS.manager('core.events').emit('log.error', {message: 'uncaught exception occured', data: err.stack});
+	  	FormideOS.manager('debug').log(err.stack, true);
 	});
 
 	d.add(FormideOS.manager('core.events'));
