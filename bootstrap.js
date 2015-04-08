@@ -20,7 +20,7 @@ FormideOS 	= require('./FormideOS')();
 
 getMac.getMac(function(err, macAddress)
 {
-	FormideOS.macAddress = FormideOS.config.get('cloud.softMac', macAddress);
+	FormideOS.macAddress = FormideOS.config.get('cloud.softMac') ||  macAddress;
 
 	// core modules
 	FormideOS.register('core.http');
@@ -32,8 +32,6 @@ getMac.getMac(function(err, macAddress)
 
 	// app modules
 	FormideOS.register('app.log', FormideOS.config.get('log'));
-	FormideOS.register('app.cloud', FormideOS.config.get('cloud'));
-	FormideOS.register('app.webhook');
 	FormideOS.register('app.rest');
 	FormideOS.register('app.files');
 	FormideOS.register('app.printer', FormideOS.config.get('printer'));
@@ -43,6 +41,10 @@ getMac.getMac(function(err, macAddress)
 
 	FormideOS.register('app.camera', FormideOS.config.get('camera'));
 	FormideOS.register('app.led');
+
+	// start these modules last
+	FormideOS.register('app.cloud', FormideOS.config.get('cloud'));
+	FormideOS.register('app.webhook');
 
 	// under development
 	// FormideOS.register('app.cron');

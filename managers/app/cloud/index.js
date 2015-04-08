@@ -27,7 +27,12 @@ module.exports =
 		this.cloud = socket( config.url );
 
 		this.cloud.on('connect', function() {
-			FormideOS.manager('debug').log('Cloud connection inited');
+			this.cloud.emit('authenticate', {
+				mac: FormideOS.macAddress,
+				token: FormideOS.settings.cloud.accesstoken,
+				permissions: FormideOS.settings.cloud.permissions
+			});
+			FormideOS.manager('debug').log('Cloud connected');
 		}.bind(this));
 
 		this.cloud.on('http', function(data, callback) {
@@ -48,6 +53,10 @@ module.exports =
 			FormideOS.manager('debug').log('Cloud ws emit: ' + data.manager + '/' + data.channel);
 			this.emit(data);
 		}.bind(this));
+
+		this.cloud.on('disconnect', function() {
+			FormideOS.manager('debug').log('Cloud diconnected');
+		});
 	},
 
 	http: function(data, callback) {
