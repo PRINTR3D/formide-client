@@ -39,7 +39,7 @@ module.exports = {
 			var outputString = '[' + callerString[callerString.length - 2] + ']\t';
 			outputString += JSON.stringify(debug);
 
-			FormideOS.manager('core.events').emit('log.debug', 'debug info', debug);
+			FormideOS.manager('core.events').emit('log.debug', {message: debug, data: {manager: callerString[callerString.length - 2]}});
 
 			if(caller.evalOrigin.indexOf('/managers') > -1)
 			{

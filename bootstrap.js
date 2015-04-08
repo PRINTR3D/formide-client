@@ -32,10 +32,11 @@ getMac.getMac(function(err, macAddress)
 
 	// app modules
 	FormideOS.register('app.log', FormideOS.config.get('log'));
+	FormideOS.register('app.cloud', FormideOS.config.get('cloud'));
 	FormideOS.register('app.webhook');
 	FormideOS.register('app.rest');
 	FormideOS.register('app.files');
-	FormideOS.register('app.printer'/* , FormideOS.config.get('printer') */);
+	FormideOS.register('app.printer', FormideOS.config.get('printer'));
 	FormideOS.register('app.slicer', FormideOS.config.get('slicer'));
 	FormideOS.register('app.interface', FormideOS.config.get('dashboard'));
 	FormideOS.register('app.setup');
@@ -45,7 +46,6 @@ getMac.getMac(function(err, macAddress)
 
 	// under development
 	// FormideOS.register('app.cron');
-	// FormideOS.register('app.cloud', FormideOS.config.get('cloud'));
 	// FormideOS.register('wifi');
 	// FormideOS.register('update');
 });
