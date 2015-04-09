@@ -28,6 +28,7 @@ module.exports =
 
 		this.cloud.on('connect', function() {
 			this.cloud.emit('authenticate', {
+				type: 'client',
 				mac: FormideOS.macAddress,
 				token: FormideOS.settings.cloud.accesstoken,
 				permissions: FormideOS.settings.cloud.permissions
