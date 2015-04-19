@@ -21,7 +21,7 @@ FormideOS 	= require('./FormideOS')();
 
 getMac.getMac(function(err, macAddress)
 {
-	FormideOS.macAddress = FormideOS.config.get('cloud.softMac', macAddress);
+	FormideOS.macAddress = FormideOS.config.get('cloud.softMac') || macAddress;
 
 	// core modules
 	FormideOS.register('core.http');
