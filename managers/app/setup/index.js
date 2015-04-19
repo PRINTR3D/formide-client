@@ -36,7 +36,8 @@ module.exports = {
 		// connect to wifi, otherwise, back to AP
 		request({
 			method: 'POST',
-			url: 'http://localhost:3000/clients/register/token', // 'https://api.formide.com/cauth/v1/token',
+			//url: 'http://localhost:3000/clients/register/token',
+			url: 'https://api2.formide.com/clients/register/token',
 			form:{
 				//ip_int: '',
 				//ip_ext: '',
