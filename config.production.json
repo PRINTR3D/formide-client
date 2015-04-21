@@ -45,7 +45,7 @@
 	},
 
 	"cloud": {
-		"url": "https://ws.formide.com"
+		"url": "https://dashboard.formide.com"
 	},
 
 	"dashboard": {
