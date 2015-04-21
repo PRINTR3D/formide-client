@@ -45,7 +45,7 @@
 	},
 
 	"cloud": {
-		"url": "https://dashboard.formide.com"
+		"url": "https://ws.formide.com"
 	},
 
 	"dashboard": {
@@ -80,5 +80,9 @@
 	"slicer": {
 		"port": 1339,
 		"simulated": false
+	},
+
+	"settings": {
+		"path": "../storage"
 	}
 }
