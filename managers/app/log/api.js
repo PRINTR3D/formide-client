@@ -17,8 +17,19 @@ module.exports = function(routes, module)
 	/**
 	 * Set led rgb color
 	 */
-	routes.get('/get/:type', FormideOS.manager('core.http').server.permissions.check('log'), function( req, res )
+	routes.get('/get', /* FormideOS.manager('core.http').server.permissions.check('log'),  */function( req, res )
 	{
-		res.send('OK');
+		var options = {
+			from: new Date - 24 * 60 * 60 * 1000,
+			until: new Date,
+			limit: 10,
+			start: 0,
+			order: 'desc',
+			fields: ['message', 'domainThrown']
+		};
+
+		module.get(options, function(results) {
+			res.send(results);
+		});
 	});
 }

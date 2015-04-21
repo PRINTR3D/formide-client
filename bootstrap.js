@@ -14,7 +14,6 @@
 
 // require dependencies
 var getMac 	= require('getmac');
-_ 			= require('underscore');
 
 // define global objects
 FormideOS 	= require('./FormideOS')();
@@ -39,14 +38,15 @@ getMac.getMac(function(err, macAddress)
 	FormideOS.register('app.slicer', FormideOS.config.get('slicer'));
 	FormideOS.register('app.interface', FormideOS.config.get('dashboard'));
 	FormideOS.register('app.setup');
-
 	FormideOS.register('app.camera', FormideOS.config.get('camera'));
-	FormideOS.register('app.led');
+
+	// start these modules last
 	FormideOS.register('app.cloud', FormideOS.config.get('cloud'));
+	FormideOS.register('app.webhook');
 
 	// under development
 	// FormideOS.register('app.cron');
-	// FormideOS.register('app.cloud', FormideOS.config.get('cloud'));
 	// FormideOS.register('wifi');
 	// FormideOS.register('update');
+	// FormideOS.register('app.led');
 });

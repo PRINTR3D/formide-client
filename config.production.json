@@ -45,8 +45,7 @@
 	},
 
 	"cloud": {
-		"url": "http://ws.formide.com:4000",
-		"softMac": "AAABBBCCCDDD"
+		"url": "https://ws.formide.com"
 	},
 
 	"dashboard": {
@@ -81,5 +80,9 @@
 	"slicer": {
 		"port": 1339,
 		"simulated": false
+	},
+
+	"settings": {
+		"path": "../storage"
 	}
 }

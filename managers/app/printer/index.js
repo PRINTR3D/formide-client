@@ -32,7 +32,6 @@ module.exports =
 			this.process.stdout.setEncoding('utf8');
 			this.process.stdout.on('exit', this.onExit);
 			this.process.stdout.on('error', this.onError);
-			this.process.stdout.on('data', this.onData);
 		}
 
 		this.printer = new net.Socket();
@@ -61,11 +60,6 @@ module.exports =
 	onError: function(error)
 	{
 		FormideOS.manager('debug').log(error, true);
-	},
-
-	onData: function(data)
-	{
-		FormideOS.manager('debug').log(data);
 	},
 
 	stop: function(stop)
