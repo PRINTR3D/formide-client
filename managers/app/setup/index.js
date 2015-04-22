@@ -39,10 +39,7 @@ module.exports = {
 			//url: 'http://localhost:3000/clients/register/token',
 			url: 'https://api2.formide.com/clients/register/token',
 			form:{
-				//ip_int: '',
-				//ip_ext: '',
 				mac: FormideOS.macAddress,
-				//hostname: '',
 				registertoken: registertoken
 			},
 			strictSSL: false
@@ -52,6 +49,7 @@ module.exports = {
 			}
 			else {
 				FormideOS.manager('debug').log( body );
+				FormideOS.settings.cloud.accesstoken = JSON.parse(body).accessToken;
 			}
 		}.bind(this));
 	},
