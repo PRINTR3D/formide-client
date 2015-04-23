@@ -75,7 +75,7 @@ module.exports =
 		var self = this;
 		var hash = (Math.random() / +new Date()).toString(36).replace(/[^a-z]+/g, '');
 
-		FormideOS.manager('app.log').log( 'debug', sliceparams );
+		FormideOS.manager('app.log').logDebug( 'debug', sliceparams );
 
 		var sliceData = {
 			"type": "slice",
