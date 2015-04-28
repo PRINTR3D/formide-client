@@ -41,21 +41,6 @@ module.exports =
 		this.slicer.on('data', this.sliceResponse.bind(this));
 		this.slicer.on('close', this.slicerError.bind(this));
 
-/*
-		setTimeout(function()
-		{
-			this.slicer = net.connect({
-				port: config.port
-			}, function() {
-				FormideOS.manager('debug').log('slicer connected');
-			});
-
-			this.slicer.on('error', this.slicerError);
-			this.slicer.on('data', this.sliceResponse);
-
-		}.bind(this), 2500);
-*/
-
 		FormideOS.manager('core.events').on('process.exit', this.stop.bind(this));
 	},
 
@@ -144,7 +129,7 @@ module.exports =
 			.success(function(printjob)
 			{
 				// send slice request to local slicer
-				self.slicer.write(JSON.stringify(sliceData), function() {
+				self.slicer.write(JSON.stringify(sliceData) + '\n', function() {
 					FormideOS.manager('core.events').emit('slicer.slice', sliceData);
 					return callback(true);
 				});
@@ -152,46 +137,49 @@ module.exports =
 		});
 	},
 
-	sliceResponse: function(responseData)
+	sliceResponse: function(stream)
 	{
 		try // try parsing
 		{
-			data = JSON.parse(responseData.toString()); // convert binary stream to json object
+			FormideOS.utils.parseTCPStream(stream, function(data) {
 
-			if(data.status == 200 && data.data.responseID != null)
-			{
-				FormideOS.manager('core.db').db.Printjob
-				.find({where: {sliceResponse: "{" + data.data.responseID + "}"}})
-				.success(function(printjob)
-				{
-					printjob
-					.updateAttributes({gcode: data.data.gcode, sliceResponse: JSON.stringify(data.data)})
-					.success(function()
+				if(data.status == 200 && data.data.responseID != null) {
+
+					FormideOS.manager('debug').log(data);
+					FormideOS.manager('core.db').db.Printjob
+					.find({where: {sliceResponse: "{" + data.data.responseID + "}"}})
+					.success(function(printjob)
 					{
-						FormideOS.manager('core.events').emit('slicer.finished', {
-							success: true,
-							message: 'Slicing finished'
+						printjob
+						.updateAttributes({gcode: data.data.gcode, sliceResponse: JSON.stringify(data.data)})
+						.success(function()
+						{
+							FormideOS.manager('core.events').emit('slicer.finished', {
+								success: true,
+								message: 'Slicing finished'
+							});
 						});
 					});
-				});
-			}
-			else {
-				FormideOS.manager('debug').log(data, true);
-				FormideOS.manager('app.log').logError({
-					message: 'slicer error',
-					data: data
-				});
-/*
-				FormideOS.manager('core.db').db.Printjob
-				.destroy({where: {sliceResponse: "{" + data.data.responseID + "}"}})
-				.success(function() {
-*/
-					FormideOS.manager('core.events').emit('slicer.finished', {
-						success: false,
-						message: 'Slicing failed'
+				}
+				else {
+
+					FormideOS.manager('debug').log(data, true);
+					FormideOS.manager('app.log').logError({
+						message: 'slicer error',
+						data: data
 					});
-// 				});
-			}
+	/*
+					FormideOS.manager('core.db').db.Printjob
+					.destroy({where: {sliceResponse: "{" + data.data.responseID + "}"}})
+					.success(function() {
+	*/
+						FormideOS.manager('core.events').emit('slicer.finished', {
+							success: false,
+							message: 'Slicing failed'
+						});
+	// 				});
+				}
+			});
 		}
 		catch(e)
 		{

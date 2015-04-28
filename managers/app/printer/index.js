@@ -22,8 +22,7 @@ module.exports =
 	process: null,
 	printer: {},
 
-	init: function(config)
-	{
+	init: function(config) {
 		this.config = config;
 
 		if(config.simulated)
@@ -52,18 +51,15 @@ module.exports =
 		});
 	},
 
-	onExit: function(exit)
-	{
+	onExit: function(exit) {
 		FormideOS.manager('debug').log(exit, true);
 	},
 
-	onError: function(error)
-	{
+	onError: function(error) {
 		FormideOS.manager('debug').log(error, true);
 	},
 
-	stop: function(stop)
-	{
+	stop: function(stop) {
 		this.process.kill('SIGINT');
 	},
 
@@ -77,35 +73,30 @@ module.exports =
 		}
 	},
 
-	printerStatus: function(printerData)
-	{
+	printerStatus: function(stream) {
 		try // try parsing
 		{
-			data = JSON.parse(printerData.toString());
-			FormideOS.manager('core.events').emit('printer.status', data);
+			FormideOS.utils.parseTCPStream(stream, function(printerData) {
+				FormideOS.manager('core.events').emit('printer.status', printerData);
 
-			if(data.type == 'status')
-			{
-				this.status = data.data;
-			}
+				if(printerData.type == 'status') {
+					this.status = printerData.data;
+				}
 
-			if(data.type == 'finished')
-			{
-				FormideOS.manager('core.db').db.Queueitem
-				.find({where: {id: data.data.printjobID}})
-				.success(function(queueitem)
-				{
-					if(queueitem != null)
-					{
-						queueitem
-						.updateAttributes({status: 'finished'})
-						.success(function()
-						{
-							FormideOS.manager('debug').log('removed item from queue after printing');
-						});
-					}
-				});
-			}
+				if(printerData.type == 'finished') {
+					FormideOS.manager('core.db').db.Queueitem
+					.find({where: {id: printerData.data.printjobID}})
+					.success(function(queueitem) {
+						if(queueitem != null) {
+							queueitem
+							.updateAttributes({status: 'finished'})
+							.success(function() {
+								FormideOS.manager('debug').log('removed item from queue after printing');
+							});
+						}
+					});
+				}
+			});
 		}
 		catch(e)
 		{
@@ -113,17 +104,14 @@ module.exports =
 		}
 	},
 
-	printerControl: function(data)
-	{
+	printerControl: function(data) {
 		if( data.data == undefined || data.data == null)
 		{
 			data.data = {};
 		}
 
 		data = JSON.stringify(data);
-
 		FormideOS.manager('debug').log(data);
-
-		this.printer.write(data);
+		this.printer.write(data + '\n');
 	}
 }
