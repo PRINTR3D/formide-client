@@ -37,9 +37,9 @@ module.exports =
 
 		this.slicer = new net.Socket();
 		this.connect();
-		this.printer.on('error', this.slicerError.bind(this));
-		this.printer.on('data', this.sliceResponse.bind(this));
-		this.printer.on('close', this.slicerError.bind(this));
+		this.slicer.on('error', this.slicerError.bind(this));
+		this.slicer.on('data', this.sliceResponse.bind(this));
+		this.slicer.on('close', this.slicerError.bind(this));
 
 /*
 		setTimeout(function()
