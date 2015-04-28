@@ -155,8 +155,10 @@ module.exports =
 						.success(function()
 						{
 							FormideOS.manager('core.events').emit('slicer.finished', {
-								success: true,
-								message: 'Slicing finished'
+								type: 'success',
+								title: 'Slicer finished',
+								message: 'Slicer finished slicing ' + data.data.responseID,
+								notification: true
 							});
 						});
 					});
@@ -174,8 +176,10 @@ module.exports =
 					.success(function() {
 	*/
 						FormideOS.manager('core.events').emit('slicer.finished', {
-							success: false,
-							message: 'Slicing failed'
+							type: 'warning',
+							title: 'Slicer error',
+							message: 'Slicing failed slicing ' + data.data.responseID,
+							notification: true
 						});
 	// 				});
 				}
