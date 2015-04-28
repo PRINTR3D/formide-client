@@ -169,6 +169,7 @@ module.exports =
 					.success(function()
 					{
 						FormideOS.manager('core.events').emit('slicer.finished', {
+							success: true,
 							message: 'Slicing finished'
 						});
 					});
@@ -180,23 +181,21 @@ module.exports =
 					message: 'slicer error',
 					data: data
 				});
+/*
 				FormideOS.manager('core.db').db.Printjob
 				.destroy({where: {sliceResponse: "{" + data.data.responseID + "}"}})
 				.success(function() {
+*/
 					FormideOS.manager('core.events').emit('slicer.finished', {
+						success: false,
 						message: 'Slicing failed'
 					});
-				});
+// 				});
 			}
 		}
 		catch(e)
 		{
 			FormideOS.manager('debug').log(e, true);
 		}
-	},
-
-	slicerError: function(error)
-	{
-		FormideOS.manager('debug').log(error, true);
 	}
 }
