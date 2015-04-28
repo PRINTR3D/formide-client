@@ -24,6 +24,8 @@ module.exports =
 
 	init: function(config)
 	{
+		this.config = config;
+
 		if(config.simulated)
 		{
 			this.process = spawn('node', ['index.js'], {cwd: FormideOS.appRoot + 'slicer-simulator', stdio: 'pipe'});
@@ -33,6 +35,13 @@ module.exports =
 			this.process.stdout.on('data', this.onData);
 		}
 
+		this.slicer = new net.Socket();
+		this.connect();
+		this.printer.on('error', this.slicerError.bind(this));
+		this.printer.on('data', this.sliceResponse.bind(this));
+		this.printer.on('close', this.slicerError.bind(this));
+
+/*
 		setTimeout(function()
 		{
 			this.slicer = net.connect({
@@ -45,8 +54,18 @@ module.exports =
 			this.slicer.on('data', this.sliceResponse);
 
 		}.bind(this), 2500);
+*/
 
 		FormideOS.manager('core.events').on('process.exit', this.stop.bind(this));
+	},
+
+	connect: function() {
+		this.slicer.destroy();
+		this.slicer.connect({
+			port: this.config.port
+		}, function() {
+			FormideOS.manager('debug').log('slicer connected');
+		});
 	},
 
 	onExit: function(exit)
@@ -67,6 +86,16 @@ module.exports =
 	stop: function(stop)
 	{
 		this.process.kill('SIGINT');
+	},
+
+	// custom functions
+	slicerError: function(error) {
+		FormideOS.manager('debug').log(error.toString(), true);
+		if (error.code == 'ECONNREFUSED' || error == false) {
+			this.slicer.setTimeout(2000, function() {
+				this.connect();
+			}.bind(this));
+		}
 	},
 
 	// custom functions
@@ -142,6 +171,20 @@ module.exports =
 						FormideOS.manager('core.events').emit('slicer.finished', {
 							message: 'Slicing finished'
 						});
+					});
+				});
+			}
+			else {
+				FormideOS.manager('debug').log(data, true);
+				FormideOS.manager('app.log').logError({
+					message: 'slicer error',
+					data: data
+				});
+				FormideOS.manager('core.db').db.Printjob
+				.destroy({where: {sliceResponse: "{" + data.data.responseID + "}"}})
+				.success(function() {
+					FormideOS.manager('core.events').emit('slicer.finished', {
+						message: 'Slicing failed'
 					});
 				});
 			}

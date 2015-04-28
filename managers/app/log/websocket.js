@@ -14,6 +14,7 @@
 
 module.exports = function(namespace, module)
 {
+/*
 	namespace.on('connection', function( socket )
 	{
 		module.logger.on('logging', function(transport, level, msg, data) {
@@ -23,4 +24,5 @@ module.exports = function(namespace, module)
 			});
 		});
 	});
+*/
 };
