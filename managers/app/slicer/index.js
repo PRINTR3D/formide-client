@@ -86,6 +86,77 @@ module.exports =
 	// custom functions
 	slice: function(sliceparams, modelfile, sliceprofile, materials, printer, callback)
 	{
+
+
+
+/*
+		sliceprofile
+
+		models [
+			hash
+			bucketIn
+			x
+			y
+			z
+			extruder
+			settings
+		]
+
+		printer
+
+		settings [
+			bed [
+				temp
+				firstLayersTemp
+			]
+			materials [
+				extnr
+				material
+			]
+			raft -> boolean, extruder
+			brim -> boolean, extruder
+			skirt -> boolean, extruder
+			support -> boolean, extruder
+			fan -> boolean
+		]
+
+		regionSettings []
+*/
+
+		var sliceData = {
+			type: "slice",
+			data: sliceparams
+		};
+
+		// check for printjob settings
+		if(!settings.raft.enabled) {
+			delete sliceData.data.raft;
+		}
+
+		if(!settings.brim.enabled) {
+			delete sliceData.data.brim;
+		}
+
+		if(!settings.skirt.enabled) {
+			delete sliceData.data.skirt;
+		}
+
+		if(!settings.support.enabled) {
+			delete sliceData.data.support;
+		}
+
+		if(!settings.fan.enabled) {
+			delete sliceData.data.fan;
+		}
+
+		if(settings.bed.enabled) {
+			sliceData.data.bed = settings.bed; // TODO: fix this
+		}
+
+
+
+
+
 		var self = this;
 		var hash = (Math.random() / +new Date()).toString(36).replace(/[^a-z]+/g, '');
 
