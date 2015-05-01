@@ -123,6 +123,7 @@ module.exports =
 		regionSettings []
 */
 
+/*
 		var sliceData = {
 			type: "slice",
 			data: sliceparams
@@ -152,6 +153,7 @@ module.exports =
 		if(settings.bed.enabled) {
 			sliceData.data.bed = settings.bed; // TODO: fix this
 		}
+*/
 
 
 
