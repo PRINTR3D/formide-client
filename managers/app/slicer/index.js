@@ -88,41 +88,6 @@ module.exports =
 	{
 
 
-
-/*
-		sliceprofile
-
-		models [
-			hash
-			bucketIn
-			x
-			y
-			z
-			extruder
-			settings
-		]
-
-		printer
-
-		settings [
-			bed [
-				temp
-				firstLayersTemp
-			]
-			materials [
-				extnr
-				material
-			]
-			raft -> boolean, extruder
-			brim -> boolean, extruder
-			skirt -> boolean, extruder
-			support -> boolean, extruder
-			fan -> boolean
-		]
-
-		regionSettings []
-*/
-
 /*
 		var sliceData = {
 			type: "slice",
