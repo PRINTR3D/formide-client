@@ -22,92 +22,81 @@ module.exports =
 	process: null,
 	printer: {},
 
-	init: function(config)
-	{
+	init: function(config) {
+		this.config = config;
+
 		if(config.simulated)
 		{
 			this.process = spawn('node', ['index.js'], {cwd: FormideOS.appRoot + 'driver-simulator', stdio: 'pipe'});
 			this.process.stdout.setEncoding('utf8');
 			this.process.stdout.on('exit', this.onExit);
 			this.process.stdout.on('error', this.onError);
-			this.process.stdout.on('data', this.onData);
 		}
 
-		setTimeout(function()
-		{
-			this.printer = new net.Socket();
-
-			this.printer.connect({
-				port: config.port
-			}, function() {
-				FormideOS.manager('debug').log('printer connected');
-			});
-
-			this.printer.setTimeout(10);
-			this.printer.setNoDelay(true);
-			this.printer.on('error', this.printerError);
-			this.printer.on('data', this.printerStatus);
-
-		}.bind(this), 2500);
+		this.printer = new net.Socket();
+		this.connect();
+		this.printer.on('error', this.printerError.bind(this));
+		this.printer.on('data', this.printerStatus.bind(this));
+		this.printer.on('close', this.printerError.bind(this));
 
 		FormideOS.manager('core.events').on('process.exit', this.stop.bind(this));
 	},
 
-	onExit: function(exit)
-	{
+	connect: function() {
+		this.printer.destroy();
+		this.printer.connect({
+			port: this.config.port
+		}, function() {
+			FormideOS.manager('debug').log('printer connected');
+		});
+	},
+
+	onExit: function(exit) {
 		FormideOS.manager('debug').log(exit, true);
 	},
 
-	onError: function(error)
-	{
+	onError: function(error) {
 		FormideOS.manager('debug').log(error, true);
 	},
 
-	onData: function(data)
-	{
-		FormideOS.manager('debug').log(data);
-	},
-
-	stop: function(stop)
-	{
+	stop: function(stop) {
 		this.process.kill('SIGINT');
 	},
 
 	// custom functions
-	printerError: function(error)
-	{
+	printerError: function(error) {
 		FormideOS.manager('debug').log(error.toString(), true);
+		if (error.code == 'ECONNREFUSED' || error == false) {
+			this.printer.setTimeout(2000, function() {
+				this.connect();
+			}.bind(this));
+		}
 	},
 
-	printerStatus: function(printerData)
-	{
+	printerStatus: function(stream) {
 		try // try parsing
 		{
-			data = JSON.parse(printerData.toString());
-			FormideOS.manager('core.events').emit('printer.status', data);
+			FormideOS.utils.parseTCPStream(stream, function(printerData) {
+				FormideOS.manager('core.events').emit('printer.status', printerData);
 
-			if(data.type == 'status')
-			{
-				this.status = data.data;
-			}
+				if(printerData.type == 'status') {
+					this.status = printerData.data;
+				}
 
-			if(data.type == 'finished')
-			{
-				FormideOS.manager('core.db').db.Queueitem
-				.find({where: {id: data.data.printjobID}})
-				.success(function(queueitem)
-				{
-					if(queueitem != null)
-					{
-						queueitem
-						.updateAttributes({status: 'finished'})
-						.success(function()
-						{
-							FormideOS.manager('debug').log('removed item from queue after printing');
-						});
-					}
-				});
-			}
+				if(printerData.type == 'finished') {
+					FormideOS.manager('core.db').db.Queueitem
+					.find({where: {id: printerData.data.printjobID}})
+					.success(function(queueitem) {
+						if(queueitem != null) {
+							queueitem
+							.updateAttributes({status: 'finished'})
+							.success(function() {
+								FormideOS.manager('debug').log('removed item from queue after printing');
+							});
+						}
+					});
+				}
+			});
 		}
 		catch(e)
 		{
@@ -115,17 +104,14 @@ module.exports =
 		}
 	},
 
-	printerControl: function(data)
-	{
+	printerControl: function(data) {
 		if( data.data == undefined || data.data == null)
 		{
 			data.data = {};
 		}
 
 		data = JSON.stringify(data);
-
 		FormideOS.manager('debug').log(data);
-
-		this.printer.write(data);
+		this.printer.write(data + '\n');
 	}
 }

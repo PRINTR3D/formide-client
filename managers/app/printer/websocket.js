@@ -57,8 +57,6 @@ module.exports = function(namespace, module)
 			{
 				socket.on(realMethod, function(data)
 				{
-					FormideOS.manager('debug').log('Control printer ' + realMethod);
-
 					var expected = FormideOS.config.get('channels.dashboard')[realMethod];
 					var given = data;
 					var correct = true;

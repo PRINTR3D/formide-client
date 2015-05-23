@@ -20,44 +20,75 @@ var socket 		= require('socket.io-client');
 module.exports =
 {
 	cloud: {},
-	clients: [],
+	local: [],
 
 	init: function( config )
 	{
 		this.cloud = socket( config.url );
 
-/*
-		this.http({
-			method: 'GET',
-			url: '/api/printer/status',
-			token: 'ABCABC',
-			callback: console.log
+		this.cloud.on('connect', function() {
+			this.cloud.emit('authenticate', {
+				type: 'client',
+				mac: FormideOS.macAddress,
+				token: FormideOS.settings.cloud.accesstoken,
+				permissions: FormideOS.settings.cloud.permissions
+			});
+			console.log(this.cloud.id);
+			FormideOS.manager('debug').log('Cloud connected');
+		}.bind(this));
+
+		this.cloud.on('http', function(data, callback) {
+			FormideOS.manager('debug').log('Cloud http call: ' + data.manager + '/' + data.function);
+			this.http(data, function(response) {
+				callback(response);
+			});
+		}.bind(this));
+
+		this.cloud.on('listen', function(data, callback) {
+			FormideOS.manager('debug').log('Cloud ws listen: ' + data.manager + '/' + data.channel);
+			this.listen(data, function(response) {
+				callback(response);
+			});
+		}.bind(this));
+
+		this.cloud.on('emit', function(data, callback) {
+			FormideOS.manager('debug').log('Cloud ws emit: ' + data.manager + '/' + data.channel);
+			this.emit(data);
+		}.bind(this));
+
+		this.cloud.on('disconnect', function() {
+			FormideOS.manager('debug').log('Cloud diconnected');
 		});
-*/
 	},
 
-	http: function( data )
-	{
+	http: function(data, callback) {
 		request({
 			method: data.method,
-			uri: 'http://127.0.0.1:' + FormideOS.manager('core.http').server.server.address().port + data.url,
+			uri: 'http://127.0.0.1:' + FormideOS.manager('core.http').server.server.address().port + '/api/' + data.manager + '/' + data.function,
 			auth: {
 				bearer: data.token
 			},
 			form: data.data || {}
-		}, function( error, response, body )
-		{
-			data.callback( body );
+		}, function( error, response, body ) {
+			callback( body );
 		});
 	},
 
-	socketOn: function( data )
-	{
-
+	listen: function(data, callback) {
+		var self = this;
+		if(!this.local[data.manager]) {
+			this.local[data.manager] = socket( 'ws://127.0.0.1:' + FormideOS.manager('core.http').server.server.address().port + '/' + data.manager);
+		}
+		this.local[data.manager].on(data.channel, function(response) {
+			self.cloud.emit(data.manager + "." + data.channel, response);
+		});
 	},
 
-	socketEmit: function( data )
-	{
-		this.cloud.emit()
+	emit: function(data) {
+		var self = this;
+		if(!this.local[data.manager]) {
+			this.local[data.manager] = socket( 'ws://127.0.0.1:' + FormideOS.manager('core.http').server.server.address().port + '/' + data.manager);
+		}
+		this.local[data.manager].emit(data.channel, data.data);
 	}
 }

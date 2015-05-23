@@ -12,8 +12,8 @@
  *
  */
 
-var domain 	= require('domain');
-var fs 		= require('fs');
+var domain 					= require('domain');
+var fs 						= require('fs');
 
 module.exports = function( managerName, data )
 {
@@ -22,7 +22,8 @@ module.exports = function( managerName, data )
 
 	d.on('error', function( err )
 	{
-	  	console.log( err.stack );
+		FormideOS.manager('core.events').emit('log.error', {message: 'uncaught exception occured', data: err.stack});
+	  	FormideOS.manager('debug').log(err.stack, true);
 	});
 
 	d.add(FormideOS.manager('core.events'));
@@ -46,9 +47,9 @@ module.exports = function( managerName, data )
 
 			if(fs.existsSync('managers/' + managerName + '/api.js'))
 			{
-				var routes = express();
-				require('../managers/' + managerName + '/api.js')(routes, manager);
-				FormideOS.manager('core.http').server.app.use('/api/' + managerNamespace, routes); // register as sub-app in express server
+				var router = express.Router();
+				require('../managers/' + managerName + '/api.js')(router, manager);
+				FormideOS.manager('core.http').server.app.use('/api/' + managerNamespace, router); // register as sub-app in express server
 			}
 
 			if(fs.existsSync('managers/' + managerName + '/websocket.js'))

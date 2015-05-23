@@ -13,16 +13,21 @@
  */
 
 // dependencies
-express 				= require('express');
-var expressValidator 	= require('express-validator')
-var cors 				= require('cors');
-var passport 			= require('passport');
-var LocalStrategy 		= require('passport-local').Strategy;
-var BearerStrategy 		= require('passport-http-bearer').Strategy;
-var bodyParser 			= require('body-parser');
-var session 			= require('express-session');
-var MemoryStore 		= session.MemoryStore;
-var permissions			= require('./middleware/permissions.js');
+express 					= require('express');
+var expressSession			= require('express-session');
+cookieParser 				= require('cookie-parser');
+var MemoryStore 			= expressSession.MemoryStore;
+sessionStore 				= new MemoryStore();
+session 					= expressSession({ store: sessionStore, secret: 'secret', key: 'express.sid', saveUninitialized: false, resave: false });
+var expressValidator 		= require('express-validator');
+var cors 					= require('cors');
+var passport 				= require('passport');
+var LocalStrategy 			= require('passport-local').Strategy;
+var BearerStrategy 			= require('passport-http-bearer').Strategy;
+var bodyParser 				= require('body-parser');
+var permissionsMiddleware	= require('./middleware/permissions');
+var passwordHash 			= require('password-hash');
+var bearerToken 			= require('express-bearer-token');
 
 module.exports =
 {
@@ -43,23 +48,20 @@ module.exports =
 		http.app.use( bodyParser.urlencoded({extended: true}) );
 		http.app.use( expressValidator() );
 
-		http.app.use( session({
-		    key: 'KEY',
-		    secret: 'SECRET331156%^!fafsdaasd',
-		    store: new MemoryStore({reapInterval: 60000 * 10}),
-		    saveUninitialized: true,
-		    resave: false
-		}));
+		http.app.use( cookieParser() );
+		http.app.use( session );
 
 		http.app.use( passport.initialize() );
 		http.app.use( passport.session() );
+
+		http.app.use(bearerToken());
 
 		http.app.use(cors({
 			origin: true,
 			credentials: true
 		}));
 
-		http.app.use( permissions.initialize() );
+		http.app.use( permissionsMiddleware.initialize() );
 
 		passport.serializeUser(function(user, done)
 		{
@@ -92,10 +94,12 @@ module.exports =
 						return callback( null, false, { message: 'Username already taken' } );
 					}
 
+					var hashedPassword = passwordHash.generate(password);
+
 					FormideOS.manager('core.db').db.User
 					.create({
 						username: username,
-						password: password
+						password: hashedPassword
 					})
 					.success(function( user )
 					{
@@ -118,7 +122,7 @@ module.exports =
 					return callback(null, false, { message: 'Incorrect username.' });
 				}
 
-				if( user.password != password )
+				if( !passwordHash.verify(password, user.password) )
 				{
 					return callback(null, false, { message: 'Incorrect password.' });
 				}
@@ -127,6 +131,7 @@ module.exports =
 			});
 		}));
 
+/*
 		passport.use( 'bearer-login', new BearerStrategy({}, function( token, callback )
 		{
 			FormideOS.manager('debug').log( 'Token login attempt for ' + token );
@@ -143,9 +148,10 @@ module.exports =
 				return callback(null, token);
 			});
 		}));
+*/
 
 		this.server = http;
 		this.server.auth = passport;
-		this.server.permissions = permissions;
+		this.server.permissions = permissionsMiddleware;
 	}
 }

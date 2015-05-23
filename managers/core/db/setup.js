@@ -12,6 +12,8 @@
  *
  */
 
+var passwordHash = require('password-hash');
+
 module.exports = {
 
 	init: function( db, sequelize )
@@ -31,8 +33,8 @@ module.exports = {
 				db.User
 				.create({
 					"username": "login@printspot.local",
-					"password": "password",
-					"permissions": "camera,files,led,log,printer,rest:material,rest:modelfile,rest:printer,rest:printjob,rest:queue,rest:sliceprofile,rest:user,slicer,wifi,device"
+					"password": passwordHash.generate("password"),
+					"permissions": "auth,camera,files,led,log,printer,rest:material,rest:modelfile,rest:printer,rest:printjob,rest:queue,rest:sliceprofile,rest:user,slicer,wifi,device"
 				})
 				.success(function(success)
 				{
@@ -42,7 +44,7 @@ module.exports = {
 				db.Accesstoken
 				.create({
 					"token": "b518e7f9-9d7f-4de8-a522-68deaea20024",
-					"permissions": "camera,files,led,log,printer,rest:material,rest:modelfile,rest:printer,rest:printjob,rest:queue,rest:sliceprofile,rest:user,slicer,wifi,device"
+					"permissions": "auth,camera,files,led,log,printer,rest:material,rest:modelfile,rest:printer,rest:printjob,rest:queue,rest:sliceprofile,rest:user,slicer,wifi,device"
 				})
 				.success(function(success)
 				{
@@ -73,8 +75,8 @@ module.exports = {
 				.create({
 					"name": "PLA",
 					"type": "PLA",
-					"temperature": 193,
-					"firstLayersTemperature": 200,
+					"temperature": 200,
+					"firstLayersTemperature": 210,
 					"bedTemperature": 50,
 					"firstLayersBedTemperature": 60,
 					"filamentDiameter": 1750,
@@ -104,15 +106,15 @@ module.exports = {
 						"support": {
 						   "fillRate": 15,
 						   "angle": 30,
-						   "supportEverywhere": 1,
+						   "supportEverywhere": 0,
 						   "supportPlatform": 0,
 						   "extruder": "extruder1",
 						   "XYDistance": 700,
 						   "ZDistance": 150
 						},
 						"skirt": {
-						   "lineCount": 0,
-						   "distance": 3000,
+						   "lineCount": 1,
+						   "distance": 10000,
 						   "minLenght": 150000
 						},
 						"multiExtrusion": {
@@ -152,21 +154,21 @@ module.exports = {
 						   "extruder":"extruder1"
 			           	},
 						"bottom": {
-						   "thickness": 960,
-						   "layerHeight": 240,
+						   "thickness": 600,
+						   "layerHeight": 300,
 						   "speed": 15,
 						   "solid": 1,
-						   "layerDelay": 5,
+						   "layerDelay": 0,
 						   "cutOff": 0
 						},
 						"top": {
-						   "thickness": 720,
+						   "thickness": 500,
 						   "solid": 1,
-						   "layerHeight": 240
+						   "layerHeight": 250
 						},
 						"retraction": {
-						   "amount": 4500,
-						   "speed": 45,
+						   "amount": 3000,
+						   "speed": 30,
 						   "extruderSwitch": 14500,
 						   "minimalExtrusionBeforeRetraction": 20,
 						   "zhop": 0,
@@ -176,11 +178,11 @@ module.exports = {
 						   "spiralize": 0,
 						   "simpleMode": 0,
 						   "layerHeight": 200,
-						   "layerCoolingTime": 2,
-						   "firstLayersCount": 1,
+						   "layerCoolingTime": 0,
+						   "firstLayersCount": 0,
 						   "firstLayersAmount": 100,
 						   "thickness": 200,
-						   "wallThickness": 400
+						   "wallThickness": 800
 						},
 						"extra": {
 							"brimLines": 0
@@ -189,7 +191,7 @@ module.exports = {
 						   "startGcode": ["G21", "G28", "G1 Z5 F5000", "G90", "G92 E0", "M82", "G92 E0"],
 						   "endGcode": ["G92 E0", "M104 S0", "G28 X0", "M84"],
 						   "changelayerGcode": [],
-						   "gcodeFlavour": "GCODE_FLAVOR_ULTIGCODE"
+						   "gcodeFlavour": "GCODE_FLAVOR_DEFAULT"
 						},
 						"plugins": []
 					})

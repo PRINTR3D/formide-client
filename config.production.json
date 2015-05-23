@@ -2,9 +2,8 @@
 	"app": {
 		"debug": true,
 		"timezone": "UTC",
-		"url": "localhost",
+		"url": "0.0.0.0",
 		"port": 1337,
-		"websocket": 4000,
 		"version": "0.4.0"
 	},
 
@@ -45,8 +44,7 @@
 	},
 
 	"cloud": {
-		"url": "http://ws.formide.com:4000",
-		"softMac": "AAABBBCCCDDD"
+		"url": "https://ws.formide.com"
 	},
 
 	"dashboard": {
@@ -81,5 +79,9 @@
 	"slicer": {
 		"port": 1339,
 		"simulated": false
+	},
+
+	"settings": {
+		"path": "../storage"
 	}
 }

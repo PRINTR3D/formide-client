@@ -32,36 +32,29 @@ module.exports = {
 		callback( 'OK' );
 	},
 
-	registerToCloud: function( ssid, password, token )
-	{
+	registerToCloud: function( ssid, password, registertoken ) {
 		// connect to wifi, otherwise, back to AP
-
 		request({
 			method: 'POST',
-			url: 'https://api.formide.com/cauth/v1/token',
+			//url: 'http://localhost:3000/clients/register/token',
+			url: 'https://api2.formide.com/clients/register/token',
 			form:{
-				ip_int: '',
-				ip_ext: '',
 				mac: FormideOS.macAddress,
-				hostname: '',
-				token: token
+				registertoken: registertoken
 			},
 			strictSSL: false
-		}, function( err, httpResponse, body )
-		{
-			if( err )
-			{
+		}, function( err, httpResponse, body ) {
+			if( err ) {
 				FormideOS.manager('debug').log( err, true );
 			}
-			else
-			{
+			else {
 				FormideOS.manager('debug').log( body );
+				FormideOS.settings.cloud.accesstoken = JSON.parse(body).accessToken;
 			}
 		}.bind(this));
 	},
 
-	listNetworks: function( callback )
-	{
+	listNetworks: function( callback ) {
 		networks = [
 			{
 				"ssid": "Printhom",

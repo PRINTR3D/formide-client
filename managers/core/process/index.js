@@ -12,7 +12,7 @@
  *
  */
 
-var argv = require('minimist');
+var argv 		= require('minimist');
 
 module.exports =
 {
@@ -23,9 +23,7 @@ module.exports =
 	{
 		this.process = process;
 		this.args = argv(this.process.argv.slice(2));
-
 		this.process.on('exit', this.processExit);
-
 		this.process.on('uncaughtException', this.processError);
 	},
 
@@ -66,7 +64,7 @@ module.exports =
 
 	processError: function(err)
 	{
-		err = err.toString();
-		FormideOS.manager('debug').log(err, true);
+		FormideOS.manager('core.events').emit('log.error', {message: 'uncaught exception occured', data: err.stack});
+		FormideOS.manager('debug').log(err.stack);
 	}
 };

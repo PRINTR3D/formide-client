@@ -32,7 +32,7 @@ module.exports = function(routes, module)
 	{
 		req.checkBody('wifi_ssid', 'wifi_ssid invalid').notEmpty();
 		req.checkBody('wifi_password', 'wifi_password invalid').notEmpty();
-		req.checkBody('token', 'token invalid').notEmpty();
+		req.checkBody('registertoken', 'token invalid').notEmpty();
 
 		var inputErrors = req.validationErrors();
 		if( inputErrors )
@@ -43,7 +43,7 @@ module.exports = function(routes, module)
 			});
 		}
 
-		module.registerToCloud( req.body.wifi_ssid, req.body.wifi_password, req.body.token );
+		module.registerToCloud( req.body.wifi_ssid, req.body.wifi_password, req.body.registertoken );
 		return res.send({
 			status: 200,
 			message: 'OK'
