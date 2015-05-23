@@ -16,12 +16,6 @@ To contribute to this repository as non-printer developer, please make a private
 	* copy config
 	* copy bootscript
 	* restart to new folder
-* Wifi manager
-	* Switch between modes (client and AP)
-* New cloud manager
-	* Full ws and http proxy
-	* Access settings (restrict cloud access)
-* Developer token authorization
 * Cron manager
 	* Schedule print job
 * Automated tests
