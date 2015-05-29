@@ -6,20 +6,10 @@ module.exports = {
 	
 	init: function() {
 		
-		this.db.User.find().exec(function(err, users) {
-			console.log(users);
-		});
-		
-/*
-		this.db.User.create({
-			password: "derp",
-			email: "derp@printr.nl",
-			firstname: "Chris",
-			lastname: "ter Beke"
-		}, function(err, user) {
-			console.log(err);
-			console.log(user);
-		});
-*/
+		// run setup when argument given in terminal
+		if(FormideOS.manager('core.process').args.setup) {
+			FormideOS.manager('debug').log('Database setup running');
+			require('./setup').init(this.db);
+		}
 	}
 }

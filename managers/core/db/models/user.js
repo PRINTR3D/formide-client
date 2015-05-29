@@ -1,9 +1,5 @@
 var mongoose = require('mongoose')
 var Schema = mongoose.Schema;
-
-/**
- * User schema
- */
  
 var OAuthUsersSchema = new Schema({
 	email: { type: String, unique: true, required: true },
