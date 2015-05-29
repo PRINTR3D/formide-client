@@ -26,7 +26,6 @@ getMac.getMac(function(err, macAddress)
 	FormideOS.register('core.http');
 	FormideOS.register('core.process');
 	FormideOS.register('core.db');
-/*
 	FormideOS.register('core.auth');
 	FormideOS.register('core.websocket');
 	FormideOS.register('core.device');
@@ -44,7 +43,6 @@ getMac.getMac(function(err, macAddress)
 	// start these modules last
 	FormideOS.register('app.cloud', FormideOS.config.get('cloud'));
 	FormideOS.register('app.webhook');
-*/
 
 	// under development
 	// FormideOS.register('app.cron');

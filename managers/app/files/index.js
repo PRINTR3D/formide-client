@@ -12,7 +12,8 @@
  *
  */
 
-var fs 					= require('fs');
+var fs		= require('fs');
+var uuid	= require('node-uuid');
 
 module.exports =
 {
@@ -20,7 +21,7 @@ module.exports =
 	{
 		fs.readFile(file.path, function( err, data )
 		{
-			var hash = (Math.random() / +new Date()).toString(36).replace(/[^a-z]+/g, '');
+			var hash = uuid.v4();
 			var newPath = FormideOS.config.get('paths.modelfile') + '/' + hash;
 
 			fs.writeFile(newPath, data, function( err )
@@ -40,12 +41,13 @@ module.exports =
 						filename: file.name,
 						filesize: file.size,
 						hash: hash
-					});
-
-					return callback({
-						status: 200,
-						message: 'OK'
-					});
+					}, function(err, modelfile) {
+						if(err) return false;
+						return callback({
+							status: 200,
+							message: 'OK'
+						});
+					})
 				}
 			});
 		});

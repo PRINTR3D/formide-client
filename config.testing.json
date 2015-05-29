@@ -54,11 +54,7 @@
 	},
 
 	"database": {
-		"username": "root",
-		"password": null,
-		"database": "printspot",
-		"storage": "../storage/printspot.sqlite",
-		"debug": false
+		"storage": "../storage/database"
 	},
 
 	"log": {

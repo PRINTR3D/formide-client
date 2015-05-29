@@ -2,7 +2,10 @@ var mongoose = require('mongoose')
 var Schema = mongoose.Schema;
 
 var schema = new Schema({
-	
+	user: { type: String, ref: 'users' },
+	filename: { type: String, required: true },
+	filesize: { type: Number, required: true },
+	hash: { type: String, required: true }
 });
 
 mongoose.model('modelfiles', schema);

@@ -14,13 +14,10 @@
 
 module.exports = function(routes, db)
 {
-	routes.get('/modelfiles', FormideOS.manager('core.http').server.permissions.check('rest:modelfile'), function( req, res )
-	{
-		db.Modelfile
-		.findAll()
-		.then(function(modelfiles)
-		{
-			res.send(modelfiles);
+	routes.get('/modelfiles', FormideOS.manager('core.http').server.permissions.check('rest:modelfile'), function(req, res) {
+		db.Modelfile.find().exec(function(err, modelfiles) {
+			if (err) return res.send(err);
+			return res.send(modelfiles);
 		});
 	});
 
@@ -36,12 +33,10 @@ module.exports = function(routes, db)
 				errors: inputErrors
 			});
 		}
-
-		db.Modelfile
-		.find({ where: {id: req.params.id } })
-		.then(function(modelfile)
-		{
-			res.send(modelfile);
+		
+		db.Modelfile.findOne({ _id: req.params.id }).exec(function(err, modelfile) {
+			if (err) return res.send(err);
+			return res.send(modelfile);
 		});
 	});
 
