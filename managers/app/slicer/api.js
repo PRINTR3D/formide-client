@@ -268,8 +268,9 @@ module.exports = function(routes, module)
 		req.checkBody('sliceMethod', 'sliceMethod is invalid, is mandatory and must be a string').notEmpty();
 */
 		
+
 		
-		
+/*
 		req.checkBody('sliceparams', 'sliceparams invalid').notEmpty();
 		req.checkBody('modelfile', 'modelfile invalid').notEmpty().isInt();
 		req.checkBody('sliceprofile', 'sliceprofile invalid').notEmpty().isInt();
@@ -285,13 +286,16 @@ module.exports = function(routes, module)
 				errors: inputErrors
 			});
 		}
+*/
+		console.log(req);
+		var parsedBody = req.body; //JSON.parse(req.body);
 
-		var _sliceparams = req.body.sliceparams;
-		var _modelfile = req.body.modelfile;
-		var _sliceprofile = req.body.sliceprofile;
-		var _materials = req.body.materials;
-		var _printer = req.body.printer;
-		var _slicemethod = req.body.slicemethod;
+		var _sliceparams = parsedBody.sliceparams;
+		var _modelfile = parsedBody.modelfile;
+		var _sliceprofile = parsedBody.sliceprofile;
+		var _materials = parsedBody.materials;
+		var _printer = parsedBody.printer;
+		var _slicemethod = parsedBody.slicemethod;
 
 		if( _slicemethod == 'local' )
 		{

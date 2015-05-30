@@ -63,7 +63,7 @@ module.exports = function(routes, module)
 					{
 						if(req.params.command == 'start')
 						{
-							req.query.hash = FormideOS.config.get('paths.gcode') + '/' + req.query.hash;
+							req.query.hash = FormideOS.appRoot + FormideOS.config.get('paths.gcode') + '/' + req.query.hash;
 						}
 
 						var params = JSON.stringify(req.query);

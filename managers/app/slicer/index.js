@@ -201,6 +201,9 @@ module.exports =
 						});
 					});
 				}
+				else if(data.status == 111) {
+					// status, do later
+				}
 				else {
 
 					FormideOS.manager('debug').log(data, true);
