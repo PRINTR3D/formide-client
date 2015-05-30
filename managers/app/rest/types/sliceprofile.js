@@ -14,16 +14,14 @@
 
 module.exports = function(routes, db)
 {
-	routes.get('/sliceprofiles', FormideOS.manager('core.http').server.permissions.check('rest:sliceprofile'), function( req, res )
-	{
+	routes.get('/sliceprofiles', FormideOS.manager('core.http').server.permissions.check('rest:sliceprofile'), function( req, res ) {
 		db.Sliceprofile.find().exec(function(err, sliceprofiles) {
 			if (err) res.send(err);
 			res.send(sliceprofiles);
 		});
 	});
 
-	routes.get('/sliceprofiles/:id', FormideOS.manager('core.http').server.permissions.check('rest:sliceprofile'), function( req, res )
-	{
+	routes.get('/sliceprofiles/:id', FormideOS.manager('core.http').server.permissions.check('rest:sliceprofile'), function( req, res ) {
 		req.checkParams('id', 'id invalid').notEmpty().isInt();
 
 		var inputErrors = req.validationErrors();
@@ -35,7 +33,7 @@ module.exports = function(routes, db)
 			});
 		}
 		
-		db.Sliceprofile.find({ _id: req.params.id }).exec(function(err, sliceprofile) {
+		db.Sliceprofile.findOne({ _id: req.params.id }).exec(function(err, sliceprofile) {
 			if (err) res.send(err);
 			if (!sliceprofile) res.send('nothing');
 			res.send(sliceprofile);

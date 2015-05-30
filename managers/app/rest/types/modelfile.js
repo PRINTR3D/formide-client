@@ -21,8 +21,7 @@ module.exports = function(routes, db)
 		});
 	});
 
-	routes.get('/modelfiles/:id', FormideOS.manager('core.http').server.permissions.check('rest:modelfile'), function( req, res )
-	{
+	routes.get('/modelfiles/:id', FormideOS.manager('core.http').server.permissions.check('rest:modelfile'), function( req, res ) {
 		req.checkParams('id', 'id invalid').notEmpty().isInt();
 
 		var inputErrors = req.validationErrors();

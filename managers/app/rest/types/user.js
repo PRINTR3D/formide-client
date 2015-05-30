@@ -14,22 +14,14 @@
 
 module.exports = function(routes, db)
 {
-	routes.get('/users', FormideOS.manager('core.http').server.permissions.check('rest:user'), function( req, res )
-	{
-		db.User
-		.findAll()
-		.then(function(users)
-		{
+	routes.get('/users', FormideOS.manager('core.http').server.permissions.check('rest:user'), function( req, res ) {
+		db.User.find().exec(function(err, users) {
 			res.send(users);
 		});
 	});
 
-	routes.get('/users/:id', FormideOS.manager('core.http').server.permissions.check('rest:user'), function( req, res )
-	{
-		db.User
-		.find({ where: {id: req.params.id } })
-		.then(function(user)
-		{
+	routes.get('/users/:id', FormideOS.manager('core.http').server.permissions.check('rest:user'), function( req, res ) {
+		db.User.findOne({ _id: req.params.id }).exec(function(err, user) {
 			res.send(user);
 		});
 	});

@@ -14,18 +14,14 @@
 
 module.exports = function(routes, db)
 {
-	routes.get('/printers', FormideOS.manager('core.http').server.permissions.check('rest:printer'), function( req, res )
-	{
-		db.Printer
-		.findAll()
-		.then(function(printers)
-		{
-			res.send(printers);
+	routes.get('/printers', FormideOS.manager('core.http').server.permissions.check('rest:printer'), function( req, res ) {
+		db.Printer.find().exec(function(err, printers) {
+			if (err) return res.send(err);
+			return res.send(printers);
 		});
 	});
 
-	routes.get('/printers/:id', FormideOS.manager('core.http').server.permissions.check('rest:printer'), function( req, res )
-	{
+	routes.get('/printers/:id', FormideOS.manager('core.http').server.permissions.check('rest:printer'), function( req, res ) {
 		req.checkParams('id', 'id invalid').notEmpty().isInt();
 
 		var inputErrors = req.validationErrors();
@@ -36,12 +32,10 @@ module.exports = function(routes, db)
 				errors: inputErrors
 			});
 		}
-
-		db.Printer
-		.find({ where: {id: req.params.id } })
-		.then(function(printer)
-		{
-			res.send(printer);
+		
+		db.Printer.findOne({ _id: req.params.id }).exec(function(err, printer) {
+			if (err) return res.send(err);
+			return res.send(printer);
 		});
 	});
 

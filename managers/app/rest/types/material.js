@@ -14,18 +14,13 @@
 
 module.exports = function(routes, db)
 {
-	routes.get('/materials', FormideOS.manager('core.http').server.permissions.check('rest:material'), function( req, res )
-	{
-		db.Material
-		.findAll()
-		.then(function( materials )
-		{
-			res.send( materials );
+	routes.get('/materials', FormideOS.manager('core.http').server.permissions.check('rest:material'), function( req, res ) {
+		db.Material.find().exec(function(err, materials) {
+			res.send(materials);
 		});
 	});
 
-	routes.get('/materials/:id', FormideOS.manager('core.http').server.permissions.check('rest:material'), function( req, res )
-	{
+	routes.get('/materials/:id', FormideOS.manager('core.http').server.permissions.check('rest:material'), function( req, res ) {
 		req.checkParams('id', 'id invalid').notEmpty().isInt();
 
 		var inputErrors = req.validationErrors();
@@ -36,12 +31,9 @@ module.exports = function(routes, db)
 				errors: inputErrors
 			});
 		}
-
-		db.Material
-		.find({ where: {id: req.params.id } })
-		.then(function( material )
-		{
-			res.send( material );
+		
+		db.Material.findOne({ _id: req.params.id }).exec(function(err, material) {
+			res.send(material);
 		});
 	});
 

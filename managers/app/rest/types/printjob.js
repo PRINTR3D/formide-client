@@ -14,18 +14,13 @@
 
 module.exports = function(routes, db)
 {
-	routes.get('/printjobs', FormideOS.manager('core.http').server.permissions.check('rest:printjob'), function( req, res )
-	{
-		db.Printjob
-		.findAll({ include: [ { model: db.Modelfile } ] })
-		.then(function(printjobs)
-		{
+	routes.get('/printjobs', FormideOS.manager('core.http').server.permissions.check('rest:printjob'), function(req, res) {
+		db.Printjob.find().exec(function(err, printjobs) {
 			res.send(printjobs);
 		});
 	});
 
-	routes.get('/printjobs/:id', FormideOS.manager('core.http').server.permissions.check('rest:printjob'), function( req, res )
-	{
+	routes.get('/printjobs/:id', FormideOS.manager('core.http').server.permissions.check('rest:printjob'), function( req, res ) {
 		req.checkParams('id', 'id invalid').notEmpty().isInt();
 
 		var inputErrors = req.validationErrors();
@@ -36,11 +31,8 @@ module.exports = function(routes, db)
 				errors: inputErrors
 			});
 		}
-
-		db.Printjob
-		.find({ where: {id: req.params.id }, include: [ { model: db.Modelfile } ] })
-		.then(function(printjob)
-		{
+		
+		db.Printjob.findOne({ _id: req.params.id }).exec(function(err, printjob) {
 			res.send(printjob);
 		});
 	});

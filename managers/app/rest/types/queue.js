@@ -14,12 +14,8 @@
 
 module.exports = function(routes, db)
 {
-	routes.get('/queue', FormideOS.manager('core.http').server.permissions.check('rest:queue'), function( req, res )
-	{
-		db.Queueitem
-		.findAll({where: {status: 'queued'}, include: [{model: db.Printjob, include: [{model: db.Modelfile}]}]})
-		.success(function(queue)
-		{
+	routes.get('/queue', FormideOS.manager('core.http').server.permissions.check('rest:queue'), function( req, res ) {
+		db.Queueitem.find().exec(function(err, queue) {
 			res.send(queue);
 		});
 	});
@@ -36,11 +32,8 @@ module.exports = function(routes, db)
 				errors: inputErrors
 			});
 		}
-
-		db.Queueitem
-		.find({ where: {id: req.params.id } })
-		.then(function(queueitem)
-		{
+		
+		db.Queueitem.findOne({ _id: req.params.id }).exec(function(err, queueitem) {
 			res.send(queueitem);
 		});
 	});
