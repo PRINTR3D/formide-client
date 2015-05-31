@@ -2,13 +2,11 @@ var mongoose = require('mongoose')
 var Schema = mongoose.Schema;
 
 var schema = new Schema({
-	name: { type: String },
-	buildVolumeX: { type: Number },
-	buildVolumeY: { type: Number },
-	buildVolumeZ: { type: Number },
-	bed: { type: Boolean },
-	extruders: { type: Schema.Types.Mixed },
-	port: { type: String },
+	name: { type: String, required: true, unique: true },
+	buildVolume: { type: Schema.Types.Mixed, required: true },
+	bed: { type: Boolean, required: true },
+	extruders: { type: Schema.Types.Mixed, required: true },
+	port: { type: String, required: true },
 	user: { type: String, ref: 'users' }
 });
 

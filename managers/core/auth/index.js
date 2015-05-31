@@ -61,32 +61,18 @@ module.exports =
 		});
 	},
 
-	getAccessTokens: function( callback )
-	{
-		FormideOS.manager('core.db').db.Accesstoken
-		.findAll()
-		.then( function( tokens )
-		{
+	getAccessTokens: function(callback) {
+		FormideOS.manager('core.db').db.AccessToken.find().exec( function(err, tokens) {
 			callback( tokens );
 		});
 	},
 
-	deleteAccessToken: function( token, callback )
-	{
-		FormideOS.manager('core.db').db.Accesstoken
-		.find({ where: {token: token } })
-		.on('success', function( accesstoken )
-		{
-			if(accesstoken)
-			{
-				accesstoken
-				.destroy()
-				.success(function()
-				{
-					callback({
-						status: 200,
-						message: 'OK'
-					});
+	deleteAccessToken: function( token, callback ) {
+		FormideOS.manager('core.db').db.AccessToken.delete({ where: {token: token } }).exec(function(err) {
+			if(!err) {
+				callback({
+					status: 200,
+					message: 'OK'
 				});
 			}
 		});

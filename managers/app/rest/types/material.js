@@ -16,127 +16,58 @@ module.exports = function(routes, db)
 {
 	routes.get('/materials', FormideOS.manager('core.http').server.permissions.check('rest:material'), function( req, res ) {
 		db.Material.find().exec(function(err, materials) {
-			res.send(materials);
+			if (err) return res.send(err);
+			return res.send(materials);
 		});
 	});
 
 	routes.get('/materials/:id', FormideOS.manager('core.http').server.permissions.check('rest:material'), function( req, res ) {
-		req.checkParams('id', 'id invalid').notEmpty().isInt();
-
-		var inputErrors = req.validationErrors();
-		if( inputErrors )
-		{
-			return res.status(400).json({
-				status: 400,
-				errors: inputErrors
-			});
-		}
-		
 		db.Material.findOne({ _id: req.params.id }).exec(function(err, material) {
-			res.send(material);
+			if (err) return res.send(err);
+			return res.send(material);
 		});
 	});
 
-	routes.post('/materials', FormideOS.manager('core.http').server.permissions.check('rest:material'), function( req, res )
-	{
-		req.checkBody('name', 'name invalid').notEmpty();
-		req.checkBody('type', 'type invalid').notEmpty();
-		req.checkBody('filamentDiameter', 'filamentDiameter invalid').notEmpty().isInt();
-		req.checkBody('temperature', 'temperature invalid').notEmpty().isInt();
-		req.checkBody('firstLayersTemperature', 'firstLayersTemperature invalid').notEmpty().isInt();
-		req.checkBody('bedTemperature', 'bedTemperature invalid').notEmpty().isInt();
-		req.checkBody('firstLayersBedTemperature', 'firstLayersBedTemperature invalid').notEmpty().isInt();
-		req.checkBody('feedrate', 'feedrate invalid').notEmpty().isInt();
-
-		var inputErrors = req.validationErrors();
-		if( inputErrors )
-		{
-			return res.status(400).json({
-				status: 400,
-				errors: inputErrors
-			});
-		}
-
-		db.Material
-		.create(req.body)
-		.success(function()
-		{
+	routes.post('/materials', FormideOS.manager('core.http').server.permissions.check('rest:material'), function(req, res) {
+		db.Material.create(req.body, function(err, material) {
+			if (err) return res.status(400).send(err);
+			if (material) {
+				return res.send({
+					material: material,
+					success: true
+				});
+			}
 			return res.send({
-				status: 200,
-				message: 'OK'
+				success: false
 			});
 		});
 	});
 
-	routes.put('/materials/:id', FormideOS.manager('core.http').server.permissions.check('rest:material'), function( req, res )
-	{
-		req.checkParams('id', 'id invalid').notEmpty().isInt();
-		req.checkBody('name', 'name invalid').notEmpty();
-		req.checkBody('type', 'type invalid').notEmpty();
-		req.checkBody('filamentDiameter', 'filamentDiameter invalid').notEmpty().isInt();
-		req.checkBody('temperature', 'temperature invalid').notEmpty().isInt();
-		req.checkBody('firstLayersTemperature', 'firstLayersTemperature invalid').notEmpty().isInt();
-		req.checkBody('bedTemperature', 'bedTemperature invalid').notEmpty().isInt();
-		req.checkBody('firstLayersBedTemperature', 'firstLayersBedTemperature invalid').notEmpty().isInt();
-		req.checkBody('feedrate', 'feedrate invalid').notEmpty().isInt();
-
-		var inputErrors = req.validationErrors();
-		if( inputErrors )
-		{
-			return res.status(400).json({
-				status: 400,
-				errors: inputErrors
-			});
-		}
-
-		db.Material
-		.find({ where: {id: req.params.id } })
-		.on('success', function( material )
-		{
-			if(material)
-			{
-				material
-				.updateAttributes(req.body)
-				.success(function()
-				{
-					return res.send({
-						status: 200,
-						message: 'OK'
-					});
+	routes.put('/materials/:id', FormideOS.manager('core.http').server.permissions.check('rest:material'), function(req, res) {
+		db.Material.update({ _id: req.params.id }, req.body, function(err, material) {
+			if (err) return res.status(400).send(err);
+			if (material) {
+				return res.send({
+					success: true
 				});
 			}
+			return res.send({
+				success: false
+			});
 		});
 	});
 
-	routes.delete('/materials/:id', FormideOS.manager('core.http').server.permissions.check('rest:material'), function( req, res )
-	{
-		req.checkParams('id', 'id invalid').notEmpty().isInt();
-
-		var inputErrors = req.validationErrors();
-		if( inputErrors )
-		{
-			return res.status(400).json({
-				status: 400,
-				errors: inputErrors
-			});
-		}
-
-		db.Material
-		.find({ where: {id: req.params.id } })
-		.on('success', function( material )
-		{
-			if(material)
-			{
-				material
-				.destroy()
-				.success(function()
-				{
-					return res.send({
-						status: 200,
-						message: 'OK'
-					});
+	routes.delete('/materials/:id', FormideOS.manager('core.http').server.permissions.check('rest:material'), function(req, res) {
+		db.Material.remove({ _id: req.params.id }, function(err, material) {
+			if (err) return res.status(400).send(err);
+			if (material) {
+				return res.send({
+					success: true
 				});
 			}
+			return res.send({
+				success: false
+			});
 		});
 	});
 };

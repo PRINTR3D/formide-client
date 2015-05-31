@@ -15,151 +15,101 @@
 var fs		= require('fs');
 var uuid	= require('node-uuid');
 
-module.exports =
-{
-	uploadModelfile: function( file, callback )
-	{
-		fs.readFile(file.path, function( err, data )
-		{
+module.exports = {
+	
+	uploadModelfile: function(file, callback) {
+		fs.readFile(file.path, function(err, data) {
 			var hash = uuid.v4();
 			var newPath = FormideOS.config.get('paths.modelfile') + '/' + hash;
-
-			fs.writeFile(newPath, data, function( err )
-			{
-				if(err)
-				{
-					FormideOS.manager('debug').log( err );
-					return callback({
-						status: 404,
-						message: 'could not upload file'
-					});
+			fs.writeFile(newPath, data, function(err) {
+				if (err) {
+					FormideOS.manager('debug').log(err);
+					return callback(err);
 				}
-				else
-				{
-					FormideOS.manager('core.db').db.Modelfile
-					.create({
+				else {
+					FormideOS.manager('core.db').db.Modelfile.create({
 						filename: file.name,
 						filesize: file.size,
 						hash: hash
 					}, function(err, modelfile) {
-						if(err) return false;
-						return callback({
-							status: 200,
-							message: 'OK'
-						});
-					})
+						if (err) return callback(err)
+						return callback();
+					});
 				}
 			});
 		});
 	},
 
-	uploadGcode: function( file, callback )
-	{
-		fs.readFile(file.path, function( err, data )
-		{
-			var hash = (Math.random() / +new Date()).toString(36).replace(/[^a-z]+/g, '');
+	uploadGcode: function(file, callback) {
+		fs.readFile(file.path, function( err, data ) {
+			var hash = uuid.v4();
 			var newPath = FormideOS.config.get('paths.gcode') + '/' + hash;
-
-			fs.writeFile(newPath, data, function( err )
-			{
-				if(err)
-				{
+			fs.writeFile(newPath, data, function(err) {
+				if(err) {
 					FormideOS.manager('debug').log( err );
-					return callback({
-						status: 404,
-						message: 'could not upload file'
-					});
+					return callback(err);
 				}
-				else
-				{
-					FormideOS.manager('core.db').db.Printjob
-					.create(
-					{
+				else {
+					FormideOS.manager('core.db').db.Printjob.create({
 						gcode: hash,
-						sliceMethod: 'custom'
-					});
-
-					return callback({
-						status: 200,
-						message: 'OK'
+						sliceMethod: 'custom',
+						sliceFinished: true
+					}, function(err, printjob) {
+						if (err) return callback(err)
+						return callback();
 					});
 				}
 			});
 		});
 	},
 
-	downloadModelfile: function( hash, encoding, callback )
-	{
+	downloadModelfile: function(hash, encoding, callback) {
 		var filename = FormideOS.config.get('paths.modelfile') + '/' + hash;
-
-		fs.exists(filename, function( exists )
-		{
-			if(exists)
-			{
-				fs.readFile(filename, function(err, data)
-				{
-					if(err)
-					{
+		fs.exists(filename, function(exists) {
+			if(exists) {
+				fs.readFile(filename, function(err, data) {
+					if (err) {
 						FormideOS.manager('debug').log(err, true);
+						return callback(err);
 					}
-					else
-					{
-						if(encoding == 'base64')
-						{
+					else {
+						if(encoding == 'base64') {
 							var base64File = new Buffer(data, 'binary').toString('base64');
-							return callback( base64File );
+							return callback(null, base64File);
 						}
-						else
-						{
-							return callback( data );
+						else {
+							return callback(null, data);
 						}
 					}
 				});
 			}
-			else
-			{
-				return callback({
-					status: 404,
-					message: 'file not found'
-				});
+			else {
+				return callback('file not found');
 			}
 		});
 	},
 
-	downloadGcode: function( hash, encoding, callback )
-	{
+	downloadGcode: function(hash, encoding, callback) {
 		var filename = FormideOS.config.get('paths.gcode') + '/' + hash;
-
-		fs.exists(filename, function( exists )
-		{
-			if(exists)
-			{
-				fs.readFile(filename, function(err, data)
-				{
-					if(err)
-					{
+		fs.exists(filename, function(exists) {
+			if (exists) {
+				fs.readFile(filename, function(err, data) {
+					if(err) {
 						FormideOS.manager('debug').log(err, true);
 					}
-					else
-					{
-						if(encoding == 'base64')
-						{
+					else {
+						if(encoding == 'base64') {
 							var base64File = new Buffer(data, 'binary').toString('base64');
-							return callback( base64File );
+							return callback(null, base64File);
 						}
-						else
-						{
-							return callback( data );
+						else {
+							return callback(null, data);
 						}
 					}
 				});
 			}
-			else
-			{
-				return callback({
-					status: 404,
-					message: 'file not found'
-				});
+			else {
+				return callback('file not found');
 			}
 		});
 	}

@@ -3,10 +3,10 @@ var Schema = mongoose.Schema;
 
 var schema = new Schema({
 	user: { type: String, ref: 'users' },
-	origin: { type: String },
-	gcode: { type: String },
-	status: { type: String },
-	printjob: { type: String, rel: 'printjobs' }
+	origin: { type: String, required: true },
+	gcode: { type: String, required: true },
+	status: { type: String, required: true },
+	printjob: { type: String, rel: 'printjobs', required: true }
 });
 
 mongoose.model('queueitems', schema);

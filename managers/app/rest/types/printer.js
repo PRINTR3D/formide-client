@@ -14,129 +14,60 @@
 
 module.exports = function(routes, db)
 {
-	routes.get('/printers', FormideOS.manager('core.http').server.permissions.check('rest:printer'), function( req, res ) {
+	routes.get('/printers', FormideOS.manager('core.http').server.permissions.check('rest:printer'), function(req, res) {
 		db.Printer.find().exec(function(err, printers) {
 			if (err) return res.send(err);
 			return res.send(printers);
 		});
 	});
 
-	routes.get('/printers/:id', FormideOS.manager('core.http').server.permissions.check('rest:printer'), function( req, res ) {
-		req.checkParams('id', 'id invalid').notEmpty().isInt();
-
-		var inputErrors = req.validationErrors();
-		if( inputErrors )
-		{
-			return res.status(400).json({
-				status: 400,
-				errors: inputErrors
-			});
-		}
-		
+	routes.get('/printers/:id', FormideOS.manager('core.http').server.permissions.check('rest:printer'), function(req, res) {
 		db.Printer.findOne({ _id: req.params.id }).exec(function(err, printer) {
 			if (err) return res.send(err);
 			return res.send(printer);
 		});
 	});
 
-	routes.post('/printers', FormideOS.manager('core.http').server.permissions.check('rest:printer'), function( req, res )
-	{
-		req.checkBody('name', 'name invalid').notEmpty();
-		req.checkBody('buildVolumeX', 'buildVolumeX invalid').notEmpty().isInt();
-		req.checkBody('buildVolumeY', 'buildVolumeY invalid').notEmpty().isInt();
-		req.checkBody('buildVolumeZ', 'buildVolumeZ invalid').notEmpty().isInt();
-		req.checkBody('bed', 'bed invalid').notEmpty();
-		req.checkBody('extruders', 'name invalid').notEmpty();
-		req.checkBody('port', 'name invalid').notEmpty();
-
-		var inputErrors = req.validationErrors();
-		if( inputErrors )
-		{
-			return res.status(400).json({
-				status: 400,
-				errors: inputErrors
-			});
-		}
-
-		db.Printer
-		.create(req.body)
-		.success(function()
-		{
+	routes.post('/printers', FormideOS.manager('core.http').server.permissions.check('rest:printer'), function(req, res) {
+		db.Printer.create(req.body, function(err, printer) {
+			if (err) return res.status(400).send(err);
+			if (modelfile) {
+				return res.send({
+					printer: printer,
+					success: true
+				});
+			}
 			return res.send({
-				status: 200,
-				message: 'OK'
+				success: false
 			});
 		});
 	});
 
-	routes.put('/printers/:id', FormideOS.manager('core.http').server.permissions.check('rest:printer'), function( req, res )
-	{
-		req.checkParams('id', 'id invalid').notEmpty().isInt();
-		req.checkBody('name', 'name invalid').notEmpty();
-		req.checkBody('buildVolumeX', 'buildVolumeX invalid').notEmpty().isInt();
-		req.checkBody('buildVolumeY', 'buildVolumeY invalid').notEmpty().isInt();
-		req.checkBody('buildVolumeZ', 'buildVolumeZ invalid').notEmpty().isInt();
-		req.checkBody('bed', 'bed invalid').notEmpty();
-		req.checkBody('extruders', 'name invalid').notEmpty();
-		req.checkBody('port', 'name invalid').notEmpty();
-
-		var inputErrors = req.validationErrors();
-		if( inputErrors )
-		{
-			return res.status(400).json({
-				status: 400,
-				errors: inputErrors
-			});
-		}
-
-		db.Printer
-		.find({ where: {id: req.params.id } })
-		.on('success', function( printer )
-		{
-			if(printer)
-			{
-				printer
-				.updateAttributes(req.body)
-				.success(function()
-				{
-					return res.send({
-						status: 200,
-						message: 'OK'
-					});
+	routes.put('/printers/:id', FormideOS.manager('core.http').server.permissions.check('rest:printer'), function(req, res) {
+		db.Printer.update({ _id: req.params.id }, req.body, function(err, printer) {
+			if (err) return res.status(400).send(err);
+			if (printer) {
+				return res.send({
+					success: true
 				});
 			}
+			return res.send({
+				success: false
+			});
 		});
 	});
 
-	routes.delete('/printers/:id', FormideOS.manager('core.http').server.permissions.check('rest:printer'), function( req, res )
-	{
-		req.checkParams('id', 'id invalid').notEmpty().isInt();
-
-		var inputErrors = req.validationErrors();
-		if( inputErrors )
-		{
-			return res.status(400).json({
-				status: 400,
-				errors: inputErrors
-			});
-		}
-
-		db.Printer
-		.find({ where: {id: req.params.id } })
-		.on('success', function( printer )
-		{
-			if(printer)
-			{
-				printer
-				.destroy()
-				.success(function()
-				{
-					return res.send({
-						status: 200,
-						message: 'OK'
-					});
+	routes.delete('/printers/:id', FormideOS.manager('core.http').server.permissions.check('rest:printer'), function(req, res) {
+		db.Printer.remove({ _id: req.params.id }, function(err, printer) {
+			if (err) return res.status(400).send(err);
+			if (printer) {
+				return res.send({
+					success: true
 				});
 			}
+			return res.send({
+				success: false
+			});
 		});
 	});
 };

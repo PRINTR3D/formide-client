@@ -13,9 +13,10 @@
  */
 
 // dependencies
-var spawn = require('child_process').spawn;
-var fs = require('fs');
-var net = require('net');
+var spawn 	= require('child_process').spawn;
+var fs 		= require('fs');
+var net 	= require('net');
+var uuid 	= require('node-uuid');
 
 module.exports =
 {
@@ -84,56 +85,46 @@ module.exports =
 	},
 
 	// custom functions
-	slice: function(sliceparams, modelfile, sliceprofile, materials, printer, callback)
-	{
-
-
-/*
-		var sliceData = {
-			type: "slice",
-			data: sliceparams
-		};
-
-		// check for printjob settings
-		if(!settings.raft.enabled) {
-			delete sliceData.data.raft;
-		}
-
-		if(!settings.brim.enabled) {
-			delete sliceData.data.brim;
-		}
-
-		if(!settings.skirt.enabled) {
-			delete sliceData.data.skirt;
-		}
-
-		if(!settings.support.enabled) {
-			delete sliceData.data.support;
-		}
-
-		if(!settings.fan.enabled) {
-			delete sliceData.data.fan;
-		}
-
-		if(settings.bed.enabled) {
-			sliceData.data.bed = settings.bed; // TODO: fix this
-		}
-*/
-
-
-
-
-
+	slice: function(modelfiles, sliceprofile, materials, printer, settings, callback) {
 		var self = this;
-		var hash = (Math.random() / +new Date()).toString(36).replace(/[^a-z]+/g, '');
+		var hash = uuid.v4();
 
+		FormideOS.manager('core.db').db.Printjob.create({
+			modelfiles: modelfiles,
+			printer: printer,
+			sliceprofile: sliceprofile,
+			materials: materials,
+			sliceFinished: false,
+			sliceResponse: "{" + hash + "}",
+			sliceSettings: JSON.parse(settings),
+			sliceMethod: "local"
+		}, function(err, printjob) {
+			if (err) return callback(err);
+			self.createSliceRequest(printjob._id, function(err, slicerequest) {
+				if (err) return callback(err);
+				
+				var sliceData = {
+					type: "slice",
+					data: slicerequest
+				};
+				
+				// write slicerequest to local Katana instance
+				self.slicer.write(JSON.stringify(sliceData) + '\n', function() {
+					FormideOS.manager('core.events').emit('slicer.slice', slicerequest);
+					return callback(null, slicerequest);
+				});
+			});
+		});
+		
+/*
 		FormideOS.manager('app.log').logDebug( 'debug', sliceparams );
 
 		var sliceData = {
 			"type": "slice",
 			"data": sliceparams
 		};
-
+*/
+/*
 		FormideOS.manager('core.db').db.Modelfile
 		.find({ where: {id: modelfile } })
 		.then(function(dbModelfile)
@@ -172,6 +163,95 @@ module.exports =
 					return callback(true);
 				});
 			});
+		});
+*/
+	},
+	
+	createSliceRequest: function(printjobId, callback) {
+		
+		// creates a slice request from a printjob database entry
+		FormideOS.manager('core.db').db.Printjob.findOne({ _id: printjobId }).lean().populate('modelfiles sliceprofile materials printer').exec(function(err, printjob) {
+		
+			var slicerequest = printjob.sliceprofile.settings;
+			
+			slicerequest.bed = {
+				xlength: printjob.printer.bed.x,
+				ylength: printjob.printer.bed.y,
+				zlength: printjob.printer.bed.z,
+				temperature: printjob.materials[0].temperature, // hardcoded material 0 by default
+				firstLayersTemperature: printjob.materials[0].firstLayersTemperature // hardcoded material 0 by default
+			};
+		
+			if(printjob.sliceSettings.brim) {
+				if(printjob.sliceSettings.brim.use === false) {
+					slicerequest.extra.brimlines = 0;
+				}
+			}
+			
+			if(printjob.sliceSettings.raft) {
+				if(printjob.sliceSettings.raft.use === false) {
+					delete slicerequest.raft;
+				}
+			}
+			
+			if(printjob.sliceSettings.support) {
+				if(printjob.sliceSettings.support.use === false) {
+					delete slicerequest.support;
+				}
+			}
+			
+			if(printjob.sliceSettings.skirt) {
+				if(printjob.sliceSettings.skirt.use === false) {
+					delete slicerequest.skirt;
+				}
+			}
+			
+			if(printjob.sliceSettings.fan) {
+				if(printjob.sliceSettings.fan.use === false) {
+					delete slicerequest.fan;
+				}
+			}
+			
+			if(printjob.sliceSettings.bed) {
+				if(printjob.sliceSettings.bed.use === false) {
+					slicerequest.bed.temperature = 0;
+					slicerequest.bed.firstLayersTemperature = 0;
+				}
+			}
+			
+			slicerequest.models = [];
+			for(var i in printjob.modelfiles) {
+				var model = printjob.modelfiles[i];
+				slicerequest.models.push({
+					hash: model.hash,
+					bucketIn: FormideOS.appRoot + FormideOS.config.get("paths.modelfile"),
+					x: 100000, // TODO: set user specified position
+					y: 100000, // TODO: set user specified position
+					z: 0, // TODO: set user specified position
+					extruder: "extruder1", // TODO: set extruder dynamically
+					settings: 0 // TODO: set region settings
+				});
+			}
+			
+			slicerequest.extruders = [];
+			for(var i in printjob.printer.extruders) {
+				var extruder = printjob.printer.extruders[i];
+				var material = printjob.materials[i];
+				slicerequest.extruders.push({
+					name: extruder.name,
+					nozzleSize: extruder.nozzleSize,
+					temperature:material.temperature,
+					firstLayersTemperature: material.firstLayersTemperature,
+					filamentDiameter: material.filamentDiameter,
+					feedrate: material.feedrate,
+					mode: 'model' // TODO: remove from slicer
+				});
+			}
+			
+			slicerequest.bucketOut = FormideOS.appRoot + FormideOS.config.get("paths.gcode"); // TODO: specify bucketOut
+			slicerequest.responseID = printjob._id;
+		
+			callback(null, slicerequest);
 		});
 	},
 

@@ -15,57 +15,30 @@
 module.exports = function(routes, db)
 {
 	routes.get('/printjobs', FormideOS.manager('core.http').server.permissions.check('rest:printjob'), function(req, res) {
-		db.Printjob.find().exec(function(err, printjobs) {
-			res.send(printjobs);
+		db.Printjob.find().populate('materials modelfiles printer sliceprofile').exec(function(err, printjobs) {
+			if (err) return res.send(err);
+			return res.send(printjobs);
 		});
 	});
 
-	routes.get('/printjobs/:id', FormideOS.manager('core.http').server.permissions.check('rest:printjob'), function( req, res ) {
-		req.checkParams('id', 'id invalid').notEmpty().isInt();
-
-		var inputErrors = req.validationErrors();
-		if( inputErrors )
-		{
-			return res.status(400).json({
-				status: 400,
-				errors: inputErrors
-			});
-		}
-		
-		db.Printjob.findOne({ _id: req.params.id }).exec(function(err, printjob) {
-			res.send(printjob);
+	routes.get('/printjobs/:id', FormideOS.manager('core.http').server.permissions.check('rest:printjob'), function(req, res) {
+		db.Printjob.findOne({ _id: req.params.id }).populate('materials modelfiles printer sliceprofile').exec(function(err, printjob) {
+			if (err) return res.send(err);
+			return res.send(printjob);
 		});
 	});
 
-	routes.delete('/printjobs/:id', FormideOS.manager('core.http').server.permissions.check('rest:printjob'), function( req, res )
-	{
-		req.checkParams('id', 'id invalid').notEmpty().isInt();
-
-		var inputErrors = req.validationErrors();
-		if( inputErrors )
-		{
-			return res.status(400).json({
-				status: 400,
-				errors: inputErrors
-			});
-		}
-
-		db.Printjob
-		.find({ where: {id: req.params.id } })
-		.on('success', function( printjob )
-		{
-			if(printjob)
-			{
-				printjob
-				.destroy()
-				.success(function()
-				{
-					return res.send({
-						status: 200,
-						message: 'OK'
-					});
+	routes.delete('/printjobs/:id', FormideOS.manager('core.http').server.permissions.check('rest:printjob'), function(req, res) {
+		db.Printjob.remove({ _id: req.params.id }, function(err, printjob) {
+			if (err) return res.status(400).send(err);
+			if (printjob) {
+				return res.send({
+					success: true
 				});
 			}
+			return res.send({
+				success: false
+			});
 		});
 	});
 };

@@ -25,9 +25,11 @@ module.exports = {
 		
 		db.Printer.create({
 			name: "MyCyrus",
-			buildVolumeX: 200,
-			buildVolumeY: 200,
-			buildVolumeZ: 200,
+			buildVolume: {
+				x: 200,
+				y: 200,
+				z: 200
+			},
 			bed: false,
 			extruders: [
 				{
