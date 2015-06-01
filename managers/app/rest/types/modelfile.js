@@ -11,20 +11,28 @@
  *	applications than for Printr B.V.
  *
  */
+ 
+var reversePopulate = require('mongoose-reverse-populate');
 
 module.exports = function(routes, db)
 {
 	routes.get('/modelfiles', FormideOS.manager('core.http').server.permissions.check('rest:modelfile'), function(req, res) {
-		db.Modelfile.find().exec(function(err, modelfiles) {
+		db.Modelfile.find().lean().exec(function(err, modelfiles) {
 			if (err) return res.send(err);
-			return res.send(modelfiles);
+			reversePopulate(modelfiles, "printjobs", true, db.Printjob, "modelfiles", function(err, popModelfiles) {
+				if (err) return res.send(err);
+				return res.send(popModelfiles);
+    		});
 		});
 	});
 
 	routes.get('/modelfiles/:id', FormideOS.manager('core.http').server.permissions.check('rest:modelfile'), function(req, res) {
-		db.Modelfile.findOne({ _id: req.params.id }).exec(function(err, modelfile) {
+		db.Modelfile.find({ _id: req.params.id }).lean().exec(function(err, modelfile) {
 			if (err) return res.send(err);
-			return res.send(modelfile);
+			reversePopulate(modelfile, "printjobs", true, db.Printjob, "modelfiles", function(err, popModelfile) {
+				if (err) return res.send(err);
+				return res.send(popModelfile[0]);
+    		});
 		});
 	});
 

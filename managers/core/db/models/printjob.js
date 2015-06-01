@@ -9,8 +9,8 @@ var schema = new Schema({
 	materials: [{ type: String, ref: 'materials' }],
 	gcode: { type: String },
 	sliceSettings: { type: Schema.Types.Mixed },
-	sliceResponse: { type: Schema.Types.Mixed, required: true },
-	sliceFinished: {type: Boolean, required: true },
+	sliceResponse: { type: Schema.Types.Mixed },
+	sliceFinished: { type: Boolean, required: true },
 	sliceMethod: { type: String, required: true }
 });
 
