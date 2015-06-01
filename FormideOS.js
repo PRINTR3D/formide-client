@@ -35,7 +35,7 @@ module.exports = function()
 	formideos.managers['core/events'] = require('./utils/events.js');
 
 	// register debug
-	formideos.managers['debug'] = require('./utils/debug.js');
+	formideos.managers.debug = require('./utils/debug.js');
 
 	// global user settings
 	formideos.settings = require('./utils/settings.js')(formideos);
@@ -56,7 +56,7 @@ module.exports = function()
 		{
 			return formideos.managers[name];
 		}
-	}
+	};
 
 	// return instance of formideos
 	return formideos;
