@@ -28,7 +28,7 @@ module.exports =
 
 		if(config.simulated)
 		{
-			this.process = spawn('node', ['index.js'], {cwd: FormideOS.appRoot + 'slicer-simulator', stdio: 'pipe'});
+			this.process = spawn('node', ['slicesim.js'], {cwd: FormideOS.appRoot + 'utils', stdio: 'pipe'});
 			this.process.stdout.setEncoding('utf8');
 			this.process.stdout.on('exit', this.onExit);
 			this.process.stdout.on('error', this.onError);
