@@ -17,9 +17,7 @@ var util = require('util');
 module.exports = function(routes, module)
 {	
 	/**
-	 * 	/api/slice
-	 *	POST
-	 *	
+	 *	Start a new slice request and creates a new printjob in the database. Uses modelfiles, sliprofile, materials, printer and optional settings as input.
 	 */
 	routes.post('/slice', FormideOS.manager('core.http').server.permissions.check('slicer'), function(req, res) {
 		module.slice(req.body.modelfiles, req.body.sliceprofile, req.body.materials, req.body.printer, req.body.settings, function(err, printjob) {
@@ -28,6 +26,16 @@ module.exports = function(routes, module)
 				success: true,
 				printjob: printjob
 			});
+		});
+	});
+	
+	/*
+	 * Get the generated slicerequest for an existing printjob.
+	 */
+	routes.get('/generaterequest/:printjobID', FormideOS.manager('core.http').server.permissions.check('slicer'), function(req, res) {
+		module.createSliceRequest(req.params.printjobID, function(err, slicerequest) {
+			if (err) return res.send(err);
+			return res.send(slicerequest);
 		});
 	});
 };

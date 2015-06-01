@@ -3,7 +3,7 @@ var Schema = mongoose.Schema;
 
 var schema = new Schema({
 	token: { type: String, required: true },
-	user: { type: String, ref: 'users' },
+	user: { type: Schema.Types.ObjectId, ref: 'users' },
 	permissions: [{ type: String }]
 });
 

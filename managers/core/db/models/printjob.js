@@ -2,11 +2,11 @@ var mongoose = require('mongoose')
 var Schema = mongoose.Schema;
 
 var schema = new Schema({
-	user: { type: String, ref: 'users' },
-	modelfiles: [{ type: String, ref: 'modelfiles' }],
-	printer: { type: String, ref: 'printers' },
-	sliceprofile: { type: String, ref: 'sliceprofiles' },
-	materials: [{ type: String, ref: 'materials' }],
+	user: { type: Schema.Types.ObjectId, ref: 'users' },
+	modelfiles: [{ type: Schema.Types.ObjectId, ref: 'modelfiles' }],
+	printer: { type: Schema.Types.ObjectId, ref: 'printers' },
+	sliceprofile: { type: Schema.Types.ObjectId, ref: 'sliceprofiles' },
+	materials: [{ type: Schema.Types.ObjectId, ref: 'materials' }],
 	gcode: { type: String },
 	sliceSettings: { type: Schema.Types.Mixed },
 	sliceResponse: { type: Schema.Types.Mixed },

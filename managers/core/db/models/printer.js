@@ -7,7 +7,7 @@ var schema = new Schema({
 	bed: { type: Boolean, required: true },
 	extruders: { type: Schema.Types.Mixed, required: true },
 	port: { type: String, required: true },
-	user: { type: String, ref: 'users' }
+	user: { type: Schema.Types.ObjectId, ref: 'users' }
 });
 
 mongoose.model('printers', schema);

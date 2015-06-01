@@ -32,6 +32,7 @@
     "lodash": "2.4.1",
     "minimist": "~1.1.0",
     "mongoose": "3.8.22",
+    "mongoose-deep-populate": "^1.1.0",
     "mongoose-reverse-populate": "^0.1.0",
     "multer": "~0.1.8",
     "node-schedule": "~0.1.15",

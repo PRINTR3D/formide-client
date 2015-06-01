@@ -10,7 +10,7 @@ var schema = new Schema({
 	bedTemperature: { type: Number, required: true },
 	firstLayersBedTemperature: { type: Number },
 	feedrate: { type: Number, required: true },
-	user: { type: String, ref: 'users' }
+	user: { type: Schema.Types.ObjectId, ref: 'users' }
 });
 
 mongoose.model('materials', schema);
