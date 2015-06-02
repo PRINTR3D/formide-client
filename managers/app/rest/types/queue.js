@@ -12,111 +12,50 @@
  *
  */
 
-module.exports = function(routes, db)
-{
-	routes.get('/queue', FormideOS.manager('core.http').server.permissions.check('rest:queue'), function( req, res )
-	{
-		db.Queueitem
-		.findAll({where: {status: 'queued'}, include: [{model: db.Printjob, include: [{model: db.Modelfile}]}]})
-		.success(function(queue)
-		{
-			res.send(queue);
+module.exports = function(routes, db) {
+	
+	routes.get('/queue', FormideOS.manager('core.http').server.permissions.check('rest:queue'), function(req, res) {
+		db.Queueitem.find().populate('printjob').deepPopulate('printjob.modelfiles printjob.materials printjob.sliceprofile printjob.printer').exec(function(err, queue) {
+			if (err) return res.send(err);
+			return res.send(queue);
 		});
 	});
 
-	routes.get('/queue/:id', FormideOS.manager('core.http').server.permissions.check('rest:queue'), function( req, res )
-	{
-		req.checkParams('id', 'id invalid').notEmpty().isInt();
-
-		var inputErrors = req.validationErrors();
-		if( inputErrors )
-		{
-			return res.status(400).json({
-				status: 400,
-				errors: inputErrors
-			});
-		}
-
-		db.Queueitem
-		.find({ where: {id: req.params.id } })
-		.then(function(queueitem)
-		{
-			res.send(queueitem);
+	routes.get('/queue/:id', FormideOS.manager('core.http').server.permissions.check('rest:queue'), function(req, res) {
+		db.Queueitem.findOne({ _id: req.params.id }).populate('printjob').deepPopulate('printjob.modelfiles printjob.materials printjob.sliceprofile printjob.printer').exec(function(err, queueitem) {
+			if (err) return res.send(err);
+			return res.send(queueitem);
 		});
 	});
 
-	routes.post('/queue', FormideOS.manager('core.http').server.permissions.check('rest:queue'), function( req, res )
-	{
-		req.checkBody('printjobID', 'printjobID invalid').notEmpty();
-
-		var inputErrors = req.validationErrors();
-		if( inputErrors )
-		{
-			return res.status(400).json({
-				status: 400,
-				errors: inputErrors
-			});
-		}
-
-		db.Printjob.find({where: {id: req.body.printjobID}})
-		.success(function(printjob)
-		{
-			if( printjob )
-			{
-				db.Queueitem
-				.create({
-					origin: 'local',
-					status: 'queued',
-					gcode: printjob.gcode,
-					PrintjobId: printjob.id
+	routes.post('/queue/:printjobID', FormideOS.manager('core.http').server.permissions.check('rest:queue'), function(req, res) {
+		db.Printjob.findOne({ _id: req.params.printjobID }, function(err, printjob) {
+			db.Queueitem.create({
+				origin: 'local',
+				status: 'queued',
+				gcode: printjob.gcode,
+				printjob: printjob._id
+			}, function(err, queueitem) {
+				if (err) return res.send(err);
+				return res.send({
+					success: true,
+					queueitem: queueitem
 				})
-				.success(function(queueitem)
-				{
-					return res.send({
-						status: 200,
-						message: 'OK'
-					});
-				});
-			}
-			else
-			{
-				return res.status(400).json({
-					status: 400,
-					errors: 'printjob with this ID does not exist'
-				});
-			}
+			});
 		});
 	});
 
-	routes.delete('/queue/:id', FormideOS.manager('core.http').server.permissions.check('rest:queue'), function( req, res )
-	{
-		req.checkParams('id', 'id invalid').notEmpty().isInt();
-
-		var inputErrors = req.validationErrors();
-		if( inputErrors )
-		{
-			return res.status(400).json({
-				status: 400,
-				errors: inputErrors
-			});
-		}
-
-		db.Queueitem
-		.find({ where: {id: req.params.id } })
-		.on('success', function( queueitem )
-		{
-			if(queueitem)
-			{
-				queueitem
-				.destroy()
-				.success(function()
-				{
-					return res.send({
-						status: 200,
-						message: 'OK'
-					});
+	routes.delete('/queue/:id', FormideOS.manager('core.http').server.permissions.check('rest:queue'), function(req, res) {
+		db.Queueitem.remove({ _id: req.params.id }, function(err, queueitem) {
+			if (err) return res.status(400).send(err);
+			if (queueitem) {
+				return res.send({
+					success: true
 				});
 			}
+			return res.send({
+				success: false
+			});
 		});
 	});
 };

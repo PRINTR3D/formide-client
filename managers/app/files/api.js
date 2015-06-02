@@ -17,73 +17,69 @@ var multipartMiddleware = multipart();
 
 module.exports = function(routes, module)
 {
-	routes.get('/download', /* FormideOS.manager('core.http').server.permissions.check('files'),  */function( req, res )
-	{
+	routes.get('/modelfiles/download', FormideOS.manager('core.http').server.permissions.check('files'), function(req, res) {
 		req.checkQuery('hash', 'hash invalid').notEmpty();
 		req.checkQuery('encoding', 'encoding invalid').notEmpty();
 
-		if( req.validationErrors() )
-		{
+		if (req.validationErrors()) {
 			return res.status(400).json({
 				status: 400,
 				errors: req.validationErrors()
 			});
 		}
 
-		module.downloadModelfile(req.query.hash, req.query.encoding, function( response )
-		{
-			res.send( response );
+		module.downloadModelfile(req.query.hash, req.query.encoding, function(err, filecontents) {
+			if(err) return res.send(err);
+			return res.send(filecontents);
 		});
 	});
 
-	routes.get('/downloadgcode', /* FormideOS.manager('core.http').server.permissions.check('files'),  */function( req, res )
-	{
+	routes.get('/gcode/download', FormideOS.manager('core.http').server.permissions.check('files'), function(req, res) {
 		req.checkQuery('hash', 'hash invalid').notEmpty();
 		req.checkQuery('encoding', 'encoding invalid').notEmpty();
 
-		if( req.validationErrors() )
-		{
+		if (req.validationErrors()) {
 			return res.status(400).json({
 				status: 400,
 				errors: req.validationErrors()
 			});
 		}
 
-		module.downloadGcode(req.query.hash, req.query.encoding, function( response )
-		{
-			res.send( response );
+		module.downloadGcode(req.query.hash, req.query.encoding, function(err, response) {
+			if(err) return res.send(err);
+			return res.send(filecontents);
 		});
 	});
 
-	routes.post('/upload', /* FormideOS.manager('core.http').server.permissions.check('files'),  */multipartMiddleware, function( req, res )
-	{
-		if( !req.files )
-		{
+	routes.post('/modelfiles/upload', FormideOS.manager('core.http').server.permissions.check('files'), multipartMiddleware, function(req, res) {
+		if (!req.files) {
+			return res.status(400).json({
+				success: false,
+				message: "No files posted"
+			});
+		}
+
+		module.uploadModelfile(req.files.file, function(err) {
+			if (err) return res.send(err);
+			return res.send({
+				success: true
+			});
+		});
+	});
+
+	routes.post('/gcode/upload', FormideOS.manager('core.http').server.permissions.check('files'), multipartMiddleware, function(req, res) {
+		if( !req.files ) {
 			return res.status(400).json({
 				status: 400,
 				errors: "No files posted"
 			});
 		}
 
-		module.uploadModelfile(req.files.file, function( response )
-		{
-			res.send( response );
-		});
-	});
-
-	routes.post('/uploadgcode', /* FormideOS.manager('core.http').server.permissions.check('files'),  */multipartMiddleware, function( req, res )
-	{
-		if( !req.files )
-		{
-			return res.status(400).json({
-				status: 400,
-				errors: "No files posted"
+		module.uploadGcode(req.files.file, function(err) {
+			if (err) return res.send(err);
+			return res.send({
+				success: true
 			});
-		}
-
-		module.uploadGcode(req.files.file, function( response )
-		{
-			res.send( response );
 		});
 	});
 };

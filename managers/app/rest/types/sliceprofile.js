@@ -14,125 +14,60 @@
 
 module.exports = function(routes, db)
 {
-	routes.get('/sliceprofiles', FormideOS.manager('core.http').server.permissions.check('rest:sliceprofile'), function( req, res )
-	{
-		db.Sliceprofile
-		.findAll()
-		.then(function(sliceprofiles)
-		{
-			res.send(sliceprofiles);
+	routes.get('/sliceprofiles', FormideOS.manager('core.http').server.permissions.check('rest:sliceprofile'), function(req, res) {
+		db.Sliceprofile.find().exec(function(err, sliceprofiles) {
+			if (err) return res.send(err);
+			return res.send(sliceprofiles);
 		});
 	});
 
-	routes.get('/sliceprofiles/:id', FormideOS.manager('core.http').server.permissions.check('rest:sliceprofile'), function( req, res )
-	{
-		req.checkParams('id', 'id invalid').notEmpty().isInt();
-
-		var inputErrors = req.validationErrors();
-		if( inputErrors )
-		{
-			return res.status(400).json({
-				status: 400,
-				errors: inputErrors
-			});
-		}
-
-		db.Sliceprofile
-		.find({ where: {id: req.params.id } })
-		.then(function(sliceprofile)
-		{
-			res.send(sliceprofile);
+	routes.get('/sliceprofiles/:id', FormideOS.manager('core.http').server.permissions.check('rest:sliceprofile'), function(req, res) {
+		db.Sliceprofile.findOne({ _id: req.params.id }).exec(function(err, sliceprofile) {
+			if (err) return res.send(err);
+			return res.send(sliceprofile);
 		});
 	});
 
-	routes.post('/sliceprofiles', FormideOS.manager('core.http').server.permissions.check('rest:sliceprofile'), function( req, res )
-	{
-		req.checkBody('name', 'name invalid').notEmpty();
-		req.checkBody('settings', 'type invalid').notEmpty();
-
-		var inputErrors = req.validationErrors();
-		if( inputErrors )
-		{
-			return res.status(400).json({
-				status: 400,
-				errors: inputErrors
-			});
-		}
-
-		db.Sliceprofile
-		.create(req.body)
-		.success(function()
-		{
+	routes.post('/sliceprofiles', FormideOS.manager('core.http').server.permissions.check('rest:sliceprofile'), function(req, res) {
+		db.Sliceprofile.create(req.body, function(err, sliceprofile) {
+			if (err) return res.status(400).send(err);
+			if (sliceprofile) {
+				return res.send({
+					sliceprofile: sliceprofile,
+					success: true
+				});
+			}
 			return res.send({
-				status: 200,
-				message: 'OK'
+				success: false
 			});
 		});
 	});
 
-	routes.put('/sliceprofiles/:id', FormideOS.manager('core.http').server.permissions.check('rest:sliceprofile'), function( req, res )
-	{
-		req.checkParams('id', 'id invalid').notEmpty().isInt();
-		req.checkBody('name', 'name invalid').notEmpty();
-		req.checkBody('settings', 'type invalid').notEmpty();
-
-		var inputErrors = req.validationErrors();
-		if( inputErrors )
-		{
-			return res.status(400).json({
-				status: 400,
-				errors: inputErrors
-			});
-		}
-
-		db.Sliceprofile
-		.find({ where: {id: req.params.id } })
-		.on('success', function( sliceprofile )
-		{
-			if(sliceprofile)
-			{
-				sliceprofile
-				.updateAttributes(req.body)
-				.success(function()
-				{
-					return res.send({
-						status: 200,
-						message: 'OK'
-					});
+	routes.put('/sliceprofiles/:id', FormideOS.manager('core.http').server.permissions.check('rest:sliceprofile'), function(req, res) {
+		db.Sliceprofile.update({ _id: req.params.id }, req.body, function(err, sliceprofile) {
+			if (err) return res.status(400).send(err);
+			if (sliceprofile) {
+				return res.send({
+					success: true
 				});
 			}
+			return res.send({
+				success: false
+			});
 		});
 	});
 
-	routes.delete('/sliceprofiles/:id', FormideOS.manager('core.http').server.permissions.check('rest:sliceprofile'), function( req, res )
-	{
-		req.checkParams('id', 'id invalid').notEmpty().isInt();
-
-		var inputErrors = req.validationErrors();
-		if( inputErrors )
-		{
-			return res.status(400).json({
-				status: 400,
-				errors: inputErrors
-			});
-		}
-
-		db.Sliceprofile
-		.find({ where: {id: req.params.id } })
-		.on('success', function( sliceprofile )
-		{
-			if(sliceprofile)
-			{
-				sliceprofile
-				.destroy()
-				.success(function()
-				{
-					return res.send({
-						status: 200,
-						message: 'OK'
-					});
+	routes.delete('/sliceprofiles/:id', FormideOS.manager('core.http').server.permissions.check('rest:sliceprofile'), function(req, res) {
+		db.Sliceprofile.remove({ _id: req.params.id }, function(err, sliceprofile) {
+			if (err) return res.status(400).send(err);
+			if (sliceprofile) {
+				return res.send({
+					success: true
 				});
 			}
+			return res.send({
+				success: false
+			});
 		});
 	});
 };
