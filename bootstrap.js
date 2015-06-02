@@ -18,8 +18,8 @@ var getMac 	= require('getmac');
 // define global objects
 FormideOS 	= require('./FormideOS')();
 
-getMac.getMac(function(err, macAddress)
-{
+getMac.getMac(function(err, macAddress) {
+	
 	FormideOS.macAddress = FormideOS.config.get('cloud.softMac') || macAddress;
 
 	// core modules
@@ -29,24 +29,22 @@ getMac.getMac(function(err, macAddress)
 	FormideOS.register('core.auth');
 	FormideOS.register('core.websocket');
 	FormideOS.register('core.device');
-
+	FormideOS.register('core.log', FormideOS.config.get('log'));
+	FormideOS.register('core.rest');
+	FormideOS.register('core.files');
+	FormideOS.register('core.printer', FormideOS.config.get('printer'));
+	FormideOS.register('core.slicer', FormideOS.config.get('slicer'));
+	FormideOS.register('core.setup');
+	// FormideOS.register('core.wifi');
+	
+	// connect to cloud after other core modules booted
+	FormideOS.register('core.cloud', FormideOS.config.get('cloud'));
+	
 	// app modules
-	FormideOS.register('app.log', FormideOS.config.get('log'));
-	FormideOS.register('app.rest');
-	FormideOS.register('app.files');
-	FormideOS.register('app.printer', FormideOS.config.get('printer'));
-	FormideOS.register('app.slicer', FormideOS.config.get('slicer'));
 	FormideOS.register('app.interface', FormideOS.config.get('dashboard'));
-	FormideOS.register('app.setup');
+	FormideOS.register('app.webhook');
 	FormideOS.register('app.camera', FormideOS.config.get('camera'));
 
-	// start these modules last
-	FormideOS.register('app.cloud', FormideOS.config.get('cloud'));
-	FormideOS.register('app.webhook');
-
-	// under development
-	// FormideOS.register('app.cron');
-	// FormideOS.register('wifi');
 	// FormideOS.register('update');
 	// FormideOS.register('app.led');
 });

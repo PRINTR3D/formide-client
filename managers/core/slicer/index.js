@@ -177,7 +177,7 @@ module.exports = {
 		
 			if(printjob.sliceSettings.brim) {
 				if(printjob.sliceSettings.brim.use === false) {
-					slicerequest.extra.brimlines = 0;
+					slicerequest.extra.brimLines = 0;
 				}
 			}
 			

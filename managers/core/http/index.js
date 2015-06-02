@@ -45,7 +45,7 @@ module.exports =
 		});
 
 		http.app.use( bodyParser.json() );
-		//http.app.use( bodyParser.urlencoded({extended: true}) );
+		http.app.use( bodyParser.urlencoded({extended: true}) );
 		http.app.use( expressValidator() );
 
 		http.app.use( cookieParser() );
