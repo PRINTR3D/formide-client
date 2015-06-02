@@ -15,7 +15,7 @@
 module.exports = function()
 {
 	var env = process.env.NODE_ENV || 'development';
-	var cfg = require('../config.' + env + '.json');
+	var cfg = require('../config/' + env + '.json');
 
 	function parts(key)
 	{

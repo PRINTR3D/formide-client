@@ -33,7 +33,6 @@ module.exports =
 				token: FormideOS.settings.cloud.accesstoken,
 				permissions: FormideOS.settings.cloud.permissions
 			});
-			console.log(this.cloud.id);
 			FormideOS.manager('debug').log('Cloud connected');
 		}.bind(this));
 
