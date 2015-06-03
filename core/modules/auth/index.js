@@ -29,15 +29,14 @@ module.exports =
 				.success(function()
 				{
 					return callback({
-						status: 200,
-						message: 'OK'
+						success: true
 					});
 				});
 			}
 			else
 			{
 				return callback({
-					status: 402,
+					success: false,
 					message: 'cannot change password for unknown user'
 				});
 			}
@@ -47,32 +46,29 @@ module.exports =
 	generateAccessToken: function(permissions, callback) {
 		var token = uuid.v4();
 		
-		FormideOS.manager('core.db').db.Accesstoken
-		.create({
+		permissions = JSON.parse(permissions);
+		
+		FormideOS.manager('core.db').db.AccessToken.create({
 			token: token,
 			permissions: permissions
-		});
-
-	  	return callback({
-		  	status: 200,
-		  	token: token
+		}, function(err, accesstoken) {
+			return callback({
+			  	success: true,
+			  	token: accesstoken
+			});
 		});
 	},
 
 	getAccessTokens: function(callback) {
 		FormideOS.manager('core.db').db.AccessToken.find().exec( function(err, tokens) {
-			callback( tokens );
+			return callback(tokens);
 		});
 	},
 
 	deleteAccessToken: function( token, callback ) {
-		FormideOS.manager('core.db').db.AccessToken.delete({ where: {token: token } }).exec(function(err) {
-			if(!err) {
-				callback({
-					status: 200,
-					message: 'OK'
-				});
-			}
+		FormideOS.manager('core.db').db.AccessToken.delete({ token: token }, function(err) {
+			if (err) return callback(err);
+			return callback();
 		});
 	}
 }
