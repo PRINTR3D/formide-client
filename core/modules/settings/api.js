@@ -15,26 +15,47 @@
 module.exports = function(routes, module) {
 	
 	/**
-	 * Get list of networks
+	 * Get complete settings object
 	 */
-	routes.get('/', function(req, res) {
+	routes.get('/', FormideOS.manager('core.http').server.permissions.check('settings'), function(req, res) {
 		module.getSettings(function(settings) {
 			return res.send(settings);
 		});
 	});
 	
-	routes.get('/:settingName', function(req, res) {
+	/*
+	 * Get installed module overview
+	 */
+	routes.get('/modules', FormideOS.manager('core.http').server.permissions.check('settings'), function(req, res) {
+		module.getBootstrapInfo(function(bootstrapInfo) {
+			return res.send(bootstrapInfo);
+		});
+	});
+	
+	/**
+	 * Get partial settings object by key
+	 */
+	routes.get('/:settingName', FormideOS.manager('core.http').server.permissions.check('settings'), function(req, res) {
 		module.getSetting(req.params.settingName, function(setting) {
 			return res.send(setting);
 		});
 	});
 	
-	routes.post('/:settingName', function(req, res) {
+	routes.post('/:settingName', FormideOS.manager('core.http').server.permissions.check('settings'), function(req, res) {
 		module.saveSetting(req.params.settingName, req.body, function(err, changedSetting) {
 			if(err) return res.send(err);
 			return res.send({
 				success: true,
 				setting: changedSetting
+			});
+		});
+	});
+	
+	routes.delete('/:settingName', FormideOS.manager('core.http').server.permissions.check('settings'), function(req, res) {
+		module.deleteSetting(req.params.settingName, function(err) {
+			if(err) return res.send({ success: false, message: err });
+			return res.send({
+				success: true
 			});
 		});
 	});

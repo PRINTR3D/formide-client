@@ -40,14 +40,12 @@ module.exports = function(managerName, data) {
 			// require manager index file
 			var manager = require(managerRoot + '/index.js');
 			
-			// check if manager already exists or something with the same name does
-			if(!(managerName in FormideOS.managers)) {
-				FormideOS.managers[managerName] = manager;
-			}
-			else {
-				FormideOS.manager('debug').log('Manager with name ' + managerName + ' already exists', true);
-				return;
-			}
+			var moduleInfo = {
+				hasHTTP: false,
+				hasWS: false,
+				namespace: managerNamespace,
+				root: managerRoot
+			};
 
 			// do init function if exists
 			if (typeof manager.init === 'function') {
@@ -56,6 +54,7 @@ module.exports = function(managerName, data) {
 
 			// load module http api if exists
 			if (fs.existsSync(managerRoot + '/api.js')) {
+				moduleInfo.hasHTTP = true;
 				var router = express.Router();
 				require(managerRoot + '/api.js')(router, manager);
 				FormideOS.manager('core.http').server.app.use('/api/' + managerNamespace, router); // register as sub-app in express server
@@ -63,8 +62,18 @@ module.exports = function(managerName, data) {
 
 			// load module ws api if exists
 			if(fs.existsSync(managerRoot + '/websocket.js')) {
+				moduleInfo.hasWS = true;
 				var namespace = FormideOS.manager('core.websocket').connection.of('/' + managerNamespace);
 				require(managerRoot + '/websocket.js')(namespace, manager);
+			}
+			
+			// check if manager already exists or something with the same name does
+			if(!(managerName in FormideOS.managers)) {
+				FormideOS.modules[managerName] = moduleInfo;
+				FormideOS.managers[managerName] = manager;
+			}
+			else {
+				FormideOS.manager('debug').log('Manager with name ' + managerName + ' already exists', true);
 			}
 		}
 		else {

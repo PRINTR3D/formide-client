@@ -7,8 +7,7 @@ var OAuthUsersSchema = new Schema({
 	firstname: { type: String, required: true },
 	lastname: { type: String, required: true },
 	avatar: String,
-	//scopes: [{ type: String, ref: 'scopes' }],
-	//confirmationToken: String
+	permissions: [{ type: String }]
 });
 /*
 OAuthUsersSchema.plugin(timestamps);

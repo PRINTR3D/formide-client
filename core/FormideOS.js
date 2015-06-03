@@ -22,11 +22,10 @@ module.exports = function() {
 	formideos.coreRoot = path.resolve(__dirname) + '/';
 	formideos.appRoot = path.resolve(__dirname + '/../') + '/';
 	formideos.userRoot = path.resolve(__dirname + '/../app') + '/';
-	
-	console.log(formideos.appRoot);
 
-	// global object to hold managers
+	// global object to hold managers and module info
 	formideos.managers = {};
+	formideos.modules = {};
 
 	// global config
 	formideos.config = require('./utils/config.js')();
@@ -35,10 +34,10 @@ module.exports = function() {
 	formideos.register = require('./utils/register.js');
 
 	// register events
-	formideos.managers['core/events'] = require('./utils/events.js'); // a bit ugly
+	formideos.managers['core/events'] = require('./utils/events.js'); // a bit very ugly
 
 	// register debug
-	formideos.managers.debug = require('./utils/debug.js');
+	formideos.managers['debug'] = require('./utils/debug.js'); // a bit very ugly
 
 	// global user settings
 	formideos.settings = require('./utils/settings.js')(formideos);

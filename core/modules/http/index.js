@@ -29,19 +29,17 @@ var permissionsMiddleware	= require('./middleware/permissions');
 var passwordHash 			= require('password-hash');
 var bearerToken 			= require('express-bearer-token');
 
-module.exports =
-{
+module.exports = {
+	
 	server: {},
 
-	init: function()
-	{
+	init: function() {
 		var http = {};
 
 		http.app = express();
 		http.server = require('http').Server( http.app );
-		http.server.listen( FormideOS.config.get('app.port'), function()
-		{
-			FormideOS.manager('debug').log('http server running on port ' + http.server.address().port );
+		http.server.listen( FormideOS.config.get('app.port'), function() {
+			FormideOS.manager('debug').log('http server running on port ' + http.server.address().port);
 		});
 
 		http.app.use( bodyParser.json() );
@@ -63,32 +61,25 @@ module.exports =
 
 		http.app.use( permissionsMiddleware.initialize() );
 
-		passport.serializeUser(function(user, done)
-		{
+		passport.serializeUser(function(user, done) {
 		  	done(null, user.id);
 		});
 
-		passport.deserializeUser(function(id, done)
-		{
-		  	FormideOS.manager('core.db').db.User
-			.find({ where: {id: id } })
-			.then(function( user )
-			{
-				if( user )
-				{
-					done(null, user);
+		passport.deserializeUser(function(id, done) {
+		  	FormideOS.manager('core.db').db.User.findOne({ _id: id }).exec(function(err, user) {
+			  	if (err) return done('user not found', false);
+				if (user) {
+					return done(null, user);
 				}
 			});
 		});
 
-		passport.use( 'local-signup', new LocalStrategy(function( username, password, callback )
-		{
-			process.nextTick( function()
-			{
+		passport.use( 'local-signup', new LocalStrategy(function(email, password, callback) {
+			process.nextTick( function() {
+/*
 				FormideOS.manager('core.db').db.user
 				.find({ where: {username: username} })
-				.then(function( user )
-				{
+				.then(function( user ) {
 					if( user )
 					{
 						return callback( null, false, { message: 'Username already taken' } );
@@ -106,28 +97,21 @@ module.exports =
 						return callback( null, user);
 					});
 				});
+*/
 			});
 		}));
 
-		passport.use( 'local-login', new LocalStrategy(function( username, password, callback )
-		{
-			FormideOS.manager('debug').log( 'Login attempt for ' + username );
-
-			FormideOS.manager('core.db').db.User
-			.find({ where: {username: username } })
-			.then(function( user )
-			{
-				if( !user )
-				{
-					return callback(null, false, { message: 'Incorrect username.' });
+		passport.use('local-login', new LocalStrategy({usernameField: 'email'}, function(email, password, next) {
+			FormideOS.manager('debug').log('Login attempt for ' + email);
+			FormideOS.manager('core.db').db.User.findOne({ email: email }).exec(function(err, user) {
+				if (err) return next(err);
+				if (!user || user === 'undefined') {
+					return next(null, false, { message: 'Incorrect user credentials' });
 				}
-
-				if( !passwordHash.verify(password, user.password) )
-				{
-					return callback(null, false, { message: 'Incorrect password.' });
+				if (!passwordHash.verify(password, user.password)) {
+					return next(null, false, { message: 'Incorrect user credentials' });
 				}
-
-				return callback(null, user);
+				return next(null, user);
 			});
 		}));
 

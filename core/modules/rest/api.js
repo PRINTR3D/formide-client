@@ -12,13 +12,12 @@
  *
  */
 
-module.exports = function(routes, module)
-{
+module.exports = function(routes, module) {
+	
 	require('./types/material.js')(routes, FormideOS.manager('core.db').db);
 	require('./types/modelfile.js')(routes, FormideOS.manager('core.db').db);
 	require('./types/printer.js')(routes, FormideOS.manager('core.db').db);
 	require('./types/printjob.js')(routes, FormideOS.manager('core.db').db);
 	require('./types/queue.js')(routes, FormideOS.manager('core.db').db);
 	require('./types/sliceprofile.js')(routes, FormideOS.manager('core.db').db);
-	require('./types/user.js')(routes, FormideOS.manager('core.db').db);
 };

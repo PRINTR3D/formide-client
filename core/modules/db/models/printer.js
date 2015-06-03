@@ -3,7 +3,6 @@ var Schema = mongoose.Schema;
 
 var schema = new Schema({
 	name: { type: String, required: true, unique: true },
-	buildVolume: { type: Schema.Types.Mixed, required: true },
 	bed: { type: Boolean, required: true },
 	extruders: { type: Schema.Types.Mixed, required: true },
 	port: { type: String, required: true },

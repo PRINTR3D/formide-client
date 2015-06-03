@@ -44,11 +44,9 @@ module.exports =
 		});
 	},
 
-	generateAccessToken: function( permissions, callback )
-	{
+	generateAccessToken: function(permissions, callback) {
 		var token = uuid.v4();
-		permissions = permissions.toString();
-
+		
 		FormideOS.manager('core.db').db.Accesstoken
 		.create({
 			token: token,

@@ -22,8 +22,20 @@ module.exports = {
 		return cb(FormideOS.settings[key]);
 	},
 	
+	getBootstrapInfo: function(cb) {
+		return cb(FormideOS.modules);	
+	},
+	
 	saveSetting: function(key, value, cb) {
 		FormideOS.settings[key] = value;
 		return cb(FormideOS.settings[key]);
+	},
+	
+	deleteSetting: function(key, cb) {
+		if(key !== 'cloud' && key !== 'webhook') {
+			delete FormideOS.settings[key];
+			return cb();
+		}
+		return cb("can't delete cloud or webhook setting");
 	}
 }

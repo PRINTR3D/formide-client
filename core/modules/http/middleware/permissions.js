@@ -12,35 +12,30 @@
  *
  */
 
-module.exports =
-{
-	initialize: function()
-	{
+module.exports = {
+	
+	initialize: function() {
 		var self = this;
 
-		return function( req, res, next )
-		{
+		return function( req, res, next ) {
 			req._permissions = {};
 			req._permissions.instance = self;
 
-			if(req.user)
-			{
+			if(req.user) {
 				FormideOS.manager('debug').log( 'Session set and permissions fetched from DB' );
-				var permissions = req.user.permissions.split(",");
+				var permissions = req.user.permissions || [];
 				req._permissions.session = true;
 				req.session['permissions'] = permissions;
 				req._permissions.permissions = req.session['permissions'];
 			}
-			else if(req.token && req.token == FormideOS.settings.cloud.accesstoken)
-			{
+			else if(req.token && req.token == FormideOS.settings.cloud.accesstoken) {
 				FormideOS.manager('debug').log( 'Session set and permissions fetched from DB (accesstoken)' );
-				var permissions = FormideOS.settings.cloud.permissions.split(",");
+				var permissions = FormideOS.settings.cloud.permissions || [];
 				req._permissions.session = true;
 				req.session['permissions'] = permissions;
 				req._permissions.permissions = req.session['permissions'];
 			}
-			else
-			{
+			else {
 				FormideOS.manager('debug').log( 'Session not set' );
 				req._permissions.session = false;
 			}
@@ -49,20 +44,17 @@ module.exports =
 		}
 	},
 
-	check: function( permission )
-	{
-		return function( req, res, next )
-		{
-			return next();
+	check: function( permission ) {
+		return function(req, res, next) {
+			//return next();
 			if(req._permissions.session) {
-				if( req._permissions.permissions.indexOf( permission ) > -1 )
-				{
-					FormideOS.manager('debug').log( 'Permissions correct' );
+				if (req._permissions.permissions.indexOf(permission) > -1) {
+					FormideOS.manager('debug').log('Permissions correct');
 					return next();
 				}
 			}
 
-			FormideOS.manager('debug').log( 'Permissions incorrect' );
+			FormideOS.manager('debug').log('Permissions incorrect');
 
 			return res.status(401).send({
 				status: 401,
