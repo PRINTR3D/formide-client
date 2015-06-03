@@ -13,6 +13,7 @@
  */
  
 var reversePopulate = require('mongoose-reverse-populate');
+var fs				= require('fs');
 
 module.exports = function(routes, db)
 {
@@ -48,16 +49,13 @@ module.exports = function(routes, db)
 	 * Delete a modelfile entry by ID.
 	 */
 	routes.delete('/modelfiles/:id', FormideOS.manager('core.http').server.permissions.check('rest:modelfile'), function(req, res) {
-		// TODO: remove actual modelfile from disk
 		db.Modelfile.remove({ _id: req.params.id }, function(err, modelfile) {
 			if (err) return res.status(400).send(err);
-			if (modelfile) {
+			var filePath = FormideOS.config.get('paths.modelfile') + '/' + modelfile.hash;
+			fs.unlink(filePath, function() {
 				return res.send({
 					success: true
 				});
-			}
-			return res.send({
-				success: false
 			});
 		});
 	});

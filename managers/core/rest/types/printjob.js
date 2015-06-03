@@ -31,13 +31,11 @@ module.exports = function(routes, db)
 	routes.delete('/printjobs/:id', FormideOS.manager('core.http').server.permissions.check('rest:printjob'), function(req, res) {
 		db.Printjob.remove({ _id: req.params.id }, function(err, printjob) {
 			if (err) return res.status(400).send(err);
-			if (printjob) {
+			var filePath = FormideOS.config.get('paths.modelfile') + '/' + printjob.gcode;
+			fs.unlink(filePath, function() {
 				return res.send({
 					success: true
 				});
-			}
-			return res.send({
-				success: false
 			});
 		});
 	});
