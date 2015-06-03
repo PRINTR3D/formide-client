@@ -66,7 +66,7 @@ module.exports =
 	},
 
 	deleteAccessToken: function( token, callback ) {
-		FormideOS.manager('core.db').db.AccessToken.delete({ token: token }, function(err) {
+		FormideOS.manager('core.db').db.AccessToken.remove({ token: token }, function(err) {
 			if (err) return callback(err);
 			return callback();
 		});
