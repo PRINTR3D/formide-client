@@ -10,7 +10,7 @@ sudo killall -9 adhoc_daemon.sh
 sudo killall -9 dhcpd
 sudo ifdown --force wlan0
 
-sudo cp ~/formideOS/formideOS-client/wifi/infrastructure.interfaces /etc/network/interfaces
-sudo cp ~/formideOS/formideOS-client/wifi/active-infrastructure.conf /etc/wpa_supplicant/wpa_supplicant.conf
+sudo cp /home/debian/formideOS/formideOS-client/wifi/infrastructure.interfaces /etc/network/interfaces
+sudo cp /home/debian/formideOS/formideOS-client/wifi/active-infrastructure.conf /etc/wpa_supplicant/wpa_supplicant.conf
 
 sudo ifup wlan0

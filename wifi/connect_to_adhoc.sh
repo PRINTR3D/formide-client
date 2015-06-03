@@ -12,7 +12,7 @@ sudo killall -9 dhcpd
 sudo killall -9 dhclient
 sudo killall -9 wpa_supplicant
 
-sudo cp ~/formideOS/formideOS-client/wifi/adhoc.interfaces /etc/network/interfaces
+sudo cp /home/debian/formideOS/formideOS-client/wifi/adhoc.interfaces /etc/network/interfaces
 
 sleep 2
 
@@ -21,4 +21,4 @@ sleep 2
 
 sudo dhcpd
 
-nohup ~/formideOS/formideOS-client/wifi/adhoc_daemon.sh > /dev/null < /dev/null 2>/dev/null &
+nohup /home/debian/formideOS/formideOS-client/wifi/adhoc_daemon.sh > /dev/null < /dev/null 2>/dev/null &

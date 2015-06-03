@@ -8,19 +8,19 @@ while true; do
 
   if ! (/sbin/ifconfig wlan0 | grep -q 10.0.213.1) ; then
     echo 'adhoc_daemon.sh: Missing IP Address'
-    ~/formideOS/formideOS-client/wifi/connect_to_adhoc.sh
+    /home/debian/formideOS/formideOS-client/wifi/connect_to_adhoc.sh
     break
   fi
 
   if ! (/sbin/iwconfig wlan0 | grep -q "New PrintToPi") ; then
     echo 'adhoc_daemon.sh: WiFi Not Associated'
-    ~/formideOS/formideOS-client/wifi/connect_to_adhoc.sh
+    /home/debian/formideOS/formideOS-client/wifi/connect_to_adhoc.sh
     break
   fi
 
   if ! (pgrep "dhcpd" > /dev/null) ; then
     echo 'adhoc_daemon.sh: dhcpd not running'
-    ~/formideOS/formideOS-client/wifi/connect_to_adhoc.sh
+    /home/debian/formideOS/formideOS-client/wifi/connect_to_adhoc.sh
     break
   fi
 
