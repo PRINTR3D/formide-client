@@ -31,7 +31,6 @@ getMac.getMac(function(err, macAddress) {
 	FormideOS.register('core.websocket');
 	FormideOS.register('core.device');
 	FormideOS.register('core.log', FormideOS.config.get('log'));
-	FormideOS.register('core.rest');
 	FormideOS.register('core.files');
 	FormideOS.register('core.printer', FormideOS.config.get('printer'));
 	FormideOS.register('core.slicer', FormideOS.config.get('slicer'));

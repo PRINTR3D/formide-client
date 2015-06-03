@@ -12,10 +12,9 @@
  *
  */
 
-module.exports = function(routes, module)
-{
-	routes.get('/info', FormideOS.manager('core.http').server.permissions.check('device'), function( req, res )
-	{
+module.exports = function(routes, module) {
+	
+	routes.get('/info', FormideOS.manager('core.http').server.permissions.check('device'), function(req, res) {
 		res.send( module.getInfo() );
 	});
 }

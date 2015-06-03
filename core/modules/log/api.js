@@ -12,13 +12,11 @@
  *
  */
 
-module.exports = function(routes, module)
-{
-	/**
-	 * Set led rgb color
-	 */
-	routes.get('/get', /* FormideOS.manager('core.http').server.permissions.check('log'),  */function( req, res )
-	{
+module.exports = function(routes, module) {
+	
+	// TODO: fix this
+/*
+	routes.get('/get', FormideOS.manager('core.http').server.permissions.check('log'), function(req, res) {
 		var options = {
 			from: new Date - 24 * 60 * 60 * 1000,
 			until: new Date,
@@ -32,4 +30,5 @@ module.exports = function(routes, module)
 			res.send(results);
 		});
 	});
+*/
 }

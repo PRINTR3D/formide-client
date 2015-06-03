@@ -17,18 +17,15 @@ module.exports = function(routes, module)
 	/**
 	 * Get a list of printer commands
 	 */
-	routes.get('/list', FormideOS.manager('core.http').server.permissions.check('printer'), function( req, res )
-	{
+	routes.get('/list', FormideOS.manager('core.http').server.permissions.check('printer'), function(req, res) {
 		res.send(FormideOS.config.get('channels.dashboard'));
 	});
 
 	/**
 	 * Get the current status of the printer
 	 */
-	routes.get('/status', FormideOS.manager('core.http').server.permissions.check('printer'), function( req, res )
-	{
-		FormideOS.manager('core.events').once('printer.status', function( status )
-		{
+	routes.get('/status', FormideOS.manager('core.http').server.permissions.check('printer'), function(req, res) {
+		FormideOS.manager('core.events').once('printer.status', function(status) {
 			res.send( status.data );
 		});
 	});
@@ -36,47 +33,36 @@ module.exports = function(routes, module)
 	/**
 	 * Send a command to the printer
 	 */
-	routes.get('/control/:command', FormideOS.manager('core.http').server.permissions.check('printer'), function( req, res )
-	{
+	routes.get('/control/:command', FormideOS.manager('core.http').server.permissions.check('printer'), function(req, res) {
 		// load channels from config
-		Object.keys(FormideOS.config.get('channels.dashboard')).forEach(function(method)
-		{
-			(function(realMethod)
-			{
-				if(req.params.command == realMethod)
-				{
+		Object.keys(FormideOS.config.get('channels.dashboard')).forEach(function(method) {
+			(function(realMethod) {
+				if(req.params.command == realMethod) {
 					FormideOS.manager('debug').log('Control printer ' + realMethod);
 
 					var expected = FormideOS.config.get('channels.dashboard')[realMethod];
 					var given = req.query;
 					var correct = true;
 
-					for(key in expected)
-					{
-						if(!given.hasOwnProperty(expected[key]))
-						{
+					for(key in expected) {
+						if(!given.hasOwnProperty(expected[key])) {
 							correct = false;
 						}
 					};
 
-					if(correct)
-					{
-						if(req.params.command == 'start')
-						{
+					if(correct) {
+						if(req.params.command == 'start') {
 							req.query.hash = FormideOS.appRoot + FormideOS.config.get('paths.gcode') + '/' + req.query.hash;
 						}
 
 						var params = JSON.stringify(req.query);
-						params = JSON.parse(params, function( k, v )
-						{
+						params = JSON.parse(params, function( k, v ) {
 							if(k === "") return v;
 
-							if(!parseInt(v))
-							{
+							if(!parseInt(v)) {
 								return v;
 							}
-							else
-							{
+							else {
 								return parseInt(v);
 							}
 						});
@@ -93,15 +79,13 @@ module.exports = function(routes, module)
 							message: 'OK'
 						});
 					}
-					else
-					{
+					else {
 						return res.send({
 							status: 402,
 							errors: 'ERR: param missing'
 						});
 					}
 				}
-
 			})(method);
 		});
 	});

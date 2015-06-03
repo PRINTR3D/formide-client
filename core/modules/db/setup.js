@@ -31,10 +31,11 @@ module.exports = {
 					"led",
 					"log",
 					"printer",
-					"rest",
+					"db",
 					"slicer",
 					"wifi",
-					"device"
+					"device",
+					"settings"
 				]
 			});
 		});
@@ -69,7 +70,7 @@ module.exports = {
 					"led",
 					"log",
 					"printer",
-					"rest",
+					"db",
 					"slicer",
 					"wifi",
 					"device"
