@@ -26,7 +26,7 @@ getMac.getMac(function(err, macAddress) {
 	FormideOS.register('core.http');
 	FormideOS.register('core.process');
 	FormideOS.register('core.db');
-	// FormideOS.register('core.settings');
+	FormideOS.register('core.settings');
 	FormideOS.register('core.auth');
 	FormideOS.register('core.websocket');
 	FormideOS.register('core.device');

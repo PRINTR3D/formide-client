@@ -24,10 +24,8 @@ function addZero(i) {
 
 module.exports = {
 
-	log: function(debug, severe)
-	{
-		if(FormideOS.config.get('app.debug') == true)
-		{
+	log: function(debug, severe) {
+		if(FormideOS.config.get('app.debug') == true) {
 			severe = severe || false;
 
 			var caller = callerId.getData();
@@ -36,14 +34,14 @@ module.exports = {
 			var date = new Date();
 
 			var timestampString = addZero(date.getHours()) + ":" + addZero(date.getMinutes()) + ":" + addZero(date.getSeconds()) + ":" + addZero(date.getMilliseconds()) + '\t';
+			
 			var outputString = '[' + callerString + ']\t';
 
-			FormideOS.manager('core.events').emit('log.debug', {message: debug, data: {manager: callerString[callerString.length - 2]}});
-
-			if(outputString.length < 12) {
-				outputString += '\u0020\u0020';
+			//FormideOS.manager('core.events').emit('log.debug', {message: debug, data: {manager: callerString[callerString.length - 2]}});
+			if(outputString.length < 32) {
+				outputString += '\t';
 			}
-			outputString += '\t';
+			
 			outputString += JSON.stringify(debug);
 
 			if(severe) {
