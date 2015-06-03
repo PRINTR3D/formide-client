@@ -16,7 +16,7 @@
 var getMac 	= require('getmac');
 
 // define global objects
-FormideOS 	= require('./FormideOS')();
+FormideOS 	= require('./core/FormideOS')();
 
 getMac.getMac(function(err, macAddress) {
 	
@@ -26,6 +26,7 @@ getMac.getMac(function(err, macAddress) {
 	FormideOS.register('core.http');
 	FormideOS.register('core.process');
 	FormideOS.register('core.db');
+	// FormideOS.register('core.settings');
 	FormideOS.register('core.auth');
 	FormideOS.register('core.websocket');
 	FormideOS.register('core.device');
@@ -36,6 +37,7 @@ getMac.getMac(function(err, macAddress) {
 	FormideOS.register('core.slicer', FormideOS.config.get('slicer'));
 	FormideOS.register('core.setup');
 	// FormideOS.register('core.wifi');
+	// FormideOS.register('core.update');
 	
 	// connect to cloud after other core modules booted
 	FormideOS.register('core.cloud', FormideOS.config.get('cloud'));
@@ -44,7 +46,5 @@ getMac.getMac(function(err, macAddress) {
 	FormideOS.register('app.interface', FormideOS.config.get('dashboard'));
 	FormideOS.register('app.webhook');
 	FormideOS.register('app.camera', FormideOS.config.get('camera'));
-
-	// FormideOS.register('update');
 	// FormideOS.register('app.led');
 });

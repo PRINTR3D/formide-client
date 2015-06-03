@@ -27,7 +27,7 @@ module.exports =
 
 		if(config.simulated)
 		{
-			this.process = spawn('node', ['driversim.js'], {cwd: FormideOS.appRoot + 'utils', stdio: 'pipe'});
+			this.process = spawn('node', ['driversim.js'], {cwd: FormideOS.appRoot + 'core/utils', stdio: 'pipe'});
 			this.process.stdout.setEncoding('utf8');
 			this.process.stdout.on('exit', this.onExit);
 			this.process.stdout.on('error', this.onError);

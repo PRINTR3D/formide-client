@@ -15,12 +15,15 @@
 var path = require('path');
 
 // define global formideos object
-module.exports = function()
-{
+module.exports = function() {
 	var formideos = {};
 
-	// global app root directory
-	formideos.appRoot = path.resolve(__dirname) + '/';
+	// global directories
+	formideos.coreRoot = path.resolve(__dirname) + '/';
+	formideos.appRoot = path.resolve(__dirname + '/../') + '/';
+	formideos.userRoot = path.resolve(__dirname + '/../app') + '/';
+	
+	console.log(formideos.appRoot);
 
 	// global object to hold managers
 	formideos.managers = {};
@@ -32,7 +35,7 @@ module.exports = function()
 	formideos.register = require('./utils/register.js');
 
 	// register events
-	formideos.managers['core/events'] = require('./utils/events.js');
+	formideos.managers['core/events'] = require('./utils/events.js'); // a bit ugly
 
 	// register debug
 	formideos.managers.debug = require('./utils/debug.js');
@@ -44,16 +47,13 @@ module.exports = function()
 	formideos.utils = require('./utils/functions.js');
 
 	// get registered manager
-	formideos.manager = function(name)
-	{
+	formideos.manager = function(name) {
 		name = name.replace('.', '/');
 
-		if(!(name in formideos.managers))
-		{
+		if(!(name in formideos.managers)) {
 			FormideOS.manager('debug').log('Manager with name ' + name + ' is not registered', true);
 		}
-		else
-		{
+		else {
 			return formideos.managers[name];
 		}
 	};
