@@ -19,6 +19,8 @@ var socket 		= require('socket.io-client');
 
 module.exports =
 {
+	name: "core.cloud",
+	
 	cloud: {},
 	local: [],
 

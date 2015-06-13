@@ -21,6 +21,8 @@ var semver		= require('semver');
 
 module.exports =
 {
+	name: "core.update",
+	
 	currentVersion: "1.0.0",
 
 	update: {},

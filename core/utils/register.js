@@ -15,9 +15,9 @@
 var domain 					= require('domain');
 var fs 						= require('fs');
 
-module.exports = function(managerName, data) {
+module.exports = function(search, data) {
 	var d = domain.create();
-	d.name = managerName;
+	d.name = search;
 
 	d.on('error', function(err) {
 		FormideOS.manager('core.events').emit('log.error', {message: 'uncaught exception occured', data: err.stack});
@@ -27,18 +27,26 @@ module.exports = function(managerName, data) {
 	d.add(FormideOS.manager('core.events'));
 
 	d.run(function() {
-		managerName 			= managerName.replace('.', '/');
-		var managerLocation 	= managerName.split('/')[0]; // find in core or app
-		var managerNamespace 	= managerName.split('/')[1]; // remove core or app for urls
-		var managerRoot 		= FormideOS.appRoot + managerLocation + '/modules/' + managerNamespace;
 
-		FormideOS.manager('debug').log('Loading manager: ' + managerName);
+		FormideOS.manager('debug').log('Loading module: ' + search);
 
 		// check if manager has index file
 		if(fs.existsSync(managerRoot + '/index.js')) {
 			
+			if(managerName.indexOf('core.') !== -1) {
+				
+			}
+			
 			// require manager index file
-			var manager = require(managerRoot + '/index.js');
+			var manager 			= require(managerRoot + '/index.js');
+			var managerName 		= manager.name;
+			var managerLocation 	= search;
+			var managerNamespace	= managerName;
+			var managerRoot 		= FormideOS.appRoot + search;
+			
+			if(managerName.indexOf('core.') !== -1) {
+				managerNamespace = managerName.split('.')[1]; // remove core. from urls
+			}
 			
 			var moduleInfo = {
 				hasHTTP: false,
@@ -68,16 +76,16 @@ module.exports = function(managerName, data) {
 			}
 			
 			// check if manager already exists or something with the same name does
-			if(!(managerName in FormideOS.managers)) {
-				FormideOS.modules[managerName] = moduleInfo;
-				FormideOS.managers[managerName] = manager;
+			if(!(managerNamespace in FormideOS.managers)) {
+				FormideOS.modules[managerNamespace] = moduleInfo;
+				FormideOS.managers[managerNamespace] = manager;
 			}
 			else {
-				FormideOS.manager('debug').log('Manager with name ' + managerName + ' already exists', true);
+				FormideOS.manager('debug').log('Module with namespace ' + managerNamespace + ' already exists', true);
 			}
 		}
 		else {
-			FormideOS.manager('debug').log('manager does not have an index.js file', true);
+			FormideOS.manager('debug').log('Module does not have an index.js file', true);
 		}
-	}.bind(managerName, data));
+	}.bind(search, data));
 }

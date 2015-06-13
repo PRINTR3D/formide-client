@@ -17,6 +17,8 @@ var uuid	= require('node-uuid');
 
 module.exports = {
 	
+	name: "core.files",
+	
 	uploadModelfile: function(file, callback) {
 		fs.readFile(file.path, function(err, data) {
 			var hash = uuid.v4();

@@ -23,27 +23,27 @@ getMac.getMac(function(err, macAddress) {
 	FormideOS.macAddress = FormideOS.config.get('cloud.softMac') || macAddress;
 
 	// core modules
-	FormideOS.register('core.http');
-	FormideOS.register('core.process');
-	FormideOS.register('core.db');
-	FormideOS.register('core.settings');
-	FormideOS.register('core.auth');
-	FormideOS.register('core.websocket');
-	FormideOS.register('core.device');
-	FormideOS.register('core.log', FormideOS.config.get('log'));
-	FormideOS.register('core.files');
-	FormideOS.register('core.printer', FormideOS.config.get('printer'));
-	FormideOS.register('core.slicer', FormideOS.config.get('slicer'));
-	FormideOS.register('core.setup');
-	// FormideOS.register('core.wifi');
-	// FormideOS.register('core.update');
+	FormideOS.register('core/modules/http');
+	FormideOS.register('core/modules/process');
+	FormideOS.register('core/modules/db');
+	FormideOS.register('core/modules/settings');
+	FormideOS.register('core/modules/auth');
+	FormideOS.register('core/modules/websocket');
+	FormideOS.register('core/modules/device');
+	FormideOS.register('core/modules/log', FormideOS.config.get('log'));
+	FormideOS.register('core/modules/files');
+	FormideOS.register('core/modules/printer', FormideOS.config.get('printer'));
+	FormideOS.register('core/modules/slicer', FormideOS.config.get('slicer'));
+	FormideOS.register('core/modules/setup');
+	// FormideOS.register('core/modules/wifi');
+	// FormideOS.register('core/modules/update');
 	
 	// connect to cloud after other core modules booted
-	FormideOS.register('core.cloud', FormideOS.config.get('cloud'));
+	FormideOS.register('core/modules/cloud', FormideOS.config.get('cloud'));
 	
 	// app modules
-	FormideOS.register('app.interface', FormideOS.config.get('dashboard'));
-	FormideOS.register('app.webhook');
-	FormideOS.register('app.camera', FormideOS.config.get('camera'));
-	// FormideOS.register('app.led');
+	FormideOS.register('app/modules/interface', FormideOS.config.get('dashboard'));
+	FormideOS.register('node_modules/formideOS-module-webhook');
+	FormideOS.register('app/modules/camera', FormideOS.config.get('camera'));
+	// FormideOS.register('app/modules/led');
 });

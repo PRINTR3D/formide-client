@@ -17,6 +17,8 @@ var fs = require('fs');
 
 module.exports =
 {
+	name: "interface",
+	
 	process: null,
 
 	init: function(config)

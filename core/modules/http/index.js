@@ -31,6 +31,8 @@ var bearerToken 			= require('express-bearer-token');
 
 module.exports = {
 	
+	name: "core.http",
+	
 	server: {},
 
 	init: function() {

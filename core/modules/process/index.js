@@ -16,6 +16,8 @@ var argv 		= require('minimist');
 
 module.exports =
 {
+	name: "core.process",
+	
 	process: null,
 	args: null,
 

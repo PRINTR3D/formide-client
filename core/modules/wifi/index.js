@@ -14,6 +14,8 @@
 
 module.exports =
 {
+	name: "core.wifi",
+	
 	connection: {},
 
 	init: function()

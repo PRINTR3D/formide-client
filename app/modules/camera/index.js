@@ -16,8 +16,12 @@ var exec = require('child_process').exec;
 
 module.exports =
 {
+	camera: "camera",
+	
 	config: {},
+	
 	stream: false,
+	
 	interval: null,
 
 	init: function( config )

@@ -17,6 +17,8 @@ var request = require('request');
 
 module.exports = {
 
+	name: "core.setup",
+	
 	startAP: function()
 	{
 		// start access point

@@ -19,6 +19,8 @@ var net = require('net');
 
 module.exports =
 {
+	name: "core.printer",
+	
 	process: null,
 	printer: {},
 

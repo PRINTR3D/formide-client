@@ -16,6 +16,8 @@ var uuid = require('node-uuid');
 
 module.exports =
 {
+	name: "core.auth",
+	
 	changePassword: function( password, callback )
 	{
 		FormideOS.manager('core.db').db.User

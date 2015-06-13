@@ -18,6 +18,8 @@ var permissionsMiddleware 		= require('./middleware/permissions');
 
 module.exports =
 {
+	name: "core.websocket",
+	
 	connection: {},
 
 	init: function()

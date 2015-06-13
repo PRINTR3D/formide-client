@@ -17,6 +17,8 @@ var Led = require('nodejs-leds');
 
 module.exports =
 {
+	name: "led",
+	
 	led: null,
 
 	init: function()
