@@ -26,6 +26,8 @@
     "express-bearer-token": "^2.1.0",
     "express-session": "~1.10.3",
     "express-validator": "^2.9.0",
+    "formideOS-module-camera": "git://github.com/printr3d/formideOS-module-camera.git",
+    "formideOS-module-interface": "git://github.com/printr3d/formideOS-module-interface.git",
     "formideOS-module-webhook": "git://github.com/printr3d/formideOS-module-webhook.git",
     "getmac": "~1.0.6",
     "install": "~0.1.8",
