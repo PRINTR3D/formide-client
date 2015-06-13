@@ -31,7 +31,7 @@ var bearerToken 			= require('express-bearer-token');
 
 module.exports = {
 	
-	name: "core.http",
+	name: "http",
 	
 	server: {},
 
@@ -68,7 +68,7 @@ module.exports = {
 		});
 
 		passport.deserializeUser(function(id, done) {
-		  	FormideOS.manager('core.db').db.User.findOne({ _id: id }).exec(function(err, user) {
+		  	FormideOS.manager('db').db.User.findOne({ _id: id }).exec(function(err, user) {
 			  	if (err) return done('user not found', false);
 				if (user) {
 					return done(null, user);
@@ -79,7 +79,7 @@ module.exports = {
 		passport.use( 'local-signup', new LocalStrategy(function(email, password, callback) {
 			process.nextTick( function() {
 /*
-				FormideOS.manager('core.db').db.user
+				FormideOS.manager('db').db.user
 				.find({ where: {username: username} })
 				.then(function( user ) {
 					if( user )
@@ -89,7 +89,7 @@ module.exports = {
 
 					var hashedPassword = passwordHash.generate(password);
 
-					FormideOS.manager('core.db').db.User
+					FormideOS.manager('db').db.User
 					.create({
 						username: username,
 						password: hashedPassword
@@ -105,7 +105,7 @@ module.exports = {
 
 		passport.use('local-login', new LocalStrategy({usernameField: 'email'}, function(email, password, next) {
 			FormideOS.manager('debug').log('Login attempt for ' + email);
-			FormideOS.manager('core.db').db.User.findOne({ email: email }).exec(function(err, user) {
+			FormideOS.manager('db').db.User.findOne({ email: email }).exec(function(err, user) {
 				if (err) return next(err);
 				if (!user || user === 'undefined') {
 					return next(null, false, { message: 'Incorrect user credentials' });
@@ -122,7 +122,7 @@ module.exports = {
 		{
 			FormideOS.manager('debug').log( 'Token login attempt for ' + token );
 
-			FormideOS.manager('core.db').db.Accesstoken
+			FormideOS.manager('db').db.Accesstoken
 			.fin({ where: {token: token } })
 			.then(function( token )
 			{

@@ -17,7 +17,7 @@ var uuid	= require('node-uuid');
 
 module.exports = {
 	
-	name: "core.files",
+	name: "files",
 	
 	uploadModelfile: function(file, callback) {
 		fs.readFile(file.path, function(err, data) {
@@ -29,7 +29,7 @@ module.exports = {
 					return callback(err);
 				}
 				else {
-					FormideOS.manager('core.db').db.Modelfile.create({
+					FormideOS.manager('db').db.Modelfile.create({
 						filename: file.name,
 						filesize: file.size,
 						hash: hash
@@ -52,7 +52,7 @@ module.exports = {
 					return callback(err);
 				}
 				else {
-					FormideOS.manager('core.db').db.Printjob.create({
+					FormideOS.manager('db').db.Printjob.create({
 						gcode: hash,
 						sliceMethod: 'custom',
 						sliceFinished: true

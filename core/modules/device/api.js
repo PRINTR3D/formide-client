@@ -14,7 +14,7 @@
 
 module.exports = function(routes, module) {
 	
-	routes.get('/info', FormideOS.manager('core.http').server.permissions.check('device'), function(req, res) {
+	routes.get('/info', FormideOS.manager('http').server.permissions.check('device'), function(req, res) {
 		res.send( module.getInfo() );
 	});
 }

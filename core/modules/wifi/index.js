@@ -14,7 +14,7 @@
 
 module.exports =
 {
-	name: "core.wifi",
+	name: "wifi",
 	
 	connection: {},
 

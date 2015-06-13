@@ -37,7 +37,7 @@ module.exports = {
 			
 			var outputString = '[' + callerString + ']\t';
 
-			//FormideOS.manager('core.events').emit('log.debug', {message: debug, data: {manager: callerString[callerString.length - 2]}});
+			//FormideOS.manager('events').emit('log.debug', {message: debug, data: {manager: callerString[callerString.length - 2]}});
 			if(outputString.length < 32) {
 				outputString += '\t';
 			}

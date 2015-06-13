@@ -34,10 +34,10 @@ module.exports = function() {
 	formideos.register = require('./utils/register.js');
 
 	// register events
-	formideos.managers['core/events'] = require('./utils/events.js'); // a bit very ugly
+	formideos.managers['events'] = require('./utils/events.js');
 
 	// register debug
-	formideos.managers['debug'] = require('./utils/debug.js'); // a bit very ugly
+	formideos.managers['debug'] = require('./utils/debug.js');
 
 	// global user settings
 	formideos.settings = require('./utils/settings.js')(formideos);

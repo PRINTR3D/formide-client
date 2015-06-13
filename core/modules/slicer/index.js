@@ -20,9 +20,10 @@ var uuid 	= require('node-uuid');
 
 module.exports = {
 	
-	name: "core.slicer",
+	name: "slicer",
 	
 	process: null,
+	
 	slicer: {},
 
 	init: function(config) {
@@ -43,7 +44,7 @@ module.exports = {
 		this.slicer.on('data', this.sliceResponse.bind(this));
 		this.slicer.on('close', this.slicerError.bind(this));
 
-		FormideOS.manager('core.events').on('process.exit', this.stop.bind(this));
+		FormideOS.manager('events').on('process.exit', this.stop.bind(this));
 	},
 
 	connect: function() {
@@ -85,7 +86,7 @@ module.exports = {
 	slice: function(modelfiles, sliceprofile, materials, printer, settings, callback) {
 		var self = this;
 		var hash = uuid.v4();
-		FormideOS.manager('core.db').db.Printjob.create({
+		FormideOS.manager('db').db.Printjob.create({
 			modelfiles: modelfiles,
 			printer: printer,
 			sliceprofile: sliceprofile,
@@ -105,7 +106,7 @@ module.exports = {
 				
 				// write slicerequest to local Katana instance
 				self.slicer.write(JSON.stringify(sliceData) + '\n', function() {
-					FormideOS.manager('core.events').emit('slicer.slice', slicerequest);
+					FormideOS.manager('events').emit('slicer.slice', slicerequest);
 					return callback(null, slicerequest);
 				});
 			});
@@ -120,7 +121,7 @@ module.exports = {
 		};
 */
 /*
-		FormideOS.manager('core.db').db.Modelfile
+		FormideOS.manager('db').db.Modelfile
 		.find({ where: {id: modelfile } })
 		.then(function(dbModelfile)
 		{
@@ -139,7 +140,7 @@ module.exports = {
 			sliceData.data.bucketOut = FormideOS.appRoot + FormideOS.config.get('paths.gcode');
 			sliceData.data.responseID = hash;
 
-			FormideOS.manager('core.db').db.Printjob
+			FormideOS.manager('db').db.Printjob
 			.create(
 			{
 				ModelfileId: 	modelfile,
@@ -154,7 +155,7 @@ module.exports = {
 			{
 				// send slice request to local slicer
 				self.slicer.write(JSON.stringify(sliceData) + '\n', function() {
-					FormideOS.manager('core.events').emit('slicer.slice', sliceData);
+					FormideOS.manager('events').emit('slicer.slice', sliceData);
 					return callback(true);
 				});
 			});
@@ -165,7 +166,7 @@ module.exports = {
 	createSliceRequest: function(printjobId, callback) {
 		
 		// creates a slice request from a printjob database entry
-		FormideOS.manager('core.db').db.Printjob.findOne({ _id: printjobId }).lean().populate('modelfiles sliceprofile materials printer').exec(function(err, printjob) {
+		FormideOS.manager('db').db.Printjob.findOne({ _id: printjobId }).lean().populate('modelfiles sliceprofile materials printer').exec(function(err, printjob) {
 		
 			var slicerequest = printjob.sliceprofile.settings;
 			
@@ -256,10 +257,10 @@ module.exports = {
 			FormideOS.utils.parseTCPStream(stream, function(data) {
 				if(data.status == 200 && data.data.responseID != null) {
 					FormideOS.manager('debug').log(data);
-					FormideOS.manager('core.db').db.Printjob
+					FormideOS.manager('db').db.Printjob
 					.update({ _id: data.data.responseID }, { gcode: data.data.gcode, sliceResponse: data.data, sliceFinished: true }, function(err, printjob) {
 						if (err) return;
-						FormideOS.manager('core.events').emit('slicer.finished', {
+						FormideOS.manager('events').emit('slicer.finished', {
 							type: 'success',
 							title: 'Slicer finished',
 							message: 'Slicer finished slicing ' + data.data.responseID,
@@ -276,7 +277,7 @@ module.exports = {
 						message: 'slicer error',
 						data: data
 					});
-					FormideOS.manager('core.events').emit('slicer.finished', {
+					FormideOS.manager('events').emit('slicer.finished', {
 						type: 'warning',
 						title: 'Slicer error',
 						message: 'Slicing failed slicing ' + data.data.responseID,

@@ -15,7 +15,7 @@
 module.exports = function(routes, module) {
 	
 	// session things
-	routes.post('/login', FormideOS.manager('core.http').server.auth.authenticate('local-login'), function(req, res) {
+	routes.post('/login', FormideOS.manager('http').server.auth.authenticate('local-login'), function(req, res) {
 		return res.send({
 			success: true,
 			sessionID: req.sessionID
@@ -37,19 +37,19 @@ module.exports = function(routes, module) {
 	});
 
 	// accesstoken things
-	routes.get('/tokens', FormideOS.manager('core.http').server.permissions.check('auth'), function( req, res ) {
+	routes.get('/tokens', FormideOS.manager('http').server.permissions.check('auth'), function( req, res ) {
 		module.getAccessTokens(function(tokens) {
 			return res.send(tokens);
 		});
 	});
 
-	routes.post('/tokens', FormideOS.manager('core.http').server.permissions.check('auth'), function(req, res) {
+	routes.post('/tokens', FormideOS.manager('http').server.permissions.check('auth'), function(req, res) {
 		module.generateAccessToken(req.body.permissions, function(token) {
 			return res.send(token);
 		});
 	});
 
-	routes.delete('/tokens/:token', FormideOS.manager('core.http').server.permissions.check('auth'), function(req, res) {
+	routes.delete('/tokens/:token', FormideOS.manager('http').server.permissions.check('auth'), function(req, res) {
 		module.deleteAccessToken( req.params.token, function(err) {
 			if (err) return res.send({ success: false, message: err })
 			return res.send({ success: true });
@@ -57,7 +57,7 @@ module.exports = function(routes, module) {
 	});
 
 	// update password
-	routes.post('/password', FormideOS.manager('core.http').server.permissions.check('auth'), function(req, res) {
+	routes.post('/password', FormideOS.manager('http').server.permissions.check('auth'), function(req, res) {
 		if(req.body.password) {
 			module.changePassword(req.body.password, function(response) {
 				res.send(response);
@@ -66,21 +66,21 @@ module.exports = function(routes, module) {
 	});
 	
 	// user config
-	routes.get('/users', FormideOS.manager('core.http').server.permissions.check('auth'), function(req, res) {
+	routes.get('/users', FormideOS.manager('http').server.permissions.check('auth'), function(req, res) {
 		db.User.find().exec(function(err, users) {
 			if (err) return res.send(err);
 			return res.send(users);
 		});
 	});
 
-	routes.get('/users/:id', FormideOS.manager('core.http').server.permissions.check('auth'), function(req, res) {
+	routes.get('/users/:id', FormideOS.manager('http').server.permissions.check('auth'), function(req, res) {
 		db.User.findOne({ _id: req.params.id }).exec(function(err, user) {
 			if (err) return res.send(err);
 			return res.send(user);
 		});
 	});
 
-	routes.post('/users', FormideOS.manager('core.http').server.permissions.check('auth'), function(req, res) {
+	routes.post('/users', FormideOS.manager('http').server.permissions.check('auth'), function(req, res) {
 		db.User.create(req.body).exec(function(err, user) {
 			if (err) return res.status(400).send(err);
 			if (user) {
@@ -95,7 +95,7 @@ module.exports = function(routes, module) {
 		});
 	});
 
-	routes.put('/users/:id', FormideOS.manager('core.http').server.permissions.check('auth'), function(req, res) {
+	routes.put('/users/:id', FormideOS.manager('http').server.permissions.check('auth'), function(req, res) {
 		db.User.update({ _id: req.params.id }, req.body, function(err, user) {
 			if (err) return res.status(400).send(err);
 			if (user) {
@@ -109,7 +109,7 @@ module.exports = function(routes, module) {
 		});
 	});
 
-	routes.delete('/users/:id', FormideOS.manager('core.http').server.permissions.check('auth'), function(req, res) {
+	routes.delete('/users/:id', FormideOS.manager('http').server.permissions.check('auth'), function(req, res) {
 		db.User.remove({ _id: req.params.id }, function(err, user) {
 			if (err) return res.status(400).send(err);
 			if (user) {

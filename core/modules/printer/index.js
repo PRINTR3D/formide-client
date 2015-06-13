@@ -19,7 +19,7 @@ var net = require('net');
 
 module.exports =
 {
-	name: "core.printer",
+	name: "printer",
 	
 	process: null,
 	printer: {},
@@ -41,7 +41,7 @@ module.exports =
 		this.printer.on('data', this.printerStatus.bind(this));
 		this.printer.on('close', this.printerError.bind(this));
 
-		FormideOS.manager('core.events').on('process.exit', this.stop.bind(this));
+		FormideOS.manager('events').on('process.exit', this.stop.bind(this));
 	},
 
 	connect: function() {
@@ -79,14 +79,14 @@ module.exports =
 		try // try parsing
 		{
 			FormideOS.utils.parseTCPStream(stream, function(printerData) {
-				FormideOS.manager('core.events').emit('printer.status', printerData);
+				FormideOS.manager('events').emit('printer.status', printerData);
 
 				if(printerData.type == 'status') {
 					this.status = printerData.data;
 				}
 
 				if(printerData.type == 'finished') {
-					FormideOS.manager('core.db').db.Queueitem
+					FormideOS.manager('db').db.Queueitem
 					.find({where: {id: printerData.data.printjobID}})
 					.success(function(queueitem) {
 						if(queueitem != null) {

@@ -81,7 +81,7 @@ module.exports =
 	http: function(data, callback) {
 		request({
 			method: data.method,
-			uri: 'http://127.0.0.1:' + FormideOS.manager('core.http').server.server.address().port + '/api/' + data.manager + '/' + data.function,
+			uri: 'http://127.0.0.1:' + FormideOS.manager('http').server.server.address().port + '/api/' + data.manager + '/' + data.function,
 			auth: {
 				bearer: data.token // add cloud api key to authorise to local HTTP api
 			},
@@ -97,7 +97,7 @@ module.exports =
 	listen: function(data, callback) {
 		var self = this;
 		if(!this.local[data.manager]) {
-			this.local[data.manager] = socket( 'ws://127.0.0.1:' + FormideOS.manager('core.http').server.server.address().port + '/' + data.manager);
+			this.local[data.manager] = socket( 'ws://127.0.0.1:' + FormideOS.manager('http').server.server.address().port + '/' + data.manager);
 		}
 		this.local[data.manager].on(data.channel, function(response) {
 			self.cloud.emit(data.manager + "." + data.channel, response);
@@ -110,7 +110,7 @@ module.exports =
 	emit: function(data) {
 		var self = this;
 		if(!this.local[data.manager]) {
-			this.local[data.manager] = socket( 'ws://127.0.0.1:' + FormideOS.manager('core.http').server.server.address().port + '/' + data.manager);
+			this.local[data.manager] = socket( 'ws://127.0.0.1:' + FormideOS.manager('http').server.server.address().port + '/' + data.manager);
 		}
 		this.local[data.manager].emit(data.channel, data.data);
 	}

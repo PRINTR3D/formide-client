@@ -30,7 +30,7 @@ module.exports =
 		this.registerModels();
 		this.registerAssociations();
 
-		if(FormideOS.manager('core.process').args.setup)
+		if(FormideOS.manager('process').args.setup)
 		{
 			FormideOS.manager('debug').log('Database setup running');
 			require('./setup.js').init( this.db, this.sequelize );

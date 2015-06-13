@@ -23,27 +23,27 @@ getMac.getMac(function(err, macAddress) {
 	FormideOS.macAddress = FormideOS.config.get('cloud.softMac') || macAddress;
 
 	// core modules
-	FormideOS.register('core/modules/http');
-	FormideOS.register('core/modules/process');
-	FormideOS.register('core/modules/db');
-	FormideOS.register('core/modules/settings');
-	FormideOS.register('core/modules/auth');
-	FormideOS.register('core/modules/websocket');
-	FormideOS.register('core/modules/device');
-	FormideOS.register('core/modules/log', FormideOS.config.get('log'));
-	FormideOS.register('core/modules/files');
-	FormideOS.register('core/modules/printer', FormideOS.config.get('printer'));
-	FormideOS.register('core/modules/slicer', FormideOS.config.get('slicer'));
-	FormideOS.register('core/modules/setup');
-	// FormideOS.register('core/modules/wifi');
-	// FormideOS.register('core/modules/update');
+	FormideOS.register('core/modules/http', 					'http');
+	FormideOS.register('core/modules/process', 					'process');
+	FormideOS.register('core/modules/db', 						'db');
+	FormideOS.register('core/modules/settings', 				'settings');
+	FormideOS.register('core/modules/auth', 					'auth');
+	FormideOS.register('core/modules/websocket', 				'websocket');
+	FormideOS.register('core/modules/device', 					'device');
+	FormideOS.register('core/modules/log', 						'log', 			FormideOS.config.get('log'));
+	FormideOS.register('core/modules/files', 					'files');
+	FormideOS.register('core/modules/printer', 					'printer', 		FormideOS.config.get('printer'));
+	FormideOS.register('core/modules/slicer', 					'slicer', 		FormideOS.config.get('slicer'));
+	FormideOS.register('core/modules/setup', 					'setup');
+	// FormideOS.register('core/modules/wifi', 					'wifi');
+	// FormideOS.register('core/modules/update', 				'update');
 	
 	// connect to cloud after other core modules booted
-	FormideOS.register('core/modules/cloud', FormideOS.config.get('cloud'));
+	FormideOS.register('core/modules/cloud', 					'cloud', 		FormideOS.config.get('cloud'));
 	
 	// app modules
-	FormideOS.register('app/modules/interface', FormideOS.config.get('dashboard'));
-	FormideOS.register('node_modules/formideOS-module-webhook');
-	FormideOS.register('app/modules/camera', FormideOS.config.get('camera'));
-	// FormideOS.register('app/modules/led');
+	FormideOS.register('app/modules/interface', 				'interface', 	FormideOS.config.get('dashboard'));
+	FormideOS.register('node_modules/formideOS-module-webhook', 'webhook');
+	FormideOS.register('app/modules/camera', 					'camera', 		FormideOS.config.get('camera'));
+	// FormideOS.register('app/modules/led', 					'led');
 });

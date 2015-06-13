@@ -61,7 +61,7 @@ module.exports =
 				FormideOS.manager('core.debug').log(stderr);
 			}
 
-			FormideOS.manager('core.events').emit('camera.refresh');
+			FormideOS.manager('events').emit('camera.refresh');
 
 		}.bind(this));
 	}

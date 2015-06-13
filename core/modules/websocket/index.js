@@ -18,13 +18,13 @@ var permissionsMiddleware 		= require('./middleware/permissions');
 
 module.exports =
 {
-	name: "core.websocket",
+	name: "websocket",
 	
 	connection: {},
 
 	init: function()
 	{
-		this.connection = io.listen( FormideOS.manager('core.http').server.server );
+		this.connection = io.listen( FormideOS.manager('http').server.server );
 
 		this.connection.use(authorizationMiddleware);
 		this.connection.use(permissionsMiddleware);

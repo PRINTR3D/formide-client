@@ -28,7 +28,7 @@ module.exports = function(namespace, module)
 			module.stopStream();
 		});
 
-		FormideOS.manager('core.events').on('camera.refresh', function()
+		FormideOS.manager('events').on('camera.refresh', function()
 		{
 			socket.emit('stream', 'image.jpg?_t=' + ( Math.random() * 100000))
 		});

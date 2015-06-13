@@ -16,7 +16,7 @@ var argv 		= require('minimist');
 
 module.exports =
 {
-	name: "core.process",
+	name: "process",
 	
 	process: null,
 	args: null,
@@ -61,12 +61,12 @@ module.exports =
 
 	processExit: function(err)
 	{
-		FormideOS.manager('core.events').emit('process.exit');
+		FormideOS.manager('events').emit('process.exit');
 	},
 
 	processError: function(err)
 	{
-		FormideOS.manager('core.events').emit('log.error', {message: 'uncaught exception occured', data: err.stack});
+		FormideOS.manager('events').emit('log.error', {message: 'uncaught exception occured', data: err.stack});
 		FormideOS.manager('debug').log(err.stack);
 	}
 };

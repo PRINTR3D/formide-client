@@ -16,12 +16,12 @@ module.exports = function(namespace, module)
 {
 	namespace.on('connection', function( socket )
 	{
-		FormideOS.manager('core.events').on('slicer.slice', function( data )
+		FormideOS.manager('events').on('slicer.slice', function( data )
 		{
 			socket.emit('slice', data);
 		});
 
-		FormideOS.manager('core.events').on('slicer.finished', function( data )
+		FormideOS.manager('events').on('slicer.finished', function( data )
 		{
 			socket.emit('finished', data);
 		});

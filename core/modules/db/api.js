@@ -14,21 +14,10 @@
 
 module.exports = function(routes, module) {
 	
-	// TODO: fix this
-/*
-	routes.get('/get', FormideOS.manager('http').server.permissions.check('log'), function(req, res) {
-		var options = {
-			from: new Date - 24 * 60 * 60 * 1000,
-			until: new Date,
-			limit: 10,
-			start: 0,
-			order: 'desc',
-			fields: ['message', 'domainThrown']
-		};
-
-		module.get(options, function(results) {
-			res.send(results);
-		});
-	});
-*/
-}
+	require('./rest/material.js')(routes, module.db);
+	require('./rest/modelfile.js')(routes, module.db);
+	require('./rest/printer.js')(routes, module.db);
+	require('./rest/printjob.js')(routes, module.db);
+	require('./rest/queue.js')(routes, module.db);
+	require('./rest/sliceprofile.js')(routes, module.db);
+};

@@ -26,7 +26,7 @@ module.exports = function(namespace, module)
 			{
 				socket.emit('auth', {message: 'OK', id: socket.id});
 
-				FormideOS.manager('core.events').emit('websocket.connected', {
+				FormideOS.manager('events').emit('websocket.connected', {
 					type: 'dashboard',
 					data: {
 						port: FormideOS.config.get('dashboard.port')
@@ -40,7 +40,7 @@ module.exports = function(namespace, module)
 		// Socket disconnect
 		socket.on('disconnect', function()
 		{
-			FormideOS.manager('core.events').emit('websocket.disconnected', {
+			FormideOS.manager('events').emit('websocket.disconnected', {
 				type: 'dashboard',
 				data: {
 					message: 'Dashboard disconnected'
@@ -91,7 +91,7 @@ module.exports = function(namespace, module)
 			})(method);
 		});
 
-		FormideOS.manager('core.events').on('printer.status', function( data )
+		FormideOS.manager('events').on('printer.status', function( data )
 		{
 			socket.emit(data.type, data.data);
 		});

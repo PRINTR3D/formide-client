@@ -16,11 +16,11 @@ var uuid = require('node-uuid');
 
 module.exports =
 {
-	name: "core.auth",
+	name: "auth",
 	
 	changePassword: function( password, callback )
 	{
-		FormideOS.manager('core.db').db.User
+		FormideOS.manager('db').db.User
 		.find({where: {id: req.user.id}})
 		.success(function( user )
 		{
@@ -50,7 +50,7 @@ module.exports =
 		
 		permissions = JSON.parse(permissions);
 		
-		FormideOS.manager('core.db').db.AccessToken.create({
+		FormideOS.manager('db').db.AccessToken.create({
 			token: token,
 			permissions: permissions
 		}, function(err, accesstoken) {
@@ -62,13 +62,13 @@ module.exports =
 	},
 
 	getAccessTokens: function(callback) {
-		FormideOS.manager('core.db').db.AccessToken.find().exec( function(err, tokens) {
+		FormideOS.manager('db').db.AccessToken.find().exec( function(err, tokens) {
 			return callback(tokens);
 		});
 	},
 
 	deleteAccessToken: function( token, callback ) {
-		FormideOS.manager('core.db').db.AccessToken.remove({ token: token }, function(err) {
+		FormideOS.manager('db').db.AccessToken.remove({ token: token }, function(err) {
 			if (err) return callback(err);
 			return callback();
 		});

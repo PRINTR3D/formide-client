@@ -46,7 +46,7 @@ module.exports =
 			}
 		}.bind(this));
 
-		FormideOS.manager('core.events').on('process.exit', this.stop);
+		FormideOS.manager('events').on('process.exit', this.stop);
 	},
 
 	onExit: function(exit)

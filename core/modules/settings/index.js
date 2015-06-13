@@ -14,7 +14,7 @@
 
 module.exports = {
 
-	name: "core.settings",
+	name: "settings",
 	
 	getSettings: function(cb) {
 		return cb(FormideOS.settings);

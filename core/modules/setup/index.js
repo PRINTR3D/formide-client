@@ -17,7 +17,7 @@ var request = require('request');
 
 module.exports = {
 
-	name: "core.setup",
+	name: "setup",
 	
 	startAP: function()
 	{

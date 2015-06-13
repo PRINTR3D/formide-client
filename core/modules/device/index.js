@@ -16,7 +16,7 @@ var os = require('os');
 
 module.exports =
 {
-	name: "core.device",
+	name: "device",
 	
 	device: {},
 
