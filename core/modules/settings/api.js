@@ -26,7 +26,7 @@ module.exports = function(routes, module) {
 	/*
 	 * Get installed module overview
 	 */
-	routes.get('/modules', FormideOS.manager('http').server.permissions.check('settings'), function(req, res) {
+	routes.get('/modules', /* FormideOS.manager('http').server.permissions.check('settings'),  */function(req, res) {
 		module.getBootstrapInfo(function(bootstrapInfo) {
 			return res.send(bootstrapInfo);
 		});

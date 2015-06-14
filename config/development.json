@@ -6,10 +6,6 @@
 		"port": 1337,
 		"version": "0.4.0"
 	},
-	"camera": {
-		"command": "imagesnap stream/image.jpg",
-		"interval": 2000
-	},
 	"channels": {
 		"dashboard": {
 			"gcode": ["code"],
@@ -40,12 +36,7 @@
 		}
 	},
 	"cloud": {
-		"url": "https://ws.formide.com"
-	},
-	"dashboard": {
-		"port": 8080,
-		"path": "../formideOS-interface",
-		"auto": false
+		"url": "https://myaccount.formide.com"
 	},
 	"database": {
 		"storage": "../storage/database"

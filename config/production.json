@@ -6,12 +6,6 @@
 		"port": 1337,
 		"version": "0.4.0"
 	},
-
-	"camera": {
-		"command": "fswebcam -d /dev/video0 -r 320x240 stream/image.jpg",
-		"interval": 2000
-	},
-
 	"channels": {
 		"dashboard": {
 			"gcode": [ "code" ],
@@ -42,45 +36,28 @@
 			"notification": [ "msg" ]
 		}
 	},
-
 	"cloud": {
-		"url": "https://ws.formide.com"
+		"url": "https://myaccount.formide.com"
 	},
-
-	"dashboard": {
-		"port": 8080,
-		"path": "../formideOS-interface",
-		"auto": false
-	},
-
 	"database": {
-		"username": "root",
-		"password": null,
-		"database": "printspot",
-		"storage": "../storage/printspot.sqlite",
-		"debug": false
+		"storage": "../storage/database"
 	},
-
 	"log": {
 		"path": "../storage"
 	},
-
 	"paths": {
 		"temp": "../uploads/tmp",
 		"modelfile": "../uploads/modelfiles",
 		"gcode": "../uploads/gcode"
 	},
-
 	"printer": {
 		"port": 1338,
 		"simulated": false
 	},
-
 	"slicer": {
 		"port": 1339,
 		"simulated": false
 	},
-
 	"settings": {
 		"path": "../storage"
 	}

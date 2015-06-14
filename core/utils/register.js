@@ -43,6 +43,7 @@ module.exports = function(managerLocation, managerName, data) {
 			var moduleInfo = {
 				hasHTTP: false,
 				hasWS: false,
+				config: false,
 				namespace: managerName,
 				root: managerRoot
 			};
@@ -50,6 +51,13 @@ module.exports = function(managerLocation, managerName, data) {
 			// do init function if exists
 			if (typeof manager.init === 'function') {
 				manager.init(data);
+			}
+			
+			// load config if exists and add to FormideOS config
+			if (fs.existsSync(managerRoot + '/config.json')) {
+				var config = require(managerRoot + '/config.json');
+				moduleInfo.config = config;
+				FormideOS.config.set(managerName, config);
 			}
 
 			// load module http api if exists

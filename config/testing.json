@@ -6,12 +6,6 @@
 		"port": 1337,
 		"version": "0.4.0"
 	},
-
-	"camera": {
-		"command": "imagesnap stream/image.jpg",
-		"interval": 2000
-	},
-
 	"channels": {
 		"dashboard": {
 			"gcode": [ "code" ],
@@ -42,41 +36,28 @@
 			"notification": [ "msg" ]
 		}
 	},
-
 	"cloud": {
 		"url": "https://ws.formide.com"
 	},
-
-	"dashboard": {
-		"port": 8080,
-		"path": "../formideOS-interface",
-		"auto": false
-	},
-
 	"database": {
 		"storage": "../storage/database"
 	},
-
 	"log": {
 		"path": "../storage"
 	},
-
 	"paths": {
 		"temp": "../uploads/tmp",
 		"modelfile": "../uploads/modelfiles",
 		"gcode": "../uploads/gcode"
 	},
-
 	"printer": {
 		"port": 1338,
 		"simulated": false
 	},
-
 	"slicer": {
 		"port": 1339,
 		"simulated": false
 	},
-
 	"settings": {
 		"path": "../storage"
 	}

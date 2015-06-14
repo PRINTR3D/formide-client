@@ -25,8 +25,7 @@ module.exports = function()
 
 	var config = {
 
-		get: function( key )
-		{
+		get: function(key) {
 			var obj = cfg;
 			key = parts(key);
 			for (var i = 0, l = key.length; i < l; i++)
@@ -39,6 +38,11 @@ module.exports = function()
 				obj = obj[part];
   			}
   			return obj;
+		},
+		
+		set: function(key, value) {
+			cfg[key] = value;
+			return this;
 		},
 
 		environment: env

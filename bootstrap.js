@@ -44,6 +44,6 @@ getMac.getMac(function(err, macAddress) {
 	
 	// app modules
 	FormideOS.register('node_modules/formideOS-module-interface',	'interface', 	FormideOS.config.get('dashboard'));
-	FormideOS.register('node_modules/formideOS-module-webhook', 	'webhook');
+	// FormideOS.register('node_modules/formideOS-module-webhook', 	'webhook');
 	FormideOS.register('node_modules/formideOS-module-camera', 		'camera', 		FormideOS.config.get('camera'));
 });
