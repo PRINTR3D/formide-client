@@ -10,5 +10,5 @@
  */
 
 FormideOS.register('node_modules/formideOS-module-interface',	'interface');
-// FormideOS.register('node_modules/formideOS-module-webhook', 	'webhook');
+FormideOS.register('node_modules/formideOS-module-webhook', 	'webhook');
 FormideOS.register('node_modules/formideOS-module-camera', 		'camera');
