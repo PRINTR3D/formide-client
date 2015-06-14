@@ -15,7 +15,7 @@
 var domain 					= require('domain');
 var fs 						= require('fs');
 
-module.exports = function(managerLocation, managerName, data) {
+module.exports = function(managerLocation, managerName) {
 	var d = domain.create();
 	d.name = managerLocation;
 
@@ -40,6 +40,7 @@ module.exports = function(managerLocation, managerName, data) {
 				managerName = managerName.split('.')[1]; // remove core. from urls
 			}
 			
+			// construct module info
 			var moduleInfo = {
 				hasHTTP: false,
 				hasWS: false,
@@ -47,11 +48,6 @@ module.exports = function(managerLocation, managerName, data) {
 				namespace: managerName,
 				root: managerRoot
 			};
-
-			// do init function if exists
-			if (typeof manager.init === 'function') {
-				manager.init(data);
-			}
 			
 			// load config if exists and add to FormideOS config
 			if (fs.existsSync(managerRoot + '/config.json')) {
@@ -75,6 +71,11 @@ module.exports = function(managerLocation, managerName, data) {
 				require(managerRoot + '/websocket.js')(namespace, manager);
 			}
 			
+			// do init function if exists
+			if (typeof manager.init === 'function') {
+				manager.init(FormideOS.config.get(managerName));
+			}
+			
 			// check if manager already exists or something with the same name does
 			if(!(managerName in FormideOS.managers)) {
 				FormideOS.modules[managerName] = moduleInfo;
@@ -85,7 +86,7 @@ module.exports = function(managerLocation, managerName, data) {
 			}
 		}
 		else {
-			FormideOS.manager('debug').log('Module does not have an index.js file', true);
+			FormideOS.manager('debug').log('Module does not have a required index.js file', true);
 		}
-	}.bind(managerLocation, data));
+	}.bind(managerLocation));
 }
