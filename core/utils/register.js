@@ -61,7 +61,7 @@ module.exports = function(managerLocation, managerName) {
 			
 			// add module settings to global user settings
 			if (FormideOS.config.get(managerName) && FormideOS.config.get(managerName).exposeSettings) {
-				FormideOS.settings.addModuleSettings(FormideOS.config.get(managerName).exposeSettings);
+				FormideOS.settings.addModuleSettings(managerName, FormideOS.config.get(managerName).exposeSettings);
 			}
 
 			// load module http api if exists
