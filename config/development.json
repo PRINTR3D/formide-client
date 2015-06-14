@@ -6,7 +6,44 @@
 		"port": 1337,
 		"version": "0.4.0"
 	},
-	"channels": {
+	"cloud": {
+		"url": "https://myaccount.formide.com",
+		"exposeSettings": {
+			"accesstoken": {
+				"type": "text",
+				"required": true
+			},
+			"permissions": {
+				"type": "multiple_checkboxes",
+				"options": {
+					"auth": "Auth",
+					"camera": "Camera",
+					"files": "Files",
+					"led": "Led",
+					"log": "Log",
+					"printer": "Printer",
+					"rest": "Rest",
+					"slicer": "Slicer",
+					"wifi": "Wifi",
+					"device": "Device"
+				}
+			}
+		}
+	},
+	"database": {
+		"storage": "../storage/database"
+	},
+	"log": {
+		"path": "../storage"
+	},
+	"paths": {
+		"temp": "../uploads/tmp",
+		"modelfile": "../uploads/modelfiles",
+		"gcode": "../uploads/gcode"
+	},
+	"printer": {
+		"port": 1338,
+		"simulated": true,
 		"dashboard": {
 			"gcode": ["code"],
 			"home": [],
@@ -34,24 +71,6 @@
 			"error": ["msg"],
 			"notification": ["msg"]
 		}
-	},
-	"cloud": {
-		"url": "https://myaccount.formide.com"
-	},
-	"database": {
-		"storage": "../storage/database"
-	},
-	"log": {
-		"path": "../storage"
-	},
-	"paths": {
-		"temp": "../uploads/tmp",
-		"modelfile": "../uploads/modelfiles",
-		"gcode": "../uploads/gcode"
-	},
-	"printer": {
-		"port": 1338,
-		"simulated": true
 	},
 	"slicer": {
 		"port": 1339,

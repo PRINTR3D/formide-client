@@ -13,31 +13,24 @@
  */
 
 module.exports = {
-
-	name: "settings",
 	
 	getSettings: function(cb) {
-		return cb(FormideOS.settings);
+		if (cb) return cb(FormideOS.settings.getSettings());
+		return FormideOS.settings.getSettings();
 	},
 	
 	getSetting: function(key, cb) {
-		return cb(FormideOS.settings[key]);
+		if (cb) return cb(FormideOS.settings.getSetting(key));
+		return FormideOS.settings.getSetting(key);
 	},
 	
 	getBootstrapInfo: function(cb) {
-		return cb(FormideOS.modules);	
+		return cb(FormideOS.modules); // only for settings api
 	},
 	
 	saveSetting: function(key, value, cb) {
-		FormideOS.settings[key] = value;
-		return cb(FormideOS.settings[key]);
-	},
-	
-	deleteSetting: function(key, cb) {
-		if(key !== 'cloud' && key !== 'webhook') {
-			delete FormideOS.settings[key];
-			return cb();
-		}
-		return cb("can't delete cloud or webhook setting");
+		FormideOS.settings.saveSetting(key, value);
+		if (cb) return cb(FormideOS.settings.getSetting(key));
+		return FormideOS.settings.getSetting(key);
 	}
 }

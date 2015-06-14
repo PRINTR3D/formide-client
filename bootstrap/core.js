@@ -44,4 +44,7 @@ getMac.getMac(function(err, macAddress) {
 	
 	// app modules
 	require('./app.js');
+	
+	// check if all settings are there, if not, add them
+	FormideOS.settings.checkSettings();
 });

@@ -18,9 +18,7 @@ var request 	= require('request');
 var socket 		= require('socket.io-client');
 
 module.exports =
-{
-	name: "core.cloud",
-	
+{	
 	cloud: {},
 	local: [],
 
@@ -38,8 +36,8 @@ module.exports =
 			this.cloud.emit('authenticate', {
 				type: 'client',
 				mac: FormideOS.macAddress,
-				token: FormideOS.settings.cloud.accesstoken,
-				permissions: FormideOS.settings.cloud.permissions
+				token: FormideOS.manager('settings').getSetting('cloud').accesstoken,
+				permissions: FormideOS.manager('settings').getSetting('cloud').permissions,
 			});
 			FormideOS.manager('debug').log('Cloud connected');
 		}.bind(this));

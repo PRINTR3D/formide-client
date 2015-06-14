@@ -49,11 +49,19 @@ module.exports = function(managerLocation, managerName) {
 				root: managerRoot
 			};
 			
-			// load config if exists and add to FormideOS config
+			// load config if exists and add to existing FormideOS config or add existing config to module register
 			if (fs.existsSync(managerRoot + '/config.json')) {
 				var config = require(managerRoot + '/config.json');
 				moduleInfo.config = config;
 				FormideOS.config.set(managerName, config);
+			}
+			else if (FormideOS.config.get(managerName)) {
+				moduleInfo.config = FormideOS.config.get(managerName);
+			}
+			
+			// add module settings to global user settings
+			if (FormideOS.config.get(managerName) && FormideOS.config.get(managerName).exposeSettings) {
+				FormideOS.settings.addModuleSettings(FormideOS.config.get(managerName).exposeSettings);
 			}
 
 			// load module http api if exists
