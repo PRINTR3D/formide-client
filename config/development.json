@@ -11,10 +11,12 @@
 		"exposeSettings": {
 			"accesstoken": {
 				"type": "text",
+				"label": "Access token",
 				"required": true
 			},
 			"permissions": {
 				"type": "multiple_checkboxes",
+				"label": "Permissions",
 				"options": {
 					"auth": "Auth",
 					"camera": "Camera",
