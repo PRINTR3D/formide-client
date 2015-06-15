@@ -12,6 +12,8 @@
  *
  */
 
+var _ = require('underscore');
+
 var permissionsMiddleware = function (socket, next)
 {
 	_.each( socket.server.nsps, function( nsp )
