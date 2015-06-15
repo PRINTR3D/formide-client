@@ -17,14 +17,14 @@ module.exports = function(routes, module)
 	/**
 	 * Get a list of printer commands
 	 */
-	routes.get('/list', FormideOS.manager('http').server.permissions.check('printer'), function(req, res) {
+	routes.get('/list', function(req, res) {
 		res.send(FormideOS.config.get('channels.dashboard'));
 	});
 
 	/**
 	 * Get the current status of the printer
 	 */
-	routes.get('/status', FormideOS.manager('http').server.permissions.check('printer'), function(req, res) {
+	routes.get('/status', function(req, res) {
 		FormideOS.manager('events').once('printer.status', function(status) {
 			res.send( status.data );
 		});
@@ -33,7 +33,7 @@ module.exports = function(routes, module)
 	/**
 	 * Send a command to the printer
 	 */
-	routes.get('/control/:command', FormideOS.manager('http').server.permissions.check('printer'), function(req, res) {
+	routes.get('/control/:command', function(req, res) {
 		// load channels from config
 		Object.keys(FormideOS.config.get('channels.dashboard')).forEach(function(method) {
 			(function(realMethod) {

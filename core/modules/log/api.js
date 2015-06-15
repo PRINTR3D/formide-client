@@ -16,7 +16,7 @@ module.exports = function(routes, module) {
 	
 	// TODO: fix this
 /*
-	routes.get('/get', FormideOS.manager('http').server.permissions.check('log'), function(req, res) {
+	routes.get('/get', function(req, res) {
 		var options = {
 			from: new Date - 24 * 60 * 60 * 1000,
 			until: new Date,

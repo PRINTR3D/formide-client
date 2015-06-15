@@ -12,8 +12,8 @@
  *
  */
 
-var os = require('os');
-var request = require('request');
+var os 			= require('os');
+var request 	= require('request');
 
 module.exports = {
 

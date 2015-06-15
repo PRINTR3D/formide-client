@@ -14,21 +14,21 @@
 
 module.exports = function(routes, db)
 {
-	routes.get('/printjobs', FormideOS.manager('http').server.permissions.check('db'), function(req, res) {
+	routes.get('/printjobs', function(req, res) {
 		db.Printjob.find().populate('materials modelfiles printer sliceprofile').exec(function(err, printjobs) {
 			if (err) return res.send(err);
 			return res.send(printjobs);
 		});
 	});
 
-	routes.get('/printjobs/:id', FormideOS.manager('http').server.permissions.check('db'), function(req, res) {
+	routes.get('/printjobs/:id', function(req, res) {
 		db.Printjob.findOne({ _id: req.params.id }).populate('materials modelfiles printer sliceprofile').exec(function(err, printjob) {
 			if (err) return res.send(err);
 			return res.send(printjob);
 		});
 	});
 
-	routes.delete('/printjobs/:id', FormideOS.manager('http').server.permissions.check('db'), function(req, res) {
+	routes.delete('/printjobs/:id', function(req, res) {
 		db.Printjob.remove({ _id: req.params.id }, function(err, printjob) {
 			if (err) return res.status(400).send(err);
 			var filePath = FormideOS.config.get('paths.modelfile') + '/' + printjob.gcode;

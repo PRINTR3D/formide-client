@@ -12,24 +12,24 @@
  *
  */
 
-module.exports = function(routes, db)
+module.exports = function(routes, module)
 {
-	routes.get('/materials', FormideOS.manager('http').server.permissions.check('db'), function( req, res ) {
-		db.Material.find().exec(function(err, materials) {
+	routes.get('/materials', function( req, res ) {
+		module.db.Material.find().exec(function(err, materials) {
 			if (err) return res.send(err);
 			return res.send(materials);
 		});
 	});
 
-	routes.get('/materials/:id', FormideOS.manager('http').server.permissions.check('db'), function( req, res ) {
-		db.Material.findOne({ _id: req.params.id }).exec(function(err, material) {
+	routes.get('/materials/:id', function( req, res ) {
+		module.db.Material.findOne({ _id: req.params.id }).exec(function(err, material) {
 			if (err) return res.send(err);
 			return res.send(material);
 		});
 	});
 
-	routes.post('/materials', FormideOS.manager('http').server.permissions.check('db'), function(req, res) {
-		db.Material.create(req.body, function(err, material) {
+	routes.post('/materials', function(req, res) {
+		module.db.Material.create(req.body, function(err, material) {
 			if (err) return res.status(400).send(err);
 			if (material) {
 				return res.send({
@@ -43,8 +43,8 @@ module.exports = function(routes, db)
 		});
 	});
 
-	routes.put('/materials/:id', FormideOS.manager('http').server.permissions.check('db'), function(req, res) {
-		db.Material.update({ _id: req.params.id }, req.body, function(err, material) {
+	routes.put('/materials/:id', function(req, res) {
+		module.db.Material.update({ _id: req.params.id }, req.body, function(err, material) {
 			if (err) return res.status(400).send(err);
 			if (material) {
 				return res.send({
@@ -57,8 +57,8 @@ module.exports = function(routes, db)
 		});
 	});
 
-	routes.delete('/materials/:id', FormideOS.manager('http').server.permissions.check('db'), function(req, res) {
-		db.Material.remove({ _id: req.params.id }, function(err, material) {
+	routes.delete('/materials/:id', function(req, res) {
+		module.db.Material.remove({ _id: req.params.id }, function(err, material) {
 			if (err) return res.status(400).send(err);
 			if (material) {
 				return res.send({

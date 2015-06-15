@@ -44,9 +44,16 @@ module.exports = {
 		}
 	},
 
-	check: function( permission ) {
+	check: function(permission, permissionNeeded) {
+
+		if (permissionNeeded === undefined) permissionNeeded = true;
+		
 		return function(req, res, next) {
-			//return next();
+			
+			if(!permissionNeeded) {
+				return next();
+			}
+			
 			if(req._permissions.session) {
 				if (req._permissions.permissions.indexOf(permission) > -1) {
 					FormideOS.manager('debug').log('Permissions correct');

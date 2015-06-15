@@ -59,8 +59,16 @@ module.exports = function(FormideOS) {
 	this.checkSettings = function() {
 		for(var i in this.fullCfg) {
 			var moduleSettings = this.fullCfg[i];
-			if(this.cfg[i] === undefined) {
+			if(this.cfg[i] === undefined || Object.keys(this.cfg[i]).length === 0) {
 				this.cfg[i] = {};
+				for(var j in moduleSettings) {
+					if(moduleSettings[j].required === true && moduleSettings[j].default !== undefined) {
+						this.cfg[i][j] = moduleSettings[j].default;
+					}
+					else {
+						FormideOS.manager('debug').log("module setting was required but no default given: " + i + " " + j)
+					}
+				}
 			}
 		}
 	}

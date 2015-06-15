@@ -80,5 +80,8 @@
 	},
 	"settings": {
 		"path": "../storage"
+	},
+	"setup": {
+		"permission": false
 	}
 }

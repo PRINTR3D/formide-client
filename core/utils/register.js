@@ -67,9 +67,13 @@ module.exports = function(managerLocation, managerName) {
 			// load module http api if exists
 			if (fs.existsSync(managerRoot + '/api.js')) {
 				moduleInfo.hasHTTP = true;
+				
+				// register as sub-app in express server
 				var router = express.Router();
+				router.use(FormideOS.manager('http').server.permissions.check(managerName, moduleInfo.config.permission));
+				
 				require(managerRoot + '/api.js')(router, manager);
-				FormideOS.manager('http').server.app.use('/api/' + managerName, router); // register as sub-app in express server
+				FormideOS.manager('http').server.app.use('/api/' + managerName, router);
 			}
 
 			// load module ws api if exists
