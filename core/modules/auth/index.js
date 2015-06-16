@@ -16,35 +16,6 @@ var uuid = require('node-uuid');
 
 module.exports =
 {
-	name: "auth",
-	
-	changePassword: function( password, callback )
-	{
-		FormideOS.manager('db').db.User
-		.find({where: {id: req.user.id}})
-		.success(function( user )
-		{
-			if( user )
-			{
-				user
-				.updateAttributes({ password: password })
-				.success(function()
-				{
-					return callback({
-						success: true
-					});
-				});
-			}
-			else
-			{
-				return callback({
-					success: false,
-					message: 'cannot change password for unknown user'
-				});
-			}
-		});
-	},
-
 	generateAccessToken: function(permissions, callback) {
 		var token = uuid.v4();
 		

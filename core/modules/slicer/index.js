@@ -20,8 +20,6 @@ var uuid 	= require('node-uuid');
 
 module.exports = {
 	
-	name: "slicer",
-	
 	process: null,
 	
 	slicer: {},

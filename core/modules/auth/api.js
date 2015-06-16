@@ -55,15 +55,6 @@ module.exports = function(routes, module) {
 			return res.send({ success: true });
 		});
 	});
-
-	// update password
-	routes.post('/password', FormideOS.manager('http').server.permissions.check('auth'), function(req, res) {
-		if(req.body.password) {
-			module.changePassword(req.body.password, function(response) {
-				res.send(response);
-			});
-		}
-	});
 	
 	// user config
 	routes.get('/users', FormideOS.manager('http').server.permissions.check('auth'), function(req, res) {
