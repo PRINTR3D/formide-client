@@ -48,7 +48,7 @@ module.exports = function(namespace, module)
 		});
 
 		// load channels from config
-		Object.keys(module.config.dashboard).forEach(function(method) {
+		Object.keys(FormideOS.config.get('printer.dashboard')).forEach(function(method) {
 			(function(realMethod) {
 				socket.on(realMethod, function(data) {
 					var expected = FormideOS.config.get('printer.dashboard')[realMethod];
