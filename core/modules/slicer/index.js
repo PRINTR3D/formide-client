@@ -192,6 +192,13 @@ module.exports = {
 				if(printjob.sliceSettings.support.use === false) {
 					delete slicerequest.support;
 				}
+				if(printjob.sliceSettings.support.type === 'touchingPlatform') {
+					slicerequest.support.supportPlatform = 1;
+				}
+				if(printjob.sliceSettings.support.type === 'touchingAll') {
+					slicerequest.support.supportPlatform = 1;
+					slicerequest.support.supportEverywhere = 1;
+				}
 			}
 			
 			if(printjob.sliceSettings.skirt) {
