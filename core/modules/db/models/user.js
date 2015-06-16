@@ -33,6 +33,29 @@ OAuthUsersSchema.pre('save', function(next) {
 	});
 });
 
+OAuthUsersSchema.static('comparePassword', function(candidatePassword, realPassword, cb) {
+	bcrypt.compare(candidatePassword, realPassword, function(err, isMatch) {
+		if(err) return cb(err);
+		cb(null, isMatch);
+	});
+});
+
+OAuthUsersSchema.static('getUser', function(email, password, cb) {
+	OAuthUsersModel.authenticate(email, password, function(err, user) {
+		if (err || !user) return cb(err);
+		cb(null, user.email);
+	});
+});
+
+OAuthUsersSchema.static('authenticate', function(email, password, cb) {
+	this.findOne({ email: email }, function(err, user) {
+		if (err || !user) return cb(err);
+		OAuthUsersModel.comparePassword(password, user.password, function(err, match) {
+			cb(null, match ? user : null)
+		});
+	});
+});
+
 OAuthUsersSchema.set('toJSON', {
 	transform: function(doc, ret, options) {
         var retJson = {

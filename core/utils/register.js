@@ -74,7 +74,6 @@ module.exports = function(managerLocation, managerName) {
 				// register as sub-app in express server
 				var router = express.Router();
 				router.use(FormideOS.manager('http').server.permissions.check(managerName, moduleInfo.config.permission));
-				
 				require(managerRoot + '/api.js')(router, manager);
 				FormideOS.manager('http').server.app.use('/api/' + managerName, router);
 			}

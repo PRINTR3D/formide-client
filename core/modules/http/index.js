@@ -105,12 +105,9 @@ module.exports = {
 
 		passport.use('local-login', new LocalStrategy({usernameField: 'email'}, function(email, password, next) {
 			FormideOS.manager('debug').log('Login attempt for ' + email);
-			FormideOS.manager('db').db.User.findOne({ email: email }).exec(function(err, user) {
+			FormideOS.manager('db').db.User.authenticate(email, password, function(err, user) {
 				if (err) return next(err);
 				if (!user || user === 'undefined') {
-					return next(null, false, { message: 'Incorrect user credentials' });
-				}
-				if (!passwordHash.verify(password, user.password)) {
 					return next(null, false, { message: 'Incorrect user credentials' });
 				}
 				return next(null, user);

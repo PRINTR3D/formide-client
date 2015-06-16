@@ -15,9 +15,7 @@
 var winston = require('winston');
 
 module.exports =
-{
-	name: "log",
-	
+{	
 	logger: {},
 
 	init: function(config) {

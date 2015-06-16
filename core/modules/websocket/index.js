@@ -26,8 +26,8 @@ module.exports =
 	{
 		this.connection = io.listen( FormideOS.manager('http').server.server );
 
-		this.connection.use(authorizationMiddleware);
-		this.connection.use(permissionsMiddleware);
+		//this.connection.use(authorizationMiddleware);
+		//this.connection.use(permissionsMiddleware);
 
 		FormideOS.manager('debug').log('websocket api running on port ' + FormideOS.config.get('app.port') );
 	}
