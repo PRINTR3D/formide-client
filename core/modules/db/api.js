@@ -14,10 +14,10 @@
 
 module.exports = function(routes, module) {
 	
-	require('./rest/material.js')(routes, module);
-	require('./rest/modelfile.js')(routes, module);
-	require('./rest/printer.js')(routes, module);
-	require('./rest/printjob.js')(routes, module);
-	require('./rest/queue.js')(routes, module);
-	require('./rest/sliceprofile.js')(routes, module);
+	require('./rest/material.js')(routes, module.db);
+	require('./rest/modelfile.js')(routes, module.db);
+	require('./rest/printer.js')(routes, module.db);
+	require('./rest/printjob.js')(routes, module.db);
+	require('./rest/queue.js')(routes, module.db);
+	require('./rest/sliceprofile.js')(routes, module.db);
 };
