@@ -19,10 +19,9 @@ var net = require('net');
 
 module.exports =
 {
-	name: "printer",
-	
 	process: null,
 	printer: {},
+	config: {},
 
 	init: function(config) {
 		this.config = config;

@@ -14,14 +14,12 @@
 
 module.exports = function(namespace, module)
 {
-	namespace.on('connection', function( socket )
-	{
+	namespace.on('connection', function(socket) {
 		socket.emit('handshake', {
 			id: socket.id
 		});
 
-		socket.on('typeof', function(data)
-		{
+		socket.on('typeof', function(data) {
 			if(data.type == 'dashboard')
 			{
 				socket.emit('auth', {message: 'OK', id: socket.id});
@@ -38,8 +36,7 @@ module.exports = function(namespace, module)
 		});
 
 		// Socket disconnect
-		socket.on('disconnect', function()
-		{
+		socket.on('disconnect', function() {
 			FormideOS.manager('events').emit('websocket.disconnected', {
 				type: 'dashboard',
 				data: {
@@ -51,20 +48,15 @@ module.exports = function(namespace, module)
 		});
 
 		// load channels from config
-		Object.keys(FormideOS.config.get('channels.dashboard')).forEach(function(method)
-		{
-			(function(realMethod)
-			{
-				socket.on(realMethod, function(data)
-				{
-					var expected = FormideOS.config.get('channels.dashboard')[realMethod];
+		Object.keys(module.config.dashboard).forEach(function(method) {
+			(function(realMethod) {
+				socket.on(realMethod, function(data) {
+					var expected = FormideOS.config.get('printer.dashboard')[realMethod];
 					var given = data;
 					var correct = true;
 
-					for(key in expected)
-					{
-						if(!given.hasOwnProperty(expected[key]))
-						{
+					for(key in expected) {
+						if(!given.hasOwnProperty(expected[key])) {
 							correct = false;
 						}
 					}
@@ -91,8 +83,7 @@ module.exports = function(namespace, module)
 			})(method);
 		});
 
-		FormideOS.manager('events').on('printer.status', function( data )
-		{
+		FormideOS.manager('events').on('printer.status', function(data) {
 			socket.emit(data.type, data.data);
 		});
 	});
