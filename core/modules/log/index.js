@@ -20,8 +20,7 @@ module.exports =
 	
 	logger: {},
 
-	init: function(config)
-	{
+	init: function(config) {
 		this.logger = new(winston.Logger)({
 			transports:
 		    [
@@ -43,18 +42,15 @@ module.exports =
 		});
 	},
 
-	logDebug: function(debug)
-	{
+	logDebug: function(debug) {
 		this.logger.log('debug', debug.message, debug.data);
 	},
 
-	logError: function(error)
-	{
+	logError: function(error) {
 		this.logger.log('error', error.message, error.data);
 	},
 
-	logInfo: function(info)
-	{
+	logInfo: function(info) {
 		this.logger.log('info', info.message, info.data);
 	}
 }

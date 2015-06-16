@@ -52,7 +52,7 @@ module.exports =
 
 		// on ws proxy request
 		this.cloud.on('listen', function(data, callback) {
-			FormideOS.manager('debug').log('Cloud ws listen: ' + data.manager + '/' + data.channel);
+			FormideOS.manager('debug').log('Cloud ws listen: ' + data.manager + '.' + data.channel);
 			// call listen function
 			this.listen(data, function(response) {
 				callback(response);
@@ -61,7 +61,7 @@ module.exports =
 
 		// emit ws to cloud
 		this.cloud.on('emit', function(data, callback) {
-			FormideOS.manager('debug').log('Cloud ws emit: ' + data.manager + '/' + data.channel);
+			FormideOS.manager('debug').log('Cloud ws emit: ' + data.manager + '.' + data.channel);
 			// call emit function
 			this.emit(data);
 		}.bind(this));
@@ -96,6 +96,7 @@ module.exports =
 		if(!this.local[data.manager]) {
 			this.local[data.manager] = socket( 'ws://127.0.0.1:' + FormideOS.manager('http').server.server.address().port + '/' + data.manager);
 		}
+		console.log(data.channel);
 		this.local[data.manager].on(data.channel, function(response) {
 			self.cloud.emit(data.manager + "." + data.channel, response);
 		});

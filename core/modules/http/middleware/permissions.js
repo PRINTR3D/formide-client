@@ -28,9 +28,9 @@ module.exports = {
 				req.session['permissions'] = permissions;
 				req._permissions.permissions = req.session['permissions'];
 			}
-			else if(req.token && req.token == FormideOS.manager('settings').getSetting('cloud').accesstoken) {
+			else if(req.token && req.token == FormideOS.manager('settings').getSetting('cloud', 'accesstoken')) {
 				FormideOS.manager('debug').log( 'Session set and permissions fetched from DB (accesstoken)' );
-				var permissions = FormideOS.manager('settings').getSetting('cloud').permissions || [];
+				var permissions = FormideOS.manager('settings').getSetting('cloud', 'permissions') || [];
 				req._permissions.session = true;
 				req.session['permissions'] = permissions;
 				req._permissions.permissions = req.session['permissions'];
