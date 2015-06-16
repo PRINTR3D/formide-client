@@ -12,8 +12,9 @@
  *
  */
 
-var callerId = require('caller-id');
-var colors = require('colors');
+var callerId 	= require('caller-id');
+var colors 		= require('colors');
+var clc 		= require('cli-color');
 
 function addZero(i) {
     if (i < 10) {
@@ -23,70 +24,61 @@ function addZero(i) {
 }
 
 module.exports = {
+	
+	modules: {},
 
 	log: function(debug, severe) {
 		if(FormideOS.config.get('app.debug') == true) {
 			severe = severe || false;
 
+			var maxLength = 40;
 			var caller = callerId.getData();
 			var callerString = caller.evalOrigin.split(FormideOS.appRoot)[1];
-
 			var date = new Date();
-
 			var timestampString = addZero(date.getHours()) + ":" + addZero(date.getMinutes()) + ":" + addZero(date.getSeconds()) + ":" + addZero(date.getMilliseconds()) + '\t';
-			
-			var outputString = '[' + callerString + ']\t';
+			var debugInfo = {
+				message: debug,
+				modulePath: callerString,
+				timestampString: timestampString,
+				timestampDate: date
+			};
 
-			//FormideOS.manager('events').emit('log.debug', {message: debug, data: {manager: callerString[callerString.length - 2]}});
-			if(outputString.length < 32) {
-				outputString += '\t';
+			// emit debug event to system
+			FormideOS.manager('events').emit('log.debug', debugInfo);
+			
+			var outputString = '[' + callerString.substring(callerString.length - maxLength, callerString.length) + ']';
+			for(var i = outputString.length; i < maxLength; i++) {
+				outputString += '.';
 			}
 			
-			outputString += JSON.stringify(debug);
+			outputString += ".." + JSON.stringify(debug);
 
-			if(severe) {
-				console.log(timestampString.grey + ' ' + outputString.red);
+			function randomFrom(items) {
+				return items[Math.floor(Math.random()*items.length)];
+			}
+	
+			if (this.modules[callerString]) {
+				var color = clc.xterm(this.modules[callerString]);
+				if( severe) {
+					color.bgXterm(160);
+				}
+				console.log(color(timestampString.grey + ' ' + outputString));
 			}
 			else {
-				console.log(timestampString.grey + ' ' + outputString.blue);
+				var randomColor;
+				if (callerString.indexOf('core') != -1) {
+					randomColor = randomFrom([26, 27, 32, 33, 74, 75, 110, 111, 153, 117]);
+				}
+				else {
+					randomColor = randomFrom([76, 77, 78, 112, 113, 114, 154, 155]);
+				}
+				var color = clc.xterm(randomColor);
+				if( severe) {
+					color.bgXterm(160);
+				}
+				this.modules[callerString] = randomColor;
+				console.log(color(timestampString.grey + ' ' + outputString));
 			}
-			
-
-/*
-			if(caller.evalOrigin.indexOf('/managers') > -1)
-			{
-				var outputString = '[' + callerString[callerString.length - 2] + ']';
-				if(outputString.length < 12)
-				{
-					outputString += '\u0020\u0020';
-				}
-				outputString += '\t';
-				outputString += JSON.stringify(debug);
-
-				if(severe)
-				{
-					console.log(timestampString.grey + ' ' + outputString.red);
-				}
-				else
-				{
-					console.log(timestampString.grey + ' ' + outputString.yellow);
-				}
-			}
-			else
-			{
-				var outputString = '[FormideOS]\t';
-				outputString += JSON.stringify(debug);
-
-				if(severe)
-				{
-					console.log(timestampString.grey + ' ' + outputString.red);
-				}
-				else
-				{
-					console.log(timestampString.grey + ' ' + outputString.cyan);
-				}
-			}
-*/
 		}
 	}
 }

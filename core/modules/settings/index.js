@@ -19,18 +19,23 @@ module.exports = {
 		return FormideOS.settings.getSettings();
 	},
 	
-	getSetting: function(key, cb) {
-		if (cb) return cb(FormideOS.settings.getSetting(key));
-		return FormideOS.settings.getSetting(key);
+	getModuleSettings: function(module, cb) {
+		if (cb) return cb(FormideOS.settings.getSettings(module));
+		return FormideOS.settings.getSettings(module);
+	},
+	
+	getSetting: function(module, key, cb) {
+		if (cb) return cb(FormideOS.settings.getSetting(module, key));
+		return FormideOS.settings.getSetting(module, key);
 	},
 	
 	getBootstrapInfo: function(cb) {
 		return cb(FormideOS.modules); // only for settings api
 	},
 	
-	saveSetting: function(key, value, cb) {
-		FormideOS.settings.saveSetting(key, value);
-		if (cb) return cb(FormideOS.settings.getSetting(key));
-		return FormideOS.settings.getSetting(key);
+	saveSetting: function(module, key, value, cb) {
+		FormideOS.settings.saveSetting(module, key, value);
+		if (cb) return cb(FormideOS.settings.getSetting(module, key));
+		return FormideOS.settings.getSetting(module, key);
 	}
 }

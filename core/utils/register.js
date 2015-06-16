@@ -49,6 +49,9 @@ module.exports = function(managerLocation, managerName) {
 				root: managerRoot
 			};
 			
+			// add debug to module
+			manager.debug = require('utils-debug')(managerRoot);
+			
 			// load config if exists and add to existing FormideOS config or add existing config to module register
 			if (fs.existsSync(managerRoot + '/config.json')) {
 				var config = require(managerRoot + '/config.json');

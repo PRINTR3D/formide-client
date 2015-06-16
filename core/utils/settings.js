@@ -34,19 +34,20 @@ module.exports = function(FormideOS) {
 		fs.writeFileSync(FormideOS.appRoot + FormideOS.config.get('settings.path') + '/settings.json', JSON.stringify(cfg));
 	});
 	
-	// get all settings
-	this.getSettings = function() {
+	// get all settings (for a module)
+	this.getSettings = function(module) {
+		if (module) return this.cfg[module];
 		return this.cfg;
 	}
 	
 	// set settings of a module
-	this.getSetting = function(key) {
-		return this.cfg[key];
+	this.getSetting = function(module, key) {
+		return this.cfg[module][key];
 	}
 	
 	// save settings of a module
-	this.saveSetting = function(key, value) {
-		this.cfg[key] = value;
+	this.saveSetting = function(module, key, value) {
+		this.cfg[module][key] = value;
 		return this;
 	}
 	

@@ -12,18 +12,14 @@
  *
  */
 
-var passwordHash = require('password-hash');
-
 module.exports = {
 
 	init: function(db) {
 		
 		db.User.remove({}, function(err) {
 			db.User.create({
-				password: passwordHash.generate("password"),
-				email: "chris@printr.nl",
-				firstname: "Chris",
-				lastname: "ter Beke",
+				password: "password",
+				email: "test@user.com",
 				permissions: [
 					"auth",
 					"camera",
