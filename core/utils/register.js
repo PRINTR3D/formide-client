@@ -20,8 +20,8 @@ module.exports = function(managerLocation, managerName) {
 	d.name = managerLocation;
 
 	d.on('error', function(err) {
-		FormideOS.manager('events').emit('log.error', {message: 'uncaught exception occured', data: err.stack});
-	  	FormideOS.manager('debug').log(err.stack, true);
+		console.error(err.stack);
+		return process.exit(1); // kill the whole thing
 	});
 
 	d.add(FormideOS.manager('events'));

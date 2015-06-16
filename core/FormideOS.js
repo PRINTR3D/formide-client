@@ -21,7 +21,6 @@ module.exports = function() {
 	// global directories
 	formideos.coreRoot = path.resolve(__dirname) + '/';
 	formideos.appRoot = path.resolve(__dirname + '/../') + '/';
-	formideos.userRoot = path.resolve(__dirname + '/../app') + '/';
 
 	// global object to hold managers and module info
 	formideos.managers = {};
