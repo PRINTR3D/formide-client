@@ -52,6 +52,7 @@ module.exports = function(routes, module)
 	});
 
 	routes.post('/modelfiles/upload', multipartMiddleware, function(req, res) {
+		console.log(req);
 		if (!req.files) {
 			return res.status(400).json({
 				success: false,

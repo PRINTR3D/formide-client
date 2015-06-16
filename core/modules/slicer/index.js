@@ -271,7 +271,7 @@ module.exports = {
 				}
 				else {
 					FormideOS.manager('debug').log(data, true);
-					FormideOS.manager('app.log').logError({
+					FormideOS.manager('log').logError({
 						message: 'slicer error',
 						data: data
 					});

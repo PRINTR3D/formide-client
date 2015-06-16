@@ -12,24 +12,24 @@
  *
  */
 
-module.exports = function(routes, module)
+module.exports = function(routes, db)
 {
 	routes.get('/materials', function( req, res ) {
-		module.db.Material.find().exec(function(err, materials) {
+		db.Material.find().exec(function(err, materials) {
 			if (err) return res.send(err);
 			return res.send(materials);
 		});
 	});
 
 	routes.get('/materials/:id', function( req, res ) {
-		module.db.Material.findOne({ _id: req.params.id }).exec(function(err, material) {
+		db.Material.findOne({ _id: req.params.id }).exec(function(err, material) {
 			if (err) return res.send(err);
 			return res.send(material);
 		});
 	});
 
 	routes.post('/materials', function(req, res) {
-		module.db.Material.create(req.body, function(err, material) {
+		db.Material.create(req.body, function(err, material) {
 			if (err) return res.status(400).send(err);
 			if (material) {
 				return res.send({
@@ -44,7 +44,7 @@ module.exports = function(routes, module)
 	});
 
 	routes.put('/materials/:id', function(req, res) {
-		module.db.Material.update({ _id: req.params.id }, req.body, function(err, material) {
+		db.Material.update({ _id: req.params.id }, req.body, function(err, material) {
 			if (err) return res.status(400).send(err);
 			if (material) {
 				return res.send({
@@ -58,7 +58,7 @@ module.exports = function(routes, module)
 	});
 
 	routes.delete('/materials/:id', function(req, res) {
-		module.db.Material.remove({ _id: req.params.id }, function(err, material) {
+		db.Material.remove({ _id: req.params.id }, function(err, material) {
 			if (err) return res.status(400).send(err);
 			if (material) {
 				return res.send({

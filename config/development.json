@@ -64,9 +64,7 @@
 			"retract": ["extnr", "dist"],
 			"fan": ["fannr", "speed"],
 			"reconnect": [],
-			"autolevel": [],
-			"door_open": [],
-			"door_close": []
+			"autolevel": []
 		},
 		"driver": {
 			"status": ["printjobID", "status", "progress", "extruders", "bed"],
