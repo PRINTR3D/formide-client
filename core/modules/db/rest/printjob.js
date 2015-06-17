@@ -30,7 +30,12 @@ module.exports = function(routes, db)
 	
 	// use to create printjob from gcodefile
 	routes.post('/printjobs', function(req, res) {
-		db.Printjob.create(req.body, function(err, printjob) {
+		db.Printjob.create({
+				sliceMethod: "custom",
+				sliceFinished: true,
+				gcode: req.body.gcodeHash,
+				gcodefile: req.body.gcodeID
+			}, function(err, printjob) {
 			if (err) return res.status(400).send(err);
 			if (printjob) {
 				return res.send({
