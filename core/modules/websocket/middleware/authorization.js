@@ -16,9 +16,9 @@ var cookie 	= require('cookie');
 
 var authorizationMiddleware = function (socket, next)
 {
-	return next(null, true);
-
 	var handshakeData = socket.request;
+	
+	console.log(handshakeData.headers);
 
 	if (handshakeData.headers.cookie)
 	{

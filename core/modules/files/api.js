@@ -16,7 +16,7 @@ var multipart 			= require('connect-multiparty');
 var multipartMiddleware = multipart();
 
 module.exports = function(routes, module)
-{
+{	
 	routes.get('/modelfiles/download', function(req, res) {
 		req.checkQuery('hash', 'hash invalid').notEmpty();
 		req.checkQuery('encoding', 'encoding invalid').notEmpty();
@@ -51,36 +51,31 @@ module.exports = function(routes, module)
 		});
 	});
 
-	routes.post('/modelfiles/upload', multipartMiddleware, function(req, res) {
-		console.log(req);
+	routes.post('/upload', multipartMiddleware, function(req, res) {
 		if (!req.files) {
 			return res.status(400).json({
 				success: false,
 				message: "No files posted"
 			});
 		}
-
-		module.uploadModelfile(req.files.file, function(err) {
-			if (err) return res.send(err);
-			return res.send({
-				success: true
-			});
-		});
-	});
-
-	routes.post('/gcode/upload', multipartMiddleware, function(req, res) {
-		if( !req.files ) {
-			return res.status(400).json({
-				status: 400,
-				errors: "No files posted"
+		
+		var ext = req.files.file.originalFilename.split('.')[1];
+		
+		if (ext === 'stl') {
+			module.uploadModelfile(req.files.file, function(err) {
+				if (err) return res.send(err);
+				return res.send({
+					success: true
+				});
 			});
 		}
-
-		module.uploadGcode(req.files.file, function(err) {
-			if (err) return res.send(err);
-			return res.send({
-				success: true
+		else if (ext === 'gcode') {
+			module.uploadGcode(req.files.file, function(err) {
+				if (err) return res.send(err);
+				return res.send({
+					success: true
+				});
 			});
-		});
+		}
 	});
 };

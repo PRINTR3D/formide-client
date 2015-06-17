@@ -1,4 +1,5 @@
-var mongoose 		= require('mongoose')
+var mongoose 		= require('mongoose');
+var timestamps  = require('mongoose-timestamp');
 var Schema 			= mongoose.Schema;
 var deepPopulate 	= require('mongoose-deep-populate');
 
@@ -9,6 +10,7 @@ var schema = new Schema({
 	status: { type: String, required: true },
 	printjob: { type: Schema.Types.ObjectId, ref: 'printjobs', required: true }
 });
+schema.plugin(timestamps);
 
 schema.plugin(deepPopulate);
 mongoose.model('queueitems', schema);

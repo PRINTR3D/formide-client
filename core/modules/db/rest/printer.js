@@ -31,7 +31,7 @@ module.exports = function(routes, db)
 	routes.post('/printers', function(req, res) {
 		db.Printer.create(req.body, function(err, printer) {
 			if (err) return res.status(400).send(err);
-			if (modelfile) {
+			if (printer) {
 				return res.send({
 					printer: printer,
 					success: true

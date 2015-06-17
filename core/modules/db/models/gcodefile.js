@@ -1,4 +1,4 @@
-var mongoose = require('mongoose');
+var mongoose = require('mongoose')
 var timestamps  = require('mongoose-timestamp');
 var Schema = mongoose.Schema;
 
@@ -10,6 +10,6 @@ var schema = new Schema({
 });
 schema.plugin(timestamps);
 
-mongoose.model('modelfiles', schema);
-var model = mongoose.model('modelfiles');
+mongoose.model('gcodes', schema);
+var model = mongoose.model('gcodes');
 module.exports = model;

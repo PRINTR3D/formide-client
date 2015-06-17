@@ -16,6 +16,7 @@ module.exports = function(routes, module) {
 	
 	require('./rest/material.js')(routes, module.db);
 	require('./rest/modelfile.js')(routes, module.db);
+	require('./rest/gcodefile.js')(routes, module.db);
 	require('./rest/printer.js')(routes, module.db);
 	require('./rest/printjob.js')(routes, module.db);
 	require('./rest/queue.js')(routes, module.db);

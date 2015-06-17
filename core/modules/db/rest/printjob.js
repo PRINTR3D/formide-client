@@ -15,16 +15,32 @@
 module.exports = function(routes, db)
 {
 	routes.get('/printjobs', function(req, res) {
-		db.Printjob.find().populate('materials modelfiles printer sliceprofile').exec(function(err, printjobs) {
+		db.Printjob.find().populate('materials modelfiles gcodefile printer sliceprofile').exec(function(err, printjobs) {
 			if (err) return res.send(err);
 			return res.send(printjobs);
 		});
 	});
 
 	routes.get('/printjobs/:id', function(req, res) {
-		db.Printjob.findOne({ _id: req.params.id }).populate('materials modelfiles printer sliceprofile').exec(function(err, printjob) {
+		db.Printjob.findOne({ _id: req.params.id }).populate('materials modelfiles gcodefile printer sliceprofile').exec(function(err, printjob) {
 			if (err) return res.send(err);
 			return res.send(printjob);
+		});
+	});
+	
+	// use to create printjob from gcodefile
+	routes.post('/printjobs', function(req, res) {
+		db.Printjob.create(req.body, function(err, printjob) {
+			if (err) return res.status(400).send(err);
+			if (printjob) {
+				return res.send({
+					printjob: printjob,
+					success: true
+				});
+			}
+			return res.send({
+				success: false
+			});
 		});
 	});
 

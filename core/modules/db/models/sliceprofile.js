@@ -1,4 +1,5 @@
-var mongoose = require('mongoose')
+var mongoose = require('mongoose');
+var timestamps  = require('mongoose-timestamp');
 var Schema = mongoose.Schema;
 
 var schema = new Schema({
@@ -6,6 +7,7 @@ var schema = new Schema({
 	user: { type: Schema.Types.ObjectId, ref: 'users' },
 	settings: { type: Schema.Types.Mixed, required: true }
 });
+schema.plugin(timestamps);
 
 mongoose.model('sliceprofiles', schema);
 var model = mongoose.model('sliceprofiles');

@@ -17,8 +17,6 @@ var uuid	= require('node-uuid');
 
 module.exports = {
 	
-	name: "files",
-	
 	uploadModelfile: function(file, callback) {
 		fs.readFile(file.path, function(err, data) {
 			var hash = uuid.v4();
@@ -52,11 +50,11 @@ module.exports = {
 					return callback(err);
 				}
 				else {
-					FormideOS.manager('db').db.Printjob.create({
-						gcode: hash,
-						sliceMethod: 'custom',
-						sliceFinished: true
-					}, function(err, printjob) {
+					FormideOS.manager('db').db.Gcodefile.create({
+						filename: file.name,
+						filesize: file.size,
+						hash: hash
+					}, function(err, gcodefile) {
 						if (err) return callback(err)
 						return callback();
 					});

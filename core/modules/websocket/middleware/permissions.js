@@ -14,34 +14,33 @@
 
 var _ = require('underscore');
 
-var permissionsMiddleware = function (socket, next)
-{
-	_.each( socket.server.nsps, function( nsp )
-	{
-		nsp.once('connection', function( s )
-		{
-			if (!socket.session)
-			{
-				socket.disconnect();
-			}
-			else
-			{
-				if( nsp.name != '/')
-				{
-					if( socket.session.permissions.indexOf( nsp.name.replace('/', '') ) === -1 )
-					{
-						FormideOS.manager('debug').log('Socket permissions incorrect');
-						s.disconnect();
-					}
-					else
-					{
-						FormideOS.manager('debug').log('Socket permissions correct');
+var permissionsMiddleware = function (socket, next) {
+	_.each( socket.server.nsps, function(nsp) {
+		nsp.once('connection', function(s) {
+			if(s.request.headers.host != '127.0.0.1:1337') { // local conections always work (needed for cloud)
+				if (!s.request.session) {
+					socket.disconnect();
+				}
+				else {
+					if (nsp.name != '/') {
+						if (s.request.session.permissions) {
+							if (s.request.session.permissions.indexOf( nsp.name.replace('/', '') ) === -1 ) {
+								FormideOS.manager('debug').log('Socket permissions incorrect');
+								s.disconnect();
+							}
+							else {
+								FormideOS.manager('debug').log('Socket permissions correct');
+							}
+						}
+						else {
+							FormideOS.manager('debug').log('Socket permissions incorrect');
+							s.disconnect();
+						}
 					}
 				}
 			}
 		});
 	});
-
 	next(null, true);
 };
 

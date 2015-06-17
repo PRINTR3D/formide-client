@@ -18,6 +18,9 @@ module.exports = {
 		
 		var setupConfig = require('./setup.json');
 		
+		db.Modelfile.remove({}, function(err) {});
+		db.Gcodefile.remove({}, function(err) {});
+		
 		db.User.remove({}, function(err) {
 			db.User.collection.insert(setupConfig.users);
 		});

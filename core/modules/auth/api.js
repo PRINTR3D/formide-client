@@ -16,6 +16,11 @@ module.exports = function(routes, module) {
 	
 	// session things
 	routes.post('/login', FormideOS.manager('http').server.auth.authenticate('local-login'), function(req, res) {
+		// TODO: rewrite to cleaner solution
+		var permissions = req.user.permissions || [];
+		req._permissions.session = true;
+		req.session['permissions'] = permissions;
+		req._permissions.permissions = req.session['permissions'];
 		return res.send({
 			success: true,
 			sessionID: req.sessionID

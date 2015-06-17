@@ -1,4 +1,5 @@
-var mongoose = require('mongoose')
+var mongoose = require('mongoose');
+var timestamps  = require('mongoose-timestamp');
 var Schema = mongoose.Schema;
 
 var schema = new Schema({
@@ -6,6 +7,7 @@ var schema = new Schema({
 	user: { type: Schema.Types.ObjectId, ref: 'users' },
 	permissions: [{ type: String }]
 });
+schema.plugin(timestamps);
 
 mongoose.model('accesstokens', schema);
 var model = mongoose.model('accesstokens');

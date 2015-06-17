@@ -41,6 +41,7 @@
     "mongoose": "3.8.22",
     "mongoose-deep-populate": "^1.1.0",
     "mongoose-reverse-populate": "^0.1.0",
+    "mongoose-timestamp": "^0.4.0",
     "multer": "~0.1.8",
     "node-schedule": "~0.1.15",
     "node-uuid": "~1.4.3",

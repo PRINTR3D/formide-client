@@ -1,22 +1,19 @@
-var mongoose 			= require('mongoose')
+var mongoose 			= require('mongoose');
+var timestamps  		= require('mongoose-timestamp');
 var Schema 				= mongoose.Schema;
 var bcrypt 				= require('bcrypt');
 var crypto 				= require('crypto');
 var SALT_WORK_FACTOR 	= 10;
  
-var OAuthUsersSchema = new Schema({
+var schema = new Schema({
 	email: { type: String, unique: true, required: true },
 	password: { type: String, required: true },
 	permissions: [{ type: String }],
 	cloud: { type: Boolean, default: false }
 });
+schema.plugin(timestamps);
 
-/*
-OAuthUsersSchema.plugin(timestamps);
-OAuthUsersSchema.plugin(soft_delete);
-*/
-
-OAuthUsersSchema.pre('save', function(next) {
+schema.pre('save', function(next) {
 	var user = this;
 
 	if(!user.isModified('password')) return next();
@@ -33,21 +30,21 @@ OAuthUsersSchema.pre('save', function(next) {
 	});
 });
 
-OAuthUsersSchema.static('comparePassword', function(candidatePassword, realPassword, cb) {
+schema.static('comparePassword', function(candidatePassword, realPassword, cb) {
 	bcrypt.compare(candidatePassword, realPassword, function(err, isMatch) {
 		if(err) return cb(err);
 		cb(null, isMatch);
 	});
 });
 
-OAuthUsersSchema.static('getUser', function(email, password, cb) {
+schema.static('getUser', function(email, password, cb) {
 	OAuthUsersModel.authenticate(email, password, function(err, user) {
 		if (err || !user) return cb(err);
 		cb(null, user.email);
 	});
 });
 
-OAuthUsersSchema.static('authenticate', function(email, password, cb) {
+schema.static('authenticate', function(email, password, cb) {
 	this.findOne({ email: email }, function(err, user) {
 		if (err || !user) return cb(err);
 		OAuthUsersModel.comparePassword(password, user.password, function(err, match) {
@@ -56,7 +53,7 @@ OAuthUsersSchema.static('authenticate', function(email, password, cb) {
 	});
 });
 
-OAuthUsersSchema.set('toJSON', {
+schema.set('toJSON', {
 	transform: function(doc, ret, options) {
         var retJson = {
 	        _id: ret._id,
@@ -67,6 +64,6 @@ OAuthUsersSchema.set('toJSON', {
     }
 });
 
-mongoose.model('users', OAuthUsersSchema);
+mongoose.model('users', schema);
 var OAuthUsersModel = mongoose.model('users');
 module.exports = OAuthUsersModel;

@@ -18,7 +18,7 @@ var expressSession			= require('express-session');
 cookieParser 				= require('cookie-parser');
 var MemoryStore 			= expressSession.MemoryStore;
 sessionStore 				= new MemoryStore();
-session 					= expressSession({ store: sessionStore, secret: 'secret', key: 'express.sid', saveUninitialized: false, resave: false });
+sessionMiddleware			= expressSession({ store: sessionStore, secret: 'secret', key: 'formide.sid', saveUninitialized: false, resave: false });
 var expressValidator 		= require('express-validator');
 var cors 					= require('cors');
 var passport 				= require('passport');
@@ -49,7 +49,7 @@ module.exports = {
 		http.app.use( expressValidator() );
 
 		http.app.use( cookieParser() );
-		http.app.use( session );
+		http.app.use( sessionMiddleware );
 
 		http.app.use( passport.initialize() );
 		http.app.use( passport.session() );
@@ -60,8 +60,6 @@ module.exports = {
 			origin: true,
 			credentials: true
 		}));
-
-		http.app.use( permissionsMiddleware.initialize() );
 
 		passport.serializeUser(function(user, done) {
 		  	done(null, user._id);
@@ -113,6 +111,8 @@ module.exports = {
 				return next(null, user);
 			});
 		}));
+		
+		http.app.use( permissionsMiddleware.initialize() );
 
 /*
 		passport.use( 'bearer-login', new BearerStrategy({}, function( token, callback )
@@ -134,6 +134,7 @@ module.exports = {
 */
 
 		this.server = http;
+		this.server.session = sessionMiddleware;
 		this.server.auth = passport;
 		this.server.permissions = permissionsMiddleware;
 	}
