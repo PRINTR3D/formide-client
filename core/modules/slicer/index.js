@@ -167,6 +167,10 @@ module.exports = {
 						slicerequest.bed.temperature = 0;
 						slicerequest.bed.firstLayersTemperature = 0;
 					}
+					else {
+						slicerequest.bed.temperature = printjob.sliceSettings.bed.temperature;
+						slicerequest.bed.firstLayersTemperature = printjob.sliceSettings.bed.firstLayersTemperature;
+					}
 				}
 			}
 			
