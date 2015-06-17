@@ -183,11 +183,11 @@ module.exports = {
 				slicerequest.model.push({
 					hash: model.hash,
 					bucketIn: FormideOS.appRoot + FormideOS.config.get("paths.modelfile"),
-					x: 100000, // TODO: set user specified position
-					y: 100000, // TODO: set user specified position
-					z: 0, // TODO: set user specified position
-					extruder: "extruder1", // TODO: set extruder dynamically
-					settings: "0" // TODO: set region settings
+					x: 100000, 		// TODO: set user specified position
+					y: 100000, 		// TODO: set user specified position
+					z: 0, 			// TODO: set user specified position
+					extruder: printjob.sliceSettings.modelfiles[i].extruder,
+					settings: "0" 	// TODO: set region settings
 				});
 			}
 			
@@ -195,15 +195,17 @@ module.exports = {
 			for(var i in printjob.printer.extruders) {
 				var extruder = printjob.printer.extruders[i];
 				var material = printjob.materials[i];
-				slicerequest.extruders.push({
-					name: extruder.name,
-					material: material.type,
-					nozzleSize: extruder.nozzleSize,
-					temperature: material.temperature,
-					firstLayersTemperature: material.firstLayersTemperature,
-					filamentDiameter: material.filamentDiameter,
-					feedrate: material.feedrate
-				});
+				if(material) {
+					slicerequest.extruders.push({
+						name: extruder.name,
+						material: material.type,
+						nozzleSize: extruder.nozzleSize,
+						temperature: material.temperature,
+						firstLayersTemperature: material.firstLayersTemperature,
+						filamentDiameter: material.filamentDiameter,
+						feedrate: material.feedrate
+					});
+				}
 			}
 			
 			slicerequest.bucketOut = FormideOS.appRoot + FormideOS.config.get("paths.gcode"); // TODO: specify bucketOut
