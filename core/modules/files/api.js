@@ -62,18 +62,20 @@ module.exports = function(routes, module)
 		var ext = req.files.file.originalFilename.split('.')[1];
 		
 		if (ext === 'stl') {
-			module.uploadModelfile(req.files.file, function(err) {
+			module.uploadModelfile(req.files.file, function(err, modelfile) {
 				if (err) return res.send(err);
 				return res.send({
-					success: true
+					success: true,
+					modelfile: modelfile
 				});
 			});
 		}
 		else if (ext === 'gcode') {
-			module.uploadGcode(req.files.file, function(err) {
+			module.uploadGcode(req.files.file, function(err, gcodefile) {
 				if (err) return res.send(err);
 				return res.send({
-					success: true
+					success: true,
+					gcodefile: gcodefile
 				});
 			});
 		}

@@ -15,29 +15,29 @@
 var domain 					= require('domain');
 var fs 						= require('fs');
 
-module.exports = function(managerLocation, managerName) {
+module.exports = function(moduleInstanceLocation, moduleInstanceName) {
 	var d = domain.create();
-	d.name = managerLocation;
+	d.name = moduleInstanceLocation;
 
 	d.on('error', function(err) {
 		console.error(err.stack);
 		return process.exit(1); // kill the whole thing
 	});
 
-	d.add(FormideOS.manager('events'));
+	d.add(FormideOS.module('events'));
 
 	d.run(function() {
 
-		FormideOS.manager('debug').log('Loading module: ' + managerLocation);
-		var managerRoot = FormideOS.appRoot + managerLocation;
+		FormideOS.module('debug').log('Loading module: ' + moduleInstanceLocation);
+		var moduleInstanceRoot = FormideOS.appRoot + moduleInstanceLocation;
 
-		// check if manager has index file
-		if(fs.existsSync(managerRoot + '/index.js')) {
+		// check if moduleInstance has index file
+		if(fs.existsSync(moduleInstanceRoot + '/index.js')) {
 			
-			var manager = require(managerRoot + '/index.js');
+			var moduleInstance = require(moduleInstanceRoot + '/index.js');
 			
-			if(managerName.indexOf('core.') !== -1) {
-				managerName = managerName.split('.')[1]; // remove core. from urls
+			if(moduleInstanceName.indexOf('core.') !== -1) {
+				moduleInstanceName = moduleInstanceName.split('.')[1]; // remove core. from urls
 			}
 			
 			// construct module info
@@ -45,62 +45,62 @@ module.exports = function(managerLocation, managerName) {
 				hasHTTP: false,
 				hasWS: false,
 				config: false,
-				namespace: managerName,
-				root: managerRoot
+				namespace: moduleInstanceName,
+				root: moduleInstanceRoot
 			};
 			
 			// add debug to module
-			manager.debug = require('utils-debug')(managerRoot);
+			moduleInstance.debug = require('utils-debug')(moduleInstanceRoot);
 			
 			// load config if exists and add to existing FormideOS config or add existing config to module register
-			if (fs.existsSync(managerRoot + '/config.json')) {
-				var config = require(managerRoot + '/config.json');
+			if (fs.existsSync(moduleInstanceRoot + '/config.json')) {
+				var config = require(moduleInstanceRoot + '/config.json');
 				moduleInfo.config = config;
-				FormideOS.config.set(managerName, config);
+				FormideOS.config.set(moduleInstanceName, config);
 			}
-			else if (FormideOS.config.get(managerName)) {
-				moduleInfo.config = FormideOS.config.get(managerName);
+			else if (FormideOS.config.get(moduleInstanceName)) {
+				moduleInfo.config = FormideOS.config.get(moduleInstanceName);
 			}
 			
 			// add module settings to global user settings
-			if (FormideOS.config.get(managerName) && FormideOS.config.get(managerName).exposeSettings) {
-				FormideOS.settings.addModuleSettings(managerName, FormideOS.config.get(managerName).exposeSettings);
+			if (FormideOS.config.get(moduleInstanceName) && FormideOS.config.get(moduleInstanceName).exposeSettings) {
+				FormideOS.settings.addModuleSettings(moduleInstanceName, FormideOS.config.get(moduleInstanceName).exposeSettings);
 			}
 
 			// load module http api if exists
-			if (fs.existsSync(managerRoot + '/api.js')) {
+			if (fs.existsSync(moduleInstanceRoot + '/api.js')) {
 				moduleInfo.hasHTTP = true;
 				
 				// register as sub-app in express server
 				var router = express.Router();
-				router.use(FormideOS.manager('http').server.permissions.check(managerName, moduleInfo.config.permission));
-				require(managerRoot + '/api.js')(router, manager);
-				FormideOS.manager('http').server.app.use('/api/' + managerName, router);
+				router.use(FormideOS.module('http').server.permissions.check(moduleInstanceName, moduleInfo.config.permission));
+				require(moduleInstanceRoot + '/api.js')(router, moduleInstance);
+				FormideOS.module('http').server.app.use('/api/' + moduleInstanceName, router);
 			}
 
 			// load module ws api if exists
-			if(fs.existsSync(managerRoot + '/websocket.js')) {
+			if(fs.existsSync(moduleInstanceRoot + '/websocket.js')) {
 				moduleInfo.hasWS = true;
-				var namespace = FormideOS.manager('websocket').connection.of('/' + managerName);
-				require(managerRoot + '/websocket.js')(namespace, manager);
+				var namespace = FormideOS.module('websocket').connection.of('/' + moduleInstanceName);
+				require(moduleInstanceRoot + '/websocket.js')(namespace, moduleInstance);
 			}
 			
 			// do init function if exists
-			if (typeof manager.init === 'function') {
-				manager.init(FormideOS.config.get(managerName));
+			if (typeof moduleInstance.init === 'function') {
+				moduleInstance.init(FormideOS.config.get(moduleInstanceName));
 			}
 			
-			// check if manager already exists or something with the same name does
-			if(!(managerName in FormideOS.managers)) {
-				FormideOS.modules[managerName] = moduleInfo;
-				FormideOS.managers[managerName] = manager;
+			// check if moduleInstance already exists or something with the same name does
+			if(!(moduleInstanceName in FormideOS.modules)) {
+				FormideOS.modulesInfo[moduleInstanceName] = moduleInfo;
+				FormideOS.modules[moduleInstanceName] = moduleInstance;
 			}
 			else {
-				FormideOS.manager('debug').log('Module with namespace ' + managerName + ' already exists', true);
+				FormideOS.module('debug').log('Module with namespace ' + moduleInstanceName + ' already exists', true);
 			}
 		}
 		else {
-			FormideOS.manager('debug').log('Module does not have a required index.js file', true);
+			FormideOS.module('debug').log('Module does not have a required index.js file', true);
 		}
-	}.bind(managerLocation));
+	}.bind(moduleInstanceLocation));
 }

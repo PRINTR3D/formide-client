@@ -42,7 +42,7 @@ module.exports = {
 		this.slicer.on('data', this.sliceResponse.bind(this));
 		this.slicer.on('close', this.slicerError.bind(this));
 
-		FormideOS.manager('events').on('process.exit', this.stop.bind(this));
+		FormideOS.module('events').on('process.exit', this.stop.bind(this));
 	},
 
 	connect: function() {
@@ -50,20 +50,20 @@ module.exports = {
 		this.slicer.connect({
 			port: this.config.port
 		}, function() {
-			FormideOS.manager('debug').log('slicer connected');
+			FormideOS.module('debug').log('slicer connected');
 		});
 	},
 
 	onExit: function(exit) {
-		FormideOS.manager('debug').log(exit, true);
+		FormideOS.module('debug').log(exit, true);
 	},
 
 	onError: function(error) {
-		FormideOS.manager('debug').log(error, true);
+		FormideOS.module('debug').log(error, true);
 	},
 
 	onData: function(data) {
-		FormideOS.manager('debug').log(data);
+		FormideOS.module('debug').log(data);
 	},
 
 	stop: function(stop) {
@@ -72,7 +72,11 @@ module.exports = {
 
 	// custom functions
 	slicerError: function(error) {
-		FormideOS.manager('debug').log(error.toString(), true);
+		FormideOS.module('debug').log(error.toString(), true);
+		FormideOS.module('log').logError({
+			message: "Slicer error",
+			data: error
+		});
 		if (error.code == 'ECONNREFUSED' || error == false) {
 			this.slicer.setTimeout(2000, function() {
 				this.connect();
@@ -84,13 +88,13 @@ module.exports = {
 	slice: function(modelfiles, sliceprofile, materials, printer, settings, callback) {
 		var self = this;
 		var hash = uuid.v4();
-		FormideOS.manager('db').db.Printjob.create({
+		FormideOS.module('db').db.Printjob.create({
 			modelfiles: modelfiles,
 			printer: printer,
 			sliceprofile: sliceprofile,
 			materials: materials,
 			sliceFinished: false,
-			sliceSettings: JSON.parse(settings),
+			sliceSettings: settings,
 			sliceMethod: "local"
 		}, function(err, printjob) {
 			if (err) return callback(err);
@@ -104,119 +108,72 @@ module.exports = {
 				
 				// write slicerequest to local Katana instance
 				self.slicer.write(JSON.stringify(sliceData) + '\n', function() {
-					FormideOS.manager('events').emit('slicer.slice', slicerequest);
+					FormideOS.module('events').emit('slicer.slice', slicerequest);
 					return callback(null, slicerequest);
 				});
 			});
 		});
-		
-/*
-		FormideOS.manager('app.log').logDebug( 'debug', sliceparams );
-
-		var sliceData = {
-			"type": "slice",
-			"data": sliceparams
-		};
-*/
-/*
-		FormideOS.manager('db').db.Modelfile
-		.find({ where: {id: modelfile } })
-		.then(function(dbModelfile)
-		{
-			// TODO: still hardcoded to 10 by 10 cm and with extruder 1
-			var model = {
-				"hash": dbModelfile.hash,
-				"bucketIn": FormideOS.appRoot + FormideOS.config.get('paths.modelfile'),
-				"x": 100000,
-				"y": 100000,
-				"z": 0,
-				"extruder": "extruder1",
-				"settings": "0"
-			};
-
-			sliceData.data.model = [model];
-			sliceData.data.bucketOut = FormideOS.appRoot + FormideOS.config.get('paths.gcode');
-			sliceData.data.responseID = hash;
-
-			FormideOS.manager('db').db.Printjob
-			.create(
-			{
-				ModelfileId: 	modelfile,
-				printerID: 		printer,
-				sliceprofileID: sliceprofile,
-				materials: 		JSON.stringify( materials ),
-				sliceResponse: 	"{" + hash + "}",
-				sliceParams: 	JSON.stringify( sliceparams ),
-				sliceMethod: 	'local'
-			})
-			.success(function(printjob)
-			{
-				// send slice request to local slicer
-				self.slicer.write(JSON.stringify(sliceData) + '\n', function() {
-					FormideOS.manager('events').emit('slicer.slice', sliceData);
-					return callback(true);
-				});
-			});
-		});
-*/
 	},
 	
 	createSliceRequest: function(printjobId, callback) {
 		
 		// creates a slice request from a printjob database entry
-		FormideOS.manager('db').db.Printjob.findOne({ _id: printjobId }).lean().populate('modelfiles sliceprofile materials printer').exec(function(err, printjob) {
+		FormideOS.module('db').db.Printjob.findOne({ _id: printjobId }).lean().populate('modelfiles sliceprofile materials printer').exec(function(err, printjob) {
 		
 			var slicerequest = printjob.sliceprofile.settings;
 			
 			slicerequest.bed = {
-				xlength: printjob.printer.buildVolume.x * 1000,
-				ylength: printjob.printer.buildVolume.y * 1000,
-				zlength: printjob.printer.buildVolume.z * 1000,
+				xlength: printjob.printer.bed.x * 1000,
+				ylength: printjob.printer.bed.y * 1000,
+				zlength: printjob.printer.bed.z * 1000,
 				temperature: printjob.materials[0].temperature, // hardcoded material 0 by default
 				firstLayersTemperature: printjob.materials[0].firstLayersTemperature // hardcoded material 0 by default
 			};
 		
-			if(printjob.sliceSettings.brim) {
-				if(printjob.sliceSettings.brim.use === false) {
-					slicerequest.extra.brimLines = 0;
+			if(printjob.sliceSettings) {
+				if(printjob.sliceSettings.brim) {
+					if(printjob.sliceSettings.brim.use === false) {
+						// TODO: move to seperate object in slice request
+						slicerequest.extra.brimLines = 0;
+					}
 				}
-			}
-			
-			if(printjob.sliceSettings.raft) {
-				if(printjob.sliceSettings.raft.use === false) {
-					delete slicerequest.raft;
+				
+				if(printjob.sliceSettings.raft) {
+					if(printjob.sliceSettings.raft.use === false) {
+						delete slicerequest.raft;
+					}
 				}
-			}
-			
-			if(printjob.sliceSettings.support) {
-				if(printjob.sliceSettings.support.use === false) {
-					delete slicerequest.support;
+				
+				if(printjob.sliceSettings.support) {
+					if(printjob.sliceSettings.support.use === false) {
+						delete slicerequest.support;
+					}
+					if(printjob.sliceSettings.support.type === 'touchingPlatform') {
+						slicerequest.support.supportPlatform = 1;
+					}
+					if(printjob.sliceSettings.support.type === 'touchingAll') {
+						slicerequest.support.supportPlatform = 1;
+						slicerequest.support.supportEverywhere = 1;
+					}
 				}
-				if(printjob.sliceSettings.support.type === 'touchingPlatform') {
-					slicerequest.support.supportPlatform = 1;
+				
+				if(printjob.sliceSettings.skirt) {
+					if(printjob.sliceSettings.skirt.use === false) {
+						delete slicerequest.skirt;
+					}
 				}
-				if(printjob.sliceSettings.support.type === 'touchingAll') {
-					slicerequest.support.supportPlatform = 1;
-					slicerequest.support.supportEverywhere = 1;
+				
+				if(printjob.sliceSettings.fan) {
+					if(printjob.sliceSettings.fan.use === false) {
+						delete slicerequest.fan;
+					}
 				}
-			}
-			
-			if(printjob.sliceSettings.skirt) {
-				if(printjob.sliceSettings.skirt.use === false) {
-					delete slicerequest.skirt;
-				}
-			}
-			
-			if(printjob.sliceSettings.fan) {
-				if(printjob.sliceSettings.fan.use === false) {
-					delete slicerequest.fan;
-				}
-			}
-			
-			if(printjob.sliceSettings.bed) {
-				if(printjob.sliceSettings.bed.use === false) {
-					slicerequest.bed.temperature = 0;
-					slicerequest.bed.firstLayersTemperature = 0;
+				
+				if(printjob.sliceSettings.bed) {
+					if(printjob.sliceSettings.bed.use === false) {
+						slicerequest.bed.temperature = 0;
+						slicerequest.bed.firstLayersTemperature = 0;
+					}
 				}
 			}
 			
@@ -245,8 +202,7 @@ module.exports = {
 					temperature: material.temperature,
 					firstLayersTemperature: material.firstLayersTemperature,
 					filamentDiameter: material.filamentDiameter,
-					feedrate: material.feedrate,
-					mode: 'model' // TODO: remove from slicer
+					feedrate: material.feedrate
 				});
 			}
 			
@@ -258,14 +214,14 @@ module.exports = {
 	},
 
 	sliceResponse: function(stream) {
-		try { // try parsing
+		try {
 			FormideOS.utils.parseTCPStream(stream, function(data) {
 				if(data.status == 200 && data.data.responseID != null) {
-					FormideOS.manager('debug').log(data);
-					FormideOS.manager('db').db.Printjob
+					FormideOS.module('debug').log(data);
+					FormideOS.module('db').db.Printjob
 					.update({ _id: data.data.responseID }, { gcode: data.data.gcode, sliceResponse: data.data, sliceFinished: true }, function(err, printjob) {
 						if (err) return;
-						FormideOS.manager('events').emit('slicer.finished', {
+						FormideOS.module('events').emit('slicer.finished', {
 							type: 'success',
 							title: 'Slicer finished',
 							message: 'Slicer finished slicing ' + data.data.responseID,
@@ -273,16 +229,16 @@ module.exports = {
 						});
 					});
 				}
-				else if(data.status == 111) {
-					// status, do later
+				else if(data.status === 110 || data.status === 111 || data.status === 112 || data.status === 120) { // filter for progress response codes
+					FormideOS.module('events').emit('slicer.progress', data.data);
 				}
 				else {
-					FormideOS.manager('debug').log(data, true);
-					FormideOS.manager('log').logError({
+					FormideOS.module('debug').log(data, true);
+					FormideOS.module('log').logError({
 						message: 'slicer error',
 						data: data
 					});
-					FormideOS.manager('events').emit('slicer.finished', {
+					FormideOS.module('events').emit('slicer.finished', {
 						type: 'warning',
 						title: 'Slicer error',
 						message: 'Slicing failed slicing ' + data.data.responseID,
@@ -292,7 +248,11 @@ module.exports = {
 			});
 		}
 		catch(e) {
-			FormideOS.manager('debug').log(e, true);
+			FormideOS.module('debug').log(e, true);
+			FormideOS.module('log').logError({
+				message: 'slice response parse error',
+				data: e
+			});
 		}
 	}
 }

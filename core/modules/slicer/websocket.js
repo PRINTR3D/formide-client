@@ -12,17 +12,18 @@
  *
  */
 
-module.exports = function(namespace, module)
-{
-	namespace.on('connection', function( socket )
-	{
-		FormideOS.manager('events').on('slicer.slice', function( data )
-		{
+module.exports = function(namespace, module) {
+	namespace.on('connection', function(socket) {
+		
+		FormideOS.module('events').on('slicer.slice', function(data) {
 			socket.emit('slice', data);
 		});
+		
+		FormideOS.module('events').on('slicer.progress', function(data) {
+			socket.emit('progress', data);
+		});
 
-		FormideOS.manager('events').on('slicer.finished', function( data )
-		{
+		FormideOS.module('events').on('slicer.finished', function(data) {
 			socket.emit('finished', data);
 		});
 	});

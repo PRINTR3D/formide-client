@@ -23,17 +23,17 @@ module.exports = {
 			var newPath = FormideOS.config.get('paths.modelfile') + '/' + hash;
 			fs.writeFile(newPath, data, function(err) {
 				if (err) {
-					FormideOS.manager('debug').log(err);
+					FormideOS.module('debug').log(err);
 					return callback(err);
 				}
 				else {
-					FormideOS.manager('db').db.Modelfile.create({
+					FormideOS.module('db').db.Modelfile.create({
 						filename: file.name,
 						filesize: file.size,
 						hash: hash
 					}, function(err, modelfile) {
 						if (err) return callback(err)
-						return callback();
+						return callback(null, modelfile);
 					});
 				}
 			});
@@ -46,17 +46,17 @@ module.exports = {
 			var newPath = FormideOS.config.get('paths.gcode') + '/' + hash;
 			fs.writeFile(newPath, data, function(err) {
 				if(err) {
-					FormideOS.manager('debug').log( err );
+					FormideOS.module('debug').log( err );
 					return callback(err);
 				}
 				else {
-					FormideOS.manager('db').db.Gcodefile.create({
+					FormideOS.module('db').db.Gcodefile.create({
 						filename: file.name,
 						filesize: file.size,
 						hash: hash
 					}, function(err, gcodefile) {
 						if (err) return callback(err)
-						return callback();
+						return callback(null, gcodefile);
 					});
 				}
 			});
@@ -69,7 +69,7 @@ module.exports = {
 			if(exists) {
 				fs.readFile(filename, function(err, data) {
 					if (err) {
-						FormideOS.manager('debug').log(err, true);
+						FormideOS.module('debug').log(err, true);
 						return callback(err);
 					}
 					else {
@@ -95,7 +95,7 @@ module.exports = {
 			if (exists) {
 				fs.readFile(filename, function(err, data) {
 					if(err) {
-						FormideOS.manager('debug').log(err, true);
+						FormideOS.module('debug').log(err, true);
 					}
 					else {
 						if(encoding == 'base64') {

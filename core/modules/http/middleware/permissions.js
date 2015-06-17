@@ -22,21 +22,21 @@ module.exports = {
 			req._permissions.instance = self;
 
 			if(req.user) {
-				FormideOS.manager('debug').log( 'Session set and permissions fetched from DB' );
+				FormideOS.module('debug').log( 'Session set and permissions fetched from DB' );
 				var permissions = req.user.permissions || [];
 				req._permissions.session = true;
 				req.session['permissions'] = permissions;
 				req._permissions.permissions = req.session['permissions'];
 			}
-			else if(req.token && req.token == FormideOS.manager('settings').getSetting('cloud', 'accesstoken')) {
-				FormideOS.manager('debug').log( 'Session set and permissions fetched from DB (accesstoken)' );
-				var permissions = FormideOS.manager('settings').getSetting('cloud', 'permissions') || [];
+			else if(req.token && req.token == FormideOS.module('settings').getSetting('cloud', 'accesstoken')) {
+				FormideOS.module('debug').log( 'Session set and permissions fetched from DB (accesstoken)' );
+				var permissions = FormideOS.module('settings').getSetting('cloud', 'permissions') || [];
 				req._permissions.session = true;
 				req.session['permissions'] = permissions;
 				req._permissions.permissions = req.session['permissions'];
 			}
 			else {
-				FormideOS.manager('debug').log( 'Session not set' );
+				FormideOS.module('debug').log( 'Session not set' );
 				req._permissions.session = false;
 			}
 
@@ -56,12 +56,12 @@ module.exports = {
 			
 			if(req._permissions.session) {
 				if (req._permissions.permissions.indexOf(permission) > -1) {
-					FormideOS.manager('debug').log('Permissions correct');
+					FormideOS.module('debug').log('Permissions correct');
 					return next();
 				}
 			}
 
-			FormideOS.manager('debug').log('Permissions incorrect');
+			FormideOS.module('debug').log('Permissions incorrect');
 
 			return res.status(401).send({
 				status: 401,

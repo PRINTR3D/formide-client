@@ -29,9 +29,9 @@ module.exports =
 		    ]
 		});
 
-		FormideOS.manager('events').on('log.debug', this.logDebug.bind(this));
-		FormideOS.manager('events').on('log.error', this.logError.bind(this));
-		FormideOS.manager('events').on('log.info', this.logInfo.bind(this));
+		FormideOS.module('events').on('log.debug', this.logDebug.bind(this));
+		FormideOS.module('events').on('log.error', this.logError.bind(this));
+		FormideOS.module('events').on('log.info', this.logInfo.bind(this));
 	},
 
 	get: function(options, callback) {

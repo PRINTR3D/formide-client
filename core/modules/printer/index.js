@@ -40,7 +40,7 @@ module.exports =
 		this.printer.on('data', this.printerStatus.bind(this));
 		this.printer.on('close', this.printerError.bind(this));
 
-		FormideOS.manager('events').on('process.exit', this.stop.bind(this));
+		FormideOS.module('events').on('process.exit', this.stop.bind(this));
 	},
 
 	connect: function() {
@@ -48,16 +48,16 @@ module.exports =
 		this.printer.connect({
 			port: this.config.port
 		}, function() {
-			FormideOS.manager('debug').log('printer connected');
+			FormideOS.module('debug').log('printer connected');
 		});
 	},
 
 	onExit: function(exit) {
-		FormideOS.manager('debug').log(exit, true);
+		FormideOS.module('debug').log(exit, true);
 	},
 
 	onError: function(error) {
-		FormideOS.manager('debug').log(error, true);
+		FormideOS.module('debug').log(error, true);
 	},
 
 	stop: function(stop) {
@@ -66,7 +66,7 @@ module.exports =
 
 	// custom functions
 	printerError: function(error) {
-		FormideOS.manager('debug').log(error.toString(), true);
+		FormideOS.module('debug').log(error.toString(), true);
 		if (error.code == 'ECONNREFUSED' || error == false) {
 			this.printer.setTimeout(2000, function() {
 				this.connect();
@@ -78,21 +78,21 @@ module.exports =
 		try // try parsing
 		{
 			FormideOS.utils.parseTCPStream(stream, function(printerData) {
-				FormideOS.manager('events').emit('printer.status', printerData);
+				FormideOS.module('events').emit('printer.status', printerData);
 
 				if(printerData.type == 'status') {
 					this.status = printerData.data;
 				}
 
 				if(printerData.type == 'finished') {
-					FormideOS.manager('db').db.Queueitem
+					FormideOS.module('db').db.Queueitem
 					.find({where: {id: printerData.data.printjobID}})
 					.success(function(queueitem) {
 						if(queueitem != null) {
 							queueitem
 							.updateAttributes({status: 'finished'})
 							.success(function() {
-								FormideOS.manager('debug').log('removed item from queue after printing');
+								FormideOS.module('debug').log('removed item from queue after printing');
 							});
 						}
 					});
@@ -101,7 +101,7 @@ module.exports =
 		}
 		catch(e)
 		{
-			FormideOS.manager('debug').log(e.toString(), true);
+			FormideOS.module('debug').log(e.toString(), true);
 		}
 	},
 
@@ -112,7 +112,7 @@ module.exports =
 		}
 
 		data = JSON.stringify(data);
-		FormideOS.manager('debug').log(data);
+		FormideOS.module('debug').log(data);
 		this.printer.write(data + '\n');
 	}
 }

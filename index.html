@@ -12,9 +12,14 @@
 		  	setTimeout(function() {
 		  	
 		  	var printerWS = io("http://localhost:1337/printer");
+		  	var slicerWS = io("http://localhost:1337/slicer");
 		  
 			  printerWS.on('status', function(data) {
 			  	console.log(data);
+			  });
+			  
+			  slicerWS.on('progress', function(data) {
+				 console.log(data); 
 			  });
 			  
 			 }, 1000);

@@ -41,7 +41,7 @@ module.exports = {
 		http.app = express();
 		http.server = require('http').Server( http.app );
 		http.server.listen( FormideOS.config.get('app.port'), function() {
-			FormideOS.manager('debug').log('http server running on port ' + http.server.address().port);
+			FormideOS.module('debug').log('http server running on port ' + http.server.address().port);
 		});
 
 		http.app.use( bodyParser.json() );
@@ -66,7 +66,7 @@ module.exports = {
 		});
 
 		passport.deserializeUser(function(id, done) {
-		  	FormideOS.manager('db').db.User.findOne({ _id: id }).exec(function(err, user) {
+		  	FormideOS.module('db').db.User.findOne({ _id: id }).exec(function(err, user) {
 			  	if (err) return done('user not found', false);
 				if (user) {
 					return done(null, user);
@@ -77,7 +77,7 @@ module.exports = {
 		passport.use( 'local-signup', new LocalStrategy(function(email, password, callback) {
 			process.nextTick( function() {
 /*
-				FormideOS.manager('db').db.user
+				FormideOS.module('db').db.user
 				.find({ where: {username: username} })
 				.then(function( user ) {
 					if( user )
@@ -87,7 +87,7 @@ module.exports = {
 
 					var hashedPassword = passwordHash.generate(password);
 
-					FormideOS.manager('db').db.User
+					FormideOS.module('db').db.User
 					.create({
 						username: username,
 						password: hashedPassword
@@ -102,8 +102,8 @@ module.exports = {
 		}));
 
 		passport.use('local-login', new LocalStrategy({usernameField: 'email'}, function(email, password, next) {
-			FormideOS.manager('debug').log('Login attempt for ' + email);
-			FormideOS.manager('db').db.User.authenticate(email, password, function(err, user) {
+			FormideOS.module('debug').log('Login attempt for ' + email);
+			FormideOS.module('db').db.User.authenticate(email, password, function(err, user) {
 				if (err) return next(err);
 				if (!user || user === 'undefined') {
 					return next(null, false, { message: 'Incorrect user credentials' });
@@ -117,9 +117,9 @@ module.exports = {
 /*
 		passport.use( 'bearer-login', new BearerStrategy({}, function( token, callback )
 		{
-			FormideOS.manager('debug').log( 'Token login attempt for ' + token );
+			FormideOS.module('debug').log( 'Token login attempt for ' + token );
 
-			FormideOS.manager('db').db.Accesstoken
+			FormideOS.module('db').db.Accesstoken
 			.fin({ where: {token: token } })
 			.then(function( token )
 			{

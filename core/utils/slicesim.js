@@ -2,14 +2,15 @@ process.title = 'printspot-katana-simulator';
 
 var net = require('net');
 
-var server = net.createServer(function(client)
-{
-	client.on('data', function(data)
-	{
-		console.log(data.toString());
+var server = net.createServer(function(client) {
+	client.on('data', function(data) {
+		console(data.toString());
+		
+/*
 		data = JSON.parse(data);
+		var progress = 0;
 
-		var json = {
+		var resultJSON = {
 			"status": 200,
 			"data": {
 				"materials":
@@ -24,11 +25,37 @@ var server = net.createServer(function(client)
 				"responseID": data.data.responseID
 			}
 		}
-
-		setTimeout(function()
-		{
-			client.write(JSON.stringify(json));
-		}, 5000);
+		
+		var progressJSON = {
+			"status": 110,
+			"data": {
+				{
+					"progress_type": "slicing_model",
+					"responseID": data.data.responseID,
+					"progress":54
+				}
+			}
+		};
+		
+		function sendProgress() {
+			setTimeout(function() {
+				client.write(JSON.stringify(progressJSON));
+				if(progress < 100) {
+					progress += 5;
+					sendProgress();
+				}
+				else {
+					sendResult();
+				}
+			}, 2000);
+		}
+		
+		function sendResult() {
+			client.write(JSON.stringify(resultJSON));
+		}
+		
+		sendProgress();
+*/
 	});
 });
 

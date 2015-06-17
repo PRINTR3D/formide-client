@@ -61,12 +61,12 @@ module.exports =
 
 	processExit: function(err)
 	{
-		FormideOS.manager('events').emit('process.exit');
+		FormideOS.module('events').emit('process.exit');
 	},
 
 	processError: function(err)
 	{
-		FormideOS.manager('events').emit('log.error', {message: 'uncaught exception occured', data: err.stack});
-		FormideOS.manager('debug').log(err.stack);
+		FormideOS.module('events').emit('log.error', {message: 'uncaught exception occured', data: err.stack});
+		FormideOS.module('debug').log(err.stack);
 	}
 };

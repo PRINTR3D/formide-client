@@ -15,7 +15,7 @@
 module.exports = function(namespace, module) {
 	
 	namespace.on('connection', function(socket) {
-		FormideOS.manager('events').on('log.debug', function(data) {
+		FormideOS.module('events').on('log.debug', function(data) {
 			socket.emit('debug', data);
 		});
 	});

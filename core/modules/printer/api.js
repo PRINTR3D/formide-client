@@ -25,7 +25,7 @@ module.exports = function(routes, module)
 	 * Get the current status of the printer
 	 */
 	routes.get('/status', function(req, res) {
-		FormideOS.manager('events').once('printer.status', function(status) {
+		FormideOS.module('events').once('printer.status', function(status) {
 			res.send( status.data );
 		});
 	});
@@ -38,7 +38,7 @@ module.exports = function(routes, module)
 		Object.keys(FormideOS.config.get('channels.dashboard')).forEach(function(method) {
 			(function(realMethod) {
 				if(req.params.command == realMethod) {
-					FormideOS.manager('debug').log('Control printer ' + realMethod);
+					FormideOS.module('debug').log('Control printer ' + realMethod);
 
 					var expected = FormideOS.config.get('channels.dashboard')[realMethod];
 					var given = req.query;

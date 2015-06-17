@@ -23,14 +23,14 @@ module.exports =
 
 	init: function()
 	{
-		this.connection = io.listen( FormideOS.manager('http').server.server );
+		this.connection = io.listen( FormideOS.module('http').server.server );
 		
 		this.connection.use(function(socket, next) {
-			FormideOS.manager('http').server.session(socket.request, socket.request.res, next);
+			FormideOS.module('http').server.session(socket.request, socket.request.res, next);
 		});
 
 		this.connection.use(permissionsMiddleware);
 
-		FormideOS.manager('debug').log('websocket api running on port ' + FormideOS.config.get('app.port') );
+		FormideOS.module('debug').log('websocket api running on port ' + FormideOS.config.get('app.port') );
 	}
 }

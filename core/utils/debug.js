@@ -44,7 +44,7 @@ module.exports = {
 			};
 
 			// emit debug event to system
-			FormideOS.manager('events').emit('log.debug', debugInfo);
+			FormideOS.module('events').emit('log.debug', debugInfo);
 			
 			var outputString = '[' + callerString.substring(callerString.length - maxLength, callerString.length) + ']';
 			for(var i = outputString.length; i < maxLength; i++) {

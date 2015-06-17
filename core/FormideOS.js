@@ -23,8 +23,8 @@ module.exports = function() {
 	formideos.appRoot = path.resolve(__dirname + '/../') + '/';
 
 	// global object to hold managers and module info
-	formideos.managers = {};
 	formideos.modules = {};
+	formideos.modulesInfo = {};
 
 	// global config
 	formideos.config = require('./utils/config.js')();
@@ -33,10 +33,10 @@ module.exports = function() {
 	formideos.register = require('./utils/register.js');
 
 	// register events
-	formideos.managers['events'] = require('./utils/events.js');
+	formideos.modules['events'] = require('./utils/events.js');
 
 	// register debug
-	formideos.managers['debug'] = require('./utils/debug.js');
+	formideos.modules['debug'] = require('./utils/debug.js');
 
 	// global user settings
 	formideos.settings = require('./utils/settings.js')(formideos);
@@ -45,14 +45,14 @@ module.exports = function() {
 	formideos.utils = require('./utils/functions.js');
 
 	// get registered manager
-	formideos.manager = function(name) {
+	formideos.module = function(name) {
 		name = name.replace('.', '/');
 
-		if(!(name in formideos.managers)) {
-			FormideOS.manager('debug').log('Manager with name ' + name + ' is not registered', true);
+		if(!(name in formideos.modules)) {
+			formideos.module('debug').log('Manager with name ' + name + ' is not registered', true);
 		}
 		else {
-			return formideos.managers[name];
+			return formideos.modules[name];
 		}
 	};
 

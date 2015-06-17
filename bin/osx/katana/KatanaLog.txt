@@ -246,3 +246,28 @@
 2015-06-01.13:22:28: Finished all layers.
 2015-06-01.13:22:28: Request correctly processed and finito!
 
+2015-06-17.15:56:25: Katana Initialized.
+
+2015-06-17.15:59:45: New request.
+2015-06-17.15:59:45: Preparing model.
+2015-06-17.15:59:45: Dividing regions.
+2015-06-17.15:59:45: Processing data.
+2015-06-17.15:59:45: Adding infill.
+2015-06-17.15:59:45: Adding skirt.
+2015-06-17.15:59:45: Writing Gcode.
+2015-06-17.15:59:45: Starting region algorithm.
+2015-06-17.15:59:45: Finished all layers.
+2015-06-17.15:59:45: Request correctly processed and finito!
+
+
+2015-06-17.16:02:58: New request.
+2015-06-17.16:02:58: Preparing model.
+2015-06-17.16:02:59: Dividing regions.
+2015-06-17.16:02:59: Processing data.
+2015-06-17.16:02:59: Adding infill.
+2015-06-17.16:02:59: Adding skirt.
+2015-06-17.16:02:59: Writing Gcode.
+2015-06-17.16:02:59: Starting region algorithm.
+2015-06-17.16:02:59: Finished all layers.
+2015-06-17.16:02:59: Request correctly processed and finito!
+

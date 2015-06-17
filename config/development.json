@@ -77,7 +77,7 @@
 	},
 	"slicer": {
 		"port": 1339,
-		"simulated": true
+		"simulated": false
 	},
 	"settings": {
 		"path": "../storage"
