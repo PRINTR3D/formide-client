@@ -10,6 +10,6 @@ var schema = new Schema({
 });
 schema.plugin(timestamps);
 
-mongoose.model('gcodes', schema);
-var model = mongoose.model('gcodes');
+mongoose.model('gcodefiles', schema);
+var model = mongoose.model('gcodefiles');
 module.exports = model;
