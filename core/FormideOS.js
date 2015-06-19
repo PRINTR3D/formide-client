@@ -12,7 +12,7 @@
  *
  */
 
-var path = require('path');
+var path 	= require('path');
 
 // define global formideos object
 module.exports = function() {
@@ -29,8 +29,15 @@ module.exports = function() {
 	// global config
 	formideos.config = require('./utils/config.js')();
 
-	// register manager
+	// register module
 	formideos.register = require('./utils/register.js');
+	
+	// deregister module
+	formideos.deregister = function(name) {
+		delete require.cache[require.resolve(name)]; // delete cache to make sure next require load updated module
+		delete formideos.modules[name];
+		delete formideos.modulesInfo[name];
+	}
 
 	// register events
 	formideos.modules['events'] = require('./utils/events.js');

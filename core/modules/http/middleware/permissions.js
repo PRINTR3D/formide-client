@@ -22,14 +22,14 @@ module.exports = {
 			req._permissions.instance = self;
 
 			if(req.user) {
-				FormideOS.module('debug').log( 'Session set and permissions fetched from DB' );
+				FormideOS.module('debug').log( 'Session set and permissions found in session' );
 				var permissions = req.user.permissions || [];
 				req._permissions.session = true;
 				req.session['permissions'] = permissions;
 				req._permissions.permissions = req.session['permissions'];
 			}
 			else if(req.token && req.token == FormideOS.module('settings').getSetting('cloud', 'accesstoken')) {
-				FormideOS.module('debug').log( 'Session set and permissions fetched from DB (accesstoken)' );
+				FormideOS.module('debug').log( 'Session set and permissions found in cloud session' );
 				var permissions = FormideOS.module('settings').getSetting('cloud', 'permissions') || [];
 				req._permissions.session = true;
 				req.session['permissions'] = permissions;

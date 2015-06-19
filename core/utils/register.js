@@ -12,8 +12,9 @@
  *
  */
 
-var domain 					= require('domain');
-var fs 						= require('fs');
+var domain 		= require('domain');
+var fs 			= require('fs');
+var reload 		= require('require-reload')(require);
 
 module.exports = function(moduleInstanceLocation, moduleInstanceName) {
 	var d = domain.create();
@@ -28,13 +29,12 @@ module.exports = function(moduleInstanceLocation, moduleInstanceName) {
 
 	d.run(function() {
 
-		FormideOS.module('debug').log('Loading module: ' + moduleInstanceLocation);
 		var moduleInstanceRoot = FormideOS.appRoot + moduleInstanceLocation;
 
 		// check if moduleInstance has index file
 		if(fs.existsSync(moduleInstanceRoot + '/index.js')) {
 			
-			var moduleInstance = require(moduleInstanceRoot + '/index.js');
+			var moduleInstance = reload(moduleInstanceRoot + '/index.js');
 			
 			if(moduleInstanceName.indexOf('core.') !== -1) {
 				moduleInstanceName = moduleInstanceName.split('.')[1]; // remove core. from urls
@@ -45,16 +45,25 @@ module.exports = function(moduleInstanceLocation, moduleInstanceName) {
 				hasHTTP: false,
 				hasWS: false,
 				config: false,
+				version: null,
+				package: null,
 				namespace: moduleInstanceName,
 				root: moduleInstanceRoot
 			};
 			
 			// add debug to module
-			moduleInstance.debug = require('utils-debug')(moduleInstanceRoot);
+			moduleInstance.debug = reload('utils-debug')(moduleInstanceRoot);
+			
+			// add version number when available
+			if (fs.existsSync(moduleInstanceRoot + '/package.json')) {
+				var npmPackage = reload(moduleInstanceRoot + '/package.json');
+				moduleInfo.package = npmPackage;
+				moduleInfo.version = npmPackage.version;
+			}
 			
 			// load config if exists and add to existing FormideOS config or add existing config to module register
 			if (fs.existsSync(moduleInstanceRoot + '/config.json')) {
-				var config = require(moduleInstanceRoot + '/config.json');
+				var config = reload(moduleInstanceRoot + '/config.json');
 				moduleInfo.config = config;
 				FormideOS.config.set(moduleInstanceName, config);
 			}
@@ -74,7 +83,7 @@ module.exports = function(moduleInstanceLocation, moduleInstanceName) {
 				// register as sub-app in express server
 				var router = express.Router();
 				router.use(FormideOS.module('http').server.permissions.check(moduleInstanceName, moduleInfo.config.permission));
-				require(moduleInstanceRoot + '/api.js')(router, moduleInstance);
+				reload(moduleInstanceRoot + '/api.js')(router, moduleInstance);
 				FormideOS.module('http').server.app.use('/api/' + moduleInstanceName, router);
 			}
 
@@ -82,7 +91,7 @@ module.exports = function(moduleInstanceLocation, moduleInstanceName) {
 			if(fs.existsSync(moduleInstanceRoot + '/websocket.js')) {
 				moduleInfo.hasWS = true;
 				var namespace = FormideOS.module('websocket').connection.of('/' + moduleInstanceName);
-				require(moduleInstanceRoot + '/websocket.js')(namespace, moduleInstance);
+				reload(moduleInstanceRoot + '/websocket.js')(namespace, moduleInstance);
 			}
 			
 			// do init function if exists
@@ -91,7 +100,8 @@ module.exports = function(moduleInstanceLocation, moduleInstanceName) {
 			}
 			
 			// check if moduleInstance already exists or something with the same name does
-			if(!(moduleInstanceName in FormideOS.modules)) {
+			if(FormideOS.modules[moduleInstanceName] === undefined) {
+				FormideOS.module('debug').log('Loading module: ' + moduleInstanceLocation);
 				FormideOS.modulesInfo[moduleInstanceName] = moduleInfo;
 				FormideOS.modules[moduleInstanceName] = moduleInstance;
 			}

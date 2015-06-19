@@ -29,10 +29,6 @@ module.exports = {
 		return FormideOS.settings.getSetting(module, key);
 	},
 	
-	getBootstrapInfo: function(cb) {
-		return cb(FormideOS.modules); // only for settings api
-	},
-	
 	saveSetting: function(module, key, value, cb) {
 		FormideOS.settings.saveSetting(module, key, value);
 		if (cb) return cb(FormideOS.settings.getSetting(module, key));

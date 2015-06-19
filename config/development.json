@@ -77,7 +77,7 @@
 	},
 	"slicer": {
 		"port": 1339,
-		"simulated": false
+		"simulated": true
 	},
 	"settings": {
 		"path": "../storage"
@@ -85,5 +85,15 @@
 	"setup": {
 		"permission": false,
 		"registerUrl": "https://api2.formide.com/clients/register/token"
+	},
+	"update": {
+		"permission": false,
+		"exposeSettings": {
+			"modules": {
+				"type": "",
+				"required": true,
+				"default": []
+			}
+		}
 	}
 }

@@ -36,15 +36,26 @@ getMac.getMac(function(err, macAddress) {
 	FormideOS.register('core/modules/slicer', 		'slicer');
 	FormideOS.register('core/modules/setup', 		'setup');
 	// FormideOS.register('core/modules/wifi', 		'wifi');
-	// FormideOS.register('core/modules/update', 	'update');
+	FormideOS.register('core/modules/update', 		'update');
 	// FormideOS.register('core/modules/led', 		'led');
 	
 	// connect to cloud after other core modules booted
 	FormideOS.register('core/modules/cloud', 		'cloud');
 	
-	// other modules
-	require('./modules.js');
-	
 	// check if all settings are there, if not, add them
 	FormideOS.settings.checkSettings();
+	
+	FormideOS.reload = function() {
+		var modules = FormideOS.module('settings').getSetting('update', 'modules');
+
+		for(var i in modules) {
+			FormideOS.deregister(modules[i]);
+			FormideOS.register("node_modules/" + modules[i], modules[i]);
+		}
+		
+		// check settings again (this time also for new 3rd party modules)
+		FormideOS.settings.checkSettings();
+	}
+	
+	FormideOS.reload();
 });

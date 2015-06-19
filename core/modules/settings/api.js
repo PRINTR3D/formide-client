@@ -23,15 +23,6 @@ module.exports = function(routes, module) {
 		});
 	});
 	
-	/*
-	 * Get installed module overview
-	 */
-	routes.get('/modules', /*  */function(req, res) {
-		module.getBootstrapInfo(function(bootstrapInfo) {
-			return res.send(bootstrapInfo);
-		});
-	});
-	
 	/**
 	 * Get partial settings object by key
 	 */

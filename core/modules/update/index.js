@@ -13,87 +13,115 @@
  */
 
 var fs 			= require('fs');
-var request 	= require('request');
-var progress	= require('request-progress');
-var shastream	= require('sha1-stream');
-var sniff		= shastream.createStream();
-var semver		= require('semver');
+var gitpull 	= require('git-pull');
+var npm 		= require("npm");
 
-module.exports =
-{
-	name: "core.update",
+module.exports = {
 	
-	currentVersion: "1.0.0",
-
-	update: {},
-
-	progress: {
-		download: 0,
-		validate: 0,
-		install: 0
+	// for now updates 3rd party modules as well!
+	updateOS: function(cb) {
+		gitpull(FormideOS.appRoot, function(err, consoleOutput) {
+		    if (err) {
+			    return cb(err, consoleOutput);
+		    }
+		    else {
+			    npm.load(function (err) {
+					if (err) return cb(err);
+					npm.commands.update(function (updateErr, data) {
+						if (updateErr) return cb(err);
+						return cb(null, data);
+						return cb(null, {
+							"core": consoleOutput,
+							"dependencies": data
+			    		});
+		  			});
+				});
+		    }
+		});
 	},
-
-	init: function()
-	{
-		this.check();
+	
+	getPackages: function(simple, cb) {
+		var modules = FormideOS.module('settings').getSetting('update', 'modules');
+		if(simple) {
+			return cb(modules);
+		}
+		packagesToUpdate = [];
+		for(var i in modules) {
+			var moduleInfo = FormideOS.modulesInfo[modules[i]];
+			packagesToUpdate.push(moduleInfo);
+		}
+		return cb(packagesToUpdate);
 	},
-
-	check: function()
-	{
-		this.currentVersion = fs.readFileSync('version.txt').toString();
-		request(
-		{
-			method: 'GET',
-			url: 'https://formide.com/updates/list.json',
-			strictSSL: false,
-		},
-		function(error, response, body)
-		{
-			this.update.updates = JSON.parse(body);
-			this.update.latestUpdate = this.update.updates.pop();
-			this.update.needsUpdating = semver.lt(this.currentVersion, this.update.latestUpdate.release.version);
-		}.bind(this));
+	
+	updatePackages: function(cb) {
+		var self = this;
+		npm.load(function (err) {
+			if (err) return cb(err);
+			self.getPackages(true, function(packages) {
+				npm.commands.update(packages, function (updateErr, data) {
+					if (updateErr) return cb(err);
+					if (data !== undefined) FormideOS.reload();
+					return cb(null, data);
+	  			});
+			});
+		});
 	},
-
-	download: function()
-	{
-		var _that = this;
-
-		if(_that.update.needsUpdating) // only download when update required
-		{
-			progress( request(
-			{
-				method: 'GET',
-				url: _that.update.latestUpdate.url,
-				strictSSL: false,
-				gzip: true
-			}))
-			.on( 'progress', function( state )
-			{
-				_that.progress.download = state.percent;
-			})
-			.on( 'error', function( err )
-			{
-				console.log('progress err', err);
-			})
-			.pipe(sniff)
-			.pipe(fs.createWriteStream( 'formideos.v' + _that.update.latestUpdate.release.version + '.zip' ))
-			.on( 'error', function( err )
-			{
-				console.log('request err', err);
-			})
-			.on( 'close', function( err )
-			{
-				_that.progress.download = 100;
-
-				if(err)
-				{
-					console.log('close', err);
-				}
+	
+	updateSinglePackage: function(packageName, version, cb) {
+		var self = this;
+		npm.load(function (err) {
+			if (err) return cb(err);
+			npm.commands.update(packageName + '@' + version, function (updateErr, data) {
+				if (updateErr) return cb(err);
+				if (data !== undefined) FormideOS.reload();
+				return cb(null, data);
+  			});
+		});
+	},
+	
+	installPackage: function(packageName, cb) {
+		var modules = FormideOS.module('settings').getSetting('update', 'modules');
+		if(modules.indexOf(packageName) > -1) {
+			return cb(true, "package already installed");
+		}
+		else {
+			npm.load(function (err) {
+				if (err) return cb(err);
+				npm.commands.install([packageName], function (installErr, data) {
+					if (installErr) return cb(err);
+					modules.push(packageName);
+					FormideOS.module('settings').saveSetting('update', 'modules', modules);
+					if (data !== undefined) FormideOS.reload();
+					return cb(null, data);
+	  			});
 			});
 		}
+	},
+	
+	uninstallPackage: function(packageName, cb) {
+		npm.load(function (err) {
+			if (err) return cb(err);
+			npm.commands.uninstall([packageName], function (uninstallErr, data) {
+				if (uninstallErr) return cb(err);
+				var modules = FormideOS.module('settings').getSetting('update', 'modules');
+				delete modules[packageName];
+				FormideOS.module('settings').saveSetting('update', 'modules', modules);
+				if (data !== undefined) FormideOS.reload();
+				return cb(null, data);
+  			});
+		});
+	},
+	
+	outdatedPackages: function(cb) {
+		var self = this;
+		npm.load(function (err) {
+			if (err) return cb(err);
+			self.getPackages(true, function(packages) {
+				npm.commands.outdated(packages, function (outdatedErr, data) {
+					if (outdatedErr) return cb(err);
+					return cb(null, data);
+	  			});
+			});
+		});
 	}
 }
-
-module.exports.init();
-require('./api.js')(server, module.exports);

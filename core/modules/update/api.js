@@ -12,8 +12,67 @@
  *
  */
 
-module.exports = function(routes, module)
-{
+module.exports = function(routes, module) {
+	
+	routes.get('/os/update', function(req, res) {
+		module.updateOS(function(err, output) {
+			if (err) return res.json({ success: false, data: output});
+			return res.json({ success: true, data: output});
+		});
+	});
+	
+	routes.get('/os/clean', function(req, res) {
+		// somehow clean the core
+	});
+	
+	routes.get('/os/reset', function(req, res) {
+		// completely re-install the core
+	});
+	
+	routes.get('/modules', function(req, res) {
+		module.getPackages(false, function(modules) {
+			return res.json(modules);
+		});
+	});
+	
+	routes.get('/modules/update', function(req, res) {
+		module.updatePackages(function(err, output) {
+			if (err) return res.json({ success: false, data: output});
+			return res.json({ success: true, data: output});
+		});
+	});
+	
+	routes.get('/modules/update/:packageName', function(req, res) {
+		module.updateSinglePackage(req.params.packageName, req.query.version || "latest", function(err, output) {
+			if (err) return res.json({ success: false, data: output});
+			return res.json({ success: true, data: output});
+		});
+	});
+	
+	routes.get('/modules/install', function(req, res) {
+		var packageName = req.query.packageName;
+		module.installPackage(packageName, function(err, output) {
+			if (err) return res.json({ success: false, data: output});
+			return res.json({ success: true, data: output});
+		});
+	});
+	
+	routes.get('/modules/remove', function(req, res) {
+		var packageName = req.query.packageName;
+		module.uninstallPackage(packageName, function(err, output) {
+			if (err) return res.json({ success: false, data: output});
+			return res.json({ success: true, data: output});
+		});
+	});
+	
+	routes.get('/modules/outdated', function(req, res) {
+		module.outdatedPackages(function(err, output) {
+			if (err) return res.json({ success: false, data: output});
+			return res.json({ success: true, data: output});
+		});
+	});
+	
+/*
 	routes.post('/start', function( req, res )
 	{
 		module.download();
@@ -24,4 +83,5 @@ module.exports = function(routes, module)
 	{
 		res.send(module.progress);
 	});
+*/
 }
