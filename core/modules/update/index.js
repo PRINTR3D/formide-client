@@ -72,7 +72,7 @@ module.exports = {
 	
 	updatePackages: function(cb) {
 		var self = this;
-		npm.load(function (err) {
+		npm.load({ save: true }, function (err) {
 			if (err) return cb(err);
 			self.getPackages(true, function(packages) {
 				npm.commands.update(packages, function (updateErr, data) {
@@ -86,9 +86,9 @@ module.exports = {
 	
 	updateSinglePackage: function(packageName, cb) {
 		var self = this;
-		npm.load(function (err) {
+		npm.load({ save: true }, function (err) {
 			if (err) return cb(err);
-			npm.commands.update([packageName], function (updateErr, data) {
+			npm.commands.update([packageName + '@latest'], function (updateErr, data) {
 				if (updateErr) return cb(err);
 				if (data !== undefined) FormideOS.reload();
 				return cb(null, data);
@@ -102,9 +102,9 @@ module.exports = {
 			return cb(true, "package already installed");
 		}
 		else {
-			npm.load(function (err) {
+			npm.load({ save: true }, function (err) {
 				if (err) return cb(err);
-				npm.commands.install([packageName], function (installErr, data) {
+				npm.commands.install([packageName + '@latest'], function (installErr, data) {
 					if (installErr) return cb(err);
 					modules.push(packageName);
 					FormideOS.module('settings').saveSetting('update', 'modules', modules);
