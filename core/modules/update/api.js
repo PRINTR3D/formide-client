@@ -35,31 +35,39 @@ module.exports = function(routes, module) {
 		});
 	});
 	
-	routes.get('/modules/update', function(req, res) {
+	routes.get('/modules/:moduleName', function(req, res) {
+		if (!req.params.moduleName) return res.json({ success: false, data: 'no moduleName given'});
+		module.getPackage(req.params.moduleName, function(modules) {
+			return res.json(modules);
+		});
+	});
+	
+	routes.get('/modules/updateall', function(req, res) {
 		module.updatePackages(function(err, output) {
 			if (err) return res.json({ success: false, data: output});
 			return res.json({ success: true, data: output});
 		});
 	});
 	
-	routes.get('/modules/update/:packageName', function(req, res) {
-		module.updateSinglePackage(req.params.packageName, req.query.version || "latest", function(err, output) {
+	routes.get('/modules/:moduleName/update', function(req, res) {
+		if (!req.params.moduleName) return res.json({ success: false, data: 'no packageName given'});
+		module.updateSinglePackage(req.params.moduleName, req.query.version || "latest", function(err, output) {
 			if (err) return res.json({ success: false, data: output});
 			return res.json({ success: true, data: output});
 		});
 	});
 	
 	routes.get('/modules/install', function(req, res) {
-		var packageName = req.query.packageName;
-		module.installPackage(packageName, function(err, output) {
+		if (!req.query.moduleName) return res.json({ success: false, data: 'no moduleName given'});
+		module.installPackage(req.query.moduleName, function(err, output) {
 			if (err) return res.json({ success: false, data: output});
 			return res.json({ success: true, data: output});
 		});
 	});
 	
-	routes.get('/modules/remove', function(req, res) {
-		var packageName = req.query.packageName;
-		module.uninstallPackage(packageName, function(err, output) {
+	routes.get('/modules/:moduleName/uninstall', function(req, res) {
+		if (!req.params.moduleName) return res.json({ success: false, data: 'no moduleName given'});
+		module.uninstallPackage(req.params.moduleName, function(err, output) {
 			if (err) return res.json({ success: false, data: output});
 			return res.json({ success: true, data: output});
 		});

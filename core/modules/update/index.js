@@ -66,6 +66,10 @@ module.exports = {
 		return cb(response);
 	},
 	
+	getPackage: function(packageName, cb) {
+		return cb(FormideOS.modulesInfo[packageName]);
+	},
+	
 	updatePackages: function(cb) {
 		var self = this;
 		npm.load(function (err) {
