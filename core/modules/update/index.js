@@ -121,7 +121,8 @@ module.exports = {
 			npm.commands.uninstall([packageName], function (uninstallErr, data) {
 				if (uninstallErr) return cb(err);
 				var modules = FormideOS.module('settings').getSetting('update', 'modules');
-				delete modules[packageName];
+				var index = modules.indexOf(packageName);
+				modules.splice(index, 1);
 				FormideOS.module('settings').saveSetting('update', 'modules', modules);
 				if (data !== undefined) FormideOS.reload();
 				return cb(null, data);

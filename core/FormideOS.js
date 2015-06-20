@@ -34,7 +34,6 @@ module.exports = function() {
 	
 	// deregister module
 	formideos.deregister = function(name) {
-		delete require.cache[require.resolve(name)]; // delete cache to make sure next require load updated module
 		delete formideos.modules[name];
 		delete formideos.modulesInfo[name];
 	}
