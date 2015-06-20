@@ -10,7 +10,7 @@
 		"permission": false
 	},
 	"cloud": {
-		"url": "https://myaccount.formide.com"
+		"url": "http://localhost:9001"
 	},
 	"database": {
 		"storage": "../storage/database"

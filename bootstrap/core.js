@@ -39,14 +39,11 @@ getMac.getMac(function(err, macAddress) {
 	FormideOS.register('core/modules/update', 		'update',		true);
 	// FormideOS.register('core/modules/led', 		'led',			true);
 	
-	// connect to cloud after other core modules booted
-	FormideOS.register('core/modules/cloud', 		'cloud',		true);
-	
 	// check if all settings are there, if not, add them
-	FormideOS.settings.checkSettings();
+	//FormideOS.settings.checkSettings();
 	
 	FormideOS.reload = function() {
-		var modules = FormideOS.module('settings').getSetting('update', 'modules');
+		var modules = FormideOS.settings.getSetting('update', 'modules');
 
 		for(var i in modules) {
 			FormideOS.deregister(modules[i]);
@@ -58,4 +55,11 @@ getMac.getMac(function(err, macAddress) {
 	}
 	
 	FormideOS.reload();
+	
+	// connect to cloud after other modules booted
+	FormideOS.register('core/modules/cloud', 		'cloud',		true);
+	
+	FormideOS.settings.checkSettings();
+	
+	FormideOS.init.run();
 });

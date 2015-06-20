@@ -51,6 +51,9 @@ module.exports = function() {
 	// register util functions
 	formideos.utils = require('./utils/functions.js');
 
+	// init module
+	formideos.init = require('./utils/init.js')(formideos.modulesInfo);
+	
 	// get registered manager
 	formideos.module = function(name) {
 		name = name.replace('.', '/');
