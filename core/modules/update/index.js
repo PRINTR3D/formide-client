@@ -41,16 +41,18 @@ module.exports = {
 	},
 	
 	getPackages: function(simple, cb) {
-		var modules = FormideOS.module('settings').getSetting('update', 'modules');
-		if(simple) {
-			return cb(modules);
+		var response = [];
+		for(var i in FormideOS.modulesInfo) {
+			//if(FormideOS.modulesInfo[i].core === false) {
+				if (simple) {
+					response.push(i);
+				}
+				else {
+					response.push(FormideOS.modulesInfo[i]);
+				}
+			//}
 		}
-		packagesToUpdate = [];
-		for(var i in modules) {
-			var moduleInfo = FormideOS.modulesInfo[modules[i]];
-			packagesToUpdate.push(moduleInfo);
-		}
-		return cb(packagesToUpdate);
+		return cb(response);
 	},
 	
 	updatePackages: function(cb) {

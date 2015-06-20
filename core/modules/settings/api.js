@@ -13,12 +13,27 @@
  */
 
 module.exports = function(routes, module) {
-	
-	/**
-	 * Get complete settings object
-	 */
+
 	routes.get('/', function(req, res) {
 		module.getSettings(function(settings) {
+			return res.send(settings);
+		});
+	});
+	
+	routes.get('/exposed', function(req, res) {
+		module.getExposedSettings(function(settings) {
+			return res.send(settings);
+		});
+	});
+	
+	routes.get('/:moduleName', function(req, res) {
+		module.getModuleSettings(req.params.moduleName, function(settings) {
+			return res.send(settings);
+		});
+	});
+	
+	routes.post('/:moduleName', function(req, res) {
+		module.saveModuleSettings(req.params.moduleName, req.body, function(settings) {
 			return res.send(settings);
 		});
 	});
@@ -26,6 +41,7 @@ module.exports = function(routes, module) {
 	/**
 	 * Get partial settings object by key
 	 */
+/*
 	routes.get('/:settingName', function(req, res) {
 		module.getSetting(req.params.settingName, function(setting) {
 			return res.send(setting);
@@ -50,4 +66,5 @@ module.exports = function(routes, module) {
 			});
 		});
 	});
+*/
 };

@@ -10,30 +10,7 @@
 		"permission": false
 	},
 	"cloud": {
-		"url": "https://myaccount.formide.com",
-		"exposeSettings": {
-			"accesstoken": {
-				"type": "text",
-				"label": "Access token",
-				"required": true
-			},
-			"permissions": {
-				"type": "multiple_checkboxes",
-				"label": "Permissions",
-				"options": {
-					"auth": "Auth",
-					"camera": "Camera",
-					"files": "Files",
-					"led": "Led",
-					"log": "Log",
-					"printer": "Printer",
-					"rest": "Rest",
-					"slicer": "Slicer",
-					"wifi": "Wifi",
-					"device": "Device"
-				}
-			}
-		}
+		"url": "https://myaccount.formide.com"
 	},
 	"database": {
 		"storage": "../storage/database"
@@ -80,6 +57,7 @@
 		"simulated": true
 	},
 	"settings": {
+		"permission": false,
 		"path": "../storage"
 	},
 	"setup": {
@@ -87,13 +65,6 @@
 		"registerUrl": "https://api2.formide.com/clients/register/token"
 	},
 	"update": {
-		"permission": false,
-		"exposeSettings": {
-			"modules": {
-				"type": "",
-				"required": true,
-				"default": []
-			}
-		}
+		"permission": false
 	}
 }

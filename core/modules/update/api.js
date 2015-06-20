@@ -14,18 +14,18 @@
 
 module.exports = function(routes, module) {
 	
-	routes.get('/os/update', function(req, res) {
+	routes.get('/core/update', function(req, res) {
 		module.updateOS(function(err, output) {
 			if (err) return res.json({ success: false, data: output});
 			return res.json({ success: true, data: output});
 		});
 	});
 	
-	routes.get('/os/clean', function(req, res) {
+	routes.get('/core/clean', function(req, res) {
 		// somehow clean the core
 	});
 	
-	routes.get('/os/reset', function(req, res) {
+	routes.get('/core/reset', function(req, res) {
 		// completely re-install the core
 	});
 	

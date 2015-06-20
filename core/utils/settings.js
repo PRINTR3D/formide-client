@@ -59,12 +59,18 @@ module.exports = function(FormideOS) {
 	// loop over all settings to see if required ones are there
 	this.checkSettings = function() {
 		for(var i in this.fullCfg) {
-			var moduleSettings = this.fullCfg[i];
+			// create module in settings
 			if(this.cfg[i] === undefined || Object.keys(this.cfg[i]).length === 0) {
+				console.log(i);
 				this.cfg[i] = {};
-				for(var j in moduleSettings) {
-					if(moduleSettings[j].required === true && moduleSettings[j].default !== undefined) {
-						this.cfg[i][j] = moduleSettings[j].default;
+			}
+			// add subsettings for module
+			var moduleSettings = this.fullCfg[i];
+			for(var j in moduleSettings) {
+				var moduleSetting = moduleSettings[j];
+				if(this.cfg[i][moduleSetting.name] === undefined) {
+					if(moduleSetting.required === true && moduleSetting.default !== undefined) {
+						this.cfg[i][moduleSetting.name] = moduleSetting.default;
 					}
 					else {
 						FormideOS.module('debug').log("module setting was required but no default given: " + i + " " + j)

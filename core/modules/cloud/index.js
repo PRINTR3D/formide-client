@@ -71,6 +71,31 @@ module.exports =
 			FormideOS.module('debug').log('Cloud diconnected');
 		});
 	},
+	
+	exposeSettings: function() {
+		var moduleSettings = [];
+		
+		moduleSettings.push({
+			name: "accesstoken",
+			label: "Access token",
+			description: "The access token used by the cloud to reach FormideOS. Don't change if you're not sure what this is!",
+			type: "text",
+			default: "no_key",
+			required: true
+		});
+		
+		for(var i in FormideOS.modules) {
+			moduleSettings.push({
+				type: "checkbox",
+				label: i + " cloud permission",
+				name: "permission_" + i,
+				required: true,
+				default: true
+			});
+		}
+		
+		return moduleSettings;
+	},
 
 	/*
 	 * Handles HTTP proxy function calls from cloud connection, calls own local http api after reconstructing HTTP request

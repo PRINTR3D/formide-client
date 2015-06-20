@@ -22,25 +22,25 @@ getMac.getMac(function(err, macAddress) {
 	
 	FormideOS.macAddress = FormideOS.config.get('cloud.softMac') || macAddress;
 
-	// core modules
-	FormideOS.register('core/modules/http', 		'http');
-	FormideOS.register('core/modules/process', 		'process');
-	FormideOS.register('core/modules/db', 			'db');
-	FormideOS.register('core/modules/settings', 	'settings');
-	FormideOS.register('core/modules/auth', 		'auth');
-	FormideOS.register('core/modules/websocket', 	'websocket');
-	FormideOS.register('core/modules/device', 		'device');
-	FormideOS.register('core/modules/log', 			'log');
-	FormideOS.register('core/modules/files', 		'files');
-	FormideOS.register('core/modules/printer', 		'printer');
-	FormideOS.register('core/modules/slicer', 		'slicer');
-	FormideOS.register('core/modules/setup', 		'setup');
-	// FormideOS.register('core/modules/wifi', 		'wifi');
-	FormideOS.register('core/modules/update', 		'update');
-	// FormideOS.register('core/modules/led', 		'led');
+	// core modules, don't edit these when you don't know what you're doing!
+	FormideOS.register('core/modules/http', 		'http',			true);
+	FormideOS.register('core/modules/process', 		'process',		true);
+	FormideOS.register('core/modules/db', 			'db',			true);
+	FormideOS.register('core/modules/settings', 	'settings',		true);
+	FormideOS.register('core/modules/auth', 		'auth',			true);
+	FormideOS.register('core/modules/websocket', 	'websocket',	true);
+	FormideOS.register('core/modules/device', 		'device',		true);
+	FormideOS.register('core/modules/log', 			'log',			true);
+	FormideOS.register('core/modules/files', 		'files',		true);
+	FormideOS.register('core/modules/printer', 		'printer',		true);
+	FormideOS.register('core/modules/slicer', 		'slicer',		true);
+	FormideOS.register('core/modules/setup', 		'setup',		true);
+	// FormideOS.register('core/modules/wifi', 		'wifi',			true);
+	FormideOS.register('core/modules/update', 		'update',		true);
+	// FormideOS.register('core/modules/led', 		'led',			true);
 	
 	// connect to cloud after other core modules booted
-	FormideOS.register('core/modules/cloud', 		'cloud');
+	FormideOS.register('core/modules/cloud', 		'cloud',		true);
 	
 	// check if all settings are there, if not, add them
 	FormideOS.settings.checkSettings();

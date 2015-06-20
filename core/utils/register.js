@@ -16,7 +16,7 @@ var domain 		= require('domain');
 var fs 			= require('fs');
 var reload 		= require('require-reload')(require);
 
-module.exports = function(moduleInstanceLocation, moduleInstanceName) {
+module.exports = function(moduleInstanceLocation, moduleInstanceName, core) {
 	var d = domain.create();
 	d.name = moduleInstanceLocation;
 
@@ -29,6 +29,7 @@ module.exports = function(moduleInstanceLocation, moduleInstanceName) {
 
 	d.run(function() {
 
+		core = core || false;
 		var moduleInstanceRoot = FormideOS.appRoot + moduleInstanceLocation;
 
 		// check if moduleInstance has index file
@@ -45,10 +46,12 @@ module.exports = function(moduleInstanceLocation, moduleInstanceName) {
 				hasHTTP: false,
 				hasWS: false,
 				config: false,
+				exposeSettings: false,
 				version: null,
 				package: null,
 				namespace: moduleInstanceName,
-				root: moduleInstanceRoot
+				root: moduleInstanceRoot,
+				core: core
 			};
 			
 			// add debug to module
@@ -71,11 +74,13 @@ module.exports = function(moduleInstanceLocation, moduleInstanceName) {
 				moduleInfo.config = FormideOS.config.get(moduleInstanceName);
 			}
 			
-			// add module settings to global user settings
-			if (FormideOS.config.get(moduleInstanceName) && FormideOS.config.get(moduleInstanceName).exposeSettings) {
-				FormideOS.settings.addModuleSettings(moduleInstanceName, FormideOS.config.get(moduleInstanceName).exposeSettings);
+			// call exposeSettings function to populate global user settings
+			if (typeof moduleInstance.exposeSettings === 'function') {
+				var moduleSettings = moduleInstance.exposeSettings();
+				moduleInfo.exposeSettings = moduleSettings;
+				FormideOS.settings.addModuleSettings(moduleInstanceName, moduleSettings);
 			}
-
+			
 			// load module http api if exists
 			if (fs.existsSync(moduleInstanceRoot + '/api.js')) {
 				moduleInfo.hasHTTP = true;
