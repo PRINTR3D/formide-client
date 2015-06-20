@@ -124,6 +124,7 @@ module.exports = {
 				var index = modules.indexOf(packageName);
 				modules.splice(index, 1);
 				FormideOS.module('settings').saveSetting('update', 'modules', modules);
+				FormideOS.deregister(packageName);
 				if (data !== undefined) FormideOS.reload();
 				return cb(null, data);
   			});
