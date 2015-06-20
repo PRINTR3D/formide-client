@@ -41,7 +41,10 @@ module.exports = {
 	},
 	
 	saveModuleSettings: function(module, keyValuePairs, cb) {
-		FormideOS.settings.saveSettings(module, keyValuePairs);
+		// we do this for loop instead of replacing the whole object to prevent losing keys that are not posted
+		for(var i in keyValuePairs) {
+			FormideOS.settings.saveSetting(module, i, keyValuePairs[i]);
+		}
 		if (cb) return cb(FormideOS.settings.getSettings(module));
 		return FormideOS.settings.getSettings(module);
 	},
