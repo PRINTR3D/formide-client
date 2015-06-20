@@ -18,6 +18,17 @@ var npm 		= require("npm");
 
 module.exports = {
 	
+	exposeSettings: function() {
+		return [
+			{
+				name: "modules",
+				type: "hidden",
+				required: true,
+				default: []
+			}
+		];
+	},
+	
 	// for now updates 3rd party modules as well!
 	updateOS: function(cb) {
 		gitpull(FormideOS.appRoot, function(err, consoleOutput) {

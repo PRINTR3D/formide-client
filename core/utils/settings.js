@@ -68,12 +68,14 @@ module.exports = function(FormideOS) {
 			var moduleSettings = this.fullCfg[i];
 			for(var j in moduleSettings) {
 				var moduleSetting = moduleSettings[j];
-				if(this.cfg[i][moduleSetting.name] === undefined) {
-					if(moduleSetting.required === true && moduleSetting.default !== undefined) {
-						this.cfg[i][moduleSetting.name] = moduleSetting.default;
-					}
-					else {
-						FormideOS.module('debug').log("module setting was required but no default given: " + i + " " + j)
+				if(this.cfg[i][moduleSetting.name] == undefined) {
+					if(moduleSetting.required == true) {
+						if(moduleSetting.default != undefined) {
+							this.cfg[i][moduleSetting.name] = moduleSetting.default;
+						}
+						else {
+							FormideOS.module('debug').log("module setting was required but no default given: " + i + " " + moduleSetting.name)
+						}
 					}
 				}
 			}
