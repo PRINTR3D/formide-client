@@ -86,9 +86,9 @@ module.exports = {
 	
 	updateSinglePackage: function(packageName, cb) {
 		var self = this;
-		npm.load({ save: true }, function (err) {
+		npm.load({ force: true, save: true }, function (err) {
 			if (err) return cb(err);
-			npm.commands.update([packageName + '@latest'], function (updateErr, data) {
+			npm.commands.install([packageName + '@latest'], function (updateErr, data) {
 				if (updateErr) return cb(err);
 				if (data !== undefined) FormideOS.reload();
 				return cb(null, data);
