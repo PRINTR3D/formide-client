@@ -35,6 +35,21 @@ module.exports = function(routes, module) {
 		});
 	});
 	
+	routes.get('/modules/install', function(req, res) {
+		if (!req.query.moduleName) return res.json({ success: false, data: 'no moduleName given'});
+		module.installPackage(req.query.moduleName, function(err, output) {
+			if (err) return res.json({ success: false, data: output});
+			return res.json({ success: true, data: output});
+		});
+	});
+	
+	routes.get('/modules/outdated', function(req, res) {
+		module.outdatedPackages(function(err, output) {
+			if (err) return res.json({ success: false, data: output});
+			return res.json({ success: true, data: output});
+		});
+	});
+	
 	routes.get('/modules/:moduleName', function(req, res) {
 		if (!req.params.moduleName) return res.json({ success: false, data: 'no moduleName given'});
 		module.getPackage(req.params.moduleName, function(modules) {
@@ -57,24 +72,9 @@ module.exports = function(routes, module) {
 		});
 	});
 	
-	routes.get('/modules/install', function(req, res) {
-		if (!req.query.moduleName) return res.json({ success: false, data: 'no moduleName given'});
-		module.installPackage(req.query.moduleName, function(err, output) {
-			if (err) return res.json({ success: false, data: output});
-			return res.json({ success: true, data: output});
-		});
-	});
-	
 	routes.get('/modules/:moduleName/uninstall', function(req, res) {
 		if (!req.params.moduleName) return res.json({ success: false, data: 'no moduleName given'});
 		module.uninstallPackage(req.params.moduleName, function(err, output) {
-			if (err) return res.json({ success: false, data: output});
-			return res.json({ success: true, data: output});
-		});
-	});
-	
-	routes.get('/modules/outdated', function(req, res) {
-		module.outdatedPackages(function(err, output) {
 			if (err) return res.json({ success: false, data: output});
 			return res.json({ success: true, data: output});
 		});

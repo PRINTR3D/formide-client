@@ -38,9 +38,24 @@ getMac.getMac(function(err, macAddress) {
 	// FormideOS.register('core/modules/wifi', 		'wifi',			true);
 	FormideOS.register('core/modules/update', 		'update',		true);
 	// FormideOS.register('core/modules/led', 		'led',			true);
+	FormideOS.register('core/modules/cloud', 		'cloud',		true);
 	
-	// check if all settings are there, if not, add them
-	//FormideOS.settings.checkSettings();
+	// init all core modules
+	FormideOS.init.run('http');
+	FormideOS.init.run('process');
+	FormideOS.init.run('db');
+	FormideOS.init.run('settings');
+	FormideOS.init.run('auth');
+	FormideOS.init.run('websocket');
+	FormideOS.init.run('device');
+	FormideOS.init.run('log');
+	FormideOS.init.run('files');
+	FormideOS.init.run('printer');
+	FormideOS.init.run('slicer');
+	FormideOS.init.run('setup');
+	// FormideOS.init.run('wifi');
+	FormideOS.init.run('update');
+	// FormideOS.init.run('led');
 	
 	FormideOS.reload = function() {
 		var modules = FormideOS.settings.getSetting('update', 'modules');
@@ -50,16 +65,17 @@ getMac.getMac(function(err, macAddress) {
 			FormideOS.register("node_modules/" + modules[i], modules[i]);
 		}
 		
-		// check settings again (this time also for new 3rd party modules)
+		// init all 3rd party modules
+		for(var i in modules) {
+			FormideOS.init.run(modules[i]);
+		}
+		
+		// we init the cloud module after all other models to build the correct permission model
+		FormideOS.init.run('cloud');
+		
+		// check all the settings
 		FormideOS.settings.checkSettings();
 	}
 	
 	FormideOS.reload();
-	
-	// connect to cloud after other modules booted
-	FormideOS.register('core/modules/cloud', 		'cloud',		true);
-	
-	FormideOS.settings.checkSettings();
-	
-	FormideOS.init.run();
 });

@@ -26,6 +26,8 @@ module.exports = function(moduleInstanceLocation, moduleInstanceName, core) {
 			moduleInstanceName = moduleInstanceName.split('.')[1]; // remove core. from urls
 		}
 		
+		var moduleInstance = require(moduleInstanceRoot + '/index.js');
+		
 		// construct module info
 		var moduleInfo = {
 			hasHTTP: false,
@@ -41,6 +43,7 @@ module.exports = function(moduleInstanceLocation, moduleInstanceName, core) {
 		
 		// check if moduleInstance already exists or something with the same name does
 		if(FormideOS.modulesInfo[moduleInstanceName] === undefined) {
+			FormideOS.modules[moduleInstanceName] = moduleInstance;
 			FormideOS.modulesInfo[moduleInstanceName] = moduleInfo;
 		}
 		else {

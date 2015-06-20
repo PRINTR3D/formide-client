@@ -20,11 +20,8 @@ module.exports = function(modules) {
 	
 	this.modules = modules;
 	
-	this.run = function() {
-		var self = this;
-		for(var i in self.modules) {
-			performInit(modules[i]);
-		}
+	this.run = function(moduleName) {
+		performInit(modules[moduleName]);
 	}
 	
 	return this;
@@ -102,12 +99,12 @@ function performInit(module) {
 			}
 			
 			// check if moduleInstance already exists or something with the same name does
-			if(FormideOS.modules[moduleInstanceName] === undefined) {
-				FormideOS.module('debug').log('Loading module: ' + moduleInstanceName);
+			if(FormideOS.modules[moduleInstanceName] != undefined) {
 				FormideOS.modules[moduleInstanceName] = moduleInstance;
+				FormideOS.module('debug').log('Loaded module: ' + moduleInstanceName);
 			}
 			else {
-				FormideOS.module('debug').log('Module with namespace ' + moduleInstanceName + ' already exists', true);
+				FormideOS.module('debug').log('Module with namespace ' + moduleInstanceName + ' does not exist', true);
 			}
 		}
 	}.bind(module));
