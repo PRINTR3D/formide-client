@@ -66,7 +66,7 @@ module.exports = function(routes, module) {
 	
 	routes.get('/modules/:moduleName/update', function(req, res) {
 		if (!req.params.moduleName) return res.json({ success: false, data: 'no packageName given'});
-		module.updateSinglePackage(req.params.moduleName, req.query.version || "latest", function(err, output) {
+		module.updateSinglePackage(req.params.moduleName, function(err, output) {
 			if (err) return res.json({ success: false, data: output});
 			return res.json({ success: true, data: output});
 		});

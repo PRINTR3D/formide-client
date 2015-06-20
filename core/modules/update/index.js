@@ -84,11 +84,11 @@ module.exports = {
 		});
 	},
 	
-	updateSinglePackage: function(packageName, version, cb) {
+	updateSinglePackage: function(packageName, cb) {
 		var self = this;
 		npm.load(function (err) {
 			if (err) return cb(err);
-			npm.commands.update([packageName + '@' + version], function (updateErr, data) {
+			npm.commands.update([packageName], function (updateErr, data) {
 				if (updateErr) return cb(err);
 				if (data !== undefined) FormideOS.reload();
 				return cb(null, data);
