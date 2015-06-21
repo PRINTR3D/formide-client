@@ -35,6 +35,7 @@ module.exports = function(routes, db)
 	routes.get('/modelfiles/:id', function(req, res) {
 		db.Modelfile.findOne({ _id: req.params.id }).lean().exec(function(err, modelfile) {
 			if (err) return res.send(err);
+			if (!modelfile) return res.json('no modelfile found with that id');
 			db.Printjob.find({ modelfiles: modelfile._id }).populate('materials printer sliceprofile modelfiles').exec(function(err, printjobs) {
 				if (err) return res.send(err);
 				modelfile.printjobs = printjobs;

@@ -35,6 +35,7 @@ module.exports = function(routes, db)
 	routes.get('/gcodefiles/:id', function(req, res) {
 		db.Gcodefile.findOne({ _id: req.params.id }).lean().exec(function(err, gcodefile) {
 			if (err) return res.send(err);
+			if (!gcodefile) return res.json('no modelfile found with that id');
 			db.Printjob.find({ gcodefile: gcodefile._id }).populate('materials printer sliceprofile gcodefile').exec(function(err, printjobs) {
 				if (err) return res.send(err);
 				gcodefile.printjobs = printjobs;

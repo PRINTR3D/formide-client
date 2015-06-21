@@ -12,7 +12,7 @@
   "contributors": "https://github.com/PRINTR3D/formideOS-client/graphs/contributors",
   "scripts": {
     "start": "node bootstrap",
-    "test": "mocha"
+    "test": "mocha spec"
   },
   "dependencies": {
     "bcrypt": "^0.8.3",
