@@ -84,7 +84,7 @@ module.exports =
 			required: true
 		});
 		
-		for(var i in FormideOS.modulesInfo) {
+		for(var i in FormideOS.moduleManager.getModules()) {
 			moduleSettings.push({
 				type: "checkbox",
 				label: i + " cloud permission",

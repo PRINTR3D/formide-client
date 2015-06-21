@@ -23,10 +23,6 @@ module.exports = function() {
 	FormideOS.coreRoot = path.resolve(__dirname) + '/';
 	FormideOS.appRoot = path.resolve(__dirname + '/../') + '/';
 
-	// global object to hold managers and module info
-	FormideOS.modules = {};
-	FormideOS.modulesInfo = {};
-
 	// global config
 	FormideOS.config = require('./utils/config.js')();
 
