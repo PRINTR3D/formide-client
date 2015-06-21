@@ -126,6 +126,10 @@ passport.use( 'bearer-login', new BearerStrategy({}, function( token, callback )
 }));
 */
 
+FormideOS.events.on('moduleManage.dispose', function(moduleInfo) {
+	console.log(moduleInfo);
+});
+
 server = http;
 server.session = sessionMiddleware;
 server.auth = passport;

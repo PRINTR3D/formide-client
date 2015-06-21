@@ -78,6 +78,7 @@ module.exports = function(formideos) {
 		}
 		
 		formideos.debug.log("module " + moduleName + " loaded");
+		formideos.events.emit("moduleManager.moduleLoaded", module.info);
 		return modules[moduleName];
 	}
 	
@@ -121,17 +122,19 @@ module.exports = function(formideos) {
 		
 		module.status = 'active';
 		formideos.debug.log("module " + moduleName + " activated");
+		formideos.events.emit("moduleManager.moduleActivated", module.info);
 		
 		return module;
 	}
 	
 	var disposeModule = function(moduleName) {
 		if (modules[moduleName] !== undefined) {
-			if(typeof modules[moduleName].instance.dispose === 'function') {
-				module.instance.dispose(function(done) {
-					delete modules[moduleName];
-				});
+			var module = modules[moduleName];
+			if(typeof module.instance.dispose === 'function') {
+				module.instance.dispose();
 			}
+			formideos.events.emit("moduleManager.moduleDisposed", module.info);
+			delete modules[moduleName];
 		}
 	}
 	
@@ -141,6 +144,12 @@ module.exports = function(formideos) {
 		}
 	}
 	
+	var reloadModule = function(moduleName) {
+		disposeModule(moduleName);
+		loadModule("node_modules/" + moduleName, moduleName);
+		activateModule(moduleName);
+	}
+	
 	/*
 	 * Public
 	 */
@@ -148,6 +157,7 @@ module.exports = function(formideos) {
 	this.activateModule = activateModule;
 	this.disposeModule = disposeModule;
 	this.activateLoadedModules = activateLoadedModules;
+	this.reloadModule = reloadModule;
 	
 	this.getModules = function() {
 		return modules;

@@ -35,16 +35,30 @@ getMac.getMac(function(err, macAddress) {
 	//FormideOS.moduleManager.loadModule('core/modules/wifi', 	'wifi',		true);
 	FormideOS.moduleManager.loadModule('core/modules/update', 	'update', 	true);
 	//FormideOS.moduleManager.loadModule('core/modules/led', 	'led', 		true);
+	FormideOS.moduleManager.loadModule('core/modules/cloud', 	'cloud',	true);
 	
-	// Activate all core modules
+	// Load all 3rd party modules
+	var modules = FormideOS.settings.getSetting('update', 'modules');
+	for(var i in modules) {
+		FormideOS.moduleManager.loadModule("node_modules/" + modules[i], modules[i]);
+	}
+		
+	// Activate all loaded modules
 	FormideOS.moduleManager.activateLoadedModules();
 	
+	// check all the settings
+	FormideOS.settings.checkSettings();
+	
+/*
 	FormideOS.reload = function() {
 		var modules = FormideOS.settings.getSetting('update', 'modules');
 
 		for(var i in modules) {
-			FormideOS.moduleManager.disposeModule(modules[i]);
-			FormideOS.moduleManager.loadModule("node_modules/" + modules[i], modules[i]);
+			
+			
+			FormideOS.moduleManager.disposeModule(moduleName);
+			FormideOS.moduleManager.loadModule("node_modules/" + moduleName, moduleName);
+			FormideOS.moduleManager.activateModule(moduleName);
 		}
 		
 		// init all 3rd party modules
@@ -61,4 +75,5 @@ getMac.getMac(function(err, macAddress) {
 	}
 	
 	FormideOS.reload();
+*/
 });

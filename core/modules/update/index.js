@@ -68,6 +68,7 @@ module.exports = {
 		return cb(FormideOS.modulesInfo[packageName]);
 	},
 	
+/*
 	updatePackages: function(cb) {
 		var self = this;
 		npm.load({ save: true }, function (err) {
@@ -75,20 +76,31 @@ module.exports = {
 			self.getPackages(true, function(packages) {
 				npm.commands.update(packages, function (updateErr, data) {
 					if (updateErr) return cb(err);
-					if (data !== undefined) FormideOS.reload();
+					if (data !== undefined) {
+						for(var i in data) {
+							var udpatedPackage = data[i];
+							
+						}
+						
+						console.log(data);
+						//FormideOS.reload();
+					}
 					return cb(null, data);
 	  			});
 			});
 		});
 	},
+*/
 	
 	updateSinglePackage: function(packageName, cb) {
 		var self = this;
-		npm.load({ force: true, save: true }, function (err) {
+		npm.load(function (err) {
 			if (err) return cb(err);
-			npm.commands.install([packageName + '@latest'], function (updateErr, data) {
+			npm.commands.update([packageName], function (updateErr, data) {
 				if (updateErr) return cb(err);
-				if (data !== undefined) FormideOS.reload();
+				if (data !== undefined) {
+					FormideOS.moduleManager.reloadModule(packageName);
+				}
 				return cb(null, data);
   			});
 		});
@@ -106,7 +118,10 @@ module.exports = {
 					if (installErr) return cb(err);
 					modules.push(packageName);
 					FormideOS.module('settings').saveSetting('update', 'modules', modules);
-					if (data !== undefined) FormideOS.reload();
+					if (data !== undefined) {
+						FormideOS.moduleManager.loadModule(packageName);
+						FormideOS.moduleManager.activateModule(packageName);
+					}
 					return cb(null, data);
 	  			});
 			});
@@ -123,7 +138,9 @@ module.exports = {
 				modules.splice(index, 1);
 				FormideOS.module('settings').saveSetting('update', 'modules', modules);
 				FormideOS.deregister(packageName);
-				if (data !== undefined) FormideOS.reload();
+				if (data !== undefined) {
+					FormideOS.moduleManager.disposeModule(packageName);
+				}
 				return cb(null, data);
   			});
 		});

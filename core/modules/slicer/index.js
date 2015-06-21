@@ -177,13 +177,17 @@ module.exports = {
 			slicerequest.model = [];
 			for(var i in printjob.modelfiles) {
 				var model = printjob.modelfiles[i];
+				var var extruderForModel = 0;
+				if(printjob.sliceSettings.modelfiles) {
+					printjob.sliceSettings.modelfiles[i].extruder;
+				}
 				slicerequest.model.push({
 					hash: model.hash,
 					bucketIn: FormideOS.appRoot + FormideOS.config.get("paths.modelfile"),
 					x: 100000, 		// TODO: set user specified position
 					y: 100000, 		// TODO: set user specified position
 					z: 0, 			// TODO: set user specified position
-					extruder: printjob.sliceSettings.modelfiles[i].extruder,
+					extruder: extruderForModel,
 					settings: "0" 	// TODO: set region settings
 				});
 			}

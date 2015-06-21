@@ -15,6 +15,6 @@
 var EventEmitter2 = require('eventemitter2').EventEmitter2;
 var server = new EventEmitter2({
 	wildcard: true,
+	maxListeners: 100
 });
-process.setMaxListeners(100);
 module.exports = server;

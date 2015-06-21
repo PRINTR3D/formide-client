@@ -50,12 +50,14 @@ module.exports = function(routes, module) {
 		});
 	});
 	
+/*
 	routes.get('/modules/updateall', function(req, res) {
 		module.updatePackages(function(err, output) {
 			if (err) return res.json({ success: false, data: output});
 			return res.json({ success: true, data: output});
 		});
 	});
+*/
 	
 	routes.get('/modules/:moduleName', function(req, res) {
 		if (!req.params.moduleName) return res.json({ success: false, data: 'no moduleName given'});
