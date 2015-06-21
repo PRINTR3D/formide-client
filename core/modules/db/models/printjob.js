@@ -4,7 +4,7 @@ var Schema = mongoose.Schema;
 
 var schema = new Schema({
 	user: { type: Schema.Types.ObjectId, ref: 'users' },
-	modelfiles: [{ type: Schema.Types.ObjectId, ref: 'modelfiles' }],
+	modelfiles: [{ type: String, ref: 'modelfiles' }],
 	gcodefile: { type: Schema.Types.ObjectId, ref: 'gcodefiles' },
 	printer: { type: Schema.Types.ObjectId, ref: 'printers' },
 	sliceprofile: { type: Schema.Types.ObjectId, ref: 'sliceprofiles' },

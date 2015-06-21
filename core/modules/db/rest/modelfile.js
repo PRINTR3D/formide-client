@@ -24,21 +24,7 @@ module.exports = function(routes, db)
 	routes.get('/modelfiles', function(req, res) {
 		db.Modelfile.find().lean().exec(function(err, modelfiles) {
 			if (err) return res.send(err);
-			var numRunningQueries = 0;
-			for(var i in modelfiles) {
-				var modelfile = modelfiles[i];
-				var result = [];
-				numRunningQueries++;
-				db.Printjob.find({ modelfiles: modelfile._id }).populate('materials printer sliceprofile').exec(function(err, printjobs) {
-					if (err) return res.send(err);
-					numRunningQueries--;
-					modelfile.printjobs = printjobs;
-					result.push(modelfile);
-					if(numRunningQueries == 0) {
-						return res.send(result);
-					}
-				});
-			}
+			return res.send(modelfiles);
 		});
 	});
 
@@ -49,7 +35,7 @@ module.exports = function(routes, db)
 	routes.get('/modelfiles/:id', function(req, res) {
 		db.Modelfile.findOne({ _id: req.params.id }).lean().exec(function(err, modelfile) {
 			if (err) return res.send(err);
-			db.Printjob.find({ modelfiles: modelfile._id }).populate('materials printer sliceprofile').exec(function(err, printjobs) {
+			db.Printjob.find({ modelfiles: modelfile._id }).populate('materials printer sliceprofile modelfiles').exec(function(err, printjobs) {
 				if (err) return res.send(err);
 				modelfile.printjobs = printjobs;
 				return res.send(modelfile);
