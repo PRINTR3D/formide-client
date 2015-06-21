@@ -74,7 +74,7 @@ module.exports = function(FormideOS) {
 							this.cfg[i][moduleSetting.name] = moduleSetting.default;
 						}
 						else {
-							FormideOS.module('debug').log("module setting was required but no default given: " + i + " " + moduleSetting.name)
+							FormideOS.debug.log("module setting was required but no default given: " + i + " " + moduleSetting.name)
 						}
 					}
 				}

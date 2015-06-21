@@ -37,17 +37,17 @@ var authorizationMiddleware = function (socket, next)
 			{
 				if (err || !session)
 				{
-					FormideOS.module('debug').log('socket session not found');
+					FormideOS.debug.log('socket session not found');
 					return next('Session not found', false);
 				}
 				else if (!session.passport || !session.passport.user || !session.permissions)
 				{
-					FormideOS.module('debug').log('socket session not active');
+					FormideOS.debug.log('socket session not active');
 					return next('Session not active', false);
 				}
 				else
 				{
-					FormideOS.module('debug').log('socket auth successful');
+					FormideOS.debug.log('socket auth successful');
 					socket.session = session;
 					return next(null, true);
 				}

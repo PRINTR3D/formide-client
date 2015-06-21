@@ -15,22 +15,12 @@
 var io 							= require('socket.io');
 var permissionsMiddleware 		= require('./middleware/permissions');
 
-module.exports =
-{
-	name: "websocket",
-	
-	connection: {},
+connection = io.listen(FormideOS.http.server);
 
-	init: function()
-	{
-		this.connection = io.listen( FormideOS.module('http').server.server );
-		
-		this.connection.use(function(socket, next) {
-			FormideOS.module('http').server.session(socket.request, socket.request.res, next);
-		});
+connection.use(function(socket, next) {
+	FormideOS.http.session(socket.request, socket.request.res, next);
+});
 
-		this.connection.use(permissionsMiddleware);
+connection.use(permissionsMiddleware);
 
-		FormideOS.module('debug').log('websocket api running on port ' + FormideOS.config.get('app.port') );
-	}
-}
+module.exports = connection;

@@ -15,63 +15,46 @@
 // require dependencies
 var getMac 	= require('getmac');
 
-// define global objects
-FormideOS 	= require('../core/FormideOS')();
+// get FormideOS object
+require('../core/FormideOS')();
 
 getMac.getMac(function(err, macAddress) {
 	
 	FormideOS.macAddress = FormideOS.config.get('cloud.softMac') || macAddress;
-
-	// core modules, don't edit these when you don't know what you're doing!
-	FormideOS.register('core/modules/http', 		'http',			true);
-	FormideOS.register('core/modules/process', 		'process',		true);
-	FormideOS.register('core/modules/db', 			'db',			true);
-	FormideOS.register('core/modules/settings', 	'settings',		true);
-	FormideOS.register('core/modules/auth', 		'auth',			true);
-	FormideOS.register('core/modules/websocket', 	'websocket',	true);
-	FormideOS.register('core/modules/device', 		'device',		true);
-	FormideOS.register('core/modules/log', 			'log',			true);
-	FormideOS.register('core/modules/files', 		'files',		true);
-	FormideOS.register('core/modules/printer', 		'printer',		true);
-	FormideOS.register('core/modules/slicer', 		'slicer',		true);
-	FormideOS.register('core/modules/setup', 		'setup',		true);
-	// FormideOS.register('core/modules/wifi', 		'wifi',			true);
-	FormideOS.register('core/modules/update', 		'update',		true);
-	// FormideOS.register('core/modules/led', 		'led',			true);
-	FormideOS.register('core/modules/cloud', 		'cloud',		true);
 	
-	// init all core modules
-	FormideOS.init.run('http');
-	FormideOS.init.run('process');
-	FormideOS.init.run('db');
-	FormideOS.init.run('settings');
-	FormideOS.init.run('auth');
-	FormideOS.init.run('websocket');
-	FormideOS.init.run('device');
-	FormideOS.init.run('log');
-	FormideOS.init.run('files');
-	FormideOS.init.run('printer');
-	FormideOS.init.run('slicer');
-	FormideOS.init.run('setup');
-	// FormideOS.init.run('wifi');
-	FormideOS.init.run('update');
-	// FormideOS.init.run('led');
+	FormideOS.moduleManager.loadModule('core/modules/process', 	'process', 	true);
+	FormideOS.moduleManager.loadModule('core/modules/db', 		'db', 		true);
+	FormideOS.moduleManager.loadModule('core/modules/settings',	'settings', true);
+	FormideOS.moduleManager.loadModule('core/modules/auth', 	'auth', 	true);
+	FormideOS.moduleManager.loadModule('core/modules/device', 	'device', 	true);
+	FormideOS.moduleManager.loadModule('core/modules/log', 		'log', 		true);
+	FormideOS.moduleManager.loadModule('core/modules/files', 	'files', 	true);
+	FormideOS.moduleManager.loadModule('core/modules/printer', 	'printer', 	true);
+	FormideOS.moduleManager.loadModule('core/modules/slicer', 	'slicer', 	true);
+	FormideOS.moduleManager.loadModule('core/modules/setup', 	'setup',	true);
+	//FormideOS.moduleManager.loadModule('core/modules/wifi', 	'wifi',		true);
+	FormideOS.moduleManager.loadModule('core/modules/update', 	'update', 	true);
+	//FormideOS.moduleManager.loadModule('core/modules/led', 	'led', 		true);
+	
+	// Activate all core modules
+	FormideOS.moduleManager.activateLoadedModules();
 	
 	FormideOS.reload = function() {
 		var modules = FormideOS.settings.getSetting('update', 'modules');
 
 		for(var i in modules) {
-			FormideOS.deregister(modules[i]);
-			FormideOS.register("node_modules/" + modules[i], modules[i]);
+			FormideOS.moduleManager.disposeModule(modules[i]);
+			FormideOS.moduleManager.loadModule("node_modules/" + modules[i], modules[i]);
 		}
 		
 		// init all 3rd party modules
 		for(var i in modules) {
-			FormideOS.init.run(modules[i]);
+			FormideOS.moduleManager.activateModule(modules[i]);
 		}
 		
 		// we init the cloud module after all other models to build the correct permission model
-		FormideOS.init.run('cloud');
+		FormideOS.moduleManager.loadModule('core/modules/cloud', 	'cloud',	true);
+		FormideOS.moduleManager.activateModule('cloud');
 		
 		// check all the settings
 		FormideOS.settings.checkSettings();

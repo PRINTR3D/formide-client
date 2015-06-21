@@ -24,27 +24,27 @@ module.exports = function(namespace, module)
 			{
 				socket.emit('auth', {message: 'OK', id: socket.id});
 
-				FormideOS.module('events').emit('websocket.connected', {
+				FormideOS.events.emit('websocket.connected', {
 					type: 'dashboard',
 					data: {
 						port: FormideOS.config.get('dashboard.port')
 					}
 				});
 
-				FormideOS.module('debug').log('Dashboard connected');
+				FormideOS.debug.log('Dashboard connected');
 			}
 		});
 
 		// Socket disconnect
 		socket.on('disconnect', function() {
-			FormideOS.module('events').emit('websocket.disconnected', {
+			FormideOS.events.emit('websocket.disconnected', {
 				type: 'dashboard',
 				data: {
 					message: 'Dashboard disconnected'
 				}
 			});
 
-			FormideOS.module('debug').log('Dashboard disconnected');
+			FormideOS.debug.log('Dashboard disconnected');
 		});
 
 		// load channels from config
@@ -77,13 +77,13 @@ module.exports = function(namespace, module)
 					}
 					else
 					{
-						FormideOS.module('debug').log('Dashboard tried to send command to printer but arguments were invalid', true);
+						FormideOS.debug.log('Dashboard tried to send command to printer but arguments were invalid', true);
 					}
 				});
 			})(method);
 		});
 
-		FormideOS.module('events').on('printer.status', function(data) {
+		FormideOS.events.on('printer.status', function(data) {
 			socket.emit(data.type, data.data);
 		});
 	});

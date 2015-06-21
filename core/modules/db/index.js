@@ -10,7 +10,7 @@ module.exports = {
 		
 		// run setup when argument given in terminal
 		if(FormideOS.module('process').args.setup) {
-			FormideOS.module('debug').log('Database setup running');
+			FormideOS.debug.log('Database setup running');
 			require('./setup').init(this.db);
 		}
 	}

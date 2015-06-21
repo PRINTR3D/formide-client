@@ -42,7 +42,7 @@ module.exports = {
 		this.slicer.on('data', this.sliceResponse.bind(this));
 		this.slicer.on('close', this.slicerError.bind(this));
 
-		FormideOS.module('events').on('process.exit', this.stop.bind(this));
+		FormideOS.events.on('process.exit', this.stop.bind(this));
 	},
 
 	connect: function() {
@@ -50,20 +50,20 @@ module.exports = {
 		this.slicer.connect({
 			port: this.config.port
 		}, function() {
-			FormideOS.module('debug').log('slicer connected');
+			FormideOS.debug.log('slicer connected');
 		});
 	},
 
 	onExit: function(exit) {
-		FormideOS.module('debug').log(exit, true);
+		FormideOS.debug.log(exit, true);
 	},
 
 	onError: function(error) {
-		FormideOS.module('debug').log(error, true);
+		FormideOS.debug.log(error, true);
 	},
 
 	onData: function(data) {
-		FormideOS.module('debug').log(data);
+		FormideOS.debug.log(data);
 	},
 
 	stop: function(stop) {
@@ -72,7 +72,7 @@ module.exports = {
 
 	// custom functions
 	slicerError: function(error) {
-		FormideOS.module('debug').log(error.toString(), true);
+		FormideOS.debug.log(error.toString(), true);
 		FormideOS.module('log').logError({
 			message: "Slicer error",
 			data: error
@@ -108,7 +108,7 @@ module.exports = {
 				
 				// write slicerequest to local Katana instance
 				self.slicer.write(JSON.stringify(sliceData) + '\n', function() {
-					FormideOS.module('events').emit('slicer.slice', slicerequest);
+					FormideOS.events.emit('slicer.slice', slicerequest);
 					return callback(null, slicerequest);
 				});
 			});
@@ -216,11 +216,11 @@ module.exports = {
 		try {
 			FormideOS.utils.parseTCPStream(stream, function(data) {
 				if(data.status == 200 && data.data.responseID != null) {
-					FormideOS.module('debug').log(data);
+					FormideOS.debug.log(data);
 					FormideOS.module('db').db.Printjob
 					.update({ _id: data.data.responseID }, { gcode: data.data.gcode, sliceResponse: data.data, sliceFinished: true }, function(err, printjob) {
 						if (err) return;
-						FormideOS.module('events').emit('slicer.finished', {
+						FormideOS.events.emit('slicer.finished', {
 							type: 'success',
 							title: 'Slicer finished',
 							message: 'Slicer finished slicing ' + data.data.responseID,
@@ -229,15 +229,15 @@ module.exports = {
 					});
 				}
 				else if(data.status === 110 || data.status === 111 || data.status === 112 || data.status === 120) { // filter for progress response codes
-					FormideOS.module('events').emit('slicer.progress', data.data);
+					FormideOS.events.emit('slicer.progress', data.data);
 				}
 				else {
-					FormideOS.module('debug').log(data, true);
+					FormideOS.debug.log(data, true);
 					FormideOS.module('log').logError({
 						message: 'slicer error',
 						data: data
 					});
-					FormideOS.module('events').emit('slicer.finished', {
+					FormideOS.events.emit('slicer.finished', {
 						type: 'warning',
 						title: 'Slicer error',
 						message: 'Slicing failed slicing ' + data.data.responseID,
@@ -247,7 +247,7 @@ module.exports = {
 			});
 		}
 		catch(e) {
-			FormideOS.module('debug').log(e, true);
+			FormideOS.debug.log(e, true);
 			FormideOS.module('log').logError({
 				message: 'slice response parse error',
 				data: e

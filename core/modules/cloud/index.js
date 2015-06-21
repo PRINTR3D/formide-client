@@ -38,12 +38,12 @@ module.exports =
 				token: FormideOS.module('settings').getSetting('cloud', 'accesstoken'),
 				permissions: FormideOS.module('settings').getSetting('cloud', 'permissions'),
 			});
-			FormideOS.module('debug').log('Cloud connected');
+			FormideOS.debug.log('Cloud connected');
 		}.bind(this));
 
 		// on http proxy request
 		this.cloud.on('http', function(data, callback) {
-			FormideOS.module('debug').log('Cloud http call: ' + data.url);
+			FormideOS.debug.log('Cloud http call: ' + data.url);
 			// call http function
 			this.http(data, function(response) {
 				callback(response);
@@ -52,7 +52,7 @@ module.exports =
 
 		// on ws proxy request
 		this.cloud.on('listen', function(data, callback) {
-			FormideOS.module('debug').log('Cloud ws listen: ' + data.module + '.' + data.channel);
+			FormideOS.debug.log('Cloud ws listen: ' + data.module + '.' + data.channel);
 			// call listen function
 			this.listen(data, function(response) {
 				callback(response);
@@ -61,14 +61,14 @@ module.exports =
 
 		// emit ws to cloud
 		this.cloud.on('emit', function(data, callback) {
-			FormideOS.module('debug').log('Cloud ws emit: ' + data.module + '.' + data.channel);
+			FormideOS.debug.log('Cloud ws emit: ' + data.module + '.' + data.channel);
 			// call emit function
 			this.emit(data);
 		}.bind(this));
 
 		// when disconnecting
 		this.cloud.on('disconnect', function() {
-			FormideOS.module('debug').log('Cloud diconnected');
+			FormideOS.debug.log('Cloud diconnected');
 		});
 	},
 	
@@ -103,7 +103,7 @@ module.exports =
 	http: function(data, callback) {
 		request({
 			method: data.method,
-			uri: 'http://127.0.0.1:' + FormideOS.module('http').server.server.address().port + '/api/' + data.url,
+			uri: 'http://127.0.0.1:' + FormideOS.http.server.address().port + '/api/' + data.url,
 			auth: {
 				bearer: data.token // add cloud api key to authorise to local HTTP api
 			},
@@ -119,7 +119,7 @@ module.exports =
 	listen: function(data, callback) {
 		var self = this;
 		if(!this.local[data.module]) {
-			this.local[data.module] = socket( 'ws://127.0.0.1:' + FormideOS.module('http').server.server.address().port + '/' + data.module);
+			this.local[data.module] = socket( 'ws://127.0.0.1:' + FormideOS.http.server.address().port + '/' + data.module);
 		}
 		this.local[data.module].on(data.channel, function(response) {
 			self.cloud.emit(data.module + "." + data.channel, response);
@@ -132,7 +132,7 @@ module.exports =
 	emit: function(data) {
 		var self = this;
 		if(!this.local[data.module]) {
-			this.local[data.module] = socket( 'ws://127.0.0.1:' + FormideOS.module('http').server.server.address().port + '/' + data.module);
+			this.local[data.module] = socket( 'ws://127.0.0.1:' + FormideOS.http.server.address().port + '/' + data.module);
 		}
 		this.local[data.module].emit(data.channel, data.data);
 	}

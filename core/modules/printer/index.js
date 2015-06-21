@@ -40,7 +40,7 @@ module.exports =
 		this.printer.on('data', this.printerStatus.bind(this));
 		this.printer.on('close', this.printerError.bind(this));
 
-		FormideOS.module('events').on('process.exit', this.stop.bind(this));
+		FormideOS.events.on('process.exit', this.stop.bind(this));
 	},
 
 	connect: function() {
@@ -48,16 +48,16 @@ module.exports =
 		this.printer.connect({
 			port: this.config.port
 		}, function() {
-			FormideOS.module('debug').log('printer connected');
+			FormideOS.debug.log('printer connected');
 		});
 	},
 
 	onExit: function(exit) {
-		FormideOS.module('debug').log(exit, true);
+		FormideOS.debug.log(exit, true);
 	},
 
 	onError: function(error) {
-		FormideOS.module('debug').log(error, true);
+		FormideOS.debug.log(error, true);
 	},
 
 	stop: function(stop) {
@@ -66,7 +66,7 @@ module.exports =
 
 	// custom functions
 	printerError: function(error) {
-		FormideOS.module('debug').log(error.toString(), true);
+		FormideOS.debug.log(error.toString(), true);
 		if (error.code == 'ECONNREFUSED' || error == false) {
 			this.printer.setTimeout(2000, function() {
 				this.connect();
@@ -78,7 +78,7 @@ module.exports =
 		try // try parsing
 		{
 			FormideOS.utils.parseTCPStream(stream, function(printerData) {
-				FormideOS.module('events').emit('printer.status', printerData);
+				FormideOS.events.emit('printer.status', printerData);
 
 				if(printerData.type == 'status') {
 					this.status = printerData.data;
@@ -92,7 +92,7 @@ module.exports =
 							queueitem
 							.updateAttributes({status: 'finished'})
 							.success(function() {
-								FormideOS.module('debug').log('removed item from queue after printing');
+								FormideOS.debug.log('removed item from queue after printing');
 							});
 						}
 					});
@@ -101,7 +101,7 @@ module.exports =
 		}
 		catch(e)
 		{
-			FormideOS.module('debug').log(e.toString(), true);
+			FormideOS.debug.log(e.toString(), true);
 		}
 	},
 
@@ -112,7 +112,7 @@ module.exports =
 		}
 
 		data = JSON.stringify(data);
-		FormideOS.module('debug').log(data);
+		FormideOS.debug.log(data);
 		this.printer.write(data + '\n');
 	}
 }

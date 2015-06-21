@@ -34,6 +34,7 @@
     "express-validator": "^2.9.0",
     "fancy-errors": "^0.1.2",
     "formideos-module-interface": "^1.0.12",
+    "formideos-module-webhook": "^1.0.16",
     "getmac": "~1.0.6",
     "git-pull": "^0.1.0",
     "install": "~0.1.8",

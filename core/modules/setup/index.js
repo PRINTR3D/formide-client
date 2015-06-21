@@ -33,7 +33,7 @@ module.exports = {
 			},
 			strictSSL: false
 		}, function( err, httpResponse, body ) {
-			if (err) return FormideOS.module('debug').log(err, true);
+			if (err) return FormideOS.debug.log(err, true);
 			FormideOS.module('settings').saveSetting('cloud', 'accesstoken', JSON.parse(body).accessToken);
 		}.bind(this));
 	},
@@ -42,7 +42,7 @@ module.exports = {
 		FormideOS.module('db').db.User.find({ cloud: true }).exec(function(err, users) {
 			if (users.length > 0) {
 				var msg = "There is already a cloud connected user, contact " + users[0].email + " to get access.";
-				FormideOS.module('debug').log(msg, true);
+				FormideOS.debug.log(msg, true);
 				return cb(msg);
 			}
 		
@@ -64,7 +64,7 @@ module.exports = {
 				],
 				cloud: true // indiate that this is a cloud connected user
 			}, function(err, user) {
-				if (err) return FormideOS.module('debug').log(err, true);
+				if (err) return FormideOS.debug.log(err, true);
 				return cb();
 			});
 		});

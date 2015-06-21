@@ -22,14 +22,14 @@ module.exports = {
 			req._permissions.instance = self;
 
 			if(req.user) {
-				FormideOS.module('debug').log( 'Session set and permissions found in session' );
+				FormideOS.debug.log( 'Session set and permissions found in session' );
 				var permissions = req.user.permissions || [];
 				req._permissions.session = true;
 				req.session['permissions'] = permissions;
 				req._permissions.permissions = req.session['permissions'];
 			}
 			else if(req.token && req.token == FormideOS.module('settings').getSetting('cloud', 'accesstoken')) {
-				FormideOS.module('debug').log( 'Session set and permissions found in cloud session' );
+				FormideOS.debug.log( 'Session set and permissions found in cloud session' );
 				var permissions = [];
 				
 				// filter for permissions cloud available and add
@@ -50,7 +50,7 @@ module.exports = {
 				req._permissions.permissions = req.session['permissions'];
 			}
 			else {
-				FormideOS.module('debug').log( 'Session not set' );
+				FormideOS.debug.log( 'Session not set' );
 				req._permissions.session = false;
 			}
 
@@ -70,12 +70,12 @@ module.exports = {
 			
 			if(req._permissions.session) {
 				if (req._permissions.permissions.indexOf(permission) > -1) {
-					FormideOS.module('debug').log('Permissions correct');
+					FormideOS.debug.log('Permissions correct');
 					return next();
 				}
 			}
 
-			FormideOS.module('debug').log('Permissions incorrect');
+			FormideOS.debug.log('Permissions incorrect');
 
 			return res.status(401).send({
 				status: 401,

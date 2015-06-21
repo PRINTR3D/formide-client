@@ -15,15 +15,15 @@
 module.exports = function(namespace, module) {
 	namespace.on('connection', function(socket) {
 		
-		FormideOS.module('events').on('slicer.slice', function(data) {
+		FormideOS.events.on('slicer.slice', function(data) {
 			socket.emit('slice', data);
 		});
 		
-		FormideOS.module('events').on('slicer.progress', function(data) {
+		FormideOS.events.on('slicer.progress', function(data) {
 			socket.emit('progress', data);
 		});
 
-		FormideOS.module('events').on('slicer.finished', function(data) {
+		FormideOS.events.on('slicer.finished', function(data) {
 			socket.emit('finished', data);
 		});
 	});

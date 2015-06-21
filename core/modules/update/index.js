@@ -53,15 +53,13 @@ module.exports = {
 	
 	getPackages: function(simple, cb) {
 		var response = [];
-		for(var i in FormideOS.modulesInfo) {
-			//if(FormideOS.modulesInfo[i].core === false) {
-				if (simple) {
-					response.push(i);
-				}
-				else {
-					response.push(FormideOS.modulesInfo[i]);
-				}
-			//}
+		for(var i in FormideOS.moduleManager.getModules()) {
+			if (simple) {
+				response.push(i);
+			}
+			else {
+				response.push(FormideOS.moduleManager.getModuleInfo(i));
+			}
 		}
 		return cb(response);
 	},
@@ -104,7 +102,7 @@ module.exports = {
 		else {
 			npm.load({ save: true }, function (err) {
 				if (err) return cb(err);
-				npm.commands.install([packageName + '@latest'], function (installErr, data) {
+				npm.commands.install([packageName], function (installErr, data) {
 					if (installErr) return cb(err);
 					modules.push(packageName);
 					FormideOS.module('settings').saveSetting('update', 'modules', modules);

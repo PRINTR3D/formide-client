@@ -25,15 +25,15 @@ var permissionsMiddleware = function (socket, next) {
 					if (nsp.name != '/') {
 						if (s.request.session.permissions) {
 							if (s.request.session.permissions.indexOf( nsp.name.replace('/', '') ) === -1 ) {
-								FormideOS.module('debug').log('Socket permissions incorrect');
+								FormideOS.debug.log('Socket permissions incorrect');
 								s.disconnect();
 							}
 							else {
-								FormideOS.module('debug').log('Socket permissions correct');
+								FormideOS.debug.log('Socket permissions correct');
 							}
 						}
 						else {
-							FormideOS.module('debug').log('Socket permissions incorrect');
+							FormideOS.debug.log('Socket permissions incorrect');
 							s.disconnect();
 						}
 					}

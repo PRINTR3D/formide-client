@@ -26,7 +26,7 @@ module.exports =
 		this.process = process;
 		this.args = argv(this.process.argv.slice(2));
 		this.process.on('exit', this.processExit);
-		this.process.on('uncaughtException', this.processError);
+		//this.process.on('uncaughtException', this.processError);
 	},
 
 	getProcess: function()
@@ -61,12 +61,12 @@ module.exports =
 
 	processExit: function(err)
 	{
-		FormideOS.module('events').emit('process.exit');
+		FormideOS.events.emit('process.exit');
 	},
 
 	processError: function(err)
 	{
-		FormideOS.module('events').emit('log.error', {message: 'uncaught exception occured', data: err.stack});
-		FormideOS.module('debug').log(err.stack);
+		FormideOS.events.emit('log.error', {message: 'uncaught exception occured', data: err.stack});
+		FormideOS.debug.log(err.stack);
 	}
 };
