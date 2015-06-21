@@ -24,10 +24,21 @@ module.exports = function(routes, db)
 	routes.get('/modelfiles', function(req, res) {
 		db.Modelfile.find().lean().exec(function(err, modelfiles) {
 			if (err) return res.send(err);
-			reversePopulate(modelfiles, "printjobs", true, db.Printjob, "modelfiles", function(err, popModelfiles) {
-				if (err) return res.send(err);
-				return res.send(popModelfiles);
-    		});
+			var numRunningQueries = 0;
+			for(var i in modelfiles) {
+				var modelfile = modelfiles[i];
+				var result = [];
+				numRunningQueries++;
+				db.Printjob.find({ modelfiles: modelfile._id }).populate('materials printer sliceprofile').exec(function(err, printjobs) {
+					if (err) return res.send(err);
+					numRunningQueries--;
+					modelfile.printjobs = printjobs;
+					result.push(modelfile);
+					if(numRunningQueries == 0) {
+						return res.send(result);
+					}
+				});
+			}
 		});
 	});
 

@@ -95,7 +95,7 @@ module.exports = function(formideos) {
 		var module = getModule(moduleName);
 		
 		if(typeof module.instance.exposeSettings === 'function') {
-			module.exposeSettings = module.instance.exposeSettings();
+			module.info.exposeSettings = module.instance.exposeSettings();
 		}
 		
 		if(typeof module.instance.init === 'function') {

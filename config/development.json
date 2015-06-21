@@ -12,7 +12,8 @@
 	"cloud": {
 		"url": "https://myaccount.formide.com"
 	},
-	"database": {
+	"db": {
+		"permission": false,
 		"storage": "../storage/database"
 	},
 	"log": {

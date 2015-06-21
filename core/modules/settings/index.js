@@ -21,10 +21,10 @@ module.exports = {
 	
 	getExposedSettings: function(cb) {
 		exposedSettings = {};
-		for(var i in FormideOS.modulesInfo) {
-			if(FormideOS.modulesInfo[i].exposeSettings !== false) {
-				var moduleExposedSettings = FormideOS.modulesInfo[i].exposeSettings;
-				exposedSettings[i] = moduleExposedSettings;
+		for(var i in FormideOS.moduleManager.getModules()) {
+			var moduleInfo = FormideOS.moduleManager.getModuleInfo(i);
+			if(moduleInfo.exposeSettings !== false) {
+				exposedSettings[i] = moduleInfo.exposeSettings;
 			}
 		}
 		return cb(exposedSettings);

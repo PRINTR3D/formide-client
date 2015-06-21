@@ -2,8 +2,6 @@ var models = require('./models');
 
 module.exports = {
 	
-	name: "db",
-	
 	db: models,
 	
 	init: function() {

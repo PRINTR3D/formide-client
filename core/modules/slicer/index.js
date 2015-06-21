@@ -126,15 +126,15 @@ module.exports = {
 				xlength: printjob.printer.bed.x * 1000,
 				ylength: printjob.printer.bed.y * 1000,
 				zlength: printjob.printer.bed.z * 1000,
-				temperature: printjob.materials[0].temperature, // hardcoded material 0 by default
-				firstLayersTemperature: printjob.materials[0].firstLayersTemperature // hardcoded material 0 by default
+				temperature: 0,
+				firstLayersTemperature: 0
 			};
 		
 			if(printjob.sliceSettings) {
 				if(printjob.sliceSettings.brim) {
 					if(printjob.sliceSettings.brim.use === false) {
-						// TODO: move to seperate object in slice request
-						slicerequest.extra.brimLines = 0;
+						slicerequest.brim.extruder = printjob.sliceSettings.brim.extruder;
+						slicerequest.brim.lines = 0;
 					}
 				}
 				
@@ -142,11 +142,17 @@ module.exports = {
 					if(printjob.sliceSettings.raft.use === false) {
 						delete slicerequest.raft;
 					}
+					else {
+						slicerequest.raft.extruder = printjob.sliceSettings.raft.extruder;
+					}
 				}
 				
 				if(printjob.sliceSettings.support) {
 					if(printjob.sliceSettings.support.use === false) {
 						delete slicerequest.support;
+					}
+					else {
+						slicerequest.support.extruder = printjob.sliceSettings.support.extruder;
 					}
 				}
 				
@@ -154,20 +160,22 @@ module.exports = {
 					if(printjob.sliceSettings.skirt.use === false) {
 						delete slicerequest.skirt;
 					}
+					else {
+						slicerequest.skirt.extruder = printjob.sliceSettings.skirt.extruder;
+					}
 				}
 				
 				if(printjob.sliceSettings.fan) {
 					if(printjob.sliceSettings.fan.use === false) {
 						delete slicerequest.fan;
 					}
+					else {
+						slicerequest.fan.speed = printjob.sliceSettings.fan.speed;
+					}
 				}
 				
 				if(printjob.sliceSettings.bed) {
-					if(printjob.sliceSettings.bed.use === false) {
-						slicerequest.bed.temperature = 0;
-						slicerequest.bed.firstLayersTemperature = 0;
-					}
-					else {
+					if(printjob.sliceSettings.bed.use !== false) {
 						slicerequest.bed.temperature = printjob.sliceSettings.bed.temperature;
 						slicerequest.bed.firstLayersTemperature = printjob.sliceSettings.bed.firstLayersTemperature;
 					}
@@ -188,7 +196,7 @@ module.exports = {
 					y: 100000, 		// TODO: set user specified position
 					z: 0, 			// TODO: set user specified position
 					extruder: extruderForModel,
-					settings: "0" 	// TODO: set region settings
+					settings: 0 	// TODO: set region settings
 				});
 			}
 			
@@ -209,7 +217,7 @@ module.exports = {
 				}
 			}
 			
-			slicerequest.bucketOut = FormideOS.appRoot + FormideOS.config.get("paths.gcode"); // TODO: specify bucketOut
+			slicerequest.bucketOut = FormideOS.appRoot + FormideOS.config.get("paths.gcode");
 			slicerequest.responseID = printjob._id.toString();
 		
 			callback(null, slicerequest);
