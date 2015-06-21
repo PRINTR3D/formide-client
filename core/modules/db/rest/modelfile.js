@@ -47,7 +47,7 @@ module.exports = function(routes, db)
 	 * We use the reversePopulate plugin to also attach a list of printjobs where the modelfile is referenced
 	 */
 	routes.get('/modelfiles/:id', function(req, res) {
-		db.Modelfile.find({ _id: req.params.id }).lean().exec(function(err, modelfile) {
+		db.Modelfile.findOne({ _id: req.params.id }).lean().exec(function(err, modelfile) {
 			if (err) return res.send(err);
 			db.Printjob.find({ modelfiles: modelfile._id }).populate('materials printer sliceprofile').exec(function(err, printjobs) {
 				if (err) return res.send(err);
