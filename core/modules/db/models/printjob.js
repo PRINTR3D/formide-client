@@ -3,12 +3,12 @@ var timestamps  = require('mongoose-timestamp');
 var Schema = mongoose.Schema;
 
 var schema = new Schema({
-	user: { type: Schema.Types.ObjectId, ref: 'users' },
+	user: { type: String, ref: 'users' },
 	modelfiles: [{ type: String, ref: 'modelfiles' }],
-	gcodefile: { type: Schema.Types.ObjectId, ref: 'gcodefiles' },
-	printer: { type: Schema.Types.ObjectId, ref: 'printers' },
-	sliceprofile: { type: Schema.Types.ObjectId, ref: 'sliceprofiles' },
-	materials: [{ type: Schema.Types.ObjectId, ref: 'materials' }],
+	gcodefile: { type: String, ref: 'gcodefiles' },
+	printer: { type: String, ref: 'printers' },
+	sliceprofile: { type: String, ref: 'sliceprofiles' },
+	materials: [{ type: String, ref: 'materials' }],
 	gcode: { type: String },
 	sliceSettings: { type: Schema.Types.Mixed },
 	sliceResponse: { type: Schema.Types.Mixed },

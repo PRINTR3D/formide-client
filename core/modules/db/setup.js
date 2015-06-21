@@ -20,6 +20,8 @@ module.exports = {
 		
 		db.Modelfile.remove({}, function(err) {});
 		db.Gcodefile.remove({}, function(err) {});
+		db.Printjob.remove({}, function(err) {});
+		db.Queueitem.remove({}, function(err) {});
 		
 		db.User.remove({}, function(err) {
 			db.User.collection.insert(setupConfig.users);
