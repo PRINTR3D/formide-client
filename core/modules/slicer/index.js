@@ -177,7 +177,7 @@ module.exports = {
 			slicerequest.model = [];
 			for(var i in printjob.modelfiles) {
 				var model = printjob.modelfiles[i];
-				var var extruderForModel = 0;
+				var extruderForModel = 0;
 				if(printjob.sliceSettings.modelfiles) {
 					printjob.sliceSettings.modelfiles[i].extruder;
 				}
