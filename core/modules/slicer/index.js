@@ -133,9 +133,19 @@ module.exports = {
 			if(printjob.sliceSettings) {
 				if(printjob.sliceSettings.brim) {
 					if(printjob.sliceSettings.brim.use === false) {
-						slicerequest.brim.extruder = printjob.sliceSettings.brim.extruder;
-						slicerequest.brim.lines = 0;
+						delete slicerequest.brim;
 					}
+					else {
+						if(printjob.sliceSettings.brim.extruder) {
+							slicerequest.brim.extruder = printjob.sliceSettings.brim.extruder;
+						}
+						else {
+							return callback("No extruder given for brim");
+						}
+					}
+				}
+				else {
+					return callback("No brim settings given");
 				}
 				
 				if(printjob.sliceSettings.raft) {
@@ -143,8 +153,16 @@ module.exports = {
 						delete slicerequest.raft;
 					}
 					else {
-						slicerequest.raft.extruder = printjob.sliceSettings.raft.extruder;
+						if(printjob.sliceSettings.raft.extruder) {
+							slicerequest.raft.extruder = printjob.sliceSettings.raft.extruder;
+						}
+						else {
+							return callback("No extruder given for raft");
+						}
 					}
+				}
+				else {
+					return callback("No raft settings given");
 				}
 				
 				if(printjob.sliceSettings.support) {
@@ -152,8 +170,16 @@ module.exports = {
 						delete slicerequest.support;
 					}
 					else {
-						slicerequest.support.extruder = printjob.sliceSettings.support.extruder;
+						if(printjob.sliceSettings.support.extruder) {
+							slicerequest.support.extruder = printjob.sliceSettings.support.extruder;
+						}
+						else {
+							return callback("No extruder given for support");
+						}
 					}
+				}
+				else {
+					return callback("No support settings given");
 				}
 				
 				if(printjob.sliceSettings.skirt) {
@@ -161,8 +187,16 @@ module.exports = {
 						delete slicerequest.skirt;
 					}
 					else {
-						slicerequest.skirt.extruder = printjob.sliceSettings.skirt.extruder;
+						if(printjob.sliceSettings.skirt.extruder) {
+							slicerequest.skirt.extruder = printjob.sliceSettings.skirt.extruder;
+						}
+						else {
+							return callback("No extruder given for skirt");
+						}
 					}
+				}
+				else {
+					return callback("No skirt settings given");
 				}
 				
 				if(printjob.sliceSettings.fan) {
@@ -170,14 +204,32 @@ module.exports = {
 						delete slicerequest.fan;
 					}
 					else {
-						slicerequest.fan.speed = printjob.sliceSettings.fan.speed;
+						if(printjob.sliceSettings.fan.speed) {
+							slicerequest.fan.speed = printjob.sliceSettings.fan.speed;
+						}
+						else {
+							return callback("No speed given for fan");
+						}
 					}
+				}
+				else {
+					return callback("No fan settings given");
 				}
 				
 				if(printjob.sliceSettings.bed) {
 					if(printjob.sliceSettings.bed.use !== false) {
-						slicerequest.bed.temperature = printjob.sliceSettings.bed.temperature;
-						slicerequest.bed.firstLayersTemperature = printjob.sliceSettings.bed.firstLayersTemperature;
+						if(printjob.sliceSettings.bed.temperature) {
+							slicerequest.bed.temperature = printjob.sliceSettings.bed.temperature;
+						}
+						else {
+							return callback("No bed temperature given");
+						}
+						if(printjob.sliceSettings.bed.firstLayersTemperature) {
+							slicerequest.bed.firstLayersTemperature = printjob.sliceSettings.bed.firstLayersTemperature;
+						}
+						else {
+							return callback("No bed firstLayersTemperature given");
+						}
 					}
 				}
 			}

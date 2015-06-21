@@ -49,10 +49,11 @@ module.exports = function(routes, db)
 	routes.get('/modelfiles/:id', function(req, res) {
 		db.Modelfile.find({ _id: req.params.id }).lean().exec(function(err, modelfile) {
 			if (err) return res.send(err);
-			reversePopulate(modelfile, "printjobs", true, db.Printjob, "modelfiles", function(err, popModelfile) {
+			db.Printjob.find({ modelfiles: modelfile._id }).populate('materials printer sliceprofile').exec(function(err, printjobs) {
 				if (err) return res.send(err);
-				return res.send(popModelfile[0]);
-    		});
+				modelfile.printjobs = printjobs;
+				return res.send(modelfile);
+			});
 		});
 	});
 
