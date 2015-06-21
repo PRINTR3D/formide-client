@@ -22,12 +22,9 @@ module.exports = function(routes, db)
 	 * We use the reversePopulate plugin to also attach a list of printjobs where each modelfile is referenced
 	 */
 	routes.get('/gcodefiles', function(req, res) {
-		db.Gcodefile.find().lean().exec(function(err, gcodefiles) {
+		db.Gcodefile.find().exec(function(err, gcodefiles) {
 			if (err) return res.send(err);
-			reversePopulate(gcodefiles, "printjobs", true, db.Printjob, "gcodefiles", function(err, popGcodefiles) {
-				if (err) return res.send(err);
-				return res.send(popGcodefiles);
-    		});
+			return res.send(gcodefiles);
 		});
 	});
 
@@ -36,12 +33,13 @@ module.exports = function(routes, db)
 	 * We use the reversePopulate plugin to also attach a list of printjobs where the modelfile is referenced
 	 */
 	routes.get('/gcodefiles/:id', function(req, res) {
-		db.Gcodefile.find({ _id: req.params.id }).lean().exec(function(err, gcodefile) {
+		db.Gcodefile.findOne({ _id: req.params.id }).lean().exec(function(err, gcodefile) {
 			if (err) return res.send(err);
-			reversePopulate(gcodefile, "printjobs", true, db.Printjob, "gcodfiles", function(err, popGcodefile) {
+			db.Printjob.find({ gcodefile: gcodefile._id }).populate('materials printer sliceprofile gcodefile').exec(function(err, printjobs) {
 				if (err) return res.send(err);
-				return res.send(popGcodefile[0]);
-    		});
+				gcodefile.printjobs = printjobs;
+				return res.send(gcodefile);
+			});
 		});
 	});
 

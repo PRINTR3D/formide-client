@@ -3,43 +3,15 @@
 		"debug": true,
 		"timezone": "UTC",
 		"url": "0.0.0.0",
-		"port": 1337,
-		"version": "0.4.0"
+		"port": 1337
 	},
-	"channels": {
-		"dashboard": {
-			"gcode": [ "code" ],
-			"home": [],
-			"jog": [ "axis", "dist" ],
-			"start": [ "hash", "printjobID" ],
-			"pause": [],
-			"resume": [],
-			"stop": [],
-			"temp_extruder": [ "extnr", "temp" ],
-			"temp_bed": [ "temp" ],
-			"lcd_message": [ "msg" ],
-			"extrude": [ "extnr", "dist" ],
-			"retract": [ "extnr", "dist" ],
-			"fan": [ "fannr", "speed" ],
-			"reconnect": [],
-			"autolevel": [],
-			"door_open": [],
-			"door_close": []
-		},
-
-		"driver": {
-			"status": [ "printjobID", "status", "progress", "extruders", "bed" ],
-			"finished": [ "printjobID" ],
-			"connect": [],
-			"disconnect": [],
-			"error": [ "msg" ],
-			"notification": [ "msg" ]
-		}
+	"auth": {
+		"permission": false
 	},
 	"cloud": {
 		"url": "https://myaccount.formide.com"
 	},
-	"database": {
+	"db": {
 		"storage": "../storage/database"
 	},
 	"log": {
@@ -52,7 +24,32 @@
 	},
 	"printer": {
 		"port": 1338,
-		"simulated": false
+		"simulated": false,
+		"dashboard": {
+			"gcode": ["code"],
+			"home": [],
+			"jog": ["axis", "dist"],
+			"start": ["hash", "printjobID"],
+			"pause": [],
+			"resume": [],
+			"stop": [],
+			"temp_extruder": ["extnr", "temp"],
+			"temp_bed": ["temp"],
+			"lcd_message": ["msg"],
+			"extrude": ["extnr", "dist"],
+			"retract": ["extnr", "dist"],
+			"fan": ["fannr", "speed"],
+			"reconnect": [],
+			"autolevel": []
+		},
+		"driver": {
+			"status": ["printjobID", "status", "progress", "extruders", "bed"],
+			"finished": ["printjobID"],
+			"connect": [],
+			"disconnect": [],
+			"error": ["msg"],
+			"notification": ["msg"]
+		}
 	},
 	"slicer": {
 		"port": 1339,
@@ -60,5 +57,9 @@
 	},
 	"settings": {
 		"path": "../storage"
+	},
+	"setup": {
+		"permission": false,
+		"registerUrl": "https://api2.formide.com/clients/register/token"
 	}
 }

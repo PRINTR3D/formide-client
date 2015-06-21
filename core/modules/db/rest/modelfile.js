@@ -22,7 +22,7 @@ module.exports = function(routes, db)
 	 * We use the reversePopulate plugin to also attach a list of printjobs where each modelfile is referenced
 	 */
 	routes.get('/modelfiles', function(req, res) {
-		db.Modelfile.find().lean().exec(function(err, modelfiles) {
+		db.Modelfile.find().exec(function(err, modelfiles) {
 			if (err) return res.send(err);
 			return res.send(modelfiles);
 		});

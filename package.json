@@ -11,7 +11,8 @@
   },
   "contributors": "https://github.com/PRINTR3D/formideOS-client/graphs/contributors",
   "scripts": {
-    "start": "node bootstrap"
+    "start": "node bootstrap",
+    "test": "mocha"
   },
   "dependencies": {
     "bcrypt": "^0.8.3",
@@ -75,6 +76,10 @@
     "utils-debug": "^0.5.22",
     "winston": "~0.8.1",
     "wireless": "~0.3.2"
+  },
+  "devDependencies": {
+	"chai": "~1.4.2",
+	"mocha": "*"
   },
   "engineStrict": [
     "darwin",
