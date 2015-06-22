@@ -14,7 +14,7 @@
 
 var fs = require('fs');
 
-module.exports = function(formideos) {
+module.exports = function() {
 	
 	/*
 	 * Private
@@ -25,7 +25,7 @@ module.exports = function(formideos) {
 	var loadModule = function(moduleLocation, moduleName, core) {
 		
 		core = core || false;
-		var moduleRoot = formideos.appRoot + moduleLocation;
+		var moduleRoot = FormideOS.appRoot + moduleLocation;
 		
 		var moduleInfo = {
 			namespace:		moduleName,
@@ -43,7 +43,7 @@ module.exports = function(formideos) {
 			moduleInfo.hasIndex = true;
 		}
 		else {
-			formideos.debug.log("Module " + moduleName + " could not be loaded. No index.js file found");
+			FormideOS.debug.log("Module " + moduleName + " could not be loaded. No index.js file found");
 			return;
 		}
 		
@@ -54,7 +54,7 @@ module.exports = function(formideos) {
 				moduleInfo.version = pack.version;
 			}
 			catch (e) {
-				formideos.debug.log("module " + moduleName + " could not be loaded. Problem with loading package.json: " + e);
+				FormideOS.debug.log("module " + moduleName + " could not be loaded. Problem with loading package.json: " + e);
 			}
 		}
 		
@@ -64,7 +64,7 @@ module.exports = function(formideos) {
 				moduleInfo.config = config;
 			}
 			catch (e) {
-				formideos.debug.log("module " + moduleName + " could not be loaded. Problem with loading config.json: " + e);
+				FormideOS.debug.log("module " + moduleName + " could not be loaded. Problem with loading config.json: " + e);
 			}
 		}
 		else if (FormideOS.config.get(moduleName)) {
@@ -77,8 +77,8 @@ module.exports = function(formideos) {
 			status: 'loaded'
 		}
 		
-		formideos.debug.log("module " + moduleName + " loaded");
-		formideos.events.emit("moduleManager.moduleLoaded", module.info);
+		FormideOS.debug.log("module " + moduleName + " loaded");
+		FormideOS.events.emit("moduleManager.moduleLoaded", module.info);
 		return modules[moduleName];
 	}
 	
@@ -87,7 +87,7 @@ module.exports = function(formideos) {
 			return modules[moduleName];
 		}
 		else {
-			formideos.debug.log("Unknown module requested: " + moduleName);
+			FormideOS.debug.log("Unknown module requested: " + moduleName);
 		}
 	}
 	
@@ -96,7 +96,7 @@ module.exports = function(formideos) {
 		
 		if(typeof module.instance.exposeSettings === 'function') {
 			module.info.exposeSettings = module.instance.exposeSettings();
-			formideos.settings.addModuleSettings(moduleName, module.info.exposeSettings);
+			FormideOS.settings.addModuleSettings(moduleName, module.info.exposeSettings);
 		}
 		
 		if(typeof module.instance.init === 'function') {
@@ -107,23 +107,23 @@ module.exports = function(formideos) {
 			module.hasHTTP = true;
 			
 			// register module's api as sub-app in express server
-			var router = express.Router();
-			router.use(formideos.http.permissions.check(module.info.namespace, module.info.config.permission));
+			var router = FormideOS.http.express.Router();
+			router.use(FormideOS.http.permissions.check(module.info.namespace, module.info.config.permission));
 			require(module.info.root + '/api.js')(router, module.instance);
-			formideos.http.app.use('/api/' + module.info.namespace, router);
+			FormideOS.http.app.use('/api/' + module.info.namespace, router);
 		}
 		
 		if (fs.existsSync(module.info.root + '/websocket.js')) {
 			module.hasWS = true;
 			
 			// register module's ws api
-			var wsNamespace = formideos.ws.of('/' + module.info.namespace);
+			var wsNamespace = FormideOS.ws.of('/' + module.info.namespace);
 			require(module.info.root + '/websocket.js')(wsNamespace, module.instance);
 		}
 		
 		module.status = 'active';
-		formideos.debug.log("module " + moduleName + " activated");
-		formideos.events.emit("moduleManager.moduleActivated", module.info);
+		FormideOS.debug.log("module " + moduleName + " activated");
+		FormideOS.events.emit("moduleManager.moduleActivated", module.info);
 		
 		return module;
 	}
@@ -134,7 +134,7 @@ module.exports = function(formideos) {
 			if(typeof module.instance.dispose === 'function') {
 				module.instance.dispose();
 			}
-			formideos.events.emit("moduleManager.moduleDisposed", module.info);
+			FormideOS.events.emit("moduleManager.moduleDisposed", module.info);
 			delete modules[moduleName];
 		}
 	}

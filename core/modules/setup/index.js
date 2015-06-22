@@ -34,12 +34,15 @@ module.exports = {
 			strictSSL: false
 		}, function( err, httpResponse, body ) {
 			if (err) return FormideOS.debug.log(err, true);
-			FormideOS.module('settings').saveSetting('cloud', 'accesstoken', JSON.parse(body).accessToken);
+			var response = JSON.parse(body);
+			FormideOS.module('db').db.User.update({ cloudConnectionToken: response.registerToken }, { cloudConnectionToken: response.clientToken }, function(err, user) {
+				FormideOS.debug.log('cloud user connected with clientToken ' + response.clientToken);
+			});
 		}.bind(this));
 	},
 	
 	addUser: function(email, password, cb) {
-		FormideOS.module('db').db.User.find({ cloud: true }).exec(function(err, users) {
+		FormideOS.module('db').db.User.find({ cloudConnectionToken: {'$ne': null } }).exec(function(err, users) {
 			if (users.length > 0) {
 				var msg = "There is already a cloud connected user, contact " + users[0].email + " to get access.";
 				FormideOS.debug.log(msg, true);
@@ -49,6 +52,7 @@ module.exports = {
 			FormideOS.module('db').db.User.create({
 				email: email,
 				password: password,
+				username: "admin",
 				permissions: [
 					"auth",
 					"camera",
@@ -62,7 +66,7 @@ module.exports = {
 					"device",
 					"settings"
 				],
-				cloud: true // indiate that this is a cloud connected user
+				cloudConnectionToken: ""
 			}, function(err, user) {
 				if (err) return FormideOS.debug.log(err, true);
 				return cb();

@@ -27,7 +27,7 @@ module.exports =
 	 */
 	init: function(config) {
 		// init cloud with new socket io client to online cloud url
-		this.cloud = socket( config.url );
+		this.cloud = socket(config.url);
 
 		// when connecting to cloud
 		this.cloud.on('connect', function() {
@@ -35,10 +35,31 @@ module.exports =
 			this.cloud.emit('authenticate', {
 				type: 'client',
 				mac: FormideOS.macAddress,
-				token: FormideOS.module('settings').getSetting('cloud', 'accesstoken'),
-				permissions: FormideOS.module('settings').getSetting('cloud', 'permissions'),
+				deviceUUID: FormideOS.macAddress // for now
 			});
-			FormideOS.debug.log('Cloud connected');
+		}.bind(this));
+		
+		/*
+		 * See if client is online
+		 */
+		this.cloud.on('ping', function(data, callback) {
+			return callback('pong', data);
+		});
+		
+		/*
+		 * This event is triggered when a user logs into the cloud and want to access one of his clients
+		 */
+		this.cloud.on('authenticate', function(data, callback) {
+			this.authenticate(data.cloudConnectionToken, function(err, accessToken) {
+				FormideOS.debug.log('Cloud connected with access_tokne ' + accessToken);
+				return callback(accessToken.token);
+			});
+			
+/*
+			FormideOS.module('db').db.User.find({ cloudConnectionToken: data.cloudConnectionToken }).exec(function(err, user) {
+				FormideOS.module.
+			});
+*/
 		}.bind(this));
 
 		// on http proxy request
@@ -72,6 +93,7 @@ module.exports =
 		});
 	},
 	
+/*
 	exposeSettings: function() {
 		var moduleSettings = [];
 		
@@ -96,6 +118,19 @@ module.exports =
 		
 		return moduleSettings;
 	},
+*/
+
+	/*
+	 * Handles cloud authentication based on cloudConnectionToken, returns session access_token that cloud uses to perform http calls from then on
+	 */
+	authenticate: function(cloudConnectionToken, callback) {
+		FormideOS.module('db').db.User.find({ cloudConnectionToken: data.cloudConnectionToken }).exec(function(err, user) {
+			FormideOS.module('db').db.AccessToken.generate(function(err, accessToken) {
+				if (err) return console.log(err);
+				return callback(accessToken);
+			});
+		});
+	},
 
 	/*
 	 * Handles HTTP proxy function calls from cloud connection, calls own local http api after reconstructing HTTP request
@@ -109,7 +144,7 @@ module.exports =
 			},
 			form: data.data || {}
 		}, function( error, response, body ) {
-			callback( body );
+			return callback(body);
 		});
 	},
 

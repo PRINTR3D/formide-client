@@ -16,7 +16,7 @@
 var getMac 	= require('getmac');
 
 // get FormideOS object
-require('../core/FormideOS')();
+require('../core/FormideOS');
 
 getMac.getMac(function(err, macAddress) {
 	
@@ -38,7 +38,7 @@ getMac.getMac(function(err, macAddress) {
 	FormideOS.moduleManager.loadModule('core/modules/cloud', 	'cloud',	true);
 	
 	// Load all 3rd party modules
-	var modules = FormideOS.settings.getSetting('update', 'modules');
+	var modules = FormideOS.settings.getSetting('update', 'modules') || [];
 	for(var i in modules) {
 		FormideOS.moduleManager.loadModule("node_modules/" + modules[i], modules[i]);
 	}
@@ -48,32 +48,4 @@ getMac.getMac(function(err, macAddress) {
 	
 	// check all the settings
 	FormideOS.settings.checkSettings();
-	
-/*
-	FormideOS.reload = function() {
-		var modules = FormideOS.settings.getSetting('update', 'modules');
-
-		for(var i in modules) {
-			
-			
-			FormideOS.moduleManager.disposeModule(moduleName);
-			FormideOS.moduleManager.loadModule("node_modules/" + moduleName, moduleName);
-			FormideOS.moduleManager.activateModule(moduleName);
-		}
-		
-		// init all 3rd party modules
-		for(var i in modules) {
-			FormideOS.moduleManager.activateModule(modules[i]);
-		}
-		
-		// we init the cloud module after all other models to build the correct permission model
-		FormideOS.moduleManager.loadModule('core/modules/cloud', 	'cloud',	true);
-		FormideOS.moduleManager.activateModule('cloud');
-		
-		// check all the settings
-		FormideOS.settings.checkSettings();
-	}
-	
-	FormideOS.reload();
-*/
 });

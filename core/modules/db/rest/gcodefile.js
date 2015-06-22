@@ -19,7 +19,6 @@ module.exports = function(routes, db)
 {
 	/*
 	 * Returns a json list of all uploaded modelfiles (their properties, not the actual files)
-	 * We use the reversePopulate plugin to also attach a list of printjobs where each modelfile is referenced
 	 */
 	routes.get('/gcodefiles', function(req, res) {
 		db.Gcodefile.find().exec(function(err, gcodefiles) {
@@ -30,7 +29,6 @@ module.exports = function(routes, db)
 
 	/*
 	 * Returns a json object with info about a single modelfile
-	 * We use the reversePopulate plugin to also attach a list of printjobs where the modelfile is referenced
 	 */
 	routes.get('/gcodefiles/:id', function(req, res) {
 		db.Gcodefile.findOne({ _id: req.params.id }).lean().exec(function(err, gcodefile) {

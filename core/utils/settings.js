@@ -15,10 +15,10 @@
 var fs = require('fs');
 var observed = require('observed');
 
-module.exports = function(FormideOS) {
+module.exports = function() {
 
 	// environment
-	this.env = process.env.NODE_ENV || 'development';
+	this.env = process.env.NODE_ENV || 'production';
 	
 	// settings object
 	this.cfg = JSON.parse(fs.readFileSync(FormideOS.appRoot + FormideOS.config.get('settings.path') + '/settings.json', {encoding: 'utf8'}));

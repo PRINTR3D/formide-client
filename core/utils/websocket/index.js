@@ -15,12 +15,18 @@
 var io 							= require('socket.io');
 var permissionsMiddleware 		= require('./middleware/permissions');
 
-connection = io.listen(FormideOS.http.server);
+module.exports = {
 
-connection.use(function(socket, next) {
-	FormideOS.http.session(socket.request, socket.request.res, next);
-});
+	init: function() {
+		
+		var connection = io.listen(FormideOS.http.server);
 
-connection.use(permissionsMiddleware);
-
-module.exports = connection;
+		connection.use(function(socket, next) {
+			FormideOS.http.session(socket.request, socket.request.res, next);
+		});
+		
+		connection.use(permissionsMiddleware);
+		
+		return connection;
+	}
+}

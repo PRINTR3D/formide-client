@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var timestamps  = require('mongoose-timestamp');
 var Schema = mongoose.Schema;
+var uuid = require('node-uuid');
 
 var schema = new Schema({
 	token: { type: String, required: true },
@@ -8,6 +9,14 @@ var schema = new Schema({
 	permissions: [{ type: String }]
 });
 schema.plugin(timestamps);
+
+schema.static('generate', function(user, cb) {
+	this.create({
+		token: uuid.v4(),
+		user: user._id,
+		permissions: user.permissions
+	}, cb);
+});
 
 mongoose.model('accesstokens', schema);
 var model = mongoose.model('accesstokens');

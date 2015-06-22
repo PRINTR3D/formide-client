@@ -16,6 +16,14 @@ module.exports = function(routes, module) {
 	
 	// session things
 	routes.post('/login', FormideOS.http.auth.authenticate('local-login'), function(req, res) {
+		
+		FormideOS.module('db').db.AccessToken.generate(req.user, function(err, accessToken) {
+			if (err) return res.json({ success: false, message: err });
+			return res.json({ success: true, access_token: accessToken.token });
+		});
+		
+		
+/*
 		// TODO: rewrite to cleaner solution
 		var permissions = req.user.permissions || [];
 		req._permissions.session = true;
@@ -25,6 +33,7 @@ module.exports = function(routes, module) {
 			success: true,
 			sessionID: req.sessionID
 		});
+*/
 	});
 
 	routes.get('/logout', function(req, res) {
@@ -74,6 +83,10 @@ module.exports = function(routes, module) {
 			if (err) return res.send(err);
 			return res.send(user);
 		});
+	});
+	
+	routes.post('/invite', FormideOS.http.permissions.check('auth'), function(req, res) {
+		// invite a user via the cloud
 	});
 
 	routes.post('/users', FormideOS.http.permissions.check('auth'), function(req, res) {

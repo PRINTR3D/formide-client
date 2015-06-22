@@ -12,43 +12,40 @@
  *
  */
  
-FormideOS = {};
-
 var path 	= require('path');
 
 // define global FormideOS object
-module.exports = function() {
+FormideOS = {};
 
-	// global directories
-	FormideOS.coreRoot = path.resolve(__dirname) + '/';
-	FormideOS.appRoot = path.resolve(__dirname + '/../') + '/';
+// global directories
+FormideOS.coreRoot = path.resolve(__dirname) + '/';
+FormideOS.appRoot = path.resolve(__dirname + '/../') + '/';
 
-	// global config
-	FormideOS.config = require('./utils/config.js')();
+// global config
+FormideOS.config = require('./utils/config.js')();
 
-	// register events
-	FormideOS.events = require('./utils/events.js');
+// register events
+FormideOS.events = require('./utils/events.js');
 
-	// register debug
-	FormideOS.debug = require('./utils/debug.js');
+// register debug
+FormideOS.debug = require('./utils/debug.js');
 
-	// global user settings
-	FormideOS.settings = require('./utils/settings.js')(FormideOS);
-	
-	// global http server
-	FormideOS.http = require('./utils/http');
-	
-	// global ws server
-	FormideOS.ws = require('./utils/websocket');
+// global user settings
+FormideOS.settings = require('./utils/settings.js')();
 
-	// register util functions
-	FormideOS.utils = require('./utils/functions.js');
-	
-	// module manager
-	FormideOS.moduleManager = require('./utils/moduleManager.js')(FormideOS);
-	
-	// get registered module
-	FormideOS.module = function(moduleName) {
-		return FormideOS.moduleManager.getModule(moduleName)
-	};
+// global http server
+FormideOS.http = require('./utils/http').init();
+
+// global ws server
+FormideOS.ws = require('./utils/websocket').init();
+
+// register util functions
+FormideOS.utils = require('./utils/functions.js');
+
+// module manager
+FormideOS.moduleManager = require('./utils/moduleManager.js')();
+
+// get registered module
+FormideOS.module = function(moduleName) {
+	return FormideOS.moduleManager.getModule(moduleName)
 };

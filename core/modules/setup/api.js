@@ -27,18 +27,6 @@ module.exports = function(routes, module)
 	 * Send token and wifi credentials
 	 */
 	routes.post('/token', function(req, res) {
-		req.checkBody('wifi_ssid', 'wifi_ssid invalid').notEmpty();
-		req.checkBody('wifi_password', 'wifi_password invalid').notEmpty();
-		req.checkBody('registertoken', 'token invalid').notEmpty();
-
-		var inputErrors = req.validationErrors();
-		if(inputErrors) {
-			return res.status(400).json({
-				status: 400,
-				errors: inputErrors
-			});
-		}
-
 		module.addUser(req.body.email, req.body.password, function(err) {
 			if (err) return res.send({ success: false, error: err });
 			module.registerToCloud(req.body.wifi_ssid, req.body.wifi_password, req.body.registertoken);
