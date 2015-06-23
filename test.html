@@ -11,8 +11,8 @@
 		  	
 		  	setTimeout(function() {
 		  	
-		  	var printerWS = io("http://localhost:1337/printer");
-		  	var slicerWS = io("http://localhost:1337/slicer");
+		  	var printerWS = io("http://localhost:1337/printer?access_token=280cd592-7bb9-46db-8e4a-56bc9fc2b073");
+		  	var slicerWS = io("http://localhost:1337/slicer?access_token=280cd592-7bb9-46db-8e4a-56bc9fc2b073");
 		  
 			  printerWS.on('status', function(data) {
 			  	console.log(data);
