@@ -27,9 +27,9 @@ module.exports = function(routes, module)
 	 * Send token and wifi credentials
 	 */
 	routes.post('/token', function(req, res) {
-		module.addUser(req.body.email, req.body.password, function(err) {
+		module.addUser(req.body.email, req.body.password, req.body.registertoken, function(err, user) {
 			if (err) return res.send({ success: false, error: err });
-			module.registerToCloud(req.body.wifi_ssid, req.body.wifi_password, req.body.registertoken);
+			module.registerToCloud(req.body.wifi_ssid, req.body.wifi_password, user.cloudConnectionToken);
 			return res.send({ success: true });
 		});
 	});

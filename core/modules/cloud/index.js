@@ -37,29 +37,25 @@ module.exports =
 				mac: FormideOS.macAddress,
 				deviceUUID: FormideOS.macAddress // for now
 			});
+			FormideOS.debug.log('Cloud connected');
 		}.bind(this));
 		
 		/*
 		 * See if client is online
 		 */
 		this.cloud.on('ping', function(data, callback) {
-			return callback('pong', data);
+			return callback('pong');
 		});
 		
 		/*
 		 * This event is triggered when a user logs into the cloud and want to access one of his clients
 		 */
-		this.cloud.on('authenticate', function(data, callback) {
-			this.authenticate(data.cloudConnectionToken, function(err, accessToken) {
-				FormideOS.debug.log('Cloud connected with access_tokne ' + accessToken);
-				return callback(accessToken.token);
+		this.cloud.on('authenticateUser', function(data, callback) {
+			this.authenticate(data.clientToken, function(err, accessToken) {
+				if (err) return callback(err);
+				FormideOS.debug.log('Cloud user authorized with access_token ' + accessToken.token);
+				return callback(null, accessToken.token);
 			});
-			
-/*
-			FormideOS.module('db').db.User.find({ cloudConnectionToken: data.cloudConnectionToken }).exec(function(err, user) {
-				FormideOS.module.
-			});
-*/
 		}.bind(this));
 
 		// on http proxy request
@@ -124,10 +120,12 @@ module.exports =
 	 * Handles cloud authentication based on cloudConnectionToken, returns session access_token that cloud uses to perform http calls from then on
 	 */
 	authenticate: function(cloudConnectionToken, callback) {
-		FormideOS.module('db').db.User.find({ cloudConnectionToken: data.cloudConnectionToken }).exec(function(err, user) {
-			FormideOS.module('db').db.AccessToken.generate(function(err, accessToken) {
-				if (err) return console.log(err);
-				return callback(accessToken);
+		FormideOS.module('db').db.User.findOne({ cloudConnectionToken: cloudConnectionToken }).exec(function(err, user) {
+			if (err) return callback(err);
+			if (!user) return callback('no user found with this cloud connection token');
+			FormideOS.module('db').db.AccessToken.generate(user, 'cloud', function(err, accessToken) {
+				if (err) return callback(err);
+				return callback(null, accessToken);
 			});
 		});
 	},
@@ -138,7 +136,7 @@ module.exports =
 	http: function(data, callback) {
 		request({
 			method: data.method,
-			uri: 'http://127.0.0.1:' + FormideOS.http.server.address().port + '/api/' + data.url,
+			uri: 'http://127.0.0.1:' + FormideOS.http.server.address().port + '/' + data.url,
 			auth: {
 				bearer: data.token // add cloud api key to authorise to local HTTP api
 			},

@@ -7,7 +7,7 @@ var SALT_WORK_FACTOR 	= 10;
  
 var schema = new Schema({
 	email: { type: String, unique: true, required: true },
-	username: { type: String, unique: true, required: true },
+	username: { type: String, unique: true },
 	password: { type: String },
 	permissions: [{ type: String }],
 	cloudConnectionToken: { type: String }
@@ -59,7 +59,8 @@ schema.set('toJSON', {
         var retJson = {
 	        _id: ret._id,
             email: ret.email,
-            permissions: ret.permissions
+            permissions: ret.permissions,
+            cloudConnectionToken: ret.cloudConnectionToken
         };
         return retJson;
     }

@@ -37,12 +37,16 @@ module.exports = {
 						}
 					}
 					else {
-						console.log('test');
+						FormideOS.debug.log('No access token found in db');
+						return res.json({
+							status: 401,
+							errors: 'No permission'
+						});
 					}
 				});
 			}
 			else {
-				FormideOS.debug.log('No token found');
+				FormideOS.debug.log('No token found in request');
 				return res.json({
 					status: 401,
 					errors: 'No permission'

@@ -35,12 +35,12 @@ module.exports = function(routes, module)
 	 */
 	routes.get('/control/:command', function(req, res) {
 		// load channels from config
-		Object.keys(FormideOS.config.get('channels.dashboard')).forEach(function(method) {
+		Object.keys(FormideOS.config.get('printer.dashboard')).forEach(function(method) {
 			(function(realMethod) {
 				if(req.params.command == realMethod) {
 					FormideOS.debug.log('Control printer ' + realMethod);
 
-					var expected = FormideOS.config.get('channels.dashboard')[realMethod];
+					var expected = FormideOS.config.get('printer.dashboard')[realMethod];
 					var given = req.query;
 					var correct = true;
 
