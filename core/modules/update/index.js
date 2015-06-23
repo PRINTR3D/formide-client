@@ -65,7 +65,7 @@ module.exports = {
 	},
 	
 	getPackage: function(packageName, cb) {
-		return cb(FormideOS.modulesInfo[packageName]);
+		return cb(FormideOS.moduleManager.getModuleInfo(packageName));
 	},
 	
 /*
