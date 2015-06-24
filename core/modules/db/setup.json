@@ -5,16 +5,14 @@
 			"email": "test@user.com",
 			"permissions": [
 				"auth",
-				"camera",
 				"files",
-				"led",
 				"log",
 				"printer",
 				"db",
 				"slicer",
-				"wifi",
 				"device",
-				"settings"
+				"settings",
+				"update"
 			]
 		}
 	],
@@ -38,8 +36,6 @@
 			"port": "/dev/tty1"
 		}
 	],
-	
-	"accesstokens": [],
 	
 	"materials": [
 		{

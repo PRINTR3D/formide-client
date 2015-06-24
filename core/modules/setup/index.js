@@ -54,16 +54,14 @@ module.exports = {
 				password: password,
 				permissions: [
 					"auth",
-					"camera",
 					"files",
-					"led",
 					"log",
 					"printer",
 					"db",
 					"slicer",
-					"wifi",
 					"device",
-					"settings"
+					"settings",
+					"update"
 				],
 				cloudConnectionToken: registertoken
 			}, function(err, user) {

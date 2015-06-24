@@ -22,25 +22,30 @@ module.exports = {
 		db.Gcodefile.remove({}, function(err) {});
 		db.Printjob.remove({}, function(err) {});
 		db.Queueitem.remove({}, function(err) {});
+		db.AccessToken.remove({}, function(err) {});
 		
 		db.User.remove({}, function(err) {
-			db.User.collection.insert(setupConfig.users);
+			db.User.create(setupConfig.users, function(err) {
+				if (err) FormideOS.debug.log('db users create err: ' + err);
+			});
 		});
 		
 		db.Printer.remove({}, function(err) {
-			db.Printer.create(setupConfig.printers);
-		});
-		
-		db.AccessToken.remove({}, function(err) {
-			db.AccessToken.create(setupConfig.accesstokens); // not configged
+			db.Printer.create(setupConfig.printers, function(err) {
+				if (err) FormideOS.debug.log('db printers create err: ' + err);
+			});
 		});
 		
 		db.Material.remove({}, function(err) {
-			db.Material.create(setupConfig.materials);
+			db.Material.create(setupConfig.materials, function(err) {
+				if (err) FormideOS.debug.log('db materials create err: ' + err);
+			});
 		});
 		
 		db.Sliceprofile.remove({}, function(err) {
-			db.Sliceprofile.create(setupConfig.sliceprofiles);
+			db.Sliceprofile.create(setupConfig.sliceprofiles, function(err) {
+				if (err) FormideOS.debug.log('db sliceprofiles create err: ' + err);
+			});
 		});
 	}
 }

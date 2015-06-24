@@ -1,13 +1,11 @@
 var mongoose 			= require('mongoose');
 var timestamps  		= require('mongoose-timestamp');
 var Schema 				= mongoose.Schema;
-var bcrypt 				= require('bcrypt');
-var crypto 				= require('crypto');
+var bcrypt 				= require('bcrypt-nodejs');
 var SALT_WORK_FACTOR 	= 10;
  
 var schema = new Schema({
 	email: { type: String, unique: true, required: true },
-	username: { type: String, unique: true },
 	password: { type: String },
 	permissions: [{ type: String }],
 	cloudConnectionToken: { type: String }
@@ -16,15 +14,14 @@ schema.plugin(timestamps);
 
 schema.pre('save', function(next) {
 	var user = this;
-
+	
 	if(!user.isModified('password')) return next();
 
 	bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
 		if (err) return next(err);
-
-		bcrypt.hash(user.password, salt, function(err, hash) {
+		
+		bcrypt.hash(user.password, salt, null, function(err, hash) {
 			if (err) return next(err);
-
 			user.password = hash;
 			next();
 		});
