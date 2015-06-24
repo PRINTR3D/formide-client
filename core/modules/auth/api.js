@@ -24,17 +24,10 @@ module.exports = function(routes, module) {
 		});
 	});
 
-	routes.get('/logout', function(req, res) {
-		req.logout();
-		return res.send({
-			success: true
-		});
-	});
-
 	routes.get('/session', function(req, res) {
-		return res.send({
-			sessionID: req.sessionID,
-			status: 'logged in'
+		FormideOS.module('db').db.AccessToken.findOne({ token: req.token }).exec(function(err, accessToken) {
+			if (err) return res.json({ success: false, message: err });
+			return res.json({ success: true, session: accessToken });
 		});
 	});
 
