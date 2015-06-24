@@ -62,7 +62,6 @@ module.exports = function() {
 		//for(var i in this.fullCfg) {
 			// create module in settings
 			if(this.cfg[i] === undefined || Object.keys(this.cfg[i]).length === 0) {
-				console.log(i);
 				this.cfg[i] = {};
 			}
 			// add subsettings for module

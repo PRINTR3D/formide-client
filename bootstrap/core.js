@@ -45,7 +45,4 @@ getMac.getMac(function(err, macAddress) {
 		
 	// Activate all loaded modules
 	FormideOS.moduleManager.activateLoadedModules();
-	
-	// check all the settings
-	FormideOS.settings.checkSettings();
 });
