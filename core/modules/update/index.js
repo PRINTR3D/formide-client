@@ -119,7 +119,7 @@ module.exports = {
 					modules.push(packageName);
 					FormideOS.module('settings').saveSetting('update', 'modules', modules);
 					if (data !== undefined) {
-						FormideOS.moduleManager.loadModule(packageName);
+						FormideOS.moduleManager.loadModule('node_modules/' + packageName, packageName, false);
 						FormideOS.moduleManager.activateModule(packageName);
 					}
 					return cb(null, data);
@@ -137,7 +137,6 @@ module.exports = {
 				var index = modules.indexOf(packageName);
 				modules.splice(index, 1);
 				FormideOS.module('settings').saveSetting('update', 'modules', modules);
-				FormideOS.deregister(packageName);
 				if (data !== undefined) {
 					FormideOS.moduleManager.disposeModule(packageName);
 				}

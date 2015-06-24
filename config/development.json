@@ -57,7 +57,6 @@
 		"simulated": true
 	},
 	"settings": {
-		"permission": false,
 		"path": "../storage"
 	},
 	"setup": {
@@ -65,6 +64,6 @@
 		"registerUrl": "https://api2.formide.com/clients/register/token"
 	},
 	"update": {
-		"permission": false
+		
 	}
 }

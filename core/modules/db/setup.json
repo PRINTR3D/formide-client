@@ -73,7 +73,6 @@
 				   "angle": 30,
 				   "supportEverywhere": 0,
 				   "supportPlatform": 0,
-				   "extruder": "extruder1",
 				   "XYDistance": 700,
 				   "ZDistance": 150
 				},
@@ -115,8 +114,7 @@
 	               "surfaceLineWidth": 400,
 	               "surfaceLineSpacing": 5000,
 	               "firstLayerAirGap": 250,
-	               "fanSpeed": 25,
-				   "extruder":"extruder1"
+	               "fanSpeed": 25
 	           	},
 				"bottom": {
 				   "thickness": 600,
@@ -149,8 +147,8 @@
 				   "thickness": 200,
 				   "wallThickness": 800
 				},
-				"extra": {
-					"brimLines": 0
+				"brim": {
+					"lines": 0
 				},
 				"gcode": {
 				   "startGcode": ["G21", "G28", "G1 Z5 F5000", "G90", "G92 E0", "M82", "G92 E0"],

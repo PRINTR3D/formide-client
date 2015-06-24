@@ -26,6 +26,7 @@ module.exports =
 	 * Init for cloud module
 	 */
 	init: function(config) {
+		
 		// init cloud with new socket io client to online cloud url
 		this.cloud = socket(config.url);
 

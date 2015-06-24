@@ -134,6 +134,7 @@ module.exports = function() {
 			if(typeof module.instance.dispose === 'function') {
 				module.instance.dispose();
 			}
+			FormideOS.debug.log("module " + moduleName + " disposed");
 			FormideOS.events.emit("moduleManager.moduleDisposed", module.info);
 			delete modules[moduleName];
 		}

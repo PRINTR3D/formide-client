@@ -14,9 +14,7 @@
 
 var argv 		= require('minimist');
 
-module.exports =
-{
-	name: "process",
+module.exports = {
 	
 	process: null,
 	args: null,
@@ -26,7 +24,7 @@ module.exports =
 		this.process = process;
 		this.args = argv(this.process.argv.slice(2));
 		this.process.on('exit', this.processExit);
-		//this.process.on('uncaughtException', this.processError);
+		this.process.on('uncaughtException', this.processError);
 	},
 
 	getProcess: function()

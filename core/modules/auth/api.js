@@ -17,25 +17,11 @@ var request = require('request');
 module.exports = function(routes, module) {
 	
 	// session things
-	routes.post('/login', FormideOS.http.auth.authenticate('local-login'), function(req, res) {
-		
+	routes.post('/login', FormideOS.http.auth.authenticate('local-login'), function(req, res) {	
 		FormideOS.module('db').db.AccessToken.generate(req.user, 'local', function(err, accessToken) {
 			if (err) return res.json({ success: false, message: err });
 			return res.json({ success: true, access_token: accessToken.token });
 		});
-		
-		
-/*
-		// TODO: rewrite to cleaner solution
-		var permissions = req.user.permissions || [];
-		req._permissions.session = true;
-		req.session['permissions'] = permissions;
-		req._permissions.permissions = req.session['permissions'];
-		return res.send({
-			success: true,
-			sessionID: req.sessionID
-		});
-*/
 	});
 
 	routes.get('/logout', function(req, res) {
@@ -53,7 +39,7 @@ module.exports = function(routes, module) {
 	});
 
 	// accesstoken things
-	routes.get('/tokens', /* FormideOS.http.permissions.check('auth'),  */function( req, res ) {
+	routes.get('/tokens', FormideOS.http.permissions.check('auth'), function( req, res ) {
 		module.getAccessTokens(function(tokens) {
 			return res.send(tokens);
 		});
@@ -73,7 +59,7 @@ module.exports = function(routes, module) {
 	});
 	
 	// user config
-	routes.get('/users', /* FormideOS.http.permissions.check('auth'),  */function(req, res) {
+	routes.get('/users', FormideOS.http.permissions.check('auth'), function(req, res) {
 		FormideOS.module('db').db.User.find().exec(function(err, users) {
 			if (err) return res.send(err);
 			return res.send(users);
@@ -117,7 +103,7 @@ module.exports = function(routes, module) {
 	});
 
 	routes.post('/users', FormideOS.http.permissions.check('auth'), function(req, res) {
-		FormideOS.module('db').db.User.create(req.body).exec(function(err, user) {
+		FormideOS.module('db').db.User.create(req.body, function(err, user) {
 			if (err) return res.status(400).send(err);
 			if (user) {
 				return res.send({
