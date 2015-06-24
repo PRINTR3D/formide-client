@@ -54,11 +54,12 @@ module.exports = function() {
 	// adds settings for a module
 	this.addModuleSettings = function(moduleName, moduleSettings) {
 		this.fullCfg[moduleName] = moduleSettings;
+		this.checkSettings(moduleName);
 	}
 	
 	// loop over all settings to see if required ones are there
-	this.checkSettings = function() {
-		for(var i in this.fullCfg) {
+	this.checkSettings = function(i) {
+		//for(var i in this.fullCfg) {
 			// create module in settings
 			if(this.cfg[i] === undefined || Object.keys(this.cfg[i]).length === 0) {
 				console.log(i);
@@ -79,7 +80,7 @@ module.exports = function() {
 					}
 				}
 			}
-		}
+		//}
 	}
 	
 	return this;
