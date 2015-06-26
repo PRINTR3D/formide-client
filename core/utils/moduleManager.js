@@ -78,7 +78,7 @@ module.exports = function() {
 		}
 		
 		FormideOS.debug.log("module " + moduleName + " loaded");
-		FormideOS.events.emit("moduleManager.moduleLoaded", module.info);
+		FormideOS.events.emit("moduleManager.moduleLoaded", moduleInfo);
 		return modules[moduleName];
 	}
 	

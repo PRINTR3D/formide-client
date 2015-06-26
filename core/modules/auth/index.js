@@ -15,7 +15,7 @@
 var uuid = require('node-uuid');
 
 module.exports =
-{
+{	
 	generateAccessToken: function(permissions, callback) {
 		var token = uuid.v4();
 		
