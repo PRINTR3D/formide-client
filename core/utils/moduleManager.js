@@ -47,6 +47,13 @@ module.exports = function() {
 			return;
 		}
 		
+		var instance = require(moduleRoot + '/index.js')
+		
+		if(typeof instance.exposeSettings === 'function') {
+			moduleInfo.exposeSettings = instance.exposeSettings();
+			FormideOS.settings.addModuleSettings(moduleName, moduleInfo.exposeSettings);
+		}
+		
 		if (fs.existsSync(moduleRoot + '/package.json')) {
 			try {
 				var pack = require(moduleRoot + '/package.json');
@@ -73,7 +80,7 @@ module.exports = function() {
 		
 		modules[moduleName] = {
 			info: moduleInfo,
-			instance: require(moduleRoot + '/index.js'),
+			instance: instance,
 			status: 'loaded'
 		}
 		
@@ -93,11 +100,6 @@ module.exports = function() {
 	
 	var activateModule = function(moduleName) {
 		var module = getModule(moduleName);
-		
-		if(typeof module.instance.exposeSettings === 'function') {
-			module.info.exposeSettings = module.instance.exposeSettings();
-			FormideOS.settings.addModuleSettings(moduleName, module.info.exposeSettings);
-		}
 		
 		if(typeof module.instance.init === 'function') {
 			module.instance.init(module.info.config);
