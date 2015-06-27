@@ -1,27 +1,26 @@
 /*
- *	    ____  ____  _____   ____________
- *	   / __ / __ /  _/ | / /_  __/ __
- *	  / /_/ / /_/ // //  |/ / / / / /_/ /
- *	 / ____/ _, _// // /|  / / / / _, _/
- *	/_/   /_/ |_/___/_/ |_/ /_/ /_/ |_|
- *
- *	Copyright Printr B.V. All rights reserved.
- *	This code is closed source and should under
- *	nu circumstances be copied or used in other
- *	applications than for Printr B.V.
- *
+ *	This code was created for Printr B.V. It is open source under the formideos-client package.
+ *	Copyright (c) 2015, All rights reserved, http://printr.nl
+ */
+ 
+/*
+ *	This is the bootstrapper of formideos-client. It basically kicks off the formideos core
+ *	and loads the core modules. After that, all user installed modules are loaded. Finally,
+ *	all loaded modules are activated via the moduleManager.activateLoadedModules function.
  */
 
-// require dependencies
-var getMac 	= require('getmac');
+// Dependencies
+var getMac	= require('getmac');
 
-// get FormideOS object
+// Load formideos core file
 require('./core/FormideOS');
 
 getMac.getMac(function(err, macAddress) {
 	
+	// Set mac address (used for cloud connection)
 	FormideOS.macAddress = FormideOS.config.get('cloud.softMac') || macAddress;
 	
+	// Load core modules
 	FormideOS.moduleManager.loadModule('core/modules/process', 	'process', 	true);
 	FormideOS.moduleManager.loadModule('core/modules/db', 		'db', 		true);
 	FormideOS.moduleManager.loadModule('core/modules/settings',	'settings', true);
@@ -32,9 +31,8 @@ getMac.getMac(function(err, macAddress) {
 	FormideOS.moduleManager.loadModule('core/modules/printer', 	'printer', 	true);
 	FormideOS.moduleManager.loadModule('core/modules/slicer', 	'slicer', 	true);
 	FormideOS.moduleManager.loadModule('core/modules/setup', 	'setup',	true);
-	//FormideOS.moduleManager.loadModule('core/modules/wifi', 	'wifi',		true);
+	//FormideOS.moduleManager.loadModule('core/modules/wifi', 	'wifi',		true);	// Wifi manager is not finished yet
 	FormideOS.moduleManager.loadModule('core/modules/update', 	'update', 	true);
-	//FormideOS.moduleManager.loadModule('core/modules/led', 	'led', 		true);
 	FormideOS.moduleManager.loadModule('core/modules/cloud', 	'cloud',	true);
 	
 	// Load all 3rd party modules
@@ -42,8 +40,6 @@ getMac.getMac(function(err, macAddress) {
 	for(var i in modules) {
 		FormideOS.moduleManager.loadModule("node_modules/" + modules[i], modules[i]);
 	}
-	
-	//FormideOS.moduleManager.loadModule('../formideOS-interface', 'formideos-interface', false);
 
 	// Activate all loaded modules
 	FormideOS.moduleManager.activateLoadedModules();

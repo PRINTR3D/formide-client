@@ -1,15 +1,14 @@
 /*
- *	    ____  ____  _____   ____________
- *	   / __ / __ /  _/ | / /_  __/ __
- *	  / /_/ / /_/ // //  |/ / / / / /_/ /
- *	 / ____/ _, _// // /|  / / / / _, _/
- *	/_/   /_/ |_/___/_/ |_/ /_/ /_/ |_|
- *
- *	Copyright Printr B.V. All rights reserved.
- *	This code is closed source and should under
- *	nu circumstances be copied or used in other
- *	applications than for Printr B.V.
- *
+ *	This code was created for Printr B.V. It is open source under the formideos-client package.
+ *	Copyright (c) 2015, All rights reserved, http://printr.nl
+ */
+ 
+/*
+ *	This is the module manager of formideos-client. As the name says, it manages the lifecyle of all
+ * 	modules, both core and 3rd party. There are fucntions for loading, activating and disposing modules,
+ *	all of which can be done on the fly without having to restart the application. We also keep track of
+ *	some key information about each module, like the root path, it's capabilities and 3rd party package
+ *	information.
  */
 
 var fs = require('fs');

@@ -1,18 +1,20 @@
 {
   "name": "formideOS-client",
   "version": "1.0.0",
-  "description": "Modular 3D printing operating system",
-  "main": "./bootstrap.js",
-  "author": "Printr",
-  "private": true,
+  "description": "FORMIDEOS is a modular 3D printing operating system with the goal of serving all 3D printers."
+  "main": "bootstrap.js",
+  "author": "Printr B.V. <info@printr.nl>",
   "reposityory": {
     "type": "git",
     "url": "https://github.com/PRINTR3D/formideOS-client.git"
   },
+  "bugs": {
+	  "url": "https://github.com/PRINTR3D/formideOS-client.git/issues"
+  },
   "contributors": "https://github.com/PRINTR3D/formideOS-client/graphs/contributors",
+  "licence": "",
   "scripts": {
-    "start": "node bootstrap",
-    "test": "mocha spec"
+    "start": "node bootstrap"
   },
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
