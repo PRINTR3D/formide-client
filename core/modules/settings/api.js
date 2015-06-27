@@ -37,34 +37,4 @@ module.exports = function(routes, module) {
 			return res.send(settings);
 		});
 	});
-	
-	/**
-	 * Get partial settings object by key
-	 */
-/*
-	routes.get('/:settingName', function(req, res) {
-		module.getSetting(req.params.settingName, function(setting) {
-			return res.send(setting);
-		});
-	});
-	
-	routes.post('/:settingName', function(req, res) {
-		module.saveSetting(req.params.settingName, req.body, function(err, changedSetting) {
-			if(err) return res.send(err);
-			return res.send({
-				success: true,
-				setting: changedSetting
-			});
-		});
-	});
-	
-	routes.delete('/:settingName', function(req, res) {
-		module.deleteSetting(req.params.settingName, function(err) {
-			if(err) return res.send({ success: false, message: err });
-			return res.send({
-				success: true
-			});
-		});
-	});
-*/
 };

@@ -12,30 +12,21 @@
  *
  */
 
-module.exports =
-{
-	name: "wifi",
+module.exports = {
 	
 	connection: {},
 
-	init: function()
-	{
-		this.connection = new Wireless({
-			iface: 'wlan0'
-		});
-
-		this.connection.enable(function( err )
-		{
-			this.connection.start();
-		}.bind(this));
+	init: function() {
+		// init
 	},
 
-	connect: function( SSID, passwd, callback )
-	{
-		this.connection.join( SSID, passwd, function( err )
-		{
-			callback( err );
-			console.log( err );
-		});
-	}
+	connectToInfra: function(SSID, passwd, callback) {
+		// connect to wifi
+	},
+	
+	connectToAP: function(callback) {
+		
+	},
+	
+	
 }

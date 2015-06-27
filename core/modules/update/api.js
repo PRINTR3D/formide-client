@@ -21,14 +21,6 @@ module.exports = function(routes, module) {
 		});
 	});
 	
-	routes.get('/core/clean', function(req, res) {
-		// somehow clean the core
-	});
-	
-	routes.get('/core/reset', function(req, res) {
-		// completely re-install the core
-	});
-	
 	routes.get('/modules', function(req, res) {
 		module.getPackages(false, function(modules) {
 			return res.json(modules);
@@ -49,15 +41,6 @@ module.exports = function(routes, module) {
 			return res.json({ success: true, data: output});
 		});
 	});
-	
-/*
-	routes.get('/modules/updateall', function(req, res) {
-		module.updatePackages(function(err, output) {
-			if (err) return res.json({ success: false, data: output});
-			return res.json({ success: true, data: output});
-		});
-	});
-*/
 	
 	routes.get('/modules/:moduleName', function(req, res) {
 		if (!req.params.moduleName) return res.json({ success: false, data: 'no moduleName given'});
@@ -81,17 +64,4 @@ module.exports = function(routes, module) {
 			return res.json({ success: true, data: output});
 		});
 	});
-	
-/*
-	routes.post('/start', function( req, res )
-	{
-		module.download();
-		res.send('OK');
-	});
-
-	ruoutes.get('/progress', function( req, res )
-	{
-		res.send(module.progress);
-	});
-*/
 }

@@ -20,38 +20,22 @@ module.exports = {
 	},
 	
 	getExposedSettings: function(cb) {
-		exposedSettings = {};
-		for(var i in FormideOS.moduleManager.getModules()) {
-			var moduleInfo = FormideOS.moduleManager.getModuleInfo(i);
-			if(moduleInfo.exposeSettings !== false) {
-				exposedSettings[i] = moduleInfo.exposeSettings;
-			}
-		}
-		return cb(exposedSettings);
+		return FormideOS.settings.getTarget();
 	},
 	
 	getSetting: function(module, key, cb) {
-		if (cb) return cb(FormideOS.settings.getSetting(module, key));
-		return FormideOS.settings.getSetting(module, key);
+		return cb(FormideOS.settings.get(module, key));
 	},
 	
 	getModuleSettings: function(module, cb) {
-		if (cb) return cb(FormideOS.settings.getSettings(module));
-		return FormideOS.settings.getSettings(module);
+		return cb(FormideOS.settings.get(module));
 	},
 	
 	saveModuleSettings: function(module, keyValuePairs, cb) {
 		// we do this for loop instead of replacing the whole object to prevent losing keys that are not posted
 		for(var i in keyValuePairs) {
-			FormideOS.settings.saveSetting(module, i, keyValuePairs[i]);
+			FormideOS.settings.set(module, i, keyValuePairs[i]);
 		}
-		if (cb) return cb(FormideOS.settings.getSettings(module));
-		return FormideOS.settings.getSettings(module);
-	},
-	
-	saveSetting: function(module, key, value, cb) {
-		FormideOS.settings.saveSetting(module, key, value);
-		if (cb) return cb(FormideOS.settings.getSetting(module, key));
-		return FormideOS.settings.getSetting(module, key);
+		return cb(FormideOS.settings.getSettings(module));
 	}
 }

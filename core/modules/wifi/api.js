@@ -12,18 +12,14 @@
  *
  */
 
-module.exports = function(routes, module)
-{
-	routes.get('/client/:ssid/:password', function( req, res )
-	{
-		module.connect(req.params.ssid, req.params,password, function( response )
-		{
-			res.send( response );
-		})
+module.exports = function(routes, module) {
+	routes.get('/client/:ssid/:password', function(req, res) {
+		module.connect(req.params.ssid, req.params,password, function(response) {
+			res.send(response);
+		});
 	});
 
-	routes.get('/ap/:ssid/:password', function( req, res )
-	{
+	routes.get('/ap/:ssid/:password', function(req, res) {
 
 	});
 }

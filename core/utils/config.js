@@ -14,11 +14,10 @@
 
 module.exports = function()
 {
-	var env = process.env.NODE_ENV || 'development';
+	var env = process.env.NODE_ENV || 'production';
 	var cfg = require('../../config/' + env + '.json');
 
-	function parts(key)
-	{
+	function parts(key) {
 		if (Array.isArray(key)) return key
 		return key.split('.')
 	}
