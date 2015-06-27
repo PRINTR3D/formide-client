@@ -47,6 +47,7 @@ module.exports = function() {
 			return;
 		}
 		
+		delete require.cache[require.resolve(moduleRoot + '/index.js')];
 		var instance = require(moduleRoot + '/index.js')
 		
 		if(typeof instance.exposeSettings === 'function') {
@@ -56,6 +57,7 @@ module.exports = function() {
 		
 		if (fs.existsSync(moduleRoot + '/package.json')) {
 			try {
+				delete require.cache[require.resolve(moduleRoot + '/package.json')];
 				var pack = require(moduleRoot + '/package.json');
 				moduleInfo.package = pack;
 				moduleInfo.version = pack.version;
@@ -67,6 +69,7 @@ module.exports = function() {
 		
 		if (fs.existsSync(moduleRoot + '/config.json')) {
 			try {
+				delete require.cache[require.resolve(moduleRoot + '/config.json')];
 				var config = require(moduleRoot + '/config.json');
 				moduleInfo.config = config;
 			}
@@ -111,6 +114,7 @@ module.exports = function() {
 			// register module's api as sub-app in express server
 			var router = FormideOS.http.express.Router();
 			router.use(FormideOS.http.permissions.check(module.info.namespace, module.info.config.permission));
+			delete require.cache[require.resolve(module.info.root + '/api.js')];
 			require(module.info.root + '/api.js')(router, module.instance);
 			FormideOS.http.app.use('/api/' + module.info.namespace, router);
 		}
@@ -120,6 +124,7 @@ module.exports = function() {
 			
 			// register module's ws api
 			var wsNamespace = FormideOS.ws.of('/' + module.info.namespace);
+			delete require.cache[require.resolve(module.info.root + '/websocket.js')];
 			require(module.info.root + '/websocket.js')(wsNamespace, module.instance);
 		}
 		
