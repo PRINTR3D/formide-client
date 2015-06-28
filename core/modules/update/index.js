@@ -13,8 +13,9 @@
  */
 
 var fs 			= require('fs');
-var gitpull 	= require('git-pull');
-var npm 		= require("npm");
+var npm 		= require('npm');
+var path		= require('path');
+var gitty		= require('gitty');
 
 module.exports = {
 	
@@ -31,23 +32,19 @@ module.exports = {
 	
 	// for now updates 3rd party modules as well!
 	updateOS: function(cb) {
-		gitpull(FormideOS.appRoot, function(err, consoleOutput) {
-		    if (err) {
-			    return cb(err, consoleOutput);
-		    }
-		    else {
-			    npm.load(function (err) {
-					if (err) return cb(err);
-					npm.commands.update(function (updateErr, data) {
-						if (updateErr) return cb(err);
-						return cb(null, data);
-						return cb(null, {
-							"core": consoleOutput,
-							"dependencies": data
-			    		});
-		  			});
-				});
-		    }
+		
+		var formideosRepo = gitty(FormideOS.appRoot);
+		formideosRepo.pull('origin', 'development', function(err) {
+			if (err) return res.send(err);
+			npm.load(function (err) {
+				npm.commands.update(function (updateErr, data) {
+					if (updateErr) return cb(err);
+					return cb(null, {
+						"core": "updated",
+						"dependencies": data
+		    		});
+	  			});
+  			});
 		});
 	},
 	
