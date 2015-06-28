@@ -6,13 +6,13 @@
 		"port": 1337
 	},
 	"auth": {
-		"permission": false
+		"permission": false,
+		"inviteUrl": "https://api2.formide.com/clients/register/invite"
 	},
 	"cloud": {
 		"url": "https://myaccount.formide.com"
 	},
 	"db": {
-		"permission": false,
 		"storage": "../storage/database"
 	},
 	"log": {
@@ -57,7 +57,6 @@
 		"simulated": true
 	},
 	"settings": {
-		"permission": false,
 		"path": "../storage"
 	},
 	"setup": {
@@ -65,6 +64,6 @@
 		"registerUrl": "https://api2.formide.com/clients/register/token"
 	},
 	"update": {
-		"permission": false
+		
 	}
 }
