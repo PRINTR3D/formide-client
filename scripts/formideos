@@ -1,0 +1,90 @@
+#! /bin/sh
+
+### BEGIN INIT INFO
+# Provides:             formideos
+# Required-Start:
+# Required-Stop:
+# Default-Start:
+# Default-Stop:
+# Short-Description:    FormideOS
+### END INIT INFO
+
+DAEMON_PATH="/home/debian/formideOS/formideOS-client"
+
+DAEMON="NODE_ENV=production node bootstrap.js"
+DAEMONOPTS=""
+
+NAME="formideos"
+PIDFILE=/var/run/$NAME.pid
+SCRIPTNAME=/etc/init.d/$NAME
+
+start()
+{
+    printf "%-50s" "Starting $NAME..."
+	cd $DAEMON_PATH
+    PID=`sudo $DAEMON $DAEMONOPTS > /dev/null 2>&1 & echo $!`
+
+    if [ -z $PID ]; then
+        printf "%s\n" "Fail"
+    else
+        echo $PID > $PIDFILE
+        printf "%s\n" "Ok $PID"
+    fi
+}
+
+status()
+{
+	printf "%-50s" "Checking $NAME..."
+
+    if [ -f $PIDFILE ]; then
+        PID=`cat $PIDFILE`
+        if [ -z "`ps axf | grep ${PID} | grep -v grep`" ]; then
+            printf "%s\n" "Process dead but pidfile exists"
+        else
+            echo "Running"
+        fi
+    else
+        printf "%s\n" "Service not running"
+    fi
+}
+
+stop()
+{
+	printf "%-50s" "Stopping $NAME"
+    PID=`cat $PIDFILE`
+	cd $DAEMON_PATH
+
+    if [ -f $PIDFILE ]; then
+        kill -HUP $PID
+        printf "%s\n" "Ok"
+        rm -f $PIDFILE
+    else
+        printf "%s\n" "pidfile not found"
+    fi
+}
+
+case "$1" in
+
+    start)
+    	start
+		;;
+
+	stop)
+		stop
+		;;
+
+	status)
+		status
+		;;
+
+	restart)
+		stop
+		start
+		;;
+
+    *)
+		echo "Usage: $SCRIPTNAME {start|stop|restart|status}"
+		exit 1
+	;;
+
+esac
