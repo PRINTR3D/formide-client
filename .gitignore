@@ -1,9 +1,5 @@
 # Dependencies
 node_modules
 
-# Config
-config/development
-config.development.json
-
 # OSX
 .DS_Store
