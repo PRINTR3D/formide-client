@@ -46,6 +46,16 @@ cd formideOS-client
 npm install
 echo "Done!"
 
+echo "Copying service scripts"
+cp scripts/formideos /etc/init.d/formideos
+chmod 755 /etc/init.d/formideos
+chown root:root /etc/init.d/formideos
+echo "Done!"
+
+echo "Adding service to boot sequence"
+update-rc.d formideos start
+echo "Done!"
+
 echo "Running FORMIDEOS for the first time..."
 echo "Visit http://setup.formide.com to continue the setup"
 node bootstrap.js --setup

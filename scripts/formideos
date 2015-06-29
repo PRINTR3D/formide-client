@@ -9,7 +9,7 @@
 # Short-Description:    FormideOS
 ### END INIT INFO
 
-DAEMON_PATH="/home/debian/formideOS/formideOS-client"
+DAEMON_PATH="/home/pi/formideOS/formideOS-client"
 
 DAEMON="NODE_ENV=production node bootstrap.js"
 DAEMONOPTS=""
