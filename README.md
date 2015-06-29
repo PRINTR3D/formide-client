@@ -2,21 +2,10 @@ formideOS-client
 =================
 
 ## Installation and setup
-check the wiki for detailed information on installation and functionality
+Check developers.formide.com for installation instructions and a complete reference documentation of the FORMIDE and FORMIDEOS platforms.
 
 ## Contributing
-To contribute to this repository as non-printer developer, please make a private fork and submit a pull request with your changes. Printer developers can make a branch for a new feature and push to that branch and so a pull request on the development branch (which an admin will merge with master if it's stable enough).
+You can contribute to FORMIDEOS by closing issues (via fork -> pull request), adding features or just using it and report bugs! Please check the issue list of this repo before adding new ones to see if we're already aware of the issue that you're having.
 
-## Todo
-* Update manager
-	* Fetch a zip of an update
-	* put in temporary foler
-	* check hash
-	* unzip
-	* copy config
-	* copy bootscript
-	* restart to new folder
-* Cron manager
-	* Schedule print job
-* Automated tests
-* More error handling
+## Licence
+Please check LICENSE.md for licensing information.
