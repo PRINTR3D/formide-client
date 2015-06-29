@@ -25,15 +25,23 @@ module.exports = function(routes, module)
 	 * Get the current status of the printer
 	 */
 	routes.get('/status', function(req, res) {
-		FormideOS.events.once('printer.status', function(status) {
-			res.send( status.data );
+		module.getStatus(function(err, result) {
+			return res.sendStatus(result);
 		});
 	});
+	
+	
+	routes.get('/control/:command', function(req, res) {
+		module.printerControl({ command: req.params.command, parameters: req.query }, function(err, result) {
+			return res.sendStatus(result);
+		});
+	});
+	
 
 	/**
 	 * Send a command to the printer
 	 */
-	routes.get('/control/:command', function(req, res) {
+	routes.get('/controlOld/:command', function(req, res) {
 		// load channels from config
 		Object.keys(FormideOS.config.get('printer.dashboard')).forEach(function(method) {
 			(function(realMethod) {

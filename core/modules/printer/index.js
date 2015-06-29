@@ -16,24 +16,53 @@
 var spawn = require('child_process').spawn;
 var fs = require('fs');
 var net = require('net');
+var SerialPort = require("serialport");
+var MarlinDriver = require('./drivers/MarlinDriver');
 
 module.exports =
 {
 	process: null,
+	process2: null,
+	printers: [],
 	printer: {},
 	config: {},
 
 	init: function(config) {
 		this.config = config;
+		var self = this;
+		
+		SerialPort.list( function (err, ports) {
+			for(var i in ports) {
+				var port = ports[i];
+				if(port.comName.indexOf('usbserial') > -1) {
+					self.printers.push(new MarlinDriver(port.comName));
+				}
+			}
+		});
 
-		if(config.simulated)
-		{
+		if(config.simulated) {
 			this.process = spawn('node', ['driversim.js'], {cwd: FormideOS.appRoot + 'core/utils', stdio: 'pipe'});
 			this.process.stdout.setEncoding('utf8');
 			this.process.stdout.on('exit', this.onExit);
 			this.process.stdout.on('error', this.onError);
 		}
+		else {
+/*
+			if(process.platform == 'darwin') {
+				this.process2 = spawn('./ClientDriver', { cwd: FormideOS.appRoot + 'bin/osx/driver', stdio: 'pipe' });
+				this.process = spawn('./formideOS', { cwd: FormideOS.appRoot + 'bin/osx/driver', stdio: 'pipe' });
+			}
+			else if(process.platform == 'linux' && process.arch == 'arm' ) {
+				this.process2 = spawn('./ClientDriver', { cwd: FormideOS.appRoot + 'bin/rpi/driver', stdio: 'pipe' });
+				this.process = spawn('./formideOS', { cwd: FormideOS.appRoot + 'bin/rpi/driver', stdio: 'pipe' });
+			}
+			
+			this.process.on('close', this.printerError.bind(this));
+			this.process2.on('close', this.printerError.bind(this));
+*/
+		}
 
+/*
 		this.printer = new net.Socket();
 		this.connect();
 		this.printer.on('error', this.printerError.bind(this));
@@ -41,6 +70,7 @@ module.exports =
 		this.printer.on('close', this.printerError.bind(this));
 
 		FormideOS.events.on('process.exit', this.stop.bind(this));
+*/
 	},
 
 	connect: function() {
@@ -61,7 +91,10 @@ module.exports =
 	},
 
 	stop: function(stop) {
-		this.process.kill('SIGINT');
+		this.process.kill('SIGHUP');
+		if(this.process2 !== null) {
+			this.process2.kill('SIGHUP');
+		}
 	},
 
 	// custom functions
@@ -75,8 +108,7 @@ module.exports =
 	},
 
 	printerStatus: function(stream) {
-		try // try parsing
-		{
+		try {
 			FormideOS.utils.parseTCPStream(stream, function(printerData) {
 				FormideOS.events.emit('printer.status', printerData);
 
@@ -99,13 +131,19 @@ module.exports =
 				}
 			});
 		}
-		catch(e)
-		{
+		catch(e) {
 			FormideOS.debug.log(e.toString(), true);
 		}
 	},
+	
+	getStatus: function(callback) {
+		this.printers[0].getStatus(callback);
+	},
 
-	printerControl: function(data) {
+	printerControl: function(data, callback) {
+		this.printers[0].command(data.command, data.parameters, callback);
+		
+/*
 		if( data.data == undefined || data.data == null)
 		{
 			data.data = {};
@@ -114,5 +152,6 @@ module.exports =
 		data = JSON.stringify(data);
 		FormideOS.debug.log(data);
 		this.printer.write(data + '\n');
+*/
 	}
 }

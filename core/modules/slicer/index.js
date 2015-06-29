@@ -27,13 +27,20 @@ module.exports = {
 	init: function(config) {
 		this.config = config;
 
-		if(config.simulated)
-		{
-			this.process = spawn('node', ['slicesim.js'], {cwd: FormideOS.appRoot + 'core/utils', stdio: 'pipe'});
+		if(config.simulated) {
+			this.process = spawn('node', ['slicesim.js'], { cwd: FormideOS.appRoot + 'core/utils', stdio: 'pipe' });
 			this.process.stdout.setEncoding('utf8');
 			this.process.stdout.on('exit', this.onExit);
 			this.process.stdout.on('error', this.onError);
 			this.process.stdout.on('data', this.onData);
+		}
+		else {
+			if(process.platform == 'darwin') {
+				this.process = spawn('./katana', { cwd: FormideOS.appRoot + 'bin/osx/katana', stdio: 'pipe' });
+			}
+			else if(process.platform == 'linux' && process.arch == 'arm' ) {
+				this.process = spawn('./katana', { cwd: FormideOS.appRoot + 'bin/rpi/katana', stdio: 'pipe' });
+			}
 		}
 
 		this.slicer = new net.Socket();
@@ -43,6 +50,10 @@ module.exports = {
 		this.slicer.on('close', this.slicerError.bind(this));
 
 		FormideOS.events.on('process.exit', this.stop.bind(this));
+	},
+	
+	dispose: function() {
+		this.stop();
 	},
 
 	connect: function() {

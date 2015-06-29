@@ -67,6 +67,7 @@
     "request-progress": "~0.3.1",
     "require-reload": "^0.2.2",
     "semver": "~4.3.1",
+    "serialport": "^1.7.4",
     "sha1-stream": "~0.1.0",
     "socket.io": "latest",
     "socket.io-client": "latest",

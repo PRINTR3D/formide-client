@@ -15,6 +15,11 @@
 module.exports = function(namespace, module)
 {
 	namespace.on('connection', function(socket) {
+		
+		FormideOS.debug.log('Dashboard connected');
+		
+		
+/*
 		socket.emit('handshake', {
 			id: socket.id
 		});
@@ -34,6 +39,7 @@ module.exports = function(namespace, module)
 				FormideOS.debug.log('Dashboard connected');
 			}
 		});
+*/
 
 		// Socket disconnect
 		socket.on('disconnect', function() {
