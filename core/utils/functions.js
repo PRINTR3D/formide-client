@@ -11,9 +11,6 @@
 var StringDecoder 		= require('string_decoder').StringDecoder;
 var buffer 				= '';
 
-var serialNumber 		= require('serial-number');
-serialNumber.preferUUID = true;
-
 // function to parse incoming tcp stream into valid json data objects
 function parseTCPStream(data, callback) {
 
@@ -40,14 +37,6 @@ function parseTCPStream(data, callback) {
 	}
 }
 
-// function to get unique serial number of current device
-function getSerialNumber(cb) {
-	serialNumber(function (err, value) {
-    	cb(err, value);
-	});
-}
-
 module.exports = {
-	parseTCPStream: parseTCPStream,
-	getSerialNumber: getSerialNumber
+	parseTCPStream: parseTCPStream
 };
