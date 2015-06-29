@@ -5,4 +5,7 @@ formideOS-client
 check the wiki for detailed information on installation and functionality
 
 ## Contributing
-To contribute to this repository as non-printer developer, please make a private fork and submit a pull request with your changes. Printer developers can make a branch for a new feature and push to that branch and so a pull request on the development branch (which an admin will merge with master if it's stable enough).
+You can contribute to FORMIDEOS by closing issues (via fork -> pull request), adding features or just using it and report bugs! Please check the issue list of this repo before adding new ones to see if we're already aware of the issue that you're having.
+
+## Licence
+Please check LICENSE.md for licensing information.
