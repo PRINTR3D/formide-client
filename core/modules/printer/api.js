@@ -25,11 +25,50 @@ module.exports = function(routes, module)
 	 * Get the current status of the printer
 	 */
 	routes.get('/status', function(req, res) {
-		module.getStatus(function(err, result) {
-			return res.sendStatus(result);
+		module.getStatus(function(status) {
+			return res.json(status);
 		});
 	});
 	
+	routes.get('/control/start', function(req, res) {
+		module.startPrint(req.query.hash, function(err, result) {
+			if (err) return res.send(err);
+			return res.json({
+				success: true,
+				message: result
+			});
+		});
+	});
+	
+	routes.get('/control/stop', function(req, res) {
+		module.stopPrint(function(err, result) {
+			if (err) return res.send(err);
+			return res.json({
+				success: true,
+				message: result
+			});
+		});
+	});
+	
+	routes.get('/control/pause', function(req, res) {
+		module.pausePrint(function(err, result) {
+			if (err) return res.send(err);
+			return res.json({
+				success: true,
+				message: result
+			});
+		});
+	});
+	
+	routes.get('/control/resume', function(req, res) {
+		module.resumePrint(function(err, result) {
+			if (err) return res.send(err);
+			return res.json({
+				success: true,
+				message: result
+			});
+		});
+	});
 	
 	routes.get('/control/:command', function(req, res) {
 		module.printerControl({ command: req.params.command, parameters: req.query }, function(err, result) {

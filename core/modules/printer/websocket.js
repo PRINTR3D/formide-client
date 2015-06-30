@@ -18,7 +18,6 @@ module.exports = function(namespace, module)
 		
 		FormideOS.debug.log('Dashboard connected');
 		
-		
 /*
 		socket.emit('handshake', {
 			id: socket.id
@@ -52,6 +51,9 @@ module.exports = function(namespace, module)
 
 			FormideOS.debug.log('Dashboard disconnected');
 		});
+		
+		
+		
 
 		// load channels from config
 		Object.keys(FormideOS.config.get('printer.dashboard')).forEach(function(method) {

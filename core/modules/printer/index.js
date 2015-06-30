@@ -31,6 +31,8 @@ module.exports =
 		this.config = config;
 		var self = this;
 		
+		//self.printers.push(new MarlinDriver('/dev/cu.test'));
+		
 		SerialPort.list( function (err, ports) {
 			for(var i in ports) {
 				var port = ports[i];
@@ -137,7 +139,7 @@ module.exports =
 	},
 	
 	getStatus: function(callback) {
-		this.printers[0].getStatus(callback);
+		return callback(this.printers[0].getStatus());
 	},
 
 	printerControl: function(data, callback) {
@@ -153,5 +155,23 @@ module.exports =
 		FormideOS.debug.log(data);
 		this.printer.write(data + '\n');
 */
-	}
+	},
+	
+	startPrint: function(hash, callback) {
+		this.printers[0].startPrint(hash, callback);	
+	},
+	
+	stopPrint: function(callback) {
+		this.printers[0].stopPrint(callback);
+	},
+	
+	pausePrint: function(callback) {
+		this.printers[0].pausePrint(callback);
+	},
+	
+	resumePrint: function(callback) {
+		this.printers[0].resumePrint(callback);
+	},
+	
+	
 }
