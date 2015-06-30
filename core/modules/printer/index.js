@@ -58,7 +58,7 @@ module.exports =
 		SerialPort.list( function (err, ports) {
 			console.log('ports', ports)
 			// detect adding printer
-			if(this.ports) {
+			if(ports) {
 				if(this.numberOfPorts < ports.length) {
 					// handle adding printer
 					for(var i in ports) {
