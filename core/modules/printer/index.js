@@ -11,6 +11,8 @@
  *	applications than for Printr B.V.
  *
  */
+ 
+// TODO: more drivers than just marlin
 
 // dependencies
 var spawn = require('child_process').spawn;
@@ -21,157 +23,102 @@ var MarlinDriver = require('./drivers/MarlinDriver');
 
 module.exports =
 {
-	process: null,
-	process2: null,
-	printers: [],
-	printer: {},
+	numberOfPorts: 0,
+	printers: {},
 	config: {},
+	serialPorts: [
+		"/dev/ttyUSB",
+		"/dev/ttyACM",
+		"/dev/tty.usb",
+		"/dev/cu.usbserial",
+		"/dev/cuaU",
+		"/dev/rfcomm"
+	],
 
 	init: function(config) {
 		this.config = config;
-		var self = this;
-		
-		//self.printers.push(new MarlinDriver('/dev/cu.test'));
-		
-		SerialPort.list( function (err, ports) {
-			for(var i in ports) {
-				var port = ports[i];
-				if(port.comName.indexOf('usbserial') > -1) {
-					self.printers.push(new MarlinDriver(port.comName));
-				}
-			}
-		});
 
 		if(config.simulated) {
-			this.process = spawn('node', ['driversim.js'], {cwd: FormideOS.appRoot + 'core/utils', stdio: 'pipe'});
-			this.process.stdout.setEncoding('utf8');
-			this.process.stdout.on('exit', this.onExit);
-			this.process.stdout.on('error', this.onError);
+			this.printers.push(new MarlinDriver('/dev/null'));
 		}
 		else {
-/*
-			if(process.platform == 'darwin') {
-				this.process2 = spawn('./ClientDriver', { cwd: FormideOS.appRoot + 'bin/osx/driver', stdio: 'pipe' });
-				this.process = spawn('./formideOS', { cwd: FormideOS.appRoot + 'bin/osx/driver', stdio: 'pipe' });
-			}
-			else if(process.platform == 'linux' && process.arch == 'arm' ) {
-				this.process2 = spawn('./ClientDriver', { cwd: FormideOS.appRoot + 'bin/rpi/driver', stdio: 'pipe' });
-				this.process = spawn('./formideOS', { cwd: FormideOS.appRoot + 'bin/rpi/driver', stdio: 'pipe' });
-			}
-			
-			this.process.on('close', this.printerError.bind(this));
-			this.process2.on('close', this.printerError.bind(this));
-*/
-		}
-
-/*
-		this.printer = new net.Socket();
-		this.connect();
-		this.printer.on('error', this.printerError.bind(this));
-		this.printer.on('data', this.printerStatus.bind(this));
-		this.printer.on('close', this.printerError.bind(this));
-
-		FormideOS.events.on('process.exit', this.stop.bind(this));
-*/
-	},
-
-	connect: function() {
-		this.printer.destroy();
-		this.printer.connect({
-			port: this.config.port
-		}, function() {
-			FormideOS.debug.log('printer connected');
-		});
-	},
-
-	onExit: function(exit) {
-		FormideOS.debug.log(exit, true);
-	},
-
-	onError: function(error) {
-		FormideOS.debug.log(error, true);
-	},
-
-	stop: function(stop) {
-		this.process.kill('SIGHUP');
-		if(this.process2 !== null) {
-			this.process2.kill('SIGHUP');
+			this.connectPrinters();
+			this.watchPorts();
 		}
 	},
-
-	// custom functions
-	printerError: function(error) {
-		FormideOS.debug.log(error.toString(), true);
-		if (error.code == 'ECONNREFUSED' || error == false) {
-			this.printer.setTimeout(2000, function() {
-				this.connect();
-			}.bind(this));
-		}
+	
+	watchPorts: function() {
+		setInterval(function() {
+			this.connectPrinters();
+		}.bind(this), 2000);
 	},
-
-	printerStatus: function(stream) {
-		try {
-			FormideOS.utils.parseTCPStream(stream, function(printerData) {
-				FormideOS.events.emit('printer.status', printerData);
-
-				if(printerData.type == 'status') {
-					this.status = printerData.data;
-				}
-
-				if(printerData.type == 'finished') {
-					FormideOS.module('db').db.Queueitem
-					.find({where: {id: printerData.data.printjobID}})
-					.success(function(queueitem) {
-						if(queueitem != null) {
-							queueitem
-							.updateAttributes({status: 'finished'})
-							.success(function() {
-								FormideOS.debug.log('removed item from queue after printing');
+	
+	connectPrinters: function() {
+		var self = this;
+		SerialPort.list( function (err, ports) {
+			// detect adding printer
+			if(this.numberOfPorts < ports.length) {
+				// handle adding printer
+				for(var i in ports) {
+					var port = ports[i];
+					for(var j in self.serialPorts) {
+						if(port.comName.indexOf(self.serialPorts[j]) > -1) {
+							FormideOS.module('db').db.Printer.findOne({ port: port.comName }).exec(function(err, printer) {
+								if (err) FormideOS.debug.log(err);
+								if (!printer) {
+									FormideOS.debug.log('Printer needs to be setup on port ' + port.comName);
+									FormideOS.events.emit('printer.setup', { port: port.comName });
+								}
+								else {
+									self.printers[port.comName.split("/")[2]] = new MarlinDriver(port.comName, printer.baudrate, function() {
+										delete self.printers[port.comName.split("/")[2]];
+										FormideOS.events.emit('printer.disconnected');
+										FormideOS.debug.log('Printer disconnected');
+									});
+								}
 							});
 						}
-					});
+					}
 				}
-			});
-		}
-		catch(e) {
-			FormideOS.debug.log(e.toString(), true);
-		}
+			}
+			
+			this.numberOfPorts = ports.length;
+		}.bind(this));
 	},
 	
-	getStatus: function(callback) {
-		return callback(this.printers[0].getStatus());
+	getPrinters: function() {
+		var result = {};
+		for(var i in this.printers) {
+			result[i] = this.printers[i].getStatus();
+		}
+		return result;
+	},
+	
+	getStatus: function(port, callback) {
+		return callback(this.printers[port].getStatus());
 	},
 
-	printerControl: function(data, callback) {
-		this.printers[0].command(data.command, data.parameters, callback);
-		
-/*
-		if( data.data == undefined || data.data == null)
-		{
-			data.data = {};
-		}
-
-		data = JSON.stringify(data);
-		FormideOS.debug.log(data);
-		this.printer.write(data + '\n');
-*/
+	printerControl: function(port, data, callback) {
+		this.printers[port].command(data.command, data.parameters, callback);
 	},
 	
-	startPrint: function(hash, callback) {
-		this.printers[0].startPrint(hash, callback);	
+	gcode: function(port, gcode, callback) {
+		this.printers[port].gcode(gcode, callback);	
 	},
 	
-	stopPrint: function(callback) {
-		this.printers[0].stopPrint(callback);
+	startPrint: function(port, hash, callback) {
+		this.printers[port].startPrint(hash, callback);	
 	},
 	
-	pausePrint: function(callback) {
-		this.printers[0].pausePrint(callback);
+	stopPrint: function(port, callback) {
+		this.printers[port].stopPrint(callback);
 	},
 	
-	resumePrint: function(callback) {
-		this.printers[0].resumePrint(callback);
+	pausePrint: function(port, callback) {
+		this.printers[port].pausePrint(callback);
 	},
 	
-	
+	resumePrint: function(port, callback) {
+		this.printers[port].resumePrint(callback);
+	}
 }

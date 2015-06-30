@@ -2,27 +2,19 @@ var SerialPort 	= require("serialport");
 var fs			= require("fs");
 var readline 	= require('readline');
 
-function PrinterDriver(port) {
+function PrinterDriver(port, baudrate, onCloseCallback) {
 	
-	this.statusInterval = 2000;
+	this.open = false;
+	this.onCloseCallback = onCloseCallback;
+	this.baudrate = baudrate;
 	
 	this.port = port;
 	this.matrix = null;
 	
 	this.status = 'connecting';
 	
-	this.extruders = [
-		{
-			id: 0,
-			temp: 200,
-			target: 210
-		}	
-	];
-	
-	this.bed = {
-		temp: 0,
-		target: 0
-	};
+	this.extruders = [];
+	this.bed = {};
 	
 	this.time = 0;
 	this.timeLeft = 0;
@@ -33,21 +25,35 @@ function PrinterDriver(port) {
 	this.currentLine = 0;
 	
 	this.timeStarted = null;
-		
+
+	this.connect();
+	
+	return this;
+}
+
+PrinterDriver.prototype.connect = function() {
 	var sPort = SerialPort.SerialPort;
 	this.sp = new sPort(this.port, {
-		baudrate: 250000,
+		baudrate: this.baudrate,
 		parser: SerialPort.parsers.readline("\n")
 	});
 	
 	this.sp.on('open', function() {
+		FormideOS.debug.log("Printer connected");
+		FormideOS.events.emit('printer.connected');
+		
+		this.open = true;
 		this.status = 'online';
 		this.sp.on('data', this.received.bind(this));
+		
 		setInterval(this.askStatus.bind(this), 2000);
 	}.bind(this));
 	
-	return this;
-}
+	this.sp.on('close', function() {
+		this.open = false;
+		this.onCloseCallback();
+	}.bind(this));
+};
 
 PrinterDriver.prototype.map = {
 	"home":					"G28",
@@ -59,8 +65,8 @@ PrinterDriver.prototype.map = {
 	"extrude":				"G21 G1 E _dist_",
 	"retract":				"G21 G1 E -_dist_",
 	"lcd_message":			"M117                     _msg_",
-	"bed_temp":				"M140 S_temp_",
-	"ext_temp":				"M104 S_temp_",
+	"temp_bed":				"M140 S_temp_",
+	"temp_ext":				"M104 S_temp_",
 	"power_on":				"M80",
 	"power_off":			"M81",
 	"power_on_steppers":	"M17",
@@ -87,7 +93,7 @@ PrinterDriver.prototype.map = {
 // M600:	Pause for filament change
 
 PrinterDriver.prototype.askStatus = function() {	
-	this.sp.write("M105" + "\n");
+	this.sendRaw("M105", function() {});
 };
 
 PrinterDriver.prototype.getStatus = function() {
@@ -104,26 +110,35 @@ PrinterDriver.prototype.getStatus = function() {
 };
 
 PrinterDriver.prototype.command = function(command, parameters, callback) {
-	var command = this.map[command];
-	
-	for(var i in parameters) {
-		command = command.replace("_" + i + "_", parameters[i]);
+	if (this.status === 'online') {
+		var command = this.map[command];
+		
+		for(var i in parameters) {
+			command = command.replace("_" + i + "_", parameters[i]);
+		}
+		
+		this.sendRaw(command, callback);
 	}
-	
-	this.sendRaw(command, function(err, results) {
-		callback(err, results);
-	});
 };
 
 PrinterDriver.prototype.sendRaw = function(data, callback) {
-	this.sp.write(data + "\n", callback);
+	if(this.open) {
+		this.sp.write(data + "\n", callback);
+	}
 };
 
 PrinterDriver.prototype.sendLineToPrint = function() {
 	setTimeout(function() {
         if (this.status === 'printing') {
 	        this.sendRaw(this.gcodeBuffer[this.currentLine]);
-	        this.currentLine++;
+	        if(this.currentLine < this.gcodeBuffer.length) {
+	        	this.currentLine++;
+	        }
+	        else {
+		        this.stopPrint(function(err, result) {
+			    	FormideOS.events.emit('printer.finished', result);
+		        });
+	        }
         }
     }.bind(this), 100); // TODO: fiddle around with interval	
 };
@@ -144,32 +159,46 @@ PrinterDriver.prototype.parseGcode = function(fileContents, callback) {
 };
 
 PrinterDriver.prototype.startPrint = function(hash, callback) {
-	fs.readFile(FormideOS.appRoot + FormideOS.config.get('paths.gcode') + '/' + hash, 'utf8', function(err, gcodeData) {
-		if (err) return callback(err);
-		this.parseGcode(gcodeData, function() {
-			this.status = 'printing';
-			this.timeStarted = new Date();
-			callback(null, "started printing " + hash);
+	if (this.status === 'online') {
+		fs.readFile(FormideOS.appRoot + FormideOS.config.get('paths.gcode') + '/' + hash, 'utf8', function(err, gcodeData) {
+			if (err) return callback(err);
+			this.parseGcode(gcodeData, function() {
+				this.status = 'printing';
+				this.timeStarted = new Date();
+				return callback(null, "started printing " + hash);
+			}.bind(this));
 		}.bind(this));
-	}.bind(this));
+	}
 };
 
 PrinterDriver.prototype.pausePrint = function(callback) {
-	this.status = 'paused';
-	callback(null, "paused printing");
+	if (this.status === 'printing') {
+		this.status = 'paused';
+		return callback(null, "paused printing");
+	}
 };
 
 PrinterDriver.prototype.resumePrint = function(callback) {
-	this.status = 'printing';
-	callback(null, "resume printing");
+	if (this.status === 'paused') {
+		this.status = 'printing';
+		return callback(null, "resume printing");
+	}
 };
 
 PrinterDriver.prototype.stopPrint = function(callback) {
-	this.status = 'online';
-	this.currentLine = 0;
-	this.gcodeBuffer = [];
-	this.timeStarted = new Date().toISOString();
-	callback(null, "stopped printing");
+	if (this.status === 'printing') {
+		this.status = 'online';
+		this.currentLine = 0;
+		this.gcodeBuffer = [];
+		this.timeStarted = new Date().toISOString();
+		return callback(null, "stopped printing");
+	}
+};
+
+PrinterDriver.prototype.gcode = function(callback) {
+	if (this.status === 'online') {
+		this.sendRaw(gcode, callback);
+	}
 };
 
 PrinterDriver.prototype.received = function(data) {
@@ -183,11 +212,12 @@ PrinterDriver.prototype.received = function(data) {
 	}
 	
 	if (data.indexOf("ok") > -1 || data.indexOf("OK") > -1) {
+		FormideOS.events.emit('printer.status', { type: 'status', data: this.getStatus() });
 		this.sendLineToPrint();
 	}
 	
 	if (data.indexOf("wait") > -1) {
-		// handle wait
+		FormideOS.events.emit('printer.status', { type: 'status', data: this.getStatus() });
 	}
 	
 	if (data.indexOf("SD card inserted") > -1) {
@@ -199,9 +229,57 @@ PrinterDriver.prototype.received = function(data) {
 	}
 	
 	if (data.indexOf("T:") > -1 || data.indexOf("T0:") > -1) {
-		// T:25.12 /0 B:25.23 /0 B@:0 @:0
-		
-		var tempArray = data.split(" ");
+		// do a try since we try to parse a lot of things that might go wrong here
+		try {
+			var tempArray = data.split(" ");
+			var extruders = [];
+			var bed = {
+				temp: 0,
+				targetTemp: 0
+			};
+			
+			for(var i = 0; i < tempArray.length; i++) {
+				var tempArrayItem = tempArray[i];
+				if(tempArrayItem.indexOf("T") > -1 && tempArrayItem.indexOf("@") == -1) { // handle extruder temp
+					var lastChar = tempArrayItem.slice(-1);
+					if (lastChar == ":") { // handle temp in next array item
+						extruders.push({
+							id: tempArrayItem,
+							temp: parseFloat(tempArray[i+1]),
+							targetTemp: parseFloat(tempArray[i+2].replace('/', ''))
+						});
+					}
+					else { // handle temp in current array item
+						var iNew = tempArrayItem.split(":");
+						extruders.push({
+							id: iNew[0],
+							temp: parseFloat(iNew[1]),
+							targetTemp: parseFloat(tempArray[i+1].replace('/', ''))
+						});
+					}
+				}
+				else if(tempArrayItem.indexOf("B") > -1 && tempArrayItem.indexOf("@") == -1) { // handle bed temp
+					var lastChar = tempArrayItem.slice(-1);
+					if (lastChar == ":") { // handle temp in next array item
+						bed = {
+							temp: parseFloat(tempArray[i+1]),
+							targetTemp: parseFloat(tempArray[i+2].replace('/', ''))
+						};
+					}
+					else { // handle temp in current array item
+						var iNew = tempArrayItem.split(":");
+						bed = {
+							temp: parseFloat(iNew[1]),
+							targetTemp: parseFloat(tempArray[i+1].replace('/', ''))
+						};
+					}
+				}
+			}
+			
+			this.extruders = extruders;
+			this.bed = bed;
+		}
+		catch(e) {}
 	}
 	
 	if (data.indexOf("Fanspeed") > -1) {
@@ -216,8 +294,7 @@ PrinterDriver.prototype.received = function(data) {
 		// handle target temp info
 	}
 	
-	this.messageBuffer.push(data);
-	console.log(data);
+	// this.messageBuffer.push(data); // clogs memory!
 };
 
 PrinterDriver.prototype.getMessageBuffer = function() {

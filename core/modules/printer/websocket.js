@@ -17,28 +17,6 @@ module.exports = function(namespace, module)
 	namespace.on('connection', function(socket) {
 		
 		FormideOS.debug.log('Dashboard connected');
-		
-/*
-		socket.emit('handshake', {
-			id: socket.id
-		});
-
-		socket.on('typeof', function(data) {
-			if(data.type == 'dashboard')
-			{
-				socket.emit('auth', {message: 'OK', id: socket.id});
-
-				FormideOS.events.emit('websocket.connected', {
-					type: 'dashboard',
-					data: {
-						port: FormideOS.config.get('dashboard.port')
-					}
-				});
-
-				FormideOS.debug.log('Dashboard connected');
-			}
-		});
-*/
 
 		// Socket disconnect
 		socket.on('disconnect', function() {
@@ -52,47 +30,50 @@ module.exports = function(namespace, module)
 			FormideOS.debug.log('Dashboard disconnected');
 		});
 		
-		
-		
-
-		// load channels from config
-		Object.keys(FormideOS.config.get('printer.dashboard')).forEach(function(method) {
-			(function(realMethod) {
-				socket.on(realMethod, function(data) {
-					var expected = FormideOS.config.get('printer.dashboard')[realMethod];
-					var given = data;
-					var correct = true;
-
-					for(key in expected) {
-						if(!given.hasOwnProperty(expected[key])) {
-							correct = false;
-						}
-					}
-
-					if(correct)
-					{
-						if(realMethod == 'start')
-						{
-							data.hash = FormideOS.appRoot + FormideOS.config.get('paths.gcode') + '/' + data.hash;
-						}
-
-						var json = {
-							"type": realMethod,
-							"data": data
-						};
-
-						module.printerControl(json);
-					}
-					else
-					{
-						FormideOS.debug.log('Dashboard tried to send command to printer but arguments were invalid', true);
-					}
-				});
-			})(method);
+		socket.on('command', function(data) {
+			
+			var method = data.method;
+			var parameters = data.parameters;
+			var port = data.port;
+			
+			if (method === 'start') {
+				module.startPrint(port, data.parameters.hash, function() {});
+			}
+			else if(method == 'pause') {
+				module.pausePrint(port, function() {});
+			}
+			else if(method == 'resume') {
+				module.resumePrint(port, function() {});
+			}
+			else if(method == 'stop') {
+				module.stopPrint(port, function() {});
+			}
+			else if(method == 'gcode') {
+				module.gcode(port, function() {});
+			}
+			else {
+				module.printerControl(port, { command: method, parameters: parameters}, function() {});
+			}
 		});
 
 		FormideOS.events.on('printer.status', function(data) {
 			socket.emit(data.type, data.data);
+		});
+		
+		FormideOS.events.on('printer.finished', function(data) {
+			socket.emit('finished', data);
+		});
+		
+		FormideOS.events.on('printer.connected', function() {
+			socket.emit('connected');
+		});
+		
+		FormideOS.events.on('printer.disconnected', function() {
+			socket.emit('disconnected');
+		});
+		
+		FormideOS.events.on('printer.setup', function(data) {
+			socket.emit('setup', data);
 		});
 	});
 };
