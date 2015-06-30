@@ -56,7 +56,7 @@ module.exports =
 	connectPrinters: function() {
 		var self = this;
 		SerialPort.list( function (err, ports) {
-			console.log('ports', ports)
+			if (err) FormideOS.debug.log(err);
 			// detect adding printer
 			if(ports) {
 				if(this.numberOfPorts < ports.length) {
