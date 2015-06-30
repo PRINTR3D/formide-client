@@ -17,5 +17,9 @@ module.exports = function(namespace, module) {
 		FormideOS.events.on('slicer.finished', function(data) {
 			socket.emit('finished', data);
 		});
+		
+		FormideOS.events.on('slicer.error', function(data) {
+			socket.emit('error', data);
+		});
 	});
 };

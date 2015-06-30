@@ -12,7 +12,7 @@ module.exports = function(routes, module)
 	 */
 	routes.post('/slice', function(req, res) {
 		module.slice(req.body.modelfiles, req.body.sliceprofile, req.body.materials, req.body.printer, req.body.settings, function(err, printjob) {
-			if (err) return res.send({ success: false, eror: err });
+			if (err) return res.send({ success: false, error: err });
 			return res.send({
 				success: true,
 				printjob: printjob

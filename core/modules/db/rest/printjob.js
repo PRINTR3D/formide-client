@@ -43,12 +43,7 @@ module.exports = function(routes, db)
 	routes.delete('/printjobs/:id', function(req, res) {
 		db.Printjob.remove({ _id: req.params.id }, function(err, printjob) {
 			if (err) return res.status(400).send(err);
-			var filePath = FormideOS.config.get('paths.modelfile') + '/' + printjob.gcode;
-			fs.unlink(filePath, function() {
-				return res.send({
-					success: true
-				});
-			});
+			return res.send({ success: true });
 		});
 	});
 };

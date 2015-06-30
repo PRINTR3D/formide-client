@@ -30,6 +30,7 @@ function PrinterDriver(port, baudrate, onCloseCallback) {
 	
 	this.time = 0;
 	this.timeLeft = 0;
+	this.printjobID = null;
 	
 	this.messageBuffer = [];
 	
@@ -121,7 +122,8 @@ PrinterDriver.prototype.getStatus = function() {
 		totalLines: this.gcodeBuffer.length,
 		currentLine: this.currentLine,
 		progress: (this.currentLine / this.gcodeBuffer.length) * 100,
-		port: this.port
+		port: this.port,
+		printjobID: this.printjobID
 	};
 };
 
@@ -175,12 +177,13 @@ PrinterDriver.prototype.parseGcode = function(fileContents, callback) {
 	callback();
 };
 
-PrinterDriver.prototype.startPrint = function(hash, callback) {
+PrinterDriver.prototype.startPrint = function(id, hash, callback) {
 	if (this.status === 'online') {
 		fs.readFile(FormideOS.appRoot + FormideOS.config.get('paths.gcode') + '/' + hash, 'utf8', function(err, gcodeData) {
 			if (err) return callback(err);
 			this.parseGcode(gcodeData, function() {
 				this.status = 'printing';
+				this.printjobID = id;
 				this.timeStarted = new Date();
 				return callback(null, "started printing " + hash);
 			}.bind(this));
@@ -206,6 +209,7 @@ PrinterDriver.prototype.stopPrint = function(callback) {
 	if (this.status === 'printing') {
 		this.status = 'online';
 		this.currentLine = 0;
+		this.printjobID = null;
 		this.gcodeBuffer = [];
 		this.timeStarted = new Date().toISOString();
 		return callback(null, "stopped printing");

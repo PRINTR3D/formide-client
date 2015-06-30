@@ -26,12 +26,14 @@ module.exports = {
 			this.process.stdout.on('data', this.onData);
 		}
 		else {
+/*
 			if(process.platform == 'darwin') {
 				this.process = spawn('./katana', { cwd: FormideOS.appRoot + 'bin/osx/katana', stdio: 'pipe' });
 			}
 			else if(process.platform == 'linux' && process.arch == 'arm' ) {
 				this.process = spawn('./katana', { cwd: FormideOS.appRoot + 'bin/rpi/katana', stdio: 'pipe' });
 			}
+*/
 		}
 
 		this.slicer = new net.Socket();
@@ -138,7 +140,7 @@ module.exports = {
 						delete slicerequest.brim;
 					}
 					else {
-						if(printjob.sliceSettings.brim.extruder) {
+						if(printjob.sliceSettings.brim.extruder != undefined) {
 							slicerequest.brim.extruder = printjob.sliceSettings.brim.extruder;
 						}
 						else {
@@ -155,7 +157,7 @@ module.exports = {
 						delete slicerequest.raft;
 					}
 					else {
-						if(printjob.sliceSettings.raft.extruder) {
+						if(printjob.sliceSettings.raft.extruder != undefined) {
 							slicerequest.raft.extruder = printjob.sliceSettings.raft.extruder;
 						}
 						else {
@@ -172,7 +174,7 @@ module.exports = {
 						delete slicerequest.support;
 					}
 					else {
-						if(printjob.sliceSettings.support.extruder) {
+						if(printjob.sliceSettings.support.extruder != undefined) {
 							slicerequest.support.extruder = printjob.sliceSettings.support.extruder;
 						}
 						else {
@@ -189,7 +191,7 @@ module.exports = {
 						delete slicerequest.skirt;
 					}
 					else {
-						if(printjob.sliceSettings.skirt.extruder) {
+						if(printjob.sliceSettings.skirt.extruder != undefined) {
 							slicerequest.skirt.extruder = printjob.sliceSettings.skirt.extruder;
 						}
 						else {
@@ -206,7 +208,7 @@ module.exports = {
 						delete slicerequest.fan;
 					}
 					else {
-						if(printjob.sliceSettings.fan.speed) {
+						if(printjob.sliceSettings.fan.speed != undefined) {
 							slicerequest.fan.speed = printjob.sliceSettings.fan.speed;
 						}
 						else {
@@ -220,13 +222,13 @@ module.exports = {
 				
 				if(printjob.sliceSettings.bed) {
 					if(printjob.sliceSettings.bed.use !== false) {
-						if(printjob.sliceSettings.bed.temperature) {
+						if(printjob.sliceSettings.bed.temperature != undefined) {
 							slicerequest.bed.temperature = printjob.sliceSettings.bed.temperature;
 						}
 						else {
 							return callback("No bed temperature given");
 						}
-						if(printjob.sliceSettings.bed.firstLayersTemperature) {
+						if(printjob.sliceSettings.bed.firstLayersTemperature != undefined) {
 							slicerequest.bed.firstLayersTemperature = printjob.sliceSettings.bed.firstLayersTemperature;
 						}
 						else {
@@ -246,11 +248,10 @@ module.exports = {
 				slicerequest.model.push({
 					hash: model.hash,
 					bucketIn: FormideOS.appRoot + FormideOS.config.get("paths.modelfile"),
-					x: 100000, 		// TODO: set user specified position
-					y: 100000, 		// TODO: set user specified position
+					x: 100, 		// TODO: set user specified position
+					y: 100, 		// TODO: set user specified position
 					z: 0, 			// TODO: set user specified position
-					extruder: extruderForModel,
-					settings: 0 	// TODO: set region settings
+					extruder: extruderForModel
 				});
 			}
 			
@@ -287,10 +288,8 @@ module.exports = {
 					.update({ _id: data.data.responseID }, { gcode: data.data.gcode, sliceResponse: data.data, sliceFinished: true }, function(err, printjob) {
 						if (err) return;
 						FormideOS.events.emit('slicer.finished', {
-							type: 'success',
 							title: 'Slicer finished',
-							message: 'Slicer finished slicing ' + data.data.responseID,
-							notification: true
+							message: 'Slicer finished slicing ' + data.data.responseID
 						});
 					});
 				}
@@ -303,21 +302,15 @@ module.exports = {
 						message: 'slicer error',
 						data: data
 					});
-					FormideOS.events.emit('slicer.finished', {
-						type: 'warning',
+					FormideOS.events.emit('slicer.error', {
 						title: 'Slicer error',
-						message: 'Slicing failed slicing ' + data.data.responseID,
-						notification: true
+						message: 'Slicing failed for ' + data.data.responseID
 					});
 				}
 			});
 		}
 		catch(e) {
 			FormideOS.debug.log(e, true);
-			FormideOS.module('log').logError({
-				message: 'slice response parse error',
-				data: e
-			});
 		}
 	}
 }
