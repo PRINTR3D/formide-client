@@ -1,18 +1,7 @@
 /*
- *	    ____  ____  _____   ____________
- *	   / __ / __ /  _/ | / /_  __/ __
- *	  / /_/ / /_/ // //  |/ / / / / /_/ /
- *	 / ____/ _, _// // /|  / / / / _, _/
- *	/_/   /_/ |_/___/_/ |_/ /_/ /_/ |_|
- *
- *	Copyright Printr B.V. All rights reserved.
- *	This code is closed source and should under
- *	nu circumstances be copied or used in other
- *	applications than for Printr B.V.
- *
+ *	This code was created for Printr B.V. It is open source under the formideos-client package.
+ *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
- 
-// TODO: more drivers than just marlin
 
 // dependencies
 var spawn = require('child_process').spawn;
@@ -74,8 +63,8 @@ module.exports =
 									else {
 										self.printers[port.comName.split("/")[2]] = new MarlinDriver(port.comName, printer.baudrate, function() {
 											delete self.printers[port.comName.split("/")[2]];
-											FormideOS.events.emit('printer.disconnected');
-											FormideOS.debug.log('Printer disconnected');
+											FormideOS.events.emit('printer.disconnected', { port: port.comName });
+											FormideOS.debug.log('Printer disconnected: ' + port.comName);
 										});
 									}
 								});

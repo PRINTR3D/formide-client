@@ -1,3 +1,15 @@
+/*
+ *	This code was created for Printr B.V. It is open source under the formideos-client package.
+ *	Copyright (c) 2015, All rights reserved, http://printr.nl
+ */
+ 
+/*
+ *	This is the printer driver for Marlin and Repetier firmware. Tested with Felix, Ultimaker, Builder and 
+ *	Cyrus 3D printers. Feel free to add more functionality like SD card support. Also, we want some extra
+ *	drivers for other firmwares. For that, an abstract driver function needs to be made that we can use to
+ *	implement other drivers with the same functions.
+ */
+
 var SerialPort 	= require("serialport");
 var fs			= require("fs");
 var readline 	= require('readline');
@@ -39,8 +51,8 @@ PrinterDriver.prototype.connect = function() {
 	});
 	
 	this.sp.on('open', function() {
-		FormideOS.debug.log("Printer connected");
-		FormideOS.events.emit('printer.connected');
+		FormideOS.debug.log("Printer connected " + this.port);
+		FormideOS.events.emit('printer.connected', { port: this.port });
 		
 		this.open = true;
 		this.status = 'online';
@@ -67,10 +79,10 @@ PrinterDriver.prototype.map = {
 	"jog":					["G91", "G21", "G1 _axis_ _dist_"],
 	"jog_abs":				["G90", "G21", "X_x_ Y_y_ Z_z_"],
 	"extrude":				["G91", "G21", "G1 E _dist_"],
-	"retract":				["G91", "G21", "G1 E -_dist_"],
+	"retract":				["G91", "G21", "G1 E _dist_"],
 	"lcd_message":			["M117                     _msg_"],
 	"temp_bed":				["M140 S_temp_"],
-	"temp_ext":				["M104 S_temp_"],
+	"temp_extruder":		["M104 S_temp_"],
 	"power_on":				["M80"],
 	"power_off":			["M81"],
 	"power_on_steppers":	["M17"],
@@ -141,7 +153,7 @@ PrinterDriver.prototype.sendLineToPrint = function() {
 	        }
 	        else {
 		        this.stopPrint(function(err, result) {
-			    	FormideOS.events.emit('printer.finished', result);
+			    	FormideOS.events.emit('printer.finished', { port: this.port });
 		        });
 	        }
         }
