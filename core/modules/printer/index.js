@@ -11,108 +11,114 @@
  *	applications than for Printr B.V.
  *
  */
+ 
+// TODO: more drivers than just marlin
 
 // dependencies
 var spawn = require('child_process').spawn;
 var fs = require('fs');
 var net = require('net');
+var SerialPort = require("serialport");
+var MarlinDriver = require('./drivers/MarlinDriver');
 
 module.exports =
 {
-	process: null,
-	printer: {},
+	numberOfPorts: 0,
+	printers: {},
 	config: {},
+	serialPorts: [
+		"/dev/ttyUSB",
+		"/dev/ttyACM",
+		"/dev/tty.usb",
+		"/dev/cu.usbserial",
+		"/dev/cuaU",
+		"/dev/rfcomm"
+	],
 
 	init: function(config) {
 		this.config = config;
 
-		if(config.simulated)
-		{
-			this.process = spawn('node', ['driversim.js'], {cwd: FormideOS.appRoot + 'core/utils', stdio: 'pipe'});
-			this.process.stdout.setEncoding('utf8');
-			this.process.stdout.on('exit', this.onExit);
-			this.process.stdout.on('error', this.onError);
+		if(config.simulated) {
+			this.printers.push(new MarlinDriver('/dev/null'));
 		}
-
-		this.printer = new net.Socket();
-		this.connect();
-		this.printer.on('error', this.printerError.bind(this));
-		this.printer.on('data', this.printerStatus.bind(this));
-		this.printer.on('close', this.printerError.bind(this));
-
-		FormideOS.events.on('process.exit', this.stop.bind(this));
-	},
-
-	connect: function() {
-		this.printer.destroy();
-		this.printer.connect({
-			port: this.config.port
-		}, function() {
-			FormideOS.debug.log('printer connected');
-		});
-	},
-
-	onExit: function(exit) {
-		FormideOS.debug.log(exit, true);
-	},
-
-	onError: function(error) {
-		FormideOS.debug.log(error, true);
-	},
-
-	stop: function(stop) {
-		this.process.kill('SIGINT');
-	},
-
-	// custom functions
-	printerError: function(error) {
-		FormideOS.debug.log(error.toString(), true);
-		if (error.code == 'ECONNREFUSED' || error == false) {
-			this.printer.setTimeout(2000, function() {
-				this.connect();
-			}.bind(this));
+		else {
+			this.connectPrinters();
+			this.watchPorts();
 		}
 	},
-
-	printerStatus: function(stream) {
-		try // try parsing
-		{
-			FormideOS.utils.parseTCPStream(stream, function(printerData) {
-				FormideOS.events.emit('printer.status', printerData);
-
-				if(printerData.type == 'status') {
-					this.status = printerData.data;
-				}
-
-				if(printerData.type == 'finished') {
-					FormideOS.module('db').db.Queueitem
-					.find({where: {id: printerData.data.printjobID}})
-					.success(function(queueitem) {
-						if(queueitem != null) {
-							queueitem
-							.updateAttributes({status: 'finished'})
-							.success(function() {
-								FormideOS.debug.log('removed item from queue after printing');
+	
+	watchPorts: function() {
+		setInterval(function() {
+			this.connectPrinters();
+		}.bind(this), 2000);
+	},
+	
+	connectPrinters: function() {
+		var self = this;
+		SerialPort.list( function (err, ports) {
+			// detect adding printer
+			if(this.numberOfPorts < ports.length) {
+				// handle adding printer
+				for(var i in ports) {
+					var port = ports[i];
+					for(var j in self.serialPorts) {
+						if(port.comName.indexOf(self.serialPorts[j]) > -1) {
+							FormideOS.module('db').db.Printer.findOne({ port: port.comName }).exec(function(err, printer) {
+								if (err) FormideOS.debug.log(err);
+								if (!printer) {
+									FormideOS.debug.log('Printer needs to be setup on port ' + port.comName);
+									FormideOS.events.emit('printer.setup', { port: port.comName });
+								}
+								else {
+									self.printers[port.comName.split("/")[2]] = new MarlinDriver(port.comName, printer.baudrate, function() {
+										delete self.printers[port.comName.split("/")[2]];
+										FormideOS.events.emit('printer.disconnected');
+										FormideOS.debug.log('Printer disconnected');
+									});
+								}
 							});
 						}
-					});
+					}
 				}
-			});
+			}
+			
+			this.numberOfPorts = ports.length;
+		}.bind(this));
+	},
+	
+	getPrinters: function() {
+		var result = {};
+		for(var i in this.printers) {
+			result[i] = this.printers[i].getStatus();
 		}
-		catch(e)
-		{
-			FormideOS.debug.log(e.toString(), true);
-		}
+		return result;
+	},
+	
+	getStatus: function(port, callback) {
+		return callback(this.printers[port].getStatus());
 	},
 
-	printerControl: function(data) {
-		if( data.data == undefined || data.data == null)
-		{
-			data.data = {};
-		}
-
-		data = JSON.stringify(data);
-		FormideOS.debug.log(data);
-		this.printer.write(data + '\n');
+	printerControl: function(port, data, callback) {
+		this.printers[port].command(data.command, data.parameters, callback);
+	},
+	
+	gcode: function(port, gcode, callback) {
+		this.printers[port].gcode(gcode, callback);	
+	},
+	
+	startPrint: function(port, hash, callback) {
+		this.printers[port].startPrint(hash, callback);	
+	},
+	
+	stopPrint: function(port, callback) {
+		this.printers[port].stopPrint(callback);
+	},
+	
+	pausePrint: function(port, callback) {
+		this.printers[port].pausePrint(callback);
+	},
+	
+	resumePrint: function(port, callback) {
+		this.printers[port].resumePrint(callback);
 	}
 }

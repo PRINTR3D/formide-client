@@ -36,6 +36,6 @@ module.exports = {
 		for(var i in keyValuePairs) {
 			FormideOS.settings.set(module, i, keyValuePairs[i]);
 		}
-		return cb(FormideOS.settings.getSettings(module));
+		return cb(FormideOS.settings.get(module));
 	}
 }

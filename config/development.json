@@ -24,37 +24,11 @@
 		"gcode": "../uploads/gcode"
 	},
 	"printer": {
-		"port": 1338,
-		"simulated": true,
-		"dashboard": {
-			"gcode": ["code"],
-			"home": [],
-			"jog": ["axis", "dist"],
-			"start": ["hash", "printjobID"],
-			"pause": [],
-			"resume": [],
-			"stop": [],
-			"temp_extruder": ["extnr", "temp"],
-			"temp_bed": ["temp"],
-			"lcd_message": ["msg"],
-			"extrude": ["extnr", "dist"],
-			"retract": ["extnr", "dist"],
-			"fan": ["fannr", "speed"],
-			"reconnect": [],
-			"autolevel": []
-		},
-		"driver": {
-			"status": ["printjobID", "status", "progress", "extruders", "bed"],
-			"finished": ["printjobID"],
-			"connect": [],
-			"disconnect": [],
-			"error": ["msg"],
-			"notification": ["msg"]
-		}
+		"simulated": false
 	},
 	"slicer": {
 		"port": 1339,
-		"simulated": true
+		"simulated": false
 	},
 	"settings": {
 		"path": "../storage"
