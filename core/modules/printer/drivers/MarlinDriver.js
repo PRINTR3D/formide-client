@@ -1,3 +1,15 @@
+/*
+ *	This code was created for Printr B.V. It is open source under the formideos-client package.
+ *	Copyright (c) 2015, All rights reserved, http://printr.nl
+ */
+ 
+/*
+ *	This is the printer driver for Marlin and Repetier firmware. Tested with Felix, Ultimaker, Builder and 
+ *	Cyrus 3D printers. Feel free to add more functionality like SD card support. Also, we want some extra
+ *	drivers for other firmwares. For that, an abstract driver function needs to be made that we can use to
+ *	implement other drivers with the same functions.
+ */
+
 var SerialPort 	= require("serialport");
 var fs			= require("fs");
 var readline 	= require('readline');
