@@ -33,7 +33,7 @@ module.exports = function(namespace, module)
 		socket.on('command', function(data) {
 			
 			var method = data.method;
-			var parameters = data.parameters;
+			var parameters = data.parameters || {};
 			var port = data.port;
 			
 			if (method === 'start') {
@@ -49,10 +49,10 @@ module.exports = function(namespace, module)
 				module.stopPrint(port, function() {});
 			}
 			else if(method == 'gcode') {
-				module.gcode(port, function() {});
+				module.gcode(port, data.parameters.code, function() {});
 			}
 			else {
-				module.printerControl(port, { command: method, parameters: parameters}, function() {});
+				module.printerControl(port, { command: method, parameters: parameters }, function() {});
 			}
 		});
 
@@ -64,12 +64,12 @@ module.exports = function(namespace, module)
 			socket.emit('finished', data);
 		});
 		
-		FormideOS.events.on('printer.connected', function() {
-			socket.emit('connected');
+		FormideOS.events.on('printer.connected', function(data) {
+			socket.emit('connected', data);
 		});
 		
-		FormideOS.events.on('printer.disconnected', function() {
-			socket.emit('disconnected');
+		FormideOS.events.on('printer.disconnected', function(data) {
+			socket.emit('disconnected', data);
 		});
 		
 		FormideOS.events.on('printer.setup', function(data) {

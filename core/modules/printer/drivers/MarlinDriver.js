@@ -49,6 +49,10 @@ PrinterDriver.prototype.connect = function() {
 		setInterval(this.askStatus.bind(this), 2000);
 	}.bind(this));
 	
+	this.sp.on('error', function(err) {
+		FormideOS.debug.log('printer error: ', err);
+	});
+	
 	this.sp.on('close', function() {
 		this.open = false;
 		this.onCloseCallback();
@@ -56,22 +60,22 @@ PrinterDriver.prototype.connect = function() {
 };
 
 PrinterDriver.prototype.map = {
-	"home":					"G28",
-	"home_x": 				"G28 x",
-	"home_y": 				"G28 y",
-	"home_z": 				"G28 z",
-	"jog":					"G91 G21 G1 _axis_ _dist_",
-	"jog_abs":				"G90 G21 X_x_ Y_y_ Z_z_",
-	"extrude":				"G21 G1 E _dist_",
-	"retract":				"G21 G1 E -_dist_",
-	"lcd_message":			"M117                     _msg_",
-	"temp_bed":				"M140 S_temp_",
-	"temp_ext":				"M104 S_temp_",
-	"power_on":				"M80",
-	"power_off":			"M81",
-	"power_on_steppers":	"M17",
-	"power_off_steppers":	"M18",
-	"stop_all":				"M112"
+	"home":					["G28"],
+	"home_x": 				["G28 x"],
+	"home_y": 				["G28 y"],
+	"home_z": 				["G28 z"],
+	"jog":					["G91", "G21", "G1 _axis_ _dist_"],
+	"jog_abs":				["G90", "G21", "X_x_ Y_y_ Z_z_"],
+	"extrude":				["G91", "G21", "G1 E _dist_"],
+	"retract":				["G91", "G21", "G1 E -_dist_"],
+	"lcd_message":			["M117                     _msg_"],
+	"temp_bed":				["M140 S_temp_"],
+	"temp_ext":				["M104 S_temp_"],
+	"power_on":				["M80"],
+	"power_off":			["M81"],
+	"power_on_steppers":	["M17"],
+	"power_off_steppers":	["M18"],
+	"stop_all":				["M112"]
 };
 
 // M20: 	List SD card
@@ -110,14 +114,15 @@ PrinterDriver.prototype.getStatus = function() {
 };
 
 PrinterDriver.prototype.command = function(command, parameters, callback) {
+	console.log(command, parameters);
 	if (this.status === 'online') {
-		var command = this.map[command];
-		
-		for(var i in parameters) {
-			command = command.replace("_" + i + "_", parameters[i]);
+		var command = Object.create(this.map[command]);
+		for(var i in command) {
+			for(var j in parameters) {
+				command[i] = command[i].replace("_" + j + "_", parameters[j]);
+			}
+			this.sendRaw(command[i], callback);
 		}
-		
-		this.sendRaw(command, callback);
 	}
 };
 
@@ -140,7 +145,7 @@ PrinterDriver.prototype.sendLineToPrint = function() {
 		        });
 	        }
         }
-    }.bind(this), 100); // TODO: fiddle around with interval	
+    }.bind(this), 50);
 };
 
 PrinterDriver.prototype.parseGcode = function(fileContents, callback) {

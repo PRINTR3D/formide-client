@@ -56,33 +56,35 @@ module.exports =
 	connectPrinters: function() {
 		var self = this;
 		SerialPort.list( function (err, ports) {
+			if (err) FormideOS.debug.log(err);
 			// detect adding printer
-			if(this.numberOfPorts < ports.length) {
-				// handle adding printer
-				for(var i in ports) {
-					var port = ports[i];
-					for(var j in self.serialPorts) {
-						if(port.comName.indexOf(self.serialPorts[j]) > -1) {
-							FormideOS.module('db').db.Printer.findOne({ port: port.comName }).exec(function(err, printer) {
-								if (err) FormideOS.debug.log(err);
-								if (!printer) {
-									FormideOS.debug.log('Printer needs to be setup on port ' + port.comName);
-									FormideOS.events.emit('printer.setup', { port: port.comName });
-								}
-								else {
-									self.printers[port.comName.split("/")[2]] = new MarlinDriver(port.comName, printer.baudrate, function() {
-										delete self.printers[port.comName.split("/")[2]];
-										FormideOS.events.emit('printer.disconnected');
-										FormideOS.debug.log('Printer disconnected');
-									});
-								}
-							});
+			if(ports) {
+				if(this.numberOfPorts < ports.length) {
+					// handle adding printer
+					for(var i in ports) {
+						var port = ports[i];
+						for(var j in self.serialPorts) {
+							if(port.comName.indexOf(self.serialPorts[j]) > -1) {
+								FormideOS.module('db').db.Printer.findOne({ port: port.comName }).exec(function(err, printer) {
+									if (err) FormideOS.debug.log(err);
+									if (!printer) {
+										FormideOS.debug.log('Printer needs to be setup on port ' + port.comName);
+										FormideOS.events.emit('printer.setup', { port: port.comName });
+									}
+									else {
+										self.printers[port.comName.split("/")[2]] = new MarlinDriver(port.comName, printer.baudrate, function() {
+											delete self.printers[port.comName.split("/")[2]];
+											FormideOS.events.emit('printer.disconnected');
+											FormideOS.debug.log('Printer disconnected');
+										});
+									}
+								});
+							}
 						}
 					}
 				}
+				this.numberOfPorts = ports.length;
 			}
-			
-			this.numberOfPorts = ports.length;
 		}.bind(this));
 	},
 	
