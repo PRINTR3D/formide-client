@@ -67,7 +67,7 @@ PrinterDriver.prototype.map = {
 	"jog":					["G91", "G21", "G1 _axis_ _dist_"],
 	"jog_abs":				["G90", "G21", "X_x_ Y_y_ Z_z_"],
 	"extrude":				["G91", "G21", "G1 E _dist_"],
-	"retract":				["G91", "G21", "G1 E -_dist_"],
+	"retract":				["G91", "G21", "G1 E _dist_"],
 	"lcd_message":			["M117                     _msg_"],
 	"temp_bed":				["M140 S_temp_"],
 	"temp_ext":				["M104 S_temp_"],
