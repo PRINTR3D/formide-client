@@ -72,10 +72,10 @@ module.exports =
 										FormideOS.events.emit('printer.setup', { port: port.comName });
 									}
 									else {
-										self.printers[port.comName.split("/")[2]] = new MarlinDriver(port.comName, printer.baudrate, function(data) {
+										self.printers[port.comName.split("/")[2]] = new MarlinDriver(port.comName, printer.baudrate, function() {
 											delete self.printers[port.comName.split("/")[2]];
-											FormideOS.events.emit('printer.disconnected', data);
-											FormideOS.debug.log('Printer disconnected: ', data.port);
+											FormideOS.events.emit('printer.disconnected', { port: port.comName });
+											FormideOS.debug.log('Printer disconnected: ' + port.comName);
 										});
 									}
 								});

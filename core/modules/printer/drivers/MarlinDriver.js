@@ -39,7 +39,7 @@ PrinterDriver.prototype.connect = function() {
 	});
 	
 	this.sp.on('open', function() {
-		FormideOS.debug.log("Printer connected");
+		FormideOS.debug.log("Printer connected " + this.port);
 		FormideOS.events.emit('printer.connected', { port: this.port });
 		
 		this.open = true;
@@ -55,7 +55,7 @@ PrinterDriver.prototype.connect = function() {
 	
 	this.sp.on('close', function() {
 		this.open = false;
-		this.onCloseCallback({ port: this.port });
+		this.onCloseCallback();
 	}.bind(this));
 };
 
