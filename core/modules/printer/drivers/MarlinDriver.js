@@ -40,7 +40,7 @@ PrinterDriver.prototype.connect = function() {
 	
 	this.sp.on('open', function() {
 		FormideOS.debug.log("Printer connected");
-		FormideOS.events.emit('printer.connected');
+		FormideOS.events.emit('printer.connected', { port: this.port });
 		
 		this.open = true;
 		this.status = 'online';
@@ -55,7 +55,7 @@ PrinterDriver.prototype.connect = function() {
 	
 	this.sp.on('close', function() {
 		this.open = false;
-		this.onCloseCallback();
+		this.onCloseCallback({ port: this.port });
 	}.bind(this));
 };
 
@@ -70,7 +70,7 @@ PrinterDriver.prototype.map = {
 	"retract":				["G91", "G21", "G1 E _dist_"],
 	"lcd_message":			["M117                     _msg_"],
 	"temp_bed":				["M140 S_temp_"],
-	"temp_ext":				["M104 S_temp_"],
+	"temp_extruder":		["M104 S_temp_"],
 	"power_on":				["M80"],
 	"power_off":			["M81"],
 	"power_on_steppers":	["M17"],
@@ -141,7 +141,7 @@ PrinterDriver.prototype.sendLineToPrint = function() {
 	        }
 	        else {
 		        this.stopPrint(function(err, result) {
-			    	FormideOS.events.emit('printer.finished', result);
+			    	FormideOS.events.emit('printer.finished', { port: this.port });
 		        });
 	        }
         }
