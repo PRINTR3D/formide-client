@@ -56,6 +56,8 @@ module.exports =
 	connectPrinters: function() {
 		var self = this;
 		SerialPort.list( function (err, ports) {
+			console.log('serial error', err);
+			console.log('serial ports', ports);
 			// detect adding printer
 			if(this.numberOfPorts < ports.length) {
 				// handle adding printer
