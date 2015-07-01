@@ -24,6 +24,7 @@ function PrinterDriver(port, baudrate, onCloseCallback) {
 	this.matrix = null;
 	
 	this.status = 'connecting';
+	this.statusInterval = null;
 	
 	this.extruders = [];
 	this.bed = {};
@@ -58,16 +59,19 @@ PrinterDriver.prototype.connect = function() {
 		this.status = 'online';
 		this.sp.on('data', this.received.bind(this));
 		
-		setInterval(this.askStatus.bind(this), 2000);
+		this.statusInterval = setInterval(this.askStatus.bind(this), 2000);
 	}.bind(this));
 	
 	this.sp.on('error', function(err) {
-		FormideOS.debug.log('printer error: ', err);
-	});
+		clearInterval(this.statusInterval);
+		this.open = false;
+		this.onCloseCallback(this.port);
+	}.bind(this));
 	
 	this.sp.on('close', function() {
+		clearInterval(this.statusInterval);
 		this.open = false;
-		this.onCloseCallback();
+		this.onCloseCallback(this.port);
 	}.bind(this));
 };
 
