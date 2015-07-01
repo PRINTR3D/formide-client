@@ -48,12 +48,15 @@ module.exports =
 			if (err) FormideOS.debug.log(err);
 			// detect adding printer
 			if(ports) {
+				console.log('ports', ports);
+				console.log('printers', ports);
 				if(this.numberOfPorts < ports.length) {
 					// handle adding printer
 					for(var i in ports) {
 						var port = ports[i];
 						for(var j in self.serialPorts) {
 							if(port.comName.indexOf(self.serialPorts[j]) > -1) {
+								console.log('comName', port.comName);
 								FormideOS.module('db').db.Printer.findOne({ port: port.comName }).exec(function(err, printer) {
 									console.log('err', err);
 									if (err) FormideOS.debug.log(err);
