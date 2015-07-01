@@ -45,11 +45,13 @@ module.exports =
 	connectPrinters: function() {
 		var self = this;
 		SerialPort.list( function (err, ports) {
-			if (err) FormideOS.debug.log(err);
+			if (err) {
+				FormideOS.debug.log(err);
+				this.numberOfPorts = 0; // fix for linux!
+			}
+			
 			// detect adding printer
 			if(ports) {
-				console.log('ports', ports);
-				console.log('printers', self.printers);
 				if(this.numberOfPorts < ports.length) {
 					console.log('ports changed');
 					// handle adding printer
@@ -59,8 +61,6 @@ module.exports =
 							if(port.comName.indexOf(self.serialPorts[j]) > -1) {
 								console.log('comName', port.comName);
 								FormideOS.module('db').db.Printer.findOne({ port: port.comName }).exec(function(err, printer) {
-									console.log('err', err);
-									console.log('printer', printer);
 									if (err) FormideOS.debug.log(err);
 									if (!printer) {
 										FormideOS.debug.log('Printer needs to be setup on port ' + port.comName);
@@ -80,7 +80,6 @@ module.exports =
 				}
 				this.numberOfPorts = ports.length;
 			}
-			this.numberOfPorts = 0; // fix for linux!
 		}.bind(this));
 	},
 	
