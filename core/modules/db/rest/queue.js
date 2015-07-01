@@ -6,32 +6,33 @@
 module.exports = function(routes, db) {
 	
 	routes.get('/queue', function(req, res) {
-		db.Queueitem.find().populate('printjob').deepPopulate('printjob.modelfiles printjob.materials printjob.sliceprofile printjob.printer printjob.gcodefile').exec(function(err, queue) {
+		db.Queueitem.find().populate('printjob printer').deepPopulate('printjob.modelfiles printjob.materials printjob.sliceprofile printjob.printer printjob.gcodefile').exec(function(err, queue) {
 			if (err) return res.send(err);
 			return res.send(queue);
 		});
 	});
 
 	routes.get('/queue/:id', function(req, res) {
-		db.Queueitem.findOne({ _id: req.params.id }).populate('printjob').deepPopulate('printjob.modelfiles printjob.materials printjob.sliceprofile printjob.printer printjob.gcodefile').exec(function(err, queueitem) {
+		db.Queueitem.findOne({ _id: req.params.id }).populate('printjob printer').deepPopulate('printjob.modelfiles printjob.materials printjob.sliceprofile printjob.printer printjob.gcodefile').exec(function(err, queueitem) {
 			if (err) return res.send(err);
 			return res.send(queueitem);
 		});
 	});
 
-	routes.post('/queue/:printjobID', function(req, res) {
+	routes.post('/queue/:printjobID/:printerID', function(req, res) {
 		db.Printjob.findOne({ _id: req.params.printjobID }, function(err, printjob) {
 			db.Queueitem.create({
 				origin: 'local',
 				status: 'queued',
 				gcode: printjob.gcode,
-				printjob: printjob._id
+				printjob: printjob._id,
+				printer: req.params.printerID
 			}, function(err, queueitem) {
 				if (err) return res.send(err);
 				return res.send({
 					success: true,
 					queueitem: queueitem
-				})
+				});
 			});
 		});
 	});
