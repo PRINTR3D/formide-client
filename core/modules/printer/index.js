@@ -53,7 +53,6 @@ module.exports =
 			// detect adding printer
 			if(ports) {
 				if(this.numberOfPorts < ports.length) {
-					console.log('ports changed');
 					// handle adding printer
 					for(var i in ports) {
 						var port = ports[i];
