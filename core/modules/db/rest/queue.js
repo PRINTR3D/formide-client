@@ -6,14 +6,14 @@
 module.exports = function(routes, db) {
 	
 	routes.get('/queue', function(req, res) {
-		db.Queueitem.find().populate('printjob').deepPopulate('printjob.modelfiles printjob.materials printjob.sliceprofile printjob.printer').exec(function(err, queue) {
+		db.Queueitem.find().populate('printjob').deepPopulate('printjob.modelfiles printjob.materials printjob.sliceprofile printjob.printer printjob.gcodefile').exec(function(err, queue) {
 			if (err) return res.send(err);
 			return res.send(queue);
 		});
 	});
 
 	routes.get('/queue/:id', function(req, res) {
-		db.Queueitem.findOne({ _id: req.params.id }).populate('printjob').deepPopulate('printjob.modelfiles printjob.materials printjob.sliceprofile printjob.printer').exec(function(err, queueitem) {
+		db.Queueitem.findOne({ _id: req.params.id }).populate('printjob').deepPopulate('printjob.modelfiles printjob.materials printjob.sliceprofile printjob.printer printjob.gcodefile').exec(function(err, queueitem) {
 			if (err) return res.send(err);
 			return res.send(queueitem);
 		});
