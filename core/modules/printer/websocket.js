@@ -70,7 +70,7 @@ module.exports = function(namespace, module)
 		});
 		
 		FormideOS.events.on('printer.disconnected', function(data) {
-			socket.emit('connected', {
+			socket.emit('disconnected', {
 				title: "Printer disconnected",
 				message: data.port,
 				port: data.port
