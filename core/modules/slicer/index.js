@@ -27,7 +27,6 @@ module.exports = {
 			this.process.stdout.on('data', this.onData);
 		}
 		else {
-/*
 			if(process.platform == 'darwin') {
 				this.process = spawn('./katana', { cwd: FormideOS.appRoot + 'bin/osx/katana', stdio: 'pipe' });
 			}
@@ -38,7 +37,6 @@ module.exports = {
 			this.process.stdout.on('exit', this.onExit);
 			this.process.stdout.on('error', this.onError);
 			this.process.stdout.on('data', this.onData);
-*/
 		}
 
 		this.slicer = new net.Socket();

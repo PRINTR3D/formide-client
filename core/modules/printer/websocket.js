@@ -27,8 +27,10 @@ module.exports = function(namespace, module)
 			var parameters = data.parameters || {};
 			var port = data.port;
 			
+			console.log(data);
+			
 			if (method === 'start') {
-				module.startPrint(port, data.parameters.hash, function() {});
+				module.startPrint(port, data.parameters._id, data.parameters.gcode, function() {});
 			}
 			else if(method == 'pause') {
 				module.pausePrint(port, function() {});
@@ -52,15 +54,24 @@ module.exports = function(namespace, module)
 		});
 		
 		FormideOS.events.on('printer.finished', function(data) {
-			socket.emit('finished', data);
+			socket.emit('finished', {
+				title: "Printer finished",
+				message: data.port
+			});
 		});
 		
 		FormideOS.events.on('printer.connected', function(data) {
-			socket.emit('connected', data);
+			socket.emit('connected', {
+				title: "Printer connected",
+				message: data.port
+			});
 		});
 		
 		FormideOS.events.on('printer.disconnected', function(data) {
-			socket.emit('disconnected', data);
+			socket.emit('connected', {
+				title: "Printer disconnected",
+				message: data.port
+			});
 		});
 		
 		FormideOS.events.on('printer.setup', function(data) {

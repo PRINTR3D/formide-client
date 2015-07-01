@@ -97,8 +97,8 @@ module.exports =
 		this.printers[port].gcode(gcode, callback);	
 	},
 	
-	startPrint: function(port, hash, callback) {
-		this.printers[port].startPrint(hash, callback);	
+	startPrint: function(port, id, gcode, callback) {
+		this.printers[port].startPrint(id, gcode, callback);
 	},
 	
 	stopPrint: function(port, callback) {

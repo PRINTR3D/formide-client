@@ -7,7 +7,10 @@ module.exports = function(namespace, module) {
 	namespace.on('connection', function(socket) {
 		
 		FormideOS.events.on('slicer.slice', function(data) {
-			socket.emit('slice', data);
+			socket.emit('slice', {
+				title: "Slicer started",
+				message: data
+			});
 		});
 		
 		FormideOS.events.on('slicer.progress', function(data) {
@@ -15,11 +18,17 @@ module.exports = function(namespace, module) {
 		});
 
 		FormideOS.events.on('slicer.finished', function(data) {
-			socket.emit('finished', data);
+			socket.emit('finished', {
+				title: "Slicer finished",
+				message: data
+			});
 		});
 		
 		FormideOS.events.on('slicer.error', function(data) {
-			socket.emit('error', data);
+			socket.emit('error', {
+				title: "Slicer error",
+				message: data
+			});
 		});
 	});
 };
