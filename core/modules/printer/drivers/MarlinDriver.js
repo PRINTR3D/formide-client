@@ -63,9 +63,12 @@ PrinterDriver.prototype.connect = function() {
 	}.bind(this));
 	
 	this.sp.on('error', function(err) {
+		console.log(err);
+/*
 		clearInterval(this.statusInterval);
 		this.open = false;
 		this.onCloseCallback(this.port);
+*/
 	}.bind(this));
 	
 	this.sp.on('close', function() {

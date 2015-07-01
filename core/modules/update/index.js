@@ -23,7 +23,6 @@ module.exports = {
 	
 	// for now updates 3rd party modules as well!
 	updateOS: function(cb) {
-		
 		var formideosRepo = gitty(FormideOS.appRoot);
 		formideosRepo.pull('origin', 'development', function(err) {
 			if (err) return res.send(err);
