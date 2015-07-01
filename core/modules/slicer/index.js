@@ -12,6 +12,7 @@ var uuid 	= require('node-uuid');
 module.exports = {
 	
 	process: null,
+	open: false,
 	
 	slicer: {},
 
@@ -33,6 +34,10 @@ module.exports = {
 			else if(process.platform == 'linux' && process.arch == 'arm' ) {
 				this.process = spawn('./katana', { cwd: FormideOS.appRoot + 'bin/rpi/katana', stdio: 'pipe' });
 			}
+			this.process.stdout.setEncoding('utf8');
+			this.process.stdout.on('exit', this.onExit);
+			this.process.stdout.on('error', this.onError);
+			this.process.stdout.on('data', this.onData);
 */
 		}
 
@@ -54,8 +59,9 @@ module.exports = {
 		this.slicer.connect({
 			port: this.config.port
 		}, function() {
+			this.open = true;
 			FormideOS.debug.log('slicer connected');
-		});
+		}.bind(this));
 	},
 
 	onExit: function(exit) {
@@ -76,12 +82,8 @@ module.exports = {
 
 	// custom functions
 	slicerError: function(error) {
-		FormideOS.debug.log(error.toString(), true);
-		FormideOS.module('log').logError({
-			message: "Slicer error",
-			data: error
-		});
 		if (error.code == 'ECONNREFUSED' || error == false) {
+			this.open = false;
 			this.slicer.setTimeout(2000, function() {
 				this.connect();
 			}.bind(this));
@@ -110,11 +112,16 @@ module.exports = {
 					data: slicerequest
 				};
 				
-				// write slicerequest to local Katana instance
-				self.slicer.write(JSON.stringify(sliceData) + '\n', function() {
-					FormideOS.events.emit('slicer.slice', slicerequest);
-					return callback(null, slicerequest);
-				});
+				if (self.open) {
+					// write slicerequest to local Katana instance
+					self.slicer.write(JSON.stringify(sliceData) + '\n', function() {
+						FormideOS.events.emit('slicer.slice', slicerequest);
+						return callback(null, slicerequest);
+					});
+				}
+				else {
+					return callback("slicer not running");
+				}
 			});
 		});
 	},

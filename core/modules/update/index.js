@@ -16,7 +16,7 @@ module.exports = {
 				name: "modules",
 				type: "hidden",
 				required: true,
-				default: []
+				default: ['formideos-interface'] // install the interface module by default, important!
 			}
 		];
 	},
