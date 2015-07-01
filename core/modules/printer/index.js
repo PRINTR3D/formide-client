@@ -49,7 +49,7 @@ module.exports =
 			// detect adding printer
 			if(ports) {
 				console.log('ports', ports);
-				console.log('printers', printers);
+				console.log('printers', self.printers);
 				if(this.numberOfPorts < ports.length) {
 					console.log('ports changed');
 					// handle adding printer
