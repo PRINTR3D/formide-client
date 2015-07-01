@@ -30,7 +30,7 @@ module.exports = {
 			if(process.platform == 'darwin') {
 				this.process = spawn('./katana', { cwd: FormideOS.appRoot + 'bin/osx/katana', stdio: 'pipe' });
 			}
-			else if(process.platform == 'linux' && process.arch == 'arm' ) {
+			else if(process.platform == 'linux') {
 				this.process = spawn('./katana', { cwd: FormideOS.appRoot + 'bin/rpi/katana', stdio: 'pipe' });
 			}
 			this.process.stdout.setEncoding('utf8');
