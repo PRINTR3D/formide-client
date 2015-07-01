@@ -80,6 +80,7 @@ module.exports =
 				}
 				this.numberOfPorts = ports.length;
 			}
+			this.numberOfPorts = 0; // fix for linux!
 		}.bind(this));
 	},
 	
