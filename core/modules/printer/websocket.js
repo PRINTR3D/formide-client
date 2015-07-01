@@ -56,21 +56,24 @@ module.exports = function(namespace, module)
 		FormideOS.events.on('printer.finished', function(data) {
 			socket.emit('finished', {
 				title: "Printer finished",
-				message: data.port
+				message: data.port,
+				port: data.port
 			});
 		});
 		
 		FormideOS.events.on('printer.connected', function(data) {
 			socket.emit('connected', {
 				title: "Printer connected",
-				message: data.port
+				message: data.port,
+				port: data.port
 			});
 		});
 		
 		FormideOS.events.on('printer.disconnected', function(data) {
 			socket.emit('connected', {
 				title: "Printer disconnected",
-				message: data.port
+				message: data.port,
+				port: data.port
 			});
 		});
 		
