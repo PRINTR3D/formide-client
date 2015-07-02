@@ -67,8 +67,8 @@
 				"support": {
 				   "fillRate": 15,
 				   "angle": 30,
-				   "supportEverywhere": 0,
-				   "supportPlatform": 0,
+				   "supportEverywhere": true,
+				   "supportPlatform": true,
 				   "XYDistance": 700,
 				   "ZDistance": 150
 				},
@@ -83,8 +83,8 @@
 					"dualOverlap": 1500
 				},
 				"movement": {
-				   "combing": 0,
-				   "oozeShield": 0,
+				   "combing": false,
+				   "oozeShield": false,
 				   "printSpeed": 40,
 				   "travelSpeed": 40,
 				   "innerWallSpeed": 15,
@@ -116,13 +116,13 @@
 				   "thickness": 600,
 				   "layerHeight": 300,
 				   "speed": 15,
-				   "solid": 1,
+				   "solid": true,
 				   "layerDelay": 0,
 				   "cutOff": 0
 				},
 				"top": {
 				   "thickness": 500,
-				   "solid": 1,
+				   "solid": true,
 				   "layerHeight": 250
 				},
 				"retraction": {
@@ -134,8 +134,8 @@
 				   "minimalDistance": 1500
 				},
 				"layers": {
-				   "spiralize": 0,
-				   "simpleMode": 0,
+				   "spiralize": false,
+				   "simpleMode": false,
 				   "layerHeight": 200,
 				   "layerCoolingTime": 0,
 				   "firstLayersCount": 0,
