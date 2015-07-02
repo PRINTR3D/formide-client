@@ -36,7 +36,7 @@ getMac.getMac(function(err, macAddress) {
 	FormideOS.moduleManager.loadModule('core/modules/cloud', 	'cloud',	true);
 	
 	// Temporary for image
-	FormideOS.moduleManager.loadModule('../formideOS-interface', 'formide-interface', false);
+	FormideOS.moduleManager.loadModule('../formideOS-interface', 'formideos-interface', false);
 	
 	// Load all 3rd party modules
 	var modules = FormideOS.settings.get('update', 'modules') || [];
