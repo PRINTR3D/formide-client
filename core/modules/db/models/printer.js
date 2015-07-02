@@ -12,7 +12,7 @@ var schema = new Schema({
 	bed: { type: Schema.Types.Mixed, required: true },
 	extruders: { type: Schema.Types.Mixed, required: true },
 	port: { type: String },
-	baudrate: { type: Number, required: true, default: 115200 },
+	baudrate: { type: Number, required: true, default: 250000 },
 	user: { type: Schema.Types.ObjectId, ref: 'users' }
 });
 schema.plugin(timestamps);
