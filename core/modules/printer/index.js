@@ -1,18 +1,7 @@
 /*
- *	    ____  ____  _____   ____________
- *	   / __ / __ /  _/ | / /_  __/ __
- *	  / /_/ / /_/ // //  |/ / / / / /_/ /
- *	 / ____/ _, _// // /|  / / / / _, _/
- *	/_/   /_/ |_/___/_/ |_/ /_/ /_/ |_|
- *
- *	Copyright Printr B.V. All rights reserved.
- *	This code is closed source and should under
- *	nu circumstances be copied or used in other
- *	applications than for Printr B.V.
- *
+ *	This code was created for Printr B.V. It is open source under the formideos-client package.
+ *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
- 
-// TODO: more drivers than just marlin
 
 // dependencies
 var spawn = require('child_process').spawn;
@@ -56,7 +45,11 @@ module.exports =
 	connectPrinters: function() {
 		var self = this;
 		SerialPort.list( function (err, ports) {
-			if (err) FormideOS.debug.log(err);
+			if (err) {
+				FormideOS.debug.log(err);
+				this.numberOfPorts = 0; // fix for linux!
+			}
+			
 			// detect adding printer
 			if(ports) {
 				if(this.numberOfPorts < ports.length) {
@@ -72,10 +65,10 @@ module.exports =
 										FormideOS.events.emit('printer.setup', { port: port.comName });
 									}
 									else {
-										self.printers[port.comName.split("/")[2]] = new MarlinDriver(port.comName, printer.baudrate, function() {
-											delete self.printers[port.comName.split("/")[2]];
-											FormideOS.events.emit('printer.disconnected');
-											FormideOS.debug.log('Printer disconnected');
+										self.printers[port.comName.split("/")[2]] = new MarlinDriver(port.comName, printer.baudrate, function(portName) {
+											delete self.printers[portName.split("/")[2]];
+											FormideOS.events.emit('printer.disconnected', { port: portName });
+											FormideOS.debug.log('Printer disconnected: ' + portName);
 										});
 									}
 								});
@@ -108,8 +101,8 @@ module.exports =
 		this.printers[port].gcode(gcode, callback);	
 	},
 	
-	startPrint: function(port, hash, callback) {
-		this.printers[port].startPrint(hash, callback);	
+	startPrint: function(port, id, gcode, callback) {
+		this.printers[port].startPrint(id, gcode, callback);
 	},
 	
 	stopPrint: function(port, callback) {

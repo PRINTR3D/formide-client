@@ -1,3 +1,15 @@
+/*
+ *	This code was created for Printr B.V. It is open source under the formideos-client package.
+ *	Copyright (c) 2015, All rights reserved, http://printr.nl
+ */
+ 
+/*
+ *	This is the printer driver for Marlin and Repetier firmware. Tested with Felix, Ultimaker, Builder and 
+ *	Cyrus 3D printers. Feel free to add more functionality like SD card support. Also, we want some extra
+ *	drivers for other firmwares. For that, an abstract driver function needs to be made that we can use to
+ *	implement other drivers with the same functions.
+ */
+
 var SerialPort 	= require("serialport");
 var fs			= require("fs");
 var readline 	= require('readline');
@@ -12,12 +24,13 @@ function PrinterDriver(port, baudrate, onCloseCallback) {
 	this.matrix = null;
 	
 	this.status = 'connecting';
+	this.statusInterval = null;
 	
 	this.extruders = [];
 	this.bed = {};
 	
 	this.time = 0;
-	this.timeLeft = 0;
+	this.queueID = null;
 	
 	this.messageBuffer = [];
 	
@@ -39,23 +52,29 @@ PrinterDriver.prototype.connect = function() {
 	});
 	
 	this.sp.on('open', function() {
-		FormideOS.debug.log("Printer connected");
-		FormideOS.events.emit('printer.connected');
+		FormideOS.debug.log("Printer connected " + this.port);
+		FormideOS.events.emit('printer.connected', { port: this.port });
 		
 		this.open = true;
 		this.status = 'online';
 		this.sp.on('data', this.received.bind(this));
 		
-		setInterval(this.askStatus.bind(this), 2000);
+		this.statusInterval = setInterval(this.askStatus.bind(this), 2000);
 	}.bind(this));
 	
 	this.sp.on('error', function(err) {
-		FormideOS.debug.log('printer error: ', err);
-	});
+		console.log(err);
+/*
+		clearInterval(this.statusInterval);
+		this.open = false;
+		this.onCloseCallback(this.port);
+*/
+	}.bind(this));
 	
 	this.sp.on('close', function() {
+		clearInterval(this.statusInterval);
 		this.open = false;
-		this.onCloseCallback();
+		this.onCloseCallback(this.port);
 	}.bind(this));
 };
 
@@ -67,10 +86,10 @@ PrinterDriver.prototype.map = {
 	"jog":					["G91", "G21", "G1 _axis_ _dist_"],
 	"jog_abs":				["G90", "G21", "X_x_ Y_y_ Z_z_"],
 	"extrude":				["G91", "G21", "G1 E _dist_"],
-	"retract":				["G91", "G21", "G1 E -_dist_"],
+	"retract":				["G91", "G21", "G1 E _dist_"],
 	"lcd_message":			["M117                     _msg_"],
 	"temp_bed":				["M140 S_temp_"],
-	"temp_ext":				["M104 S_temp_"],
+	"temp_extruder":		["M104 S_temp_"],
 	"power_on":				["M80"],
 	"power_off":			["M81"],
 	"power_on_steppers":	["M17"],
@@ -98,6 +117,7 @@ PrinterDriver.prototype.map = {
 
 PrinterDriver.prototype.askStatus = function() {	
 	this.sendRaw("M105", function() {});
+	FormideOS.events.emit('printer.status', { type: 'status', data: this.getStatus() });
 };
 
 PrinterDriver.prototype.getStatus = function() {
@@ -106,10 +126,12 @@ PrinterDriver.prototype.getStatus = function() {
 		bed: this.bed,
 		extruders: this.extruders,
 		timeStarted: this.timeStarted,
+		timeNow: new Date(),
 		totalLines: this.gcodeBuffer.length,
 		currentLine: this.currentLine,
 		progress: (this.currentLine / this.gcodeBuffer.length) * 100,
-		port: this.port
+		port: this.port,
+		queueitemID: this.queueID
 	};
 };
 
@@ -141,8 +163,8 @@ PrinterDriver.prototype.sendLineToPrint = function() {
 	        }
 	        else {
 		        this.stopPrint(function(err, result) {
-			    	FormideOS.events.emit('printer.finished', result);
-		        });
+			    	FormideOS.events.emit('printer.finished', { port: this.port });
+		        }, true);
 	        }
         }
     }.bind(this), 50);
@@ -163,16 +185,28 @@ PrinterDriver.prototype.parseGcode = function(fileContents, callback) {
 	callback();
 };
 
-PrinterDriver.prototype.startPrint = function(hash, callback) {
-	if (this.status === 'online') {
-		fs.readFile(FormideOS.appRoot + FormideOS.config.get('paths.gcode') + '/' + hash, 'utf8', function(err, gcodeData) {
-			if (err) return callback(err);
-			this.parseGcode(gcodeData, function() {
-				this.status = 'printing';
-				this.timeStarted = new Date();
-				return callback(null, "started printing " + hash);
-			}.bind(this));
-		}.bind(this));
+PrinterDriver.prototype.startPrint = function(id, gcode, callback) {
+	var self = this;
+	if (self.status === 'online') {
+		FormideOS.module('db').db.Queueitem.findOne({ _id: id, gcode: gcode }, function(err, queueitem) {
+			if (err) FormideOS.debug.log(err);
+			if (queueitem) {
+				queueitem.status = 'printing';
+				queueitem.save();
+				fs.readFile(FormideOS.appRoot + FormideOS.config.get('paths.gcode') + '/' + gcode, 'utf8', function(err, gcodeData) {
+					if (err) return callback(err);
+					self.parseGcode(gcodeData, function() {
+						self.status = 'printing';
+						self.queueID = id;
+						self.timeStarted = new Date();
+						return callback(null, "started printing " + gcode);
+					});
+				});
+			}
+			else {
+				return callback('queue item not found');
+			}
+		});
 	}
 };
 
@@ -190,13 +224,33 @@ PrinterDriver.prototype.resumePrint = function(callback) {
 	}
 };
 
-PrinterDriver.prototype.stopPrint = function(callback) {
-	if (this.status === 'printing') {
-		this.status = 'online';
-		this.currentLine = 0;
-		this.gcodeBuffer = [];
-		this.timeStarted = new Date().toISOString();
-		return callback(null, "stopped printing");
+PrinterDriver.prototype.stopPrint = function(callback, done) {
+	var self = this;
+	if (self.status === 'printing') {
+		if (done) {
+			FormideOS.module('db').db.Queueitem.findOne({ _id: self.queueID }, function(err, queueitem) {
+				queueitem.status = 'finished';
+				queueitem.save();
+				self.status = 'online';
+				self.currentLine = 0;
+				self.queueID = null;
+				self.gcodeBuffer = [];
+				self.timeStarted = null;
+				return callback(err, "stopped printing");
+			});
+		}
+		else {
+			FormideOS.module('db').db.Queueitem.findOne({ _id: self.queueID }, function(err, queueitem) {
+				queueitem.status = 'queued';
+				queueitem.save();
+				self.status = 'online';
+				self.currentLine = 0;
+				self.queueID = null;
+				self.gcodeBuffer = [];
+				self.timeStarted = null;
+				return callback(err, "stopped printing");
+			});
+		}
 	}
 };
 
@@ -217,12 +271,11 @@ PrinterDriver.prototype.received = function(data) {
 	}
 	
 	if (data.indexOf("ok") > -1 || data.indexOf("OK") > -1) {
-		FormideOS.events.emit('printer.status', { type: 'status', data: this.getStatus() });
 		this.sendLineToPrint();
 	}
 	
 	if (data.indexOf("wait") > -1) {
-		FormideOS.events.emit('printer.status', { type: 'status', data: this.getStatus() });
+		
 	}
 	
 	if (data.indexOf("SD card inserted") > -1) {

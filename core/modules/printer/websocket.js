@@ -1,15 +1,6 @@
 /*
- *	    ____  ____  _____   ____________
- *	   / __ / __ /  _/ | / /_  __/ __
- *	  / /_/ / /_/ // //  |/ / / / / /_/ /
- *	 / ____/ _, _// // /|  / / / / _, _/
- *	/_/   /_/ |_/___/_/ |_/ /_/ /_/ |_|
- *
- *	Copyright Printr B.V. All rights reserved.
- *	This code is closed source and should under
- *	nu circumstances be copied or used in other
- *	applications than for Printr B.V.
- *
+ *	This code was created for Printr B.V. It is open source under the formideos-client package.
+ *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
 module.exports = function(namespace, module)
@@ -36,8 +27,10 @@ module.exports = function(namespace, module)
 			var parameters = data.parameters || {};
 			var port = data.port;
 			
+			console.log(data);
+			
 			if (method === 'start') {
-				module.startPrint(port, data.parameters.hash, function() {});
+				module.startPrint(port, data.parameters._id, data.parameters.gcode, function() {});
 			}
 			else if(method == 'pause') {
 				module.pausePrint(port, function() {});
@@ -61,15 +54,27 @@ module.exports = function(namespace, module)
 		});
 		
 		FormideOS.events.on('printer.finished', function(data) {
-			socket.emit('finished', data);
+			socket.emit('finished', {
+				title: "Printer finished",
+				message: data.port,
+				port: data.port
+			});
 		});
 		
 		FormideOS.events.on('printer.connected', function(data) {
-			socket.emit('connected', data);
+			socket.emit('connected', {
+				title: "Printer connected",
+				message: data.port,
+				port: data.port
+			});
 		});
 		
 		FormideOS.events.on('printer.disconnected', function(data) {
-			socket.emit('disconnected', data);
+			socket.emit('disconnected', {
+				title: "Printer disconnected",
+				message: data.port,
+				port: data.port
+			});
 		});
 		
 		FormideOS.events.on('printer.setup', function(data) {

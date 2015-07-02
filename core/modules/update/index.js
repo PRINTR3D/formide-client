@@ -1,17 +1,8 @@
 /*
- *	    ____  ____  _____   ____________
- *	   / __ / __ /  _/ | / /_  __/ __
- *	  / /_/ / /_/ // //  |/ / / / / /_/ /
- *	 / ____/ _, _// // /|  / / / / _, _/
- *	/_/   /_/ |_/___/_/ |_/ /_/ /_/ |_|
- *
- *	Copyright Printr B.V. All rights reserved.
- *	This code is closed source and should under
- *	nu circumstances be copied or used in other
- *	applications than for Printr B.V.
- *
+ *	This code was created for Printr B.V. It is open source under the formideos-client package.
+ *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
-
+ 
 var fs 			= require('fs');
 var npm 		= require('npm');
 var path		= require('path');
@@ -25,16 +16,15 @@ module.exports = {
 				name: "modules",
 				type: "hidden",
 				required: true,
-				default: []
+				default: ['formideos-interface'] // install the interface module by default, important!
 			}
 		];
 	},
 	
 	// for now updates 3rd party modules as well!
 	updateOS: function(cb) {
-		
 		var formideosRepo = gitty(FormideOS.appRoot);
-		formideosRepo.pull('origin', 'development', function(err) {
+		formideosRepo.pull('origin', 'master', function(err) {
 			if (err) return res.send(err);
 			npm.load(function (err) {
 				npm.commands.update(function (updateErr, data) {

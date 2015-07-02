@@ -1,22 +1,16 @@
 /*
- *	    ____  ____  _____   ____________
- *	   / __ / __ /  _/ | / /_  __/ __
- *	  / /_/ / /_/ // //  |/ / / / / /_/ /
- *	 / ____/ _, _// // /|  / / / / _, _/
- *	/_/   /_/ |_/___/_/ |_/ /_/ /_/ |_|
- *
- *	Copyright Printr B.V. All rights reserved.
- *	This code is closed source and should under
- *	nu circumstances be copied or used in other
- *	applications than for Printr B.V.
- *
+ *	This code was created for Printr B.V. It is open source under the formideos-client package.
+ *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
 module.exports = function(namespace, module) {
 	namespace.on('connection', function(socket) {
 		
 		FormideOS.events.on('slicer.slice', function(data) {
-			socket.emit('slice', data);
+			socket.emit('slice', {
+				title: "Slicer started",
+				message: data
+			});
 		});
 		
 		FormideOS.events.on('slicer.progress', function(data) {
@@ -24,7 +18,17 @@ module.exports = function(namespace, module) {
 		});
 
 		FormideOS.events.on('slicer.finished', function(data) {
-			socket.emit('finished', data);
+			socket.emit('finished', {
+				title: "Slicer finished",
+				message: data
+			});
+		});
+		
+		FormideOS.events.on('slicer.error', function(data) {
+			socket.emit('error', {
+				title: "Slicer error",
+				message: data
+			});
 		});
 	});
 };

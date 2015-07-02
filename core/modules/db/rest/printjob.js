@@ -1,15 +1,6 @@
 /*
- *	    ____  ____  _____   ____________
- *	   / __ / __ /  _/ | / /_  __/ __
- *	  / /_/ / /_/ // //  |/ / / / / /_/ /
- *	 / ____/ _, _// // /|  / / / / _, _/
- *	/_/   /_/ |_/___/_/ |_/ /_/ /_/ |_|
- *
- *	Copyright Printr B.V. All rights reserved.
- *	This code is closed source and should under
- *	nu circumstances be copied or used in other
- *	applications than for Printr B.V.
- *
+ *	This code was created for Printr B.V. It is open source under the formideos-client package.
+ *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
 module.exports = function(routes, db)
@@ -52,12 +43,7 @@ module.exports = function(routes, db)
 	routes.delete('/printjobs/:id', function(req, res) {
 		db.Printjob.remove({ _id: req.params.id }, function(err, printjob) {
 			if (err) return res.status(400).send(err);
-			var filePath = FormideOS.config.get('paths.modelfile') + '/' + printjob.gcode;
-			fs.unlink(filePath, function() {
-				return res.send({
-					success: true
-				});
-			});
+			return res.send({ success: true });
 		});
 	});
 };
