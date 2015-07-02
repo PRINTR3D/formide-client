@@ -11,7 +11,7 @@ var schema = new Schema({
 	name: { type: String, required: true, unique: true },
 	bed: { type: Schema.Types.Mixed, required: true },
 	extruders: { type: Schema.Types.Mixed, required: true },
-	port: { type: String, required: true, default: "/dev/null" },
+	port: { type: String },
 	baudrate: { type: Number, required: true, default: 115200 },
 	user: { type: Schema.Types.ObjectId, ref: 'users' }
 });
