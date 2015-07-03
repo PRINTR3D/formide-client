@@ -80,6 +80,10 @@ module.exports = function() {
 			moduleInfo.config = FormideOS.config.get(moduleName);
 		}
 		
+		if (moduleInfo.config) {
+			FormideOS.config.set(moduleName, moduleInfo.config);
+		}
+		
 		modules[moduleName] = {
 			info: moduleInfo,
 			instance: instance,
