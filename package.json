@@ -36,7 +36,6 @@
     "express-session": "~1.10.3",
     "express-validator": "^2.9.0",
     "fancy-errors": "^0.1.2",
-    "formideos-interface": "^1.0.16",
     "formideos-module-camerapi": "^1.0.8",
     "formideos-module-webhook": "^1.0.25",
     "getmac": "~1.0.6",
