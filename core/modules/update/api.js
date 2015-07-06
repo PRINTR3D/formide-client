@@ -2,8 +2,15 @@
  *	This code was created for Printr B.V. It is open source under the formideos-client package.
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
+ 
+var fs = require('fs');
 
 module.exports = function(routes, module) {
+	
+	routes.get('/core', function(req, res) {
+		var pkg = fs.readFileSync(FormideOS.appRoot + 'package.json', 'utf8');
+		return res.json(JSON.parse(pkg));
+	});
 	
 	routes.get('/core/update', function(req, res) {
 		module.updateOS(function(err, output) {

@@ -26,7 +26,6 @@ module.exports =
 				slicer: FormideOS.config.get('slicer.port'),
 				interface: FormideOS.config.get('dashboard.port')
 			},
-			version: FormideOS.config.get('app.version'),
 			debug: FormideOS.config.get('app.debug'),
 			cloud: {
 				url: FormideOS.config.get('cloud.url')
