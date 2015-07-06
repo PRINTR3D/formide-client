@@ -9,7 +9,24 @@ module.exports = function(routes, module) {
 	
 	routes.get('/core', function(req, res) {
 		var pkg = fs.readFileSync(FormideOS.appRoot + 'package.json', 'utf8');
-		return res.json(JSON.parse(pkg));
+		pkg = JSON.parse(pkg);
+		
+		var config = {
+			environment: FormideOS.config.environment,
+			ports: {
+				app: FormideOS.config.get('app.port'),
+				slicer: FormideOS.config.get('slicer.port')
+			},
+			debug: FormideOS.config.get('app.debug'),
+			cloud: {
+				url: FormideOS.config.get('cloud.url')
+			},
+			mac: FormideOS.macAddress,
+			pkg: pkg,
+			version: pkg.version
+		};
+		
+		return res.json(config);
 	});
 	
 	routes.get('/core/update', function(req, res) {
