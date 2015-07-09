@@ -262,6 +262,8 @@ PrinterDriver.prototype.gcode = function(callback) {
 
 PrinterDriver.prototype.received = function(data) {
 	
+	console.log(data);
+	
 	if (data.indexOf("Transformation matrix") > -1) {
 		// handle Transformation matrix info
 	}
