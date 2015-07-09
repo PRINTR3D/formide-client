@@ -2,8 +2,32 @@
  *	This code was created for Printr B.V. It is open source under the formideos-client package.
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
+ 
+var fs = require('fs');
 
 module.exports = function(routes, module) {
+	
+	routes.get('/core', function(req, res) {
+		var pkg = fs.readFileSync(FormideOS.appRoot + 'package.json', 'utf8');
+		pkg = JSON.parse(pkg);
+		
+		var config = {
+			environment: FormideOS.config.environment,
+			ports: {
+				app: FormideOS.config.get('app.port'),
+				slicer: FormideOS.config.get('slicer.port')
+			},
+			debug: FormideOS.config.get('app.debug'),
+			cloud: {
+				url: FormideOS.config.get('cloud.url')
+			},
+			mac: FormideOS.macAddress,
+			pkg: pkg,
+			version: pkg.version
+		};
+		
+		return res.json(config);
+	});
 	
 	routes.get('/core/update', function(req, res) {
 		module.updateOS(function(err, output) {

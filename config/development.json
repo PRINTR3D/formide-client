@@ -36,5 +36,8 @@
 	"setup": {
 		"permission": false,
 		"registerUrl": "https://api2.formide.com/clients/register/token"
+	},
+	"update": {
+		"permission": false
 	}
 }
