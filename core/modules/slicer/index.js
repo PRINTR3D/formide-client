@@ -10,64 +10,18 @@ var net 	= require('net');
 var uuid 	= require('node-uuid');
 
 module.exports = {
-	
-	process: null,
-	open: false,
+
 	katana: null,
-	
-	slicer: {},
 
 	init: function(config) {
 		this.config = config;
 
 		if(process.platform == 'darwin') {
-			this.katana	= require(FormideOS.appRoot + '/bin/osx/katana');
+			this.katana	= require(FormideOS.appRoot + 'bin/osx/katana');
 		}
 		else if(process.platform == 'linux') {
-			this.katana	= require(FormideOS.appRoot + '/bin/rpi/katana');
+			this.katana	= require(FormideOS.appRoot + 'bin/rpi/katana');
 		}
-
-/*
-		this.slicer = new net.Socket();
-		this.connect();
-		this.slicer.on('error', this.slicerError.bind(this));
-		this.slicer.on('data', this.sliceResponse.bind(this));
-		this.slicer.on('close', this.slicerError.bind(this));
-*/
-
-// 		FormideOS.events.on('process.exit', this.stop.bind(this));
-	},
-	
-	dispose: function() {
-		this.stop();
-	},
-
-	connect: function() {
-/*
-		this.slicer.destroy();
-		this.slicer.connect({
-			port: this.config.port
-		}, function() {
-			this.open = true;
-			FormideOS.debug.log('slicer connected');
-		}.bind(this));
-*/
-	},
-
-	onExit: function(exit) {
-		FormideOS.debug.log(exit, true);
-	},
-
-	onError: function(error) {
-		FormideOS.debug.log(error, true);
-	},
-
-	onData: function(data) {
-		FormideOS.debug.log(data);
-	},
-
-	stop: function(stop) {
-		this.process.kill('SIGINT');
 	},
 
 	// custom functions
