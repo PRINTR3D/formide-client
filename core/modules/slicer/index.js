@@ -41,6 +41,7 @@ module.exports = {
 		
 		var self = this;
 		var hash = uuid.v4();
+		var callback = callback;
 		
 		FormideOS.module('db').db.Printjob.create({
 			modelfiles: modelfiles,
@@ -54,7 +55,9 @@ module.exports = {
 			if (err) return callback(err);
 			
 			self.createSliceRequest(printjob._id, function(err, slicerequest) {
-				if (err) return callback(err);
+				if (err) callback(err);
+				
+				callback(null, printjob);
 				
 				var sliceData = {
 					type: "slice",
@@ -80,12 +83,11 @@ module.exports = {
 								sliceResponse: response.data,
 								sliceFinished: true
 							}, function(err, printjob) {
-								if (err) return;
+								if (err) FormideOS.debug.log(err);
 								FormideOS.events.emit('slicer.finished', {
 									title: 'Slicer finished',
 									message: 'Slicer finished slicing'
 								});
-								return;
 							});
 						}
 						
@@ -100,11 +102,10 @@ module.exports = {
 								title: 'Slicer error ' + response.status,
 								message: 'Slicing failed: ' + response.msg
 							});
-							return;
 						}
 					}
 					catch(e) {
-						
+						FormideOS.debug.log(e);
 					}
 				});
 			});
