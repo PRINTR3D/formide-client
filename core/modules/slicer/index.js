@@ -18,9 +18,11 @@ module.exports = {
 
 		if(process.platform == 'darwin') {
 			this.katana	= require(FormideOS.appRoot + 'bin/osx/katana');
+			FormideOS.debug.log('Binded katana in osx/katana');
 		}
 		else if(process.platform == 'linux') {
 			this.katana	= require(FormideOS.appRoot + 'bin/rpi/katana');
+			FormideOS.debug.log('Binded katana in rpi/katana');
 		}
 	},
 
@@ -67,35 +69,42 @@ module.exports = {
 				
 				self.katana.slice(JSON.stringify(sliceData), function(response) {
 					
-					// success response
-					if(response.status == 200 && response.data.responseID != null) {
-						FormideOS.module('db').db.Printjob
-						.update({ _id: response.data.responseID }, {
-							gcode: response.data.gcode,
-							sliceResponse: response.data,
-							sliceFinished: true
-						}, function(err, printjob) {
-							if (err) return;
-							FormideOS.events.emit('slicer.finished', {
-								title: 'Slicer finished',
-								message: 'Slicer finished slicing'
+					try {
+						var response = JSON.parse(response);
+						
+						// success response
+						if(response.status == 200 && response.data.responseID != null) {
+							FormideOS.module('db').db.Printjob
+							.update({ _id: response.data.responseID }, {
+								gcode: response.data.gcode,
+								sliceResponse: response.data,
+								sliceFinished: true
+							}, function(err, printjob) {
+								if (err) return;
+								FormideOS.events.emit('slicer.finished', {
+									title: 'Slicer finished',
+									message: 'Slicer finished slicing'
+								});
+								return;
+							});
+						}
+						
+						// progess response
+						else if(response.status === 120) {
+							FormideOS.events.emit('slicer.progress', response.data);
+						}
+						
+						// error response
+						else {
+							FormideOS.events.emit('slicer.error', {
+								title: 'Slicer error ' + response.status,
+								message: 'Slicing failed: ' + response.msg
 							});
 							return;
-						});
+						}
 					}
-					
-					// progess response
-					else if(response.status === 120) {
-						FormideOS.events.emit('slicer.progress', response.data);
-					}
-					
-					// error response
-					else {
-						FormideOS.events.emit('slicer.error', {
-							title: 'Slicer error ' + response.status,
-							message: 'Slicing failed: ' + response.msg
-						});
-						return;
+					catch(e) {
+						
 					}
 				});
 			});
