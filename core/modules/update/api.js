@@ -4,6 +4,8 @@
  */
  
 var fs = require('fs');
+var publicIp = require('public-ip');
+var internalIp = require('internal-ip');
 
 module.exports = function(routes, module) {
 	
@@ -13,10 +15,7 @@ module.exports = function(routes, module) {
 		
 		var config = {
 			environment: FormideOS.config.environment,
-			ports: {
-				app: FormideOS.config.get('app.port'),
-				slicer: FormideOS.config.get('slicer.port')
-			},
+			port: FormideOS.config.get('app.port'),
 			debug: FormideOS.config.get('app.debug'),
 			cloud: {
 				url: FormideOS.config.get('cloud.url')
@@ -26,7 +25,11 @@ module.exports = function(routes, module) {
 			version: pkg.version
 		};
 		
-		return res.json(config);
+		publicIp(function (err, ip) {
+			config.ip_internal = internalIp();
+			config.ip = ip;
+			return res.json(config);
+		});
 	});
 	
 	routes.get('/core/update', function(req, res) {

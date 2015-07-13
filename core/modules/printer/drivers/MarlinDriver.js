@@ -13,12 +13,13 @@
 var SerialPort 	= require("serialport");
 var fs			= require("fs");
 var readline 	= require('readline');
+var async		= require('async');
 
 function PrinterDriver(port, baudrate, onCloseCallback) {
 	
 	this.open = false;
 	this.onCloseCallback = onCloseCallback;
-	this.baudrate = baudrate;
+	this.baudrate = 0; //baudrate;
 	
 	this.port = port;
 	this.matrix = null;
@@ -44,38 +45,128 @@ function PrinterDriver(port, baudrate, onCloseCallback) {
 	return this;
 }
 
+
+PrinterDriver.prototype.tryBaudrate = function(baudRate, callback) {
+	var self = this;
+	if (self.baudrate == 0) {
+		var sPort = SerialPort.SerialPort;
+		
+		self.sp = new sPort(self.port, {
+			baudrate: baudRate,
+			parser: SerialPort.parsers.readline("\n")
+		});
+		
+		self.sp.on('open', function() {
+			setTimeout(function() {
+				if (self.baudrate === 0) {
+					self.sp.close();
+					callback(null, {success: false, baudrate: baudRate});
+				}
+			}, 2500);
+			
+			self.sp.on('data', function(data) {
+				self.baudrate = baudRate;
+				callback(null, {success: true, baudrate: baudRate});
+			});
+		});
+	}
+	else {
+		callback(null, {success: false, baudrate: baudRate});
+	}
+}
+
 PrinterDriver.prototype.connect = function() {
-	var sPort = SerialPort.SerialPort;
-	this.sp = new sPort(this.port, {
-		baudrate: this.baudrate,
-		parser: SerialPort.parsers.readline("\n")
+	
+	var self = this;
+	
+	async.series([
+		function(callback) {
+			self.tryBaudrate(250000, callback);
+		},
+		function(callback) {
+			self.tryBaudrate(115200, callback);
+		},
+		function(callback) {
+			self.tryBaudrate(57600, callback);
+		}
+	], function(err, results) {
+		console.log(err, results);
 	});
 	
-	this.sp.on('open', function() {
-		FormideOS.debug.log("Printer connected " + this.port);
-		FormideOS.events.emit('printer.connected', { port: this.port });
-		
-		this.open = true;
-		this.status = 'online';
-		this.sp.on('data', this.received.bind(this));
-		
-		this.statusInterval = setInterval(this.askStatus.bind(this), 2000);
-	}.bind(this));
 	
-	this.sp.on('error', function(err) {
-		console.log(err);
+	
 /*
-		clearInterval(this.statusInterval);
-		this.open = false;
-		this.onCloseCallback(this.port);
-*/
-	}.bind(this));
+	for(var i = 0; i < this.baudrates.length; i++) {
+		(function(i) {
+		
+			try {
+				var sPort = SerialPort.SerialPort;
+				
+				this.sp = new sPort(this.port, {
+					baudrate: this.baudrates[i],
+					parser: SerialPort.parsers.readline("\n")
+				});
+				
+				this.sp.on('open', function() {
+					
+					console.log('test', this.baudrates[i]);
+					
+					var connectionTest = false;
+					
+					this.sp.write("M105\n", function(err, results) {
+						
+						setTimeout(function() {
+							if (connectionTest === true) {
+								console.log('success with ' + this.baudrates[i])
+							}
+							else {
+								
+							}
+						}.bind(this), 5000);
+						
+						
+						console.log(err, results);
+					}.bind(this));
+					
+					this.sp.on('data', function(data) {
+						connectionTest = true;
+						console.log(this.baudrates[i], data);
+					}.bind(this));
+					
+					
+					this.sp.on('data', function(data) {
+						connectionTest = true;
+						console.log(this.baudrates[i], data);
+					});
+					
+					FormideOS.debug.log("Printer connected " + this.port);
+					FormideOS.events.emit('printer.connected', { port: this.port });
+					
+					this.open = true;
+					this.status = 'online';
+					this.sp.on('data', this.received.bind(this));
+					
+					this.statusInterval = setInterval(this.askStatus.bind(this), 2000);
 	
-	this.sp.on('close', function() {
-		clearInterval(this.statusInterval);
-		this.open = false;
-		this.onCloseCallback(this.port);
-	}.bind(this));
+					
+					this.sp.on('error', function(err) {
+						console.log(err);
+					}.bind(this));
+					
+					this.sp.on('close', function() {
+						clearInterval(this.statusInterval);
+						this.open = false;
+						this.onCloseCallback(this.port);
+					}.bind(this));
+				}.bind(this));
+			}
+			catch (e) {
+				console.log(e);
+			}
+		
+		}.bind(this))(i);
+	}
+*/
 };
 
 PrinterDriver.prototype.map = {
@@ -261,8 +352,6 @@ PrinterDriver.prototype.gcode = function(callback) {
 };
 
 PrinterDriver.prototype.received = function(data) {
-	
-	console.log(data);
 	
 	if (data.indexOf("Transformation matrix") > -1) {
 		// handle Transformation matrix info

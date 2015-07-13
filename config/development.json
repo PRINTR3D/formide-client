@@ -10,7 +10,8 @@
 		"inviteUrl": "https://api2.formide.com/clients/register/invite"
 	},
 	"cloud": {
-		"url": "https://myaccount.formide.com"
+		"url": "https://api2.formide.com",
+		"url2": "http://localhost:3000"
 	},
 	"db": {
 		"storage": "../storage/database"

@@ -7,6 +7,9 @@
 var net 		= require('net');
 var request 	= require('request');
 var socket 		= require('socket.io-client');
+var publicIp 	= require('public-ip');
+var internalIp 	= require('internal-ip');
+var fs			= require('fs');
 
 module.exports =
 {	
@@ -24,12 +27,20 @@ module.exports =
 		// when connecting to cloud
 		this.cloud.on('connect', function() {
 			// authenticate formideos based on mac address and api token, also sends permissions for faster blocking via cloud
-			this.cloud.emit('authenticate', {
-				type: 'client',
-				mac: FormideOS.macAddress,
-				deviceUUID: FormideOS.macAddress // for now
-			});
-			FormideOS.debug.log('Cloud connected');
+			publicIp(function (err, ip) {
+				var pkg = fs.readFileSync(FormideOS.appRoot + 'package.json', 'utf8');
+				pkg = JSON.parse(pkg);
+				this.cloud.emit('authenticate', {
+					type: 'client',
+					mac: FormideOS.macAddress,
+					ip: ip,
+					ip_internal: internalIp(),
+					version: pkg.version,
+					environment: FormideOS.config.environment,
+					port: FormideOS.config.get('app.port')
+				});
+				FormideOS.debug.log('Cloud connected');
+			}.bind(this));
 		}.bind(this));
 		
 		/*

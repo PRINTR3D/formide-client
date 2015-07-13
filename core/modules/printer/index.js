@@ -57,7 +57,6 @@ module.exports =
 					for(var i in ports) {
 						var port = ports[i];
 						for(var j in self.serialPorts) {
-							console.log(port);
 							if(port.comName.indexOf(self.serialPorts[j]) > -1) {
 								FormideOS.module('db').db.Printer.findOne({ port: port.comName }).exec(function(err, printer) {
 									if (err) FormideOS.debug.log(err);
