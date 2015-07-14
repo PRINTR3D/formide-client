@@ -21,17 +21,22 @@ module.exports = function(routes, db) {
 
 	routes.post('/queue/:printjobID/:printerID', function(req, res) {
 		db.Printjob.findOne({ _id: req.params.printjobID }, function(err, printjob) {
-			db.Queueitem.create({
-				origin: 'local',
-				status: 'queued',
-				gcode: printjob.gcode,
-				printjob: printjob._id,
-				printer: req.params.printerID
-			}, function(err, queueitem) {
-				if (err) return res.send(err);
-				return res.send({
-					success: true,
-					queueitem: queueitem
+			if (err) return res.json({ success: false, err: err, message: 'printjob error' });
+			db.Printer.findOne({ _id: req.params.printerID }, function(err, printer) {
+				if (err) return res.json({ success: false, err: err, message: 'printer error' });
+				if (!printer) return res.json({ success: false, message: 'no printer found with this ID' });
+				db.Queueitem.create({
+					origin: 'local',
+					status: 'queued',
+					gcode: printjob.gcode,
+					printjob: printjob._id,
+					printer: req.params.printerID
+				}, function(err, queueitem) {
+					if (err) return res.send(err);
+					return res.send({
+						success: true,
+						queueitem: queueitem
+					});
 				});
 			});
 		});

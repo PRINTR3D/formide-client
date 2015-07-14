@@ -119,6 +119,13 @@ module.exports = function() {
 			router.use(FormideOS.http.permissions.check(module.info.namespace, module.info.config.permission));
 			delete require.cache[require.resolve(module.info.root + '/api.js')];
 			require(module.info.root + '/api.js')(router, module.instance);
+			
+			if (fs.existsSync(module.info.root + '/index.html')) {
+				router.get('/', function(req, res) {
+					res.sendFile(module.info.root + '/index.html');
+				});
+			}
+			
 			FormideOS.http.app.use('/api/' + module.info.namespace, router);
 		}
 		

@@ -1,0 +1,168 @@
+
+2015-07-13.15:16:22: New request.
+2015-07-13.15:16:22: Preparing model.
+2015-07-13.15:16:22: Dividing regions.
+2015-07-13.15:16:22: Processing data.
+2015-07-13.15:16:22: Adding infill.
+2015-07-13.15:16:22: Writing Gcode.
+2015-07-13.15:16:22: Starting region algorithm.
+2015-07-13.15:16:23: Finished all layers.
+2015-07-13.15:16:23: Request correctly processed and finito!
+
+
+2015-07-13.15:20:46: New request.
+2015-07-13.15:20:46: Preparing model.
+2015-07-13.15:20:47: Dividing regions.
+2015-07-13.15:20:47: Processing data.
+2015-07-13.15:20:47: Adding infill.
+2015-07-13.15:20:47: Writing Gcode.
+2015-07-13.15:20:47: Starting region algorithm.
+2015-07-13.15:20:47: Finished all layers.
+2015-07-13.15:20:47: Request correctly processed and finito!
+
+
+2015-07-13.15:21:23: New request.
+2015-07-13.15:21:23: Preparing model.
+2015-07-13.15:21:24: Dividing regions.
+2015-07-13.15:21:24: Processing data.
+2015-07-13.15:21:24: Adding infill.
+2015-07-13.15:21:24: Writing Gcode.
+2015-07-13.15:21:24: Starting region algorithm.
+2015-07-13.15:21:24: Finished all layers.
+2015-07-13.15:21:24: Request correctly processed and finito!
+
+
+2015-07-13.15:22:47: New request.
+2015-07-13.15:22:47: Preparing model.
+2015-07-13.15:22:47: Dividing regions.
+2015-07-13.15:22:47: Processing data.
+2015-07-13.15:22:48: Adding infill.
+2015-07-13.15:22:48: Writing Gcode.
+2015-07-13.15:22:48: Starting region algorithm.
+2015-07-13.15:22:48: Finished all layers.
+2015-07-13.15:22:48: Request correctly processed and finito!
+
+
+2015-07-13.15:30:54: New request.
+2015-07-13.15:30:54: Preparing model.
+2015-07-13.15:30:54: Dividing regions.
+2015-07-13.15:30:54: Processing data.
+2015-07-13.15:30:54: Adding infill.
+2015-07-13.15:30:54: Writing Gcode.
+2015-07-13.15:30:54: Starting region algorithm.
+2015-07-13.15:30:54: Finished all layers.
+2015-07-13.15:30:54: Request correctly processed and finito!
+
+
+2015-07-13.15:32:06: New request.
+2015-07-13.15:32:06: Preparing model.
+2015-07-13.15:32:06: Dividing regions.
+2015-07-13.15:32:06: Processing data.
+2015-07-13.15:32:06: Adding infill.
+2015-07-13.15:32:06: Writing Gcode.
+2015-07-13.15:32:06: Starting region algorithm.
+2015-07-13.15:32:06: Finished all layers.
+2015-07-13.15:32:06: Request correctly processed and finito!
+
+
+2015-07-13.15:34:20: New request.
+2015-07-13.15:34:20: Preparing model.
+2015-07-13.15:34:22: Dividing regions.
+2015-07-13.15:34:23: Adding support.
+2015-07-13.15:34:23: Processing data.
+2015-07-13.15:34:25: Adding infill.
+2015-07-13.15:34:27: Adding skirt.
+2015-07-13.15:34:27: Writing Gcode.
+2015-07-13.15:34:27: Starting region algorithm.
+2015-07-13.15:34:44: Finished all layers.
+2015-07-13.15:34:44: Request correctly processed and finito!
+
+
+2015-07-13.15:38:21: New request.
+2015-07-13.15:38:21: Preparing model.
+2015-07-13.15:38:22: Dividing regions.
+2015-07-13.15:38:22: Processing data.
+2015-07-13.15:38:22: Adding infill.
+2015-07-13.15:38:22: Writing Gcode.
+2015-07-13.15:38:22: Starting region algorithm.
+2015-07-13.15:38:22: Finished all layers.
+2015-07-13.15:38:22: Request correctly processed and finito!
+
+
+2015-07-13.15:38:35: New request.
+2015-07-13.15:38:35: Preparing model.
+2015-07-13.15:38:37: Dividing regions.
+2015-07-13.15:38:37: Processing data.
+2015-07-13.15:38:39: Adding infill.
+2015-07-13.15:38:42: Writing Gcode.
+2015-07-13.15:38:42: Starting region algorithm.
+2015-07-13.15:38:46: Finished all layers.
+2015-07-13.15:38:46: Request correctly processed and finito!
+
+
+2015-07-13.15:39:35: New request.
+2015-07-13.15:39:35: Preparing model.
+2015-07-13.15:39:37: Dividing regions.
+2015-07-13.15:39:38: Processing data.
+2015-07-13.15:39:40: Adding infill.
+2015-07-13.15:39:42: Writing Gcode.
+2015-07-13.15:39:42: Starting region algorithm.
+2015-07-13.15:39:46: Finished all layers.
+2015-07-13.15:39:46: Request correctly processed and finito!
+
+
+2015-07-13.15:41:57: New request.
+2015-07-13.15:41:57: Preparing model.
+2015-07-13.15:41:59: Dividing regions.
+2015-07-13.15:42:00: Processing data.
+2015-07-13.15:42:02: Adding infill.
+2015-07-13.15:42:04: Writing Gcode.
+2015-07-13.15:42:04: Starting region algorithm.
+2015-07-13.15:42:09: Finished all layers.
+2015-07-13.15:42:09: Request correctly processed and finito!
+
+
+2015-07-13.15:43:26: New request.
+2015-07-13.15:43:26: Preparing model.
+2015-07-13.15:43:28: Dividing regions.
+2015-07-13.15:43:28: Processing data.
+2015-07-13.15:43:30: Adding infill.
+2015-07-13.15:43:33: Writing Gcode.
+2015-07-13.15:43:33: Starting region algorithm.
+2015-07-13.15:43:37: Finished all layers.
+2015-07-13.15:43:37: Request correctly processed and finito!
+
+
+2015-07-13.15:44:06: New request.
+2015-07-13.15:44:06: Preparing model.
+2015-07-13.15:44:08: Dividing regions.
+2015-07-13.15:44:09: Processing data.
+2015-07-13.15:44:11: Adding infill.
+2015-07-13.15:44:13: Writing Gcode.
+2015-07-13.15:44:13: Starting region algorithm.
+2015-07-13.15:44:17: Finished all layers.
+2015-07-13.15:44:17: Request correctly processed and finito!
+
+
+2015-07-13.15:45:13: New request.
+2015-07-13.15:45:13: Preparing model.
+2015-07-13.15:45:15: Dividing regions.
+2015-07-13.15:45:16: Processing data.
+2015-07-13.15:45:18: Adding infill.
+2015-07-13.15:45:20: Writing Gcode.
+2015-07-13.15:45:20: Starting region algorithm.
+2015-07-13.15:45:25: Finished all layers.
+2015-07-13.15:45:25: Request correctly processed and finito!
+
+
+2015-07-13.15:46:48: New request.
+2015-07-13.15:46:48: Preparing model.
+2015-07-13.15:46:50: Dividing regions.
+2015-07-13.15:46:51: Adding support.
+2015-07-13.15:46:51: Processing data.
+2015-07-13.15:46:53: Adding infill.
+2015-07-13.15:46:55: Writing Gcode.
+2015-07-13.15:46:55: Starting region algorithm.
+2015-07-13.15:47:10: Finished all layers.
+2015-07-13.15:47:10: Request correctly processed and finito!
+
