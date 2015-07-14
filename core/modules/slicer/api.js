@@ -12,8 +12,8 @@ module.exports = function(routes, module)
 	 */
 	routes.post('/slice', function(req, res) {
 		module.slice(req.body.modelfiles, req.body.sliceprofile, req.body.materials, req.body.printer, req.body.settings, function(err, printjob) {
-			if (err) return res.send({ success: false, error: err });
-			return res.send({
+			if (err) res.send({ success: false, error: err });
+			return res.json({
 				success: true,
 				printjob: printjob
 			});
@@ -26,7 +26,7 @@ module.exports = function(routes, module)
 	routes.get('/generaterequest/:printjobID', function(req, res) {
 		module.createSliceRequest(req.params.printjobID, function(err, slicerequest) {
 			if (err) return res.send(err);
-			return res.send(slicerequest);
+			return res.json(slicerequest);
 		});
 	});
 };
