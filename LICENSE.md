@@ -13,4 +13,4 @@ See the GNU General Public License for more details.
 Alternatively, you can license this code under a commercial
 license.
 
-For information about a commercial license please contact chris@printr.nl.
+For information about a commercial license please contact ahmad@printr.nl.

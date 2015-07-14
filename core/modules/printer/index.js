@@ -90,30 +90,44 @@ module.exports =
 	},
 	
 	getStatus: function(port, callback) {
-		return callback(this.printers[port].getStatus());
+		if (this.printers[port] !== undefined) {
+			return callback(this.printers[port].getStatus());
+		}
 	},
 
 	printerControl: function(port, data, callback) {
-		this.printers[port].command(data.command, data.parameters, callback);
+		if (this.printers[port] !== undefined) {
+			this.printers[port].command(data.command, data.parameters, callback);
+		}
 	},
 	
 	gcode: function(port, gcode, callback) {
-		this.printers[port].gcode(gcode, callback);	
+		if (this.printers[port] !== undefined) {
+			this.printers[port].gcode(gcode, callback);	
+		}
 	},
 	
 	startPrint: function(port, id, gcode, callback) {
-		this.printers[port].startPrint(id, gcode, callback);
+		if (this.printers[port] !== undefined) {
+			this.printers[port].startPrint(id, gcode, callback);
+		}
 	},
 	
 	stopPrint: function(port, callback) {
-		this.printers[port].stopPrint(callback);
+		if (this.printers[port] !== undefined) {
+			this.printers[port].stopPrint(callback);
+		}
 	},
 	
 	pausePrint: function(port, callback) {
-		this.printers[port].pausePrint(callback);
+		if (this.printers[port] !== undefined) {
+			this.printers[port].pausePrint(callback);
+		}
 	},
 	
 	resumePrint: function(port, callback) {
-		this.printers[port].resumePrint(callback);
+		if (this.printers[port] !== undefined) {
+			this.printers[port].resumePrint(callback);
+		}
 	}
 }

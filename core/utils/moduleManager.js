@@ -49,9 +49,13 @@ module.exports = function() {
 		delete require.cache[require.resolve(moduleRoot + '/index.js')];
 		var instance = require(moduleRoot + '/index.js')
 		
-		if(typeof instance.exposeSettings === 'function') {
+		if (typeof instance.exposeSettings === 'function') {
 			moduleInfo.exposeSettings = instance.exposeSettings();
 			FormideOS.settings.addModuleSettings(moduleName, moduleInfo.exposeSettings);
+		}
+		
+		if (typeof instance.setup === 'function') {
+			instance.setup();
 		}
 		
 		if (fs.existsSync(moduleRoot + '/package.json')) {
@@ -116,9 +120,16 @@ module.exports = function() {
 			
 			// register module's api as sub-app in express server
 			var router = FormideOS.http.express.Router();
-			router.use(FormideOS.http.permissions.check(module.info.namespace, module.info.config.permission));
+			//router.use(FormideOS.http.permissions.check(module.info.namespace, module.info.config.permission));
 			delete require.cache[require.resolve(module.info.root + '/api.js')];
 			require(module.info.root + '/api.js')(router, module.instance);
+			
+			if (fs.existsSync(module.info.root + '/index.html')) {
+				router.get('/', function(req, res) {
+					res.sendFile(module.info.root + '/index.html');
+				});
+			}
+			
 			FormideOS.http.app.use('/api/' + module.info.namespace, router);
 		}
 		

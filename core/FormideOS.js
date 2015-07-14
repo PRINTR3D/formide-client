@@ -31,14 +31,14 @@ FormideOS.debug = require('./utils/debug.js');
 // Global user settings
 FormideOS.settings = require('./utils/settings.js')();
 
+// Permissions
+FormideOS.permissions = require('./utils/permissions.js');
+
 // HTTP server
 FormideOS.http = require('./utils/http').init();
 
 // WS server
 FormideOS.ws = require('./utils/websocket').init();
-
-// Utilities
-FormideOS.utils = require('./utils/functions.js');
 
 // Module manager
 FormideOS.moduleManager = require('./utils/moduleManager.js')();
