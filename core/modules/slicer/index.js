@@ -101,7 +101,7 @@ module.exports = {
 								if (err) FormideOS.debug.log(err);
 								FormideOS.events.emit('slicer.failed', {
 									status: response.status,
-									message: "Finished slicing " + response.data.msg,
+									message: response.data.msg,
 									data: response.data
 								});
 							});
