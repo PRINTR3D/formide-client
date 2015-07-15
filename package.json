@@ -63,6 +63,7 @@
     "passport-http-bearer": "~1.0.1",
     "passport-local": "~1.0.0",
     "password-hash": "^1.2.2",
+    "permission": "^0.1.6",
     "polo": "~0.7.1",
     "prettify-error": "^0.1.1",
     "public-ip": "^1.0.2",

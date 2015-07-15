@@ -16,7 +16,11 @@ module.exports = {
 		db.AccessToken.remove({}, function(err) {});
 		
 		db.User.remove({}, function(err) {
-			db.User.create(setupConfig.users, function(err) {
+			db.User.create({
+				email: "test@user.com",
+				password: "password",
+				permissions: FormideOS.permissions.get()
+			}, function(err) {
 				if (err) FormideOS.debug.log('db users create err: ' + err);
 			});
 		});

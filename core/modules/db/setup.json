@@ -2,18 +2,7 @@
 	"users": [
 		{
 			"password": "password",
-			"email": "test@user.com",
-			"permissions": [
-				"auth",
-				"files",
-				"log",
-				"printer",
-				"db",
-				"slicer",
-				"device",
-				"settings",
-				"update"
-			]
+			"email": "test@user.com"
 		}
 	],
 	
