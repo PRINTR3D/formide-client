@@ -9,33 +9,31 @@ module.exports =
 {
 	device: {},
 
-	init: function()
-	{
+	setup: function() {
+		
+	},
+
+	init: function() {
 		this.device.os = os;
 	},
 
-	getCpus: function()
-	{
+	getCpus: function() {
 		return this.device.os.cpus();
 	},
 
-	getNetwork: function()
-	{
+	getNetwork: function() {
 		return this.device.os.networkInterfaces();
 	},
 
-	getHostname: function()
-	{
+	getHostname: function() {
 		return this.device.os.hostname();
 	},
 
-	getUpdate: function()
-	{
+	getUpdate: function() {
 		return this.device.os.uptime();
 	},
 
-	getMemory: function()
-	{
+	getMemory: function() {
 		return {total: this.device.os.totalmem(), free: this.device.os.freemem()};
 	}
 };

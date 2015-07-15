@@ -3,7 +3,11 @@
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
-module.exports = function(namespace, module) {
+module.exports = function(namespace, module)
+{	
+	// set permissions needed for this websocket namespace
+	namespace.permissions = ['slicer:events'];
+	
 	namespace.on('connection', function(socket) {
 		
 		FormideOS.events.on('slicer.slice', function(data) {
