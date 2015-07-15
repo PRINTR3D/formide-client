@@ -31,7 +31,7 @@ module.exports = {
 				if (needsPermissions.indexOf(hasPermissions) > -1) {
 					return true;
 				}
-				FormideOS.debug.log("Permission not added to system");
+				FormideOS.debug.log("Permission not added to system" + hasPermissions);
 			}
 			FormideOS.debug.log("No permission: " + hasPermissions);
 			return false;
@@ -39,7 +39,7 @@ module.exports = {
 		else if (typeof hasPermissions === 'object') {
 			for (var i in hasPermissions) {
 				if (permissions.indexOf(hasPermissions[i]) === -1) {
-					FormideOS.debug.log("Permission not added to system");
+					FormideOS.debug.log("Permission not added to system" + hasPermissions[i]);
 					return false;
 				}
 				if (needsPermissions.indexOf(hasPermissions[i]) === -1) {
@@ -50,7 +50,7 @@ module.exports = {
 			return true;
 		}
 		else {
-			FormideOS.debug.log("Permissions should be string or array");
+			FormideOS.debug.log("Permissions should be string or array, now is " + typeof hasPermissions);
 			return false;
 		}
 	}
