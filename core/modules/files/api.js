@@ -5,6 +5,7 @@
 
 var multipart 			= require('connect-multiparty');
 var multipartMiddleware = multipart();
+var path                = require('path');
 
 module.exports = function(routes, module)
 {	
@@ -43,16 +44,16 @@ module.exports = function(routes, module)
 	});
 
 	routes.post('/upload', multipartMiddleware, function(req, res) {
-		if (!req.files) {
+		if (!req.files.file) {
 			return res.status(400).json({
 				success: false,
 				message: "No files posted"
 			});
 		}
 		
-		var ext = req.files.file.originalFilename.split('.')[1];
-		
-		if (ext === 'stl' || ext === 'STL') {
+		var ext = path.extname(req.files.file.originalFilename).toLowerCase();
+        
+		if (ext === '.stl') {
 			module.uploadModelfile(req.files.file, function(err, modelfile) {
 				if (err) return res.send(err);
 				return res.send({
@@ -61,13 +62,19 @@ module.exports = function(routes, module)
 				});
 			});
 		}
-		else if (ext === 'gcode' || ext === 'GCODE') {
+		else if (ext === '.gcode') {
 			module.uploadGcode(req.files.file, function(err, gcodefile) {
 				if (err) return res.send(err);
 				return res.send({
 					success: true,
 					gcodefile: gcodefile
 				});
+			});
+		}
+        else {
+			return res.status(400).json({
+				success: false,
+				message: "Wrong file format"
 			});
 		}
 	});
