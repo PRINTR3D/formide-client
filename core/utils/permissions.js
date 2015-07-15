@@ -4,7 +4,8 @@
  */
  
 /*
- *	
+ *	This utility handles the global system permissions that are available and can check if any
+ *	given permissions (string or array) are valid.
  */
  
 var permissions = FormideOS.config.get('auth.permissions');
