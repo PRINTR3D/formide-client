@@ -190,6 +190,7 @@ PrinterDriver.prototype.getStatus = function() {
 };
 
 PrinterDriver.prototype.command = function(command, parameters, callback) {
+	console.log(command);
 	if (this.status === 'online') {
 		var command = Object.create(this.map[command]);
 		for(var i in command) {
