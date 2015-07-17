@@ -10,6 +10,7 @@ var Schema = mongoose.Schema;
 var schema = new Schema({
 	name: { type: String, required: true, unique: true },
 	bed: { type: Schema.Types.Mixed, required: true },
+	axis: { type: Schema.Types.Mixed, required: true, default: { x: 1, y: 1, z: 1} },
 	extruders: { type: Schema.Types.Mixed, required: true },
 	port: { type: String },
 	baudrate: { type: Number, required: true, default: 250000 },

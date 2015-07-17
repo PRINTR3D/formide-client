@@ -5,25 +5,25 @@
 
 module.exports = function(routes, module) {
 
-	routes.get('/', function(req, res) {
+	routes.get('/', FormideOS.http.permissions.check('settings:read'), function(req, res) {
 		module.getSettings(function(settings) {
 			return res.send(settings);
 		});
 	});
 	
-	routes.get('/exposed', function(req, res) {
+	routes.get('/exposed', FormideOS.http.permissions.check('settings:read'), function(req, res) {
 		module.getExposedSettings(function(settings) {
 			return res.send(settings);
 		});
 	});
 	
-	routes.get('/:moduleName', function(req, res) {
+	routes.get('/:moduleName', FormideOS.http.permissions.check('settings:read'), function(req, res) {
 		module.getModuleSettings(req.params.moduleName, function(settings) {
 			return res.send(settings);
 		});
 	});
 	
-	routes.post('/:moduleName', function(req, res) {
+	routes.post('/:moduleName', FormideOS.http.permissions.check('settings:write'), function(req, res) {
 		module.saveModuleSettings(req.params.moduleName, req.body, function(settings) {
 			return res.send(settings);
 		});

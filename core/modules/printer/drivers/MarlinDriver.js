@@ -190,6 +190,7 @@ PrinterDriver.prototype.getStatus = function() {
 };
 
 PrinterDriver.prototype.command = function(command, parameters, callback) {
+	console.log(command);
 	if (this.status === 'online') {
 		var command = Object.create(this.map[command]);
 		for(var i in command) {
@@ -279,7 +280,7 @@ PrinterDriver.prototype.resumePrint = function(callback) {
 
 PrinterDriver.prototype.stopPrint = function(callback, done) {
 	var self = this;
-	if (self.status === 'printing') {
+	if (self.status === 'printing' || self.status === 'paused') {
 		if (done) {
 			FormideOS.module('db').db.Queueitem.findOne({ _id: self.queueID }, function(err, queueitem) {
 				queueitem.status = 'finished';

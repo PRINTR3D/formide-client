@@ -4,8 +4,6 @@ node_modules
 # OSX
 .DS_Store
 
-# binaries
-bin/osx/katana/KatanaLog.txt
-bin/osx/katana/RequestsLog.txt
-bin/rpi/katana/KatanaLog.txt
-bin/rpi/katana/RequestsLog.txt
+# katana binary log files
+KatanaLog.txt
+RequestsLog.txt

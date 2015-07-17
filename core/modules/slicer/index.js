@@ -66,8 +66,8 @@ module.exports = {
 				
 				// write slicerequest to local Katana instance
 				FormideOS.events.emit('slicer.slice', {
-					title: 'Slicer started',
-					message: 'Slicer started slicing'
+					message: "Started slicing " + printjob._id,
+					data: slicerequest
 				});
 				
 				self.katana.slice(JSON.stringify(sliceData), function(response) {
@@ -75,7 +75,6 @@ module.exports = {
 					try {
 						var response = JSON.parse(response);
 						
-						// success response
 						if(response.status == 200 && response.data.responseID != null) {
 							FormideOS.module('db').db.Printjob
 							.update({ _id: response.data.responseID }, {
@@ -85,22 +84,26 @@ module.exports = {
 							}, function(err, printjob) {
 								if (err) FormideOS.debug.log(err);
 								FormideOS.events.emit('slicer.finished', {
-									title: 'Slicer finished',
-									message: 'Slicer finished slicing'
+									message: "Finished slicing " + response.data.responseID,
+									data: response.data
 								});
 							});
 						}
-						
-						// progess response
 						else if(response.status === 120) {
 							FormideOS.events.emit('slicer.progress', response.data);
 						}
-						
-						// error response
 						else {
-							FormideOS.events.emit('slicer.error', {
-								title: 'Slicer error ' + response.status,
-								message: 'Slicing failed: ' + response.msg
+							FormideOS.module('db').db.Printjob
+							.update({ _id: response.data.responseID }, {
+								sliceResponse: response.data,
+								sliceFinished: false
+							}, function(err, printjob) {
+								if (err) FormideOS.debug.log(err);
+								FormideOS.events.emit('slicer.failed', {
+									status: response.status,
+									message: response.data.msg,
+									data: response.data
+								});
 							});
 						}
 					}

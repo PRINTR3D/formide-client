@@ -5,9 +5,10 @@
 
 module.exports = function(namespace, module)
 {
+	// set permissions needed for this websocket namespace
+	namespace.permissions = ['printer:events', 'printer:control'];
+	
 	namespace.on('connection', function(socket) {
-		
-		FormideOS.debug.log('Dashboard connected');
 
 		// Socket disconnect
 		socket.on('disconnect', function() {
@@ -26,8 +27,6 @@ module.exports = function(namespace, module)
 			var method = data.method;
 			var parameters = data.parameters || {};
 			var port = data.port;
-			
-			console.log(data);
 			
 			if (method === 'start') {
 				module.startPrint(port, data.parameters._id, data.parameters.gcode, function() {});

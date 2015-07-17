@@ -1,0 +1,34 @@
+<html>
+	<head>
+		
+	</head>
+	<body>
+		<script type="text/javascript" src="http://localhost:1337/socket.io/socket.io.js"></script>
+		<script type="text/javascript">
+		  	
+			var printerWS = io("http://localhost:1337/printer?access_token=22e3c098-9049-423d-b0ac-195f2fc9b108");
+			var slicerWS = io("http://localhost:1337/slicer?access_token=22e3c098-9049-423d-b0ac-195f2fc9b108");
+			
+			printerWS.on('connected', function() {
+				console.log('connected');
+			});
+			
+			printerWS.on('disconnected', function() {
+				console.log('disconnected');
+			});
+			
+			printerWS.on('finished', function() {
+				console.log('finished');
+			});
+			
+			printerWS.on('setup', function(data) {
+				console.log('setup', data);
+			});
+			
+			printerWS.on('status', function(data) {
+				//console.log(data);
+			});
+		  
+		</script>
+	</body>
+</html>
