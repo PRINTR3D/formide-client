@@ -64,7 +64,10 @@ PrinterDriver.prototype.tryBaudrate = function(baudRate, callback) {
 				}
 			}, 3000);
 			
+			console.log('baudrate test with M105 for ' + baudRate);
+			
 			self.sp.on('data', function(data) {
+				console.log(data);
 				self.baudrate = baudRate;
 				self.sp.close();
 				return callback(null, {success: true, baudrate: baudRate});
@@ -113,15 +116,35 @@ PrinterDriver.prototype.connect = function() {
 	
 	async.series([
 		function(callback) {
+			self.tryBaudrate(256000, callback);
+		},
+		function(callback) {
+			// weird marlin specific baudrate that's not default: http://digital.ni.com/public.nsf/allkb/D37754FFA24F7C3F86256706005B9BE7
 			self.tryBaudrate(250000, callback);
+		},
+		function(callback) {
+			self.tryBaudrate(230400, callback);
+		},
+		function(callback) {
+			self.tryBaudrate(128000, callback);
 		},
 		function(callback) {
 			self.tryBaudrate(115200, callback);
 		},
 		function(callback) {
 			self.tryBaudrate(57600, callback);
+		},
+		function(callback) {
+			self.tryBaudrate(38400, callback);
+		},
+		function(callback) {
+			self.tryBaudrate(19200, callback);
+		},
+		function(callback) {
+			self.tryBaudrate(9600, callback);
 		}
 	], function(err, results) {
+		console.log(results);
 		for (var i in results) {
 			var baudrateTest = results[i];
 			if (baudrateTest.success) {
@@ -134,9 +157,9 @@ PrinterDriver.prototype.connect = function() {
 
 PrinterDriver.prototype.map = {
 	"home":					["G28"],
-	"home_x": 				["G28 x"],
-	"home_y": 				["G28 y"],
-	"home_z": 				["G28 z"],
+	"home_x": 				["G28 X"],
+	"home_y": 				["G28 Y"],
+	"home_z": 				["G28 Z"],
 	"jog":					["G91", "G21", "G1 _axis_ _dist_"],
 	"jog_abs":				["G90", "G21", "X_x_ Y_y_ Z_z_"],
 	"extrude":				["G91", "G21", "G1 E _dist_"],
@@ -195,6 +218,10 @@ PrinterDriver.prototype.command = function(command, parameters, callback) {
 		var command = Object.create(this.map[command]);
 		for(var i in command) {
 			for(var j in parameters) {
+				if (typeof parameters[j] === 'string') {
+					// make sure that values like X, Y, Z and G are in upper case. some printers don't understand the lower case versions.
+					parameters[j] = parameters[j].toUpperCase();
+				}
 				command[i] = command[i].replace("_" + j + "_", parameters[j]);
 			}
 			this.sendRaw(command[i], callback);
@@ -203,6 +230,7 @@ PrinterDriver.prototype.command = function(command, parameters, callback) {
 };
 
 PrinterDriver.prototype.sendRaw = function(data, callback) {
+	console.log('sendRaw', data);
 	if(this.open) {
 		this.sp.write(data + "\n", callback);
 	}
@@ -316,6 +344,8 @@ PrinterDriver.prototype.gcode = function(callback) {
 
 PrinterDriver.prototype.received = function(data) {
 	
+	console.log('Received', data);
+	
 	if (data.indexOf("Transformation matrix") > -1) {
 		// handle Transformation matrix info
 	}
@@ -341,57 +371,39 @@ PrinterDriver.prototype.received = function(data) {
 	}
 	
 	if (data.indexOf("T:") > -1 || data.indexOf("T0:") > -1) {
-		// do a try since we try to parse a lot of things that might go wrong here
-		try {
-			var tempArray = data.split(" ");
-			var extruders = [];
-			var bed = {
-				temp: 0,
-				targetTemp: 0
-			};
-			
-			for(var i = 0; i < tempArray.length; i++) {
-				var tempArrayItem = tempArray[i];
-				if(tempArrayItem.indexOf("T") > -1 && tempArrayItem.indexOf("@") == -1) { // handle extruder temp
-					var lastChar = tempArrayItem.slice(-1);
-					if (lastChar == ":") { // handle temp in next array item
-						extruders.push({
-							id: tempArrayItem,
-							temp: parseFloat(tempArray[i+1]),
-							targetTemp: parseFloat(tempArray[i+2].replace('/', ''))
-						});
-					}
-					else { // handle temp in current array item
-						var iNew = tempArrayItem.split(":");
-						extruders.push({
-							id: iNew[0],
-							temp: parseFloat(iNew[1]),
-							targetTemp: parseFloat(tempArray[i+1].replace('/', ''))
-						});
-					}
-				}
-				else if(tempArrayItem.indexOf("B") > -1 && tempArrayItem.indexOf("@") == -1) { // handle bed temp
-					var lastChar = tempArrayItem.slice(-1);
-					if (lastChar == ":") { // handle temp in next array item
-						bed = {
-							temp: parseFloat(tempArray[i+1]),
-							targetTemp: parseFloat(tempArray[i+2].replace('/', ''))
-						};
-					}
-					else { // handle temp in current array item
-						var iNew = tempArrayItem.split(":");
-						bed = {
-							temp: parseFloat(iNew[1]),
-							targetTemp: parseFloat(tempArray[i+1].replace('/', ''))
-						};
-					}
-				}
-			}
-			
-			this.extruders = extruders;
-			this.bed = bed;
+		var re = /.T*:([\d\.]+) \/([\d\.]+)/g; 
+		var m;
+		
+		var extruders = [];
+		var bed = {
+			temp: 0,
+			targetTemp: 0
+		};
+		 
+		while ((m = re.exec(data)) !== null) {
+		    if (m.index === re.lastIndex) {
+		        re.lastIndex++;
+		    }
+		    
+		    var t = m[0].charAt(0);
+		    
+		    if (t === 'B') {
+			    bed = {
+				    temp: parseFloat(m[1]),
+					targetTemp: parseFloat(m[2])
+			    }
+		    }
+		    else {
+			    extruders.push({
+				    id: 'T' + t,
+				    temp: parseFloat(m[1]),
+					targetTemp: parseFloat(m[2])
+			    });
+		    }
 		}
-		catch(e) {}
+		
+		this.extruders = extruders;
+		this.bed = bed;
 	}
 	
 	if (data.indexOf("Fanspeed") > -1) {
