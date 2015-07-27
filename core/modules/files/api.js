@@ -71,7 +71,7 @@ module.exports = function(routes, module)
 	
 	routes.post('/upload/url',/*  FormideOS.http.permissions.check('files:upload'),  */function(req, res) {
 		console.log(req.body);
-		module.uploadFromUrl(req.body.url, req.body.filetype, req.body.filename, function(err, modelfile) {
+		module.uploadFromUrl(req.body.url, req.body.filename, req.body.filetype, function(err, modelfile) {
 			return res.send({
 				success: true,
 				modelfile: modelfile
