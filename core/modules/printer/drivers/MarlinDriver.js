@@ -57,6 +57,9 @@ PrinterDriver.prototype.tryBaudrate = function(baudRate, callback) {
 		});
 		
 		self.sp.on('open', function() {
+			
+			//self.sendRaw("M105", function() {});
+			
 			setTimeout(function() {
 				if (self.baudrate === 0) {
 					self.sp.close();
@@ -116,32 +119,11 @@ PrinterDriver.prototype.connect = function() {
 	
 	async.series([
 		function(callback) {
-			self.tryBaudrate(256000, callback);
-		},
-		function(callback) {
 			// weird marlin specific baudrate that's not default: http://digital.ni.com/public.nsf/allkb/D37754FFA24F7C3F86256706005B9BE7
 			self.tryBaudrate(250000, callback);
 		},
 		function(callback) {
-			self.tryBaudrate(230400, callback);
-		},
-		function(callback) {
-			self.tryBaudrate(128000, callback);
-		},
-		function(callback) {
 			self.tryBaudrate(115200, callback);
-		},
-		function(callback) {
-			self.tryBaudrate(57600, callback);
-		},
-		function(callback) {
-			self.tryBaudrate(38400, callback);
-		},
-		function(callback) {
-			self.tryBaudrate(19200, callback);
-		},
-		function(callback) {
-			self.tryBaudrate(9600, callback);
 		}
 	], function(err, results) {
 		console.log(results);

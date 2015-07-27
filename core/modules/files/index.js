@@ -5,6 +5,7 @@
  
 var fs		= require('fs');
 var uuid	= require('node-uuid');
+var request	= require('request');
 
 module.exports = {
 	
@@ -102,6 +103,34 @@ module.exports = {
 			else {
 				return callback('file not found');
 			}
+		});
+	},
+	
+	uploadFromUrl: function(url, filename, filetype, callback) {
+		request({
+			method: 'GET',
+			url: url
+		}, function(error, response, body) {
+			console.log(error);
+			var hash = uuid.v4();
+			var newPath = FormideOS.config.get('paths.modelfile') + '/' + hash;
+			fs.writeFile(newPath, body, function(err) {
+				if (err) {
+					FormideOS.debug.log(err);
+					return callback(err);
+				}
+				else {
+					FormideOS.module('db').db.Modelfile.create({
+						filename: filename,
+						filesize: body.length,
+						filetype: filetype,
+						hash: hash
+					}, function(err, modelfile) {
+						if (err) return callback(err)
+						return callback(null, modelfile);
+					});
+				}
+			});
 		});
 	}
 }

@@ -9,17 +9,7 @@ var path                = require('path');
 
 module.exports = function(routes, module)
 {	
-	routes.get('/modelfiles/download', FormideOS.http.permissions.check('files:download'), function(req, res) {
-		req.checkQuery('hash', 'hash invalid').notEmpty();
-		req.checkQuery('encoding', 'encoding invalid').notEmpty();
-
-		if (req.validationErrors()) {
-			return res.status(400).json({
-				status: 400,
-				errors: req.validationErrors()
-			});
-		}
-
+	routes.get('/modelfiles/download',/*  FormideOS.http.permissions.check('files:download'),  */function(req, res) {
 		module.downloadModelfile(req.query.hash, req.query.encoding, function(err, filecontents) {
 			if(err) return res.send(err);
 			return res.send(filecontents);
@@ -77,5 +67,15 @@ module.exports = function(routes, module)
 				message: "Wrong file format"
 			});
 		}
+	});
+	
+	routes.post('/upload/url',/*  FormideOS.http.permissions.check('files:upload'),  */function(req, res) {
+		console.log(req.body);
+		module.uploadFromUrl(req.body.url, req.body.filetype, req.body.filename, function(err, modelfile) {
+			return res.send({
+				success: true,
+				modelfile: modelfile
+			});
+		});
 	});
 };
