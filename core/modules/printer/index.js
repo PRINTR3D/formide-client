@@ -89,6 +89,12 @@ module.exports =
 		return result;
 	},
 	
+	getCommands: function() {
+		if (this.printers[port] !== undefined) {
+			return callback(this.printers[port].getCommands());
+		}	
+	},
+	
 	getStatus: function(port, callback) {
 		if (this.printers[port] !== undefined) {
 			return callback(this.printers[port].getStatus());

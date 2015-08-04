@@ -120,27 +120,24 @@ module.exports = function() {
 			
 			// register module's api as sub-app in express server
 			var router = FormideOS.http.express.Router();
-			//router.use(FormideOS.http.permissions.check(module.info.namespace, module.info.config.permission));
+			if (module.info.config.permission === undefined || module.info.config.permission !== false) {
+				router.use(FormideOS.http.permissions.isUser);
+			}
 			delete require.cache[require.resolve(module.info.root + '/api.js')];
 			require(module.info.root + '/api.js')(router, module.instance);
-			
-			if (fs.existsSync(module.info.root + '/index.html')) {
-				router.get('/', function(req, res) {
-					res.sendFile(module.info.root + '/index.html');
-				});
-			}
 			
 			FormideOS.http.app.use('/api/' + module.info.namespace, router);
 		}
 		
+/*
 		if (fs.existsSync(module.info.root + '/websocket.js')) {
 			module.hasWS = true;
 			
-			// register module's ws api
-			var wsNamespace = FormideOS.ws.of('/' + module.info.namespace);
+			// register module's ws api. Everything is in the same namespace
 			delete require.cache[require.resolve(module.info.root + '/websocket.js')];
-			require(module.info.root + '/websocket.js')(wsNamespace, module.instance);
+			require(module.info.root + '/websocket.js')(FormideOS.ws, module.instance);
 		}
+*/
 		
 		module.status = 'active';
 		FormideOS.debug.log("module " + moduleName + " activated");

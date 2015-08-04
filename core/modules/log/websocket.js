@@ -3,11 +3,13 @@
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
-module.exports = function(namespace, module) {
+module.exports = function(socketio, module) {
 	
-	namespace.on('connection', function(socket) {
+	socketio.on('connection', function(socket) {
+		
 		FormideOS.events.on('log.debug', function(data) {
-			socket.emit('debug', data);
+			socket.emit('log.debug', data);
 		});
+		
 	});
 }; 

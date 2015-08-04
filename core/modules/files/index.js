@@ -110,27 +110,24 @@ module.exports = {
 		request({
 			method: 'GET',
 			url: url
-		}, function(error, response, body) {
-			console.log(error);
+		})
+		.on('response', function(response) {
+			var regexp = /filename=\"(.*)\"/gi;
 			var hash = uuid.v4();
 			var newPath = FormideOS.config.get('paths.modelfile') + '/' + hash;
-			fs.writeFile(newPath, body, function(err) {
-				if (err) {
-					FormideOS.debug.log(err);
-					return callback(err);
-				}
-				else {
-					FormideOS.module('db').db.Modelfile.create({
-						filename: filename,
-						filesize: body.length,
-						filetype: filetype,
-						hash: hash
-					}, function(err, modelfile) {
-						if (err) return callback(err)
-						return callback(null, modelfile);
-					});
-				}
-			});
+			var fws = fs.createWriteStream(newPath);
+			response.pipe(fws);
+			response.on( 'end', function() {
+				FormideOS.module('db').db.Modelfile.create({
+					filename: filename,
+					filesize: fws.bytesWritten,
+					filetype: filetype,
+					hash: hash
+				}, function(err, modelfile) {
+					if (err) return callback(err)
+					return callback(null, modelfile);
+				});
+        	});
 		});
 	}
 }

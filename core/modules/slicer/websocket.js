@@ -3,15 +3,15 @@
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
-module.exports = function(namespace, module)
+module.exports = function(socketio, module)
 {	
 	// set permissions needed for this websocket namespace
-	namespace.permissions = ['slicer:events'];
+	// namespace.permissions = ['slicer:events'];
 	
-	namespace.on('connection', function(socket) {
+	socketio.on('connection', function(socket) {
 		
 		FormideOS.events.on('slicer.slice', function(data) {
-			socket.emit('slice', {
+			socket.emit('slicer.slice', {
 				title: "Slicer started",
 				message: data.message
 			});
@@ -22,14 +22,14 @@ module.exports = function(namespace, module)
 		});
 
 		FormideOS.events.on('slicer.finished', function(data) {
-			socket.emit('finished', {
+			socket.emit('slicer.finished', {
 				title: "Slicer finished",
 				message: data.message
 			});
 		});
 		
 		FormideOS.events.on('slicer.failed', function(data) {
-			socket.emit('failed', {
+			socket.emit('slicer.failed', {
 				title: "Slicer error " + data.status,
 				message: data.message
 			});

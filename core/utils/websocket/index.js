@@ -9,20 +9,43 @@
  */
 
 var io 							= require('socket.io');
-var permissionsMiddleware 		= require('./middleware/permissions');
+//var permissionsMiddleware 		= require('./middleware/permissions');
 
 module.exports = {
 
 	init: function() {
 		
-		var connection = io.listen(FormideOS.http.server);
+		var socketio = io.listen(FormideOS.http.server);
 
+/*
 		connection.use(function(socket, next) {
 			FormideOS.http.session(socket.request, socket.request.res, next);
 		});
+*/
 		
-		connection.use(permissionsMiddleware);
+		//connection.use(permissionsMiddleware);
 		
-		return connection;
+		// emit all system events
+		socketio.on('connection', function(socket) {
+			socket.on('authenticate', function(data, callback) {
+				FormideOS.db.AccessToken.findOne({ token: data.accessToken }).exec(function(err, accessToken) {
+					if (err) {
+						callback({ success: false, message: err.message });
+						return socket.disconnect();
+					}
+					
+					if (!accessToken) {
+						callback({ success: false, message: "Access token not found. Please provide a valid access token." });
+						return socket.disconnect();
+					}
+					
+					FormideOS.events.onAny(function(data) {
+						socket.emit(this.event, data);
+					});
+				});
+			});
+		});
+		
+		return socketio;
 	}
 }

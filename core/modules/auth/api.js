@@ -15,7 +15,7 @@ module.exports = function(routes, module) {
 		});
 	});
 
-	routes.get('/session', function(req, res) {
+	routes.get('/session', FormideOS.http.permissions.isUser, function(req, res) {
 		FormideOS.module('db').db.AccessToken.findOne({ token: req.token }).exec(function(err, accessToken) {
 			if (err) return res.json({ success: false, message: err });
 			return res.json({ success: true, session: accessToken });
@@ -23,19 +23,19 @@ module.exports = function(routes, module) {
 	});
 
 	// accesstoken things
-	routes.get('/tokens', FormideOS.http.permissions.check('db:user:admin'), function( req, res ) {
+	routes.get('/tokens', FormideOS.http.permissions.isAdmin, function( req, res ) {
 		module.getAccessTokens(function(tokens) {
 			return res.send(tokens);
 		});
 	});
 
-	routes.post('/tokens', FormideOS.http.permissions.check('db:user:admin'), function(req, res) {
+	routes.post('/tokens', FormideOS.http.permissions.isAdmin, function(req, res) {
 		module.generateAccessToken(req.body.permissions, function(token) {
 			return res.send(token);
 		});
 	});
 
-	routes.delete('/tokens/:token', FormideOS.http.permissions.check('db:user:admin'), function(req, res) {
+	routes.delete('/tokens/:token', FormideOS.http.permissions.isAdmin, function(req, res) {
 		module.deleteAccessToken( req.params.token, function(err) {
 			if (err) return res.send({ success: false, message: err })
 			return res.send({ success: true });
@@ -43,21 +43,21 @@ module.exports = function(routes, module) {
 	});
 	
 	// user config
-	routes.get('/users', FormideOS.http.permissions.check('db:user:admin'), function(req, res) {
+	routes.get('/users', FormideOS.http.permissions.isAdmin, function(req, res) {
 		FormideOS.module('db').db.User.find().exec(function(err, users) {
 			if (err) return res.send(err);
 			return res.send(users);
 		});
 	});
 
-	routes.get('/users/:id', FormideOS.http.permissions.check('db:user:admin'), function(req, res) {
+	routes.get('/users/:id', FormideOS.http.permissions.isAdmin, function(req, res) {
 		FormideOS.module('db').db.User.findOne({ _id: req.params.id }).exec(function(err, user) {
 			if (err) return res.send(err);
 			return res.send(user);
 		});
 	});
 	
-	routes.post('/invite', FormideOS.http.permissions.check('db:user:admin'), function(req, res) {
+	routes.post('/invite', FormideOS.http.permissions.isAdmin, function(req, res) {
 		FormideOS.module('db').db.User.create({
 			email: req.body.email
 		}, function(err, user) {
@@ -86,7 +86,7 @@ module.exports = function(routes, module) {
 		});
 	});
 
-	routes.post('/users', FormideOS.http.permissions.check('db:user:admin'), function(req, res) {
+	routes.post('/users', FormideOS.http.permissions.isAdmin, function(req, res) {
 		FormideOS.module('db').db.User.create(req.body, function(err, user) {
 			if (err) return res.status(400).send(err);
 			if (user) {
@@ -101,7 +101,7 @@ module.exports = function(routes, module) {
 		});
 	});
 
-	routes.put('/users/:id', FormideOS.http.permissions.check('db:user:admin'), function(req, res) {
+	routes.put('/users/:id', FormideOS.http.permissions.isAdmin, function(req, res) {
 		FormideOS.module('db').db.User.update({ _id: req.params.id }, req.body, function(err, user) {
 			if (err) return res.status(400).send(err);
 			if (user) {
@@ -115,7 +115,7 @@ module.exports = function(routes, module) {
 		});
 	});
 
-	routes.delete('/users/:id', FormideOS.http.permissions.check('db:user:admin'), function(req, res) {
+	routes.delete('/users/:id', FormideOS.http.permissions.isAdmin, function(req, res) {
 		FormideOS.module('db').db.User.remove({ _id: req.params.id }, function(err, user) {
 			if (err) return res.status(400).send(err);
 			if (user) {

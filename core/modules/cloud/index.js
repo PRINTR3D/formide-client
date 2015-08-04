@@ -13,16 +13,21 @@ var fs			= require('fs');
 
 module.exports =
 {	
-	cloud: {},
-	local: [],
+	// socket connections
+	cloud: null,
+	local: null,
 
 	/*
 	 * Init for cloud module
 	 */
 	init: function(config) {
 		
+		// use self to prevent bind(this) waterfall
+		var self = this;
+		
 		// init cloud with new socket io client to online cloud url
 		this.cloud = socket(config.url);
+		this.local = socket( 'ws://127.0.0.1:' + FormideOS.http.server.address().port);
 
 		// when connecting to cloud
 		this.cloud.on('connect', function() {
@@ -30,7 +35,7 @@ module.exports =
 			publicIp(function (err, ip) {
 				var pkg = fs.readFileSync(FormideOS.appRoot + 'package.json', 'utf8');
 				pkg = JSON.parse(pkg);
-				this.cloud.emit('authenticate', {
+				self.cloud.emit('authenticate', {
 					type: 'client',
 					mac: FormideOS.macAddress,
 					ip: ip,
@@ -38,10 +43,20 @@ module.exports =
 					version: pkg.version,
 					environment: FormideOS.config.environment,
 					port: FormideOS.config.get('app.port')
+				}, function(response) {
+					if (response.success) {
+						FormideOS.debug.log('Cloud connected');
+							// forward all events to the cloud
+						FormideOS.events.onAny(function(data) {
+							self.cloud.emit(this.event, data);
+						});
+					}
+					else {
+						FormideOS.debug.log('Cloud connection error: ' + response.message);
+					}
 				});
-				FormideOS.debug.log('Cloud connected');
-			}.bind(this));
-		}.bind(this));
+			});
+		});
 		
 		/*
 		 * See if client is online
@@ -71,24 +86,28 @@ module.exports =
 		}.bind(this));
 
 		// on ws proxy request
+/*
 		this.cloud.on('listen', function(data, callback) {
-			FormideOS.debug.log('Cloud ws listen: ' + data.module + '.' + data.channel);
+			FormideOS.debug.log('Cloud ws listen: ' + data.channel);
 			// call listen function
 			this.listen(data, function(response) {
 				callback(response);
 			});
 		}.bind(this));
+*/
 
 		// emit ws to cloud
+/*
 		this.cloud.on('emit', function(data, callback) {
 			FormideOS.debug.log('Cloud ws emit: ' + data.module + '.' + data.channel);
 			// call emit function
 			this.emit(data);
 		}.bind(this));
+*/
 
 		// when disconnecting
 		this.cloud.on('disconnect', function() {
-			FormideOS.debug.log('Cloud diconnected');
+			FormideOS.debug.log('Cloud disconnected');
 		});
 	},
 	
@@ -152,24 +171,28 @@ module.exports =
 	/*
 	 * Handles WS proxy call from cloud connection, calls own local ws server and relays calls 
 	 */
+/*
 	listen: function(data, callback) {
 		var self = this;
-		if(!this.local[data.module]) {
-			this.local[data.module] = socket( 'ws://127.0.0.1:' + FormideOS.http.server.address().port + '/' + data.module);
+		if(!this.local) {
+			this.local = socket( 'ws://127.0.0.1:' + FormideOS.http.server.address().port);
 		}
-		this.local[data.module].on(data.channel, function(response) {
-			self.cloud.emit(data.module + "." + data.channel, response);
+		this.local.on(data.channel, function(response) {
+			self.cloud.emit(data.channel, response);
 		});
 	},
+*/
 
 	/*
 	 * Handles WS emits to proxy (printer status/logs/slicer status), relays local emits to cloud
 	 */
+/*
 	emit: function(data) {
 		var self = this;
-		if(!this.local[data.module]) {
-			this.local[data.module] = socket( 'ws://127.0.0.1:' + FormideOS.http.server.address().port + '/' + data.module);
+		if(!this.local) {
+			this.local = socket( 'ws://127.0.0.1:' + FormideOS.http.server.address().port);
 		}
-		this.local[data.module].emit(data.channel, data.data);
+		this.local.emit(data.channel, data.data);
 	}
+*/
 }

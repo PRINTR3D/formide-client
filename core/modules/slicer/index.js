@@ -65,7 +65,8 @@ module.exports = {
 				};
 				
 				// write slicerequest to local Katana instance
-				FormideOS.events.emit('slicer.slice', {
+				FormideOS.events.emit('slicer.started', {
+					title: "Slicer started",
 					message: "Started slicing " + printjob._id,
 					data: slicerequest
 				});
@@ -84,6 +85,7 @@ module.exports = {
 							}, function(err, printjob) {
 								if (err) FormideOS.debug.log(err);
 								FormideOS.events.emit('slicer.finished', {
+									title: "Slicer finished",
 									message: "Finished slicing " + response.data.responseID,
 									data: response.data
 								});
@@ -100,6 +102,7 @@ module.exports = {
 							}, function(err, printjob) {
 								if (err) FormideOS.debug.log(err);
 								FormideOS.events.emit('slicer.failed', {
+									title: "Slicer error",
 									status: response.status,
 									message: response.data.msg,
 									data: response.data

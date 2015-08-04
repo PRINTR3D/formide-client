@@ -5,21 +5,21 @@
 
 module.exports = function(routes, db) {
 	
-	routes.get('/queue', FormideOS.http.permissions.check('db:queue:read'), function(req, res) {
+	routes.get('/queue', function(req, res) {
 		db.Queueitem.find().populate('printjob printer').deepPopulate('printjob.modelfiles printjob.materials printjob.sliceprofile printjob.printer printjob.gcodefile').exec(function(err, queue) {
 			if (err) return res.send(err);
 			return res.send(queue);
 		});
 	});
 
-	routes.get('/queue/:id', FormideOS.http.permissions.check('db:queue:read'), function(req, res) {
+	routes.get('/queue/:id', function(req, res) {
 		db.Queueitem.findOne({ _id: req.params.id }).populate('printjob printer').deepPopulate('printjob.modelfiles printjob.materials printjob.sliceprofile printjob.printer printjob.gcodefile').exec(function(err, queueitem) {
 			if (err) return res.send(err);
 			return res.send(queueitem);
 		});
 	});
 
-	routes.post('/queue/:printjobID/:printerID', FormideOS.http.permissions.check('db:queue:write'), function(req, res) {
+	routes.post('/queue/:printjobID/:printerID', function(req, res) {
 		db.Printjob.findOne({ _id: req.params.printjobID }, function(err, printjob) {
 			if (err) return res.json({ success: false, err: err, message: 'printjob error' });
 			db.Printer.findOne({ _id: req.params.printerID }, function(err, printer) {
@@ -42,7 +42,7 @@ module.exports = function(routes, db) {
 		});
 	});
 
-	routes.delete('/queue/:id', FormideOS.http.permissions.check('db:queue:write'), function(req, res) {
+	routes.delete('/queue/:id', function(req, res) {
 		db.Queueitem.remove({ _id: req.params.id }, function(err, queueitem) {
 			if (err) return res.status(400).send(err);
 			if (queueitem) {

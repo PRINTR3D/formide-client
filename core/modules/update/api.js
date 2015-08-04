@@ -9,7 +9,7 @@ var internalIp = require('internal-ip');
 
 module.exports = function(routes, module) {
 	
-	routes.get('/core', FormideOS.http.permissions.check('update:core'), function(req, res) {
+	routes.get('/core', function(req, res) {
 		var pkg = fs.readFileSync(FormideOS.appRoot + 'package.json', 'utf8');
 		pkg = JSON.parse(pkg);
 		
@@ -32,20 +32,20 @@ module.exports = function(routes, module) {
 		});
 	});
 	
-	routes.get('/core/update', FormideOS.http.permissions.check('update:core'), function(req, res) {
+	routes.get('/core/update', function(req, res) {
 		module.updateOS(function(err, output) {
 			if (err) return res.json({ success: false, data: output});
 			return res.json({ success: true, data: output});
 		});
 	});
 	
-	routes.get('/modules', FormideOS.http.permissions.check('update:modules'), function(req, res) {
+	routes.get('/modules', function(req, res) {
 		module.getPackages(false, function(modules) {
 			return res.json(modules);
 		});
 	});
 	
-	routes.get('/modules/install', FormideOS.http.permissions.check('update:modules'), function(req, res) {
+	routes.get('/modules/install', function(req, res) {
 		if (!req.query.moduleName) return res.json({ success: false, data: 'no moduleName given'});
 		module.installPackage(req.query.moduleName, function(err, output) {
 			if (err) return res.json({ success: false, data: output});
@@ -53,21 +53,21 @@ module.exports = function(routes, module) {
 		});
 	});
 	
-	routes.get('/modules/outdated', FormideOS.http.permissions.check('update:modules'), function(req, res) {
+	routes.get('/modules/outdated', function(req, res) {
 		module.outdatedPackages(function(err, output) {
 			if (err) return res.json({ success: false, data: output});
 			return res.json({ success: true, data: output});
 		});
 	});
 	
-	routes.get('/modules/:moduleName', FormideOS.http.permissions.check('update:modules'), function(req, res) {
+	routes.get('/modules/:moduleName', function(req, res) {
 		if (!req.params.moduleName) return res.json({ success: false, data: 'no moduleName given'});
 		module.getPackage(req.params.moduleName, function(modules) {
 			return res.json(modules);
 		});
 	});
 	
-	routes.get('/modules/:moduleName/update', FormideOS.http.permissions.check('update:modules'), function(req, res) {
+	routes.get('/modules/:moduleName/update', function(req, res) {
 		if (!req.params.moduleName) return res.json({ success: false, data: 'no packageName given'});
 		module.updateSinglePackage(req.params.moduleName, function(err, output) {
 			if (err) return res.json({ success: false, data: output});
@@ -75,7 +75,7 @@ module.exports = function(routes, module) {
 		});
 	});
 	
-	routes.get('/modules/:moduleName/uninstall', FormideOS.http.permissions.check('update:modules'), function(req, res) {
+	routes.get('/modules/:moduleName/uninstall', function(req, res) {
 		if (!req.params.moduleName) return res.json({ success: false, data: 'no moduleName given'});
 		module.uninstallPackage(req.params.moduleName, function(err, output) {
 			if (err) return res.json({ success: false, data: output});

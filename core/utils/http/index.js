@@ -20,7 +20,9 @@ var cors 					= require('cors');
 var passport 				= require('passport');
 var LocalStrategy 			= require('passport-local').Strategy;
 var bodyParser 				= require('body-parser');
-var permissionsMiddleware	= require('./middleware/permissions');
+//var permissionsMiddleware	= require('./middleware/permissions');
+var isUserMiddleware		= require('./middleware/isUser');
+var isAdminMiddleware		= require('./middleware/isAdmin');
 var passwordHash 			= require('password-hash');
 var bearerToken 			= require('express-bearer-token');
 
@@ -40,7 +42,10 @@ module.exports = {
 			server: this.httpServer,
 			session: sessionMiddleware,
 			auth: passport,
-			permissions: permissionsMiddleware
+			permissions: {
+				isUser: isUserMiddleware,
+				isAdmin: isAdminMiddleware
+			}
 		}
 	},
 	

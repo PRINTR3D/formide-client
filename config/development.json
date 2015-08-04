@@ -7,41 +7,11 @@
 	},
 	"auth": {
 		"permission": false,
-		"inviteUrl": "https://api2.formide.com/clients/register/invite",
-		"permissions": [
-			"printer:control",
-			"printer:events",
-			"files:upload",
-			"files:download",
-			"slicer:slice",
-			"slicer:events",
-			"update:core",
-			"update:modules",
-			"setup:run",
-			"db:printer:read",
-			"db:printer:write",
-			"db:material:read",
-			"db:material:write",
-			"db:sliceprofile:read",
-			"db:sliceprofile:write",
-			"db:printjob:read",
-			"db:printjob:write",
-			"db:modelfile:read",
-			"db:modelfile:write",
-			"db:gcodefile:read",
-			"db:gcodefile:write",
-			"db:queue:read",
-			"db:queue:write",
-			"db:user:read",
-			"db:user:write",
-			"db:user:admin",
-			"settings:read",
-			"settings:write"
-		]
+		"inviteUrl": "https://api2.formide.com/clients/register/invite"
 	},
 	"cloud": {
-		"url": "https://api2.formide.com",
-		"url2": "http://localhost:3000"
+		"url2": "https://api2.formide.com",
+		"url": "http://localhost:3000"
 	},
 	"db": {
 		"storage": "../storage/database"

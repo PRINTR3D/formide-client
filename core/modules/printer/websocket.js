@@ -3,14 +3,15 @@
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
-module.exports = function(namespace, module)
+module.exports = function(socketio, module)
 {
 	// set permissions needed for this websocket namespace
-	namespace.permissions = ['printer:events', 'printer:control'];
+// 	namespace.permissions = ['printer:events', 'printer:control'];
 	
-	namespace.on('connection', function(socket) {
+	socketio.on('connection', function(socket) {
 
 		// Socket disconnect
+/*
 		socket.on('disconnect', function() {
 			FormideOS.events.emit('websocket.disconnected', {
 				type: 'dashboard',
@@ -21,7 +22,9 @@ module.exports = function(namespace, module)
 
 			FormideOS.debug.log('Dashboard disconnected');
 		});
+*/
 		
+/*
 		socket.on('command', function(data) {
 			
 			var method = data.method;
@@ -47,13 +50,14 @@ module.exports = function(namespace, module)
 				module.printerControl(port, { command: method, parameters: parameters }, function() {});
 			}
 		});
+*/
 
 		FormideOS.events.on('printer.status', function(data) {
-			socket.emit(data.type, data.data);
+			socket.emit('printer.status', data.data);
 		});
 		
 		FormideOS.events.on('printer.finished', function(data) {
-			socket.emit('finished', {
+			socket.emit('printer.finished', {
 				title: "Printer finished",
 				message: data.port,
 				port: data.port
@@ -61,7 +65,7 @@ module.exports = function(namespace, module)
 		});
 		
 		FormideOS.events.on('printer.connected', function(data) {
-			socket.emit('connected', {
+			socket.emit('printer.connected', {
 				title: "Printer connected",
 				message: data.port,
 				port: data.port
@@ -69,7 +73,7 @@ module.exports = function(namespace, module)
 		});
 		
 		FormideOS.events.on('printer.disconnected', function(data) {
-			socket.emit('disconnected', {
+			socket.emit('printer.disconnected', {
 				title: "Printer disconnected",
 				message: data.port,
 				port: data.port
@@ -77,7 +81,7 @@ module.exports = function(namespace, module)
 		});
 		
 		FormideOS.events.on('printer.setup', function(data) {
-			socket.emit('setup', data);
+			socket.emit('printer.setup', data);
 		});
 	});
 };

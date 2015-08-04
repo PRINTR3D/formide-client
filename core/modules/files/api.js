@@ -9,14 +9,14 @@ var path                = require('path');
 
 module.exports = function(routes, module)
 {	
-	routes.get('/modelfiles/download',/*  FormideOS.http.permissions.check('files:download'),  */function(req, res) {
+	routes.get('/modelfiles/download',/*   */function(req, res) {
 		module.downloadModelfile(req.query.hash, req.query.encoding, function(err, filecontents) {
 			if(err) return res.send(err);
 			return res.send(filecontents);
 		});
 	});
 
-	routes.get('/gcode/download', FormideOS.http.permissions.check('files:download'), function(req, res) {
+	routes.get('/gcodefiles/download', function(req, res) {
 		req.checkQuery('hash', 'hash invalid').notEmpty();
 		req.checkQuery('encoding', 'encoding invalid').notEmpty();
 
@@ -33,7 +33,7 @@ module.exports = function(routes, module)
 		});
 	});
 
-	routes.post('/upload', FormideOS.http.permissions.check('files:upload'), multipartMiddleware, function(req, res) {
+	routes.post('/upload', multipartMiddleware, function(req, res) {
 		if (!req.files.file) {
 			return res.status(400).json({
 				success: false,
@@ -69,8 +69,7 @@ module.exports = function(routes, module)
 		}
 	});
 	
-	routes.post('/upload/url',/*  FormideOS.http.permissions.check('files:upload'),  */function(req, res) {
-		console.log(req.body);
+	routes.post('/upload/url',/*   */function(req, res) {
 		module.uploadFromUrl(req.body.url, req.body.filename, req.body.filetype, function(err, modelfile) {
 			return res.send({
 				success: true,

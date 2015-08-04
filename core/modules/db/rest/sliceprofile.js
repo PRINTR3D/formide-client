@@ -5,21 +5,21 @@
 
 module.exports = function(routes, db)
 {
-	routes.get('/sliceprofiles', FormideOS.http.permissions.check('db:sliceprofile:read'), function(req, res) {
+	routes.get('/sliceprofiles', function(req, res) {
 		db.Sliceprofile.find().exec(function(err, sliceprofiles) {
 			if (err) return res.send(err);
 			return res.send(sliceprofiles);
 		});
 	});
 
-	routes.get('/sliceprofiles/:id', FormideOS.http.permissions.check('db:sliceprofile:read'), function(req, res) {
+	routes.get('/sliceprofiles/:id', function(req, res) {
 		db.Sliceprofile.findOne({ _id: req.params.id }).exec(function(err, sliceprofile) {
 			if (err) return res.send(err);
 			return res.send(sliceprofile);
 		});
 	});
 
-	routes.post('/sliceprofiles', FormideOS.http.permissions.check('db:sliceprofile:write'), function(req, res) {
+	routes.post('/sliceprofiles', function(req, res) {
 		db.Sliceprofile.create(req.body, function(err, sliceprofile) {
 			if (err) return res.status(400).send(err);
 			if (sliceprofile) {
@@ -34,7 +34,7 @@ module.exports = function(routes, db)
 		});
 	});
 
-	routes.put('/sliceprofiles/:id', FormideOS.http.permissions.check('db:sliceprofile:write'), function(req, res) {
+	routes.put('/sliceprofiles/:id', function(req, res) {
 		db.Sliceprofile.update({ _id: req.params.id }, req.body, function(err, sliceprofile) {
 			if (err) return res.status(400).send(err);
 			if (sliceprofile) {
@@ -48,7 +48,7 @@ module.exports = function(routes, db)
 		});
 	});
 
-	routes.delete('/sliceprofiles/:id', FormideOS.http.permissions.check('db:sliceprofile:write'), function(req, res) {
+	routes.delete('/sliceprofiles/:id', function(req, res) {
 		db.Sliceprofile.remove({ _id: req.params.id }, function(err, sliceprofile) {
 			if (err) return res.status(400).send(err);
 			if (sliceprofile) {

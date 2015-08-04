@@ -179,6 +179,10 @@ PrinterDriver.prototype.askStatus = function() {
 	FormideOS.events.emit('printer.status', { type: 'status', data: this.getStatus() });
 };
 
+PrinterDriver.prototype.getCommands = function() {
+	return this.map;
+}
+
 PrinterDriver.prototype.getStatus = function() {
 	return {
 		status: this.status,

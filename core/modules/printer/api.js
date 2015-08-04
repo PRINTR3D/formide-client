@@ -5,27 +5,29 @@
 
 module.exports = function(routes, module)
 {
-	routes.get('/', FormideOS.http.permissions.check('printer:control'), function(req, res) {
+	routes.get('/', function(req, res) {
 		return res.send(module.getPrinters());
 	});
 	
 	/**
 	 * Get a list of printer commands
 	 */
-	routes.get('/commands', FormideOS.http.permissions.check('printer:control'), function(req, res) {
-		return res.send(FormideOS.config.get('printer.dashboard'));
+	routes.get('/:port/commands', function(req, res) {
+		module.getCommands(req.params.port, function(commands) {
+			return res.json(commands);
+		});
 	});
 
 	/**
 	 * Get the current status of the printer
 	 */
-	routes.get('/:port/status', FormideOS.http.permissions.check('printer:control'), function(req, res) {
+	routes.get('/:port/status', function(req, res) {
 		module.getStatus(req.params.port, function(status) {
 			return res.json(status);
 		});
 	});
 	
-	routes.get('/:port/start', FormideOS.http.permissions.check('printer:control'), function(req, res) {
+	routes.get('/:port/start', function(req, res) {
 		module.startPrint(req.params.port, req.query.hash, function(err, result) {
 			if (err) return res.send(err);
 			return res.json({
@@ -35,7 +37,7 @@ module.exports = function(routes, module)
 		});
 	});
 	
-	routes.get('/:port/stop', FormideOS.http.permissions.check('printer:control'), function(req, res) {
+	routes.get('/:port/stop', function(req, res) {
 		module.stopPrint(req.params.port, function(err, result) {
 			if (err) return res.send(err);
 			return res.json({
@@ -45,7 +47,7 @@ module.exports = function(routes, module)
 		});
 	});
 	
-	routes.get('/:port/pause', FormideOS.http.permissions.check('printer:control'), function(req, res) {
+	routes.get('/:port/pause', function(req, res) {
 		module.pausePrint(req.params.port, function(err, result) {
 			if (err) return res.send(err);
 			return res.json({
@@ -55,7 +57,7 @@ module.exports = function(routes, module)
 		});
 	});
 	
-	routes.get('/:port/resume', FormideOS.http.permissions.check('printer:control'), function(req, res) {
+	routes.get('/:port/resume', function(req, res) {
 		module.resumePrint(req.params.port, function(err, result) {
 			if (err) return res.send(err);
 			return res.json({
@@ -65,7 +67,7 @@ module.exports = function(routes, module)
 		});
 	});
 	
-	routes.get('/:port/:command', FormideOS.http.permissions.check('printer:control'), function(req, res) {
+	routes.get('/:port/:command', function(req, res) {
 		module.printerControl(req.params.port, { command: req.params.command, parameters: req.query }, function(err, result) {
 			return res.sendStatus(result);
 		});
