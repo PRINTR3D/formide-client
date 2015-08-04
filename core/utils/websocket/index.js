@@ -32,6 +32,7 @@ module.exports = {
 					}
 					
 					FormideOS.events.onAny(function(data) {
+						data.device = "LOCAL";
 						socket.emit(this.event, data);
 					});
 				});

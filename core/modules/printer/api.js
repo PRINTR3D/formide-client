@@ -69,7 +69,8 @@ module.exports = function(routes, module)
 	
 	routes.get('/:port/:command', function(req, res) {
 		module.printerControl(req.params.port, { command: req.params.command, parameters: req.query }, function(err, result) {
-			return res.sendStatus(result);
+			if (err) return res.json(err);
+			return res.json(result);
 		});
 	});
 }

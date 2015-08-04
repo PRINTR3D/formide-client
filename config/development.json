@@ -25,6 +25,7 @@
 		"gcode": "../uploads/gcode"
 	},
 	"printer": {
+		"permission": false,
 		"simulated": false
 	},
 	"slicer": {
