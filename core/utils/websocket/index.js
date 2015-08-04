@@ -16,14 +16,6 @@ module.exports = {
 	init: function() {
 		
 		var socketio = io.listen(FormideOS.http.server);
-
-/*
-		connection.use(function(socket, next) {
-			FormideOS.http.session(socket.request, socket.request.res, next);
-		});
-*/
-		
-		//connection.use(permissionsMiddleware);
 		
 		// emit all system events
 		socketio.on('connection', function(socket) {
