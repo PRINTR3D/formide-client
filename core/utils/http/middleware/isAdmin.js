@@ -10,50 +10,35 @@
 module.exports = function(req, res, next) {
 	
 	// check if user has admin permission
-	
-	
-	
-/*
-	check: function(permission, permissionNeeded) {
-		if (permissionNeeded === undefined) permissionNeeded = true;
-		return function(req, res, next) {
-			
-			if(!permissionNeeded) {
-				return next();
-			}
-			
-			if(req.token) {
-				FormideOS.module('db').db.AccessToken.findOne({ token: req.token}).exec(function(err, accessToken) {
-					if (accessToken) {
-						if (FormideOS.permissions.check(accessToken.permissions, permission)) {
-							FormideOS.debug.log('Permissions correct');
-							return next();
-						}
-						else {
-							FormideOS.debug.log('Permissions incorrect');
-							return res.json({
-								status: 401,
-								errors: 'No permission'
-							});
-						}
-					}
-					else {
-						FormideOS.debug.log('No access token found in db');
-						return res.json({
-							status: 401,
-							errors: 'No permission'
-						});
-					}
-				});
+	if(req.token) {
+		FormideOS.module('db').db.AccessToken.findOne({ token: req.token}).exec(function(err, accessToken) {
+			if (accessToken) {
+				if (accessToken.permissions.indexOf('admin') > -1) {
+					FormideOS.debug.log('Permissions correct');
+					return next();
+				}
+				else {
+					FormideOS.debug.log('Permissions incorrect');
+					return res.json({
+						status: 401,
+						errors: 'No admin permission'
+					});
+				}
 			}
 			else {
-				FormideOS.debug.log('No token found in request');
+				FormideOS.debug.log('No access token found in db');
 				return res.json({
 					status: 401,
-					errors: 'No permission'
+					errors: 'No admin permission'
 				});
 			}
-		}
+		});
 	}
-*/
+	else {
+		FormideOS.debug.log('No token found in request');
+		return res.json({
+			status: 401,
+			errors: 'No admin permission'
+		});
+	}
 }

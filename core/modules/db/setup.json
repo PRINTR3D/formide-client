@@ -2,7 +2,8 @@
 	"users": [
 		{
 			"password": "password",
-			"email": "test@user.com"
+			"email": "test@user.com",
+			"permissions": ["admin"]
 		}
 	],
 	

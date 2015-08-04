@@ -43,7 +43,7 @@ module.exports = {
 			FormideOS.module('db').db.User.create({
 				email: email,
 				password: password,
-				permissions: FormideOS.permissions.get(),
+				permissions: ["admin"],
 				cloudConnectionToken: registertoken
 			}, function(err, user) {
 				if (err) return cb(err);

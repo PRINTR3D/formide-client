@@ -144,7 +144,7 @@ module.exports =
 	authenticate: function(cloudConnectionToken, callback) {
 		FormideOS.module('db').db.User.findOne({ cloudConnectionToken: cloudConnectionToken }).exec(function(err, user) {
 			if (err) return callback(err);
-			if (!user) return callback('no user found with this cloud connection token');
+			if (!user) return callback({ success: false, message: 'no user found with this cloud connection token' });
 			FormideOS.module('db').db.AccessToken.generate(user, 'cloud', function(err, accessToken) {
 				if (err) return callback(err);
 				return callback(null, accessToken);
