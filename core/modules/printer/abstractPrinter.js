@@ -19,9 +19,7 @@ function AbstractPrinter(serialPort, driver/* , disconnectCallback */) {
 	
 	// ask for the status every 2 seconds
 	this.statusInterval = setInterval(this.askStatus.bind(this), 2000);
-	
-	console.log('abstract driver init for ' + this.port);
-	
+
 	return this;
 }
 
@@ -46,7 +44,6 @@ AbstractPrinter.prototype.map = {
 	"home_y": 				["G28 Y"],
 	"home_z": 				["G28 Z"],
 	"jog":					["G91", "G21", "G1 _axis_ _dist_"],
-	"jog_abs":				["G90", "G21", "X_x_ Y_y_ Z_z_"],
 	"extrude":				["G91", "G21", "G1 E _dist_"],
 	"retract":				["G91", "G21", "G1 E _dist_"],
 	"lcd_message":			["M117                     _msg_"],
