@@ -1,0 +1,168 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'node', '/usr/local/bin/npm', 'install', 'reboot', '--save' ]
+2 info using npm@2.7.4
+3 info using node@v0.12.2
+4 warn package.json crypto@0.0.3 crypto is also the name of a node core module.
+5 warn package.json nodejs-leds@0.0.3 No README data
+6 silly cache add args [ 'reboot', null ]
+7 verbose cache add spec reboot
+8 silly cache add parsed spec { raw: 'reboot',
+8 silly cache add   scope: null,
+8 silly cache add   name: 'reboot',
+8 silly cache add   rawSpec: '',
+8 silly cache add   spec: '*',
+8 silly cache add   type: 'range' }
+9 verbose addNamed reboot@*
+10 silly addNamed semver.valid null
+11 silly addNamed semver.validRange *
+12 silly addNameRange { name: 'reboot', range: '*', hasData: false }
+13 silly mapToRegistry name reboot
+14 silly mapToRegistry using default registry
+15 silly mapToRegistry registry https://registry.npmjs.org/
+16 silly mapToRegistry uri https://registry.npmjs.org/reboot
+17 verbose addNameRange registry:https://registry.npmjs.org/reboot not in flight; fetching
+18 verbose request uri https://registry.npmjs.org/reboot
+19 verbose request no auth needed
+20 info attempt registry request try #1 at 10:47:23 PM
+21 verbose request using bearer token for auth
+22 verbose request id 6c5940c39450b77b
+23 http request GET https://registry.npmjs.org/reboot
+24 http 200 https://registry.npmjs.org/reboot
+25 silly get cb [ 200,
+25 silly get   { server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+25 silly get     etag: '"31ENFCPLFKEUQOU1WHKCM5M5F"',
+25 silly get     'content-type': 'application/json',
+25 silly get     'cache-control': 'max-age=60',
+25 silly get     'content-length': '3665',
+25 silly get     'accept-ranges': 'bytes',
+25 silly get     date: 'Wed, 05 Aug 2015 20:47:24 GMT',
+25 silly get     via: '1.1 varnish',
+25 silly get     connection: 'keep-alive',
+25 silly get     'x-served-by': 'cache-lcy1130-LCY',
+25 silly get     'x-cache': 'MISS',
+25 silly get     'x-cache-hits': '0',
+25 silly get     'x-timer': 'S1438807644.263099,VS0,VE101',
+25 silly get     vary: 'Accept' } ]
+26 verbose get saving reboot to /Users/chris/.npm/registry.npmjs.org/reboot/.cache.json
+27 silly addNameRange number 2 { name: 'reboot', range: '*', hasData: true }
+28 silly addNameRange versions [ 'reboot', [ '0.0.1' ] ]
+29 verbose addNamed reboot@0.0.1
+30 silly addNamed semver.valid 0.0.1
+31 silly addNamed semver.validRange 0.0.1
+32 silly mapToRegistry name reboot
+33 silly mapToRegistry using default registry
+34 silly mapToRegistry registry https://registry.npmjs.org/
+35 silly mapToRegistry uri https://registry.npmjs.org/reboot
+36 verbose addRemoteTarball https://registry.npmjs.org/reboot/-/reboot-0.0.1.tgz not in flight; adding
+37 verbose addRemoteTarball [ 'https://registry.npmjs.org/reboot/-/reboot-0.0.1.tgz',
+37 verbose addRemoteTarball   'c9f02d14b1d5211490092eea3dc6e985ac51c17c' ]
+38 info retry fetch attempt 1 at 10:47:24 PM
+39 info attempt registry request try #1 at 10:47:24 PM
+40 http fetch GET https://registry.npmjs.org/reboot/-/reboot-0.0.1.tgz
+41 verbose request using bearer token for auth
+42 http fetch 200 https://registry.npmjs.org/reboot/-/reboot-0.0.1.tgz
+43 silly fetchAndShaCheck shasum c9f02d14b1d5211490092eea3dc6e985ac51c17c
+44 verbose addTmpTarball /var/folders/qt/4clgg191225g99g_t309jzwr0000gn/T/npm-18309-76dd0e3c/registry.npmjs.org/reboot/-/reboot-0.0.1.tgz not in flight; adding
+45 verbose addTmpTarball already have metadata; skipping unpack for reboot@0.0.1
+46 silly cache afterAdd reboot@0.0.1
+47 verbose afterAdd /Users/chris/.npm/reboot/0.0.1/package/package.json not in flight; writing
+48 verbose afterAdd /Users/chris/.npm/reboot/0.0.1/package/package.json written
+49 silly install resolved [ { name: 'reboot',
+49 silly install resolved     description: 'Quickly reboot Linux from node.js without fork()ing /sbin/shutdown or going thru initscripts',
+49 silly install resolved     homepage: 'http://egorfine.github.com/node-reboot',
+49 silly install resolved     bugs: { url: 'http://github.com/egorFiNE/node-reboot/issues' },
+49 silly install resolved     version: '0.0.1',
+49 silly install resolved     author: { name: 'Egor Egorov' },
+49 silly install resolved     repository:
+49 silly install resolved      { type: 'git',
+49 silly install resolved        url: 'http://github.com/egorfine/node-reboot.git' },
+49 silly install resolved     main: './index',
+49 silly install resolved     scripts: { install: 'node-gyp rebuild' },
+49 silly install resolved     gypfile: true,
+49 silly install resolved     readme: '# node-reboot\n\nReboot Linux kernel immediately from node without calling `/sbin/shutdown` or going thru initscripts. \n\n## Why? \n\nI\'m running a cluster of Linux servers which boot readonly and perform a memory-intensive computations. node-reboot is a part of a watchdog application, which in case of emergencies much reboot the server immediately without `fork()`ing another process or going thru upstart/initscripts.\n\n## Synopsis\n\nCall `sync()` and then reboot: \n\n```javascript\nrequire(\'reboot\').reboot();\n```\n\nReboot without `sync()`ing: \n\n```javascript\nrequire(\'reboot\').rebootImmediately();\n```\n\nThe function should never return. If it does, it means node has insufficient permissions. \n\n## Permissions\n\nIf you are to run node process under non-superuser, be sure to give node permissions to reboot the system: \n\n```\nsudo setcap CAP_SYS_BOOT=+ep /usr/local/bin/node\n```\n\nSee `man capabilities` for details.\n\n\n## Installation\n\n```\nnpm install reboot\n```\n\nor\n\n```\nnpm install .\n```\n\n\n## License\n\nSee LICENSE file. Basically, it\'s a kind of "do-whatever-you-want-for-free" license.\n\n\n',
+49 silly install resolved     readmeFilename: 'README.md',
+49 silly install resolved     _id: 'reboot@0.0.1',
+49 silly install resolved     dist:
+49 silly install resolved      { shasum: 'c9f02d14b1d5211490092eea3dc6e985ac51c17c',
+49 silly install resolved        tarball: 'http://registry.npmjs.org/reboot/-/reboot-0.0.1.tgz' },
+49 silly install resolved     _from: 'reboot@*',
+49 silly install resolved     _npmVersion: '1.2.18',
+49 silly install resolved     _npmUser: { name: 'egorfine', email: 'me@egorfine.com' },
+49 silly install resolved     maintainers: [ [Object] ],
+49 silly install resolved     directories: {},
+49 silly install resolved     _shasum: 'c9f02d14b1d5211490092eea3dc6e985ac51c17c',
+49 silly install resolved     _resolved: 'https://registry.npmjs.org/reboot/-/reboot-0.0.1.tgz' } ]
+50 info install reboot@0.0.1 into /Users/chris/Git/printr/formideos/formideOS-client
+51 info installOne reboot@0.0.1
+52 verbose installOne of reboot to /Users/chris/Git/printr/formideos/formideOS-client not in flight; installing
+53 verbose lock using /Users/chris/.npm/_locks/reboot-ac81f7c65bc6f9e3.lock for /Users/chris/Git/printr/formideos/formideOS-client/node_modules/reboot
+54 silly install write writing reboot 0.0.1 to /Users/chris/Git/printr/formideos/formideOS-client/node_modules/reboot
+55 silly cache addNamed cb reboot@0.0.1
+56 verbose unbuild node_modules/reboot
+57 silly gentlyRm /Users/chris/Git/printr/formideos/formideOS-client/node_modules/reboot is being purged from base /Users/chris/Git/printr/formideos/formideOS-client
+58 verbose gentlyRm don't care about contents; nuking /Users/chris/Git/printr/formideos/formideOS-client/node_modules/reboot
+59 verbose tar unpack /Users/chris/.npm/reboot/0.0.1/package.tgz
+60 verbose tar unpacking to /Users/chris/Git/printr/formideos/formideOS-client/node_modules/reboot
+61 silly gentlyRm /Users/chris/Git/printr/formideos/formideOS-client/node_modules/reboot is being purged
+62 verbose gentlyRm don't care about contents; nuking /Users/chris/Git/printr/formideos/formideOS-client/node_modules/reboot
+63 silly gunzTarPerm modes [ '755', '644' ]
+64 silly gunzTarPerm extractEntry package.json
+65 silly gunzTarPerm extractEntry .npmignore
+66 silly gunzTarPerm extractEntry README.md
+67 silly gunzTarPerm extractEntry LICENSE
+68 silly gunzTarPerm extractEntry index.js
+69 silly gunzTarPerm extractEntry test.js
+70 silly gunzTarPerm extractEntry CHANGELOG
+71 silly gunzTarPerm extractEntry binding.gyp
+72 silly gunzTarPerm extractEntry src/reboot.cc
+73 info preinstall reboot@0.0.1
+74 silly install resolved []
+75 verbose about to build /Users/chris/Git/printr/formideos/formideOS-client/node_modules/reboot
+76 info build /Users/chris/Git/printr/formideos/formideOS-client/node_modules/reboot
+77 verbose linkStuff [ false,
+77 verbose linkStuff   false,
+77 verbose linkStuff   false,
+77 verbose linkStuff   '/Users/chris/Git/printr/formideos/formideOS-client/node_modules' ]
+78 info linkStuff reboot@0.0.1
+79 verbose linkBins reboot@0.0.1
+80 verbose linkMans reboot@0.0.1
+81 verbose rebuildBundles reboot@0.0.1
+82 info install reboot@0.0.1
+83 verbose unsafe-perm in lifecycle true
+84 info reboot@0.0.1 Failed to exec install script
+85 verbose unlock done using /Users/chris/.npm/_locks/reboot-ac81f7c65bc6f9e3.lock for /Users/chris/Git/printr/formideos/formideOS-client/node_modules/reboot
+86 verbose stack Error: reboot@0.0.1 install: `node-gyp rebuild`
+86 verbose stack Exit status 1
+86 verbose stack     at EventEmitter.<anonymous> (/usr/local/lib/node_modules/npm/lib/utils/lifecycle.js:213:16)
+86 verbose stack     at EventEmitter.emit (events.js:110:17)
+86 verbose stack     at ChildProcess.<anonymous> (/usr/local/lib/node_modules/npm/lib/utils/spawn.js:14:12)
+86 verbose stack     at ChildProcess.emit (events.js:110:17)
+86 verbose stack     at maybeClose (child_process.js:1015:16)
+86 verbose stack     at Process.ChildProcess._handle.onexit (child_process.js:1087:5)
+87 verbose pkgid reboot@0.0.1
+88 verbose cwd /Users/chris/Git/printr/formideos/formideOS-client
+89 error Darwin 14.4.0
+90 error argv "node" "/usr/local/bin/npm" "install" "reboot" "--save"
+91 error node v0.12.2
+92 error npm  v2.7.4
+93 error code ELIFECYCLE
+94 error reboot@0.0.1 install: `node-gyp rebuild`
+94 error Exit status 1
+95 error Failed at the reboot@0.0.1 install script 'node-gyp rebuild'.
+95 error This is most likely a problem with the reboot package,
+95 error not with npm itself.
+95 error Tell the author that this fails on your system:
+95 error     node-gyp rebuild
+95 error You can get their info via:
+95 error     npm owner ls reboot
+95 error There is likely additional logging output above.
+96 verbose exit [ 1, true ]
+97 verbose unbuild node_modules/reboot
+98 info preuninstall reboot@0.0.1
+99 info uninstall reboot@0.0.1
+100 verbose unbuild rmStuff reboot@0.0.1 from /Users/chris/Git/printr/formideos/formideOS-client/node_modules
+101 info postuninstall reboot@0.0.1
+102 silly gentlyRm /Users/chris/Git/printr/formideos/formideOS-client/node_modules/reboot is being purged from base /Users/chris/Git/printr/formideos/formideOS-client
+103 verbose gentlyRm don't care about contents; nuking /Users/chris/Git/printr/formideos/formideOS-client/node_modules/reboot
+104 silly vacuum-fs purging /Users/chris/Git/printr/formideos/formideOS-client/node_modules/reboot
+105 silly vacuum-fs quitting because other entries in /Users/chris/Git/printr/formideos/formideOS-client/node_modules
