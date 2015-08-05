@@ -2,7 +2,7 @@ var semver					= require('semver');
 var fs						= require('fs');
 var https					= require('https');
 var AdmZip 					= require('adm-zip');
-var spawn 					= require('child_process').spawn;
+var async					= require('async');
 
 //var pkg 					= require('../../package.json');
 //var version 				= pkg.version;
@@ -12,43 +12,45 @@ var downloadURL 			= "https://storage.googleapis.com/downloads.formide.com/formi
 var downloadDestination 	= FormideOS.appRoot + "../update";
 var installDestination		= FormideOS.appRoot;
 
-function checkForUpdates(callback) {
+function checkForUpdates(next) {
 	if (semver.gt(newVersion, version)) {
 		console.log("Newer version found: " + newVersion + ", dowloading update...");
-		download(function(err, downloaded) {
-			if (err) return callback(err);
-			process.nextTick(function() {
-				FormideOS.events.emit('update.progress', downloaded);
-				console.log("Downloaded update");
-				console.log("Validating update...");
-				validate(function(err, validated) {
-					if (err) return callback(err);
-					process.nextTick(function() {
-						FormideOS.events.emit('update.progress', validated);
-						console.log("Validated update");
-						console.log("Installing update...");
-						install(function(err, installed) {
-							if (err) return callback(err);
-							process.nextTick(function() {
-								FormideOS.events.emit('update.progress', installed);
-								console.log("Installed update");
-								console.log("Cleaning up...");
-								cleanup(function(err, cleanedup) {
-									if (err) return callback(err);
-									process.nextTick(function() {
-										FormideOS.events.emit('update.progress', cleanedup);
-										console.log("Cleaned up...");
-										callback(null, {
-											progress: 100,
-											success: true,
-											message: "Reboot your device to finish update"
-										});
-									});
-								});
-							});
-						});
-					});
+		async.series([
+			function(callback) {
+				console.log('Downloading...');
+				download(function(err, downloaded) {
+					FormideOS.events.emit('update.progress', downloaded);
+					callback(null, downloaded);
 				});
+			},
+			function(callback) {
+				console.log('Validating...');
+				validate(function(err, validated) {
+					FormideOS.events.emit('update.progress', validated);
+					callback(null, validated);
+				});
+			},
+			function(callback) {
+				console.log('Installing...');
+				install(function(err, installed) {
+					FormideOS.events.emit('update.progress', installed);
+					callback(null, installed);
+				});
+			},
+			function(callback) {
+				console.log('Cleaning...');
+				cleanup(function(err, cleanedup) {
+					FormideOS.events.emit('update.progress', cleanedup);
+					callback(null, cleanedup);
+				});
+			}
+		],
+		function(err, results) {
+			FormideOS.events.emit('update.finished', results);
+			next(null, {
+				steps: results,
+				success: true,
+				message: "Reboot your device to finish update"
 			});
 		});
 	}
