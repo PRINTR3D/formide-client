@@ -12,7 +12,7 @@ var downloadURL 			= "https://storage.googleapis.com/downloads.formide.com/formi
 var downloadDestination 	= FormideOS.appRoot + "../update";
 var installDestination		= FormideOS.appRoot;
 
-function checkForUpdates(next) {
+function checkForUpdates(/* next */) {
 	if (semver.gt(newVersion, version)) {
 		console.log("Newer version found: " + newVersion + ", dowloading update...");
 		async.series([
@@ -46,12 +46,18 @@ function checkForUpdates(next) {
 			}
 		],
 		function(err, results) {
-			FormideOS.events.emit('update.finished', results);
-			next(null, {
+			FormideOS.events.emit('update.finished', {
 				steps: results,
 				success: true,
 				message: "Reboot your device to finish update"
 			});
+/*
+			next(err, {
+				steps: results,
+				success: true,
+				message: "Reboot your device to finish update"
+			});
+*/
 		});
 	}
 	else {
