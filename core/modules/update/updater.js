@@ -12,13 +12,13 @@ var downloadURL 			= "https://storage.googleapis.com/downloads.formide.com/formi
 var downloadDestination 	= FormideOS.appRoot + "../update";
 var installDestination		= FormideOS.appRoot;
 
-function checkForUpdates(progress, callback) {
+function checkForUpdates(callback) {
 	if (semver.gt(newVersion, version)) {
-		console.log("Newer version found: " + newVersion + ", Starting download...");
+		console.log("Newer version found: " + newVersion + ", dowloading update...");
 		download(function(err, downloaded) {
 			if (err) return callback(err);
 			FormideOS.events.emit('update.progress', downloaded);
-			console.log("Downloaded update...");
+			console.log("Downloaded update");
 			console.log("Validating update...");
 			validate(function(err, validated) {
 				if (err) return callback(err);
