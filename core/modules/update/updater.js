@@ -12,35 +12,36 @@ var downloadURL 			= "https://storage.googleapis.com/downloads.formide.com/formi
 var downloadDestination 	= FormideOS.appRoot + "../update";
 var installDestination		= FormideOS.appRoot;
 
-function checkForUpdates(/* next */) {
+function checkForUpdates(next) {
 	if (semver.gt(newVersion, version)) {
+		next(null, "Starting update");
 		console.log("Newer version found: " + newVersion + ", dowloading update...");
 		async.series([
 			function(callback) {
 				console.log('Downloading...');
 				download(function(err, downloaded) {
-					FormideOS.events.emit('update.progress', downloaded);
+					FormideOS.events.emit('update.progress1', downloaded);
 					callback(null, downloaded);
 				});
 			},
 			function(callback) {
 				console.log('Validating...');
 				validate(function(err, validated) {
-					FormideOS.events.emit('update.progress', validated);
+					FormideOS.events.emit('update.progress2', validated);
 					callback(null, validated);
 				});
 			},
 			function(callback) {
 				console.log('Installing...');
 				install(function(err, installed) {
-					FormideOS.events.emit('update.progress', installed);
+					FormideOS.events.emit('update.progress3', installed);
 					callback(null, installed);
 				});
 			},
 			function(callback) {
 				console.log('Cleaning...');
 				cleanup(function(err, cleanedup) {
-					FormideOS.events.emit('update.progress', cleanedup);
+					FormideOS.events.emit('update.progress4', cleanedup);
 					callback(null, cleanedup);
 				});
 			}
@@ -51,16 +52,10 @@ function checkForUpdates(/* next */) {
 				success: true,
 				message: "Reboot your device to finish update"
 			});
-/*
-			next(err, {
-				steps: results,
-				success: true,
-				message: "Reboot your device to finish update"
-			});
-*/
 		});
 	}
 	else {
+		next("No update neccesery, already running latest version");
 		console.log("You already have the latest version: " + version);
 	}
 }
@@ -86,13 +81,15 @@ function download(next) {
 }
 
 function validate(next) {
-	// do some validation
-	next(null, {
-		stage: 'validate',
-		progress: 50,
-		success: true,
-		message: "Validated downloaded updated. Safe to go!"
-	});
+	// do some real validation
+	setTimeout(function() {
+		next(null, {
+			stage: 'validate',
+			progress: 50,
+			success: true,
+			message: "Validated downloaded updated. Safe to go!"
+		});
+	}, 3000);
 }
 
 function install(next) {

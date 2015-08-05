@@ -24,8 +24,9 @@ module.exports = {
 	
 	// update system
 	updateOS: function(cb) {
-		cb(null, {});
-		updater.update();
+		updater.update(function(err, done) {
+			return cb(err, done);
+		});
 	},
 	
 	// for now updates 3rd party modules as well!
