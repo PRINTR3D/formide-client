@@ -5,6 +5,9 @@
 
 module.exports = function(routes, db)
 {
+	/*
+	 * Get a list of printjobs from database and populate with connected resources
+	 */
 	routes.get('/printjobs', function(req, res) {
 		db.Printjob.find().populate('materials modelfiles gcodefile printer sliceprofile').exec(function(err, printjobs) {
 			if (err) return res.send(err);
@@ -12,6 +15,9 @@ module.exports = function(routes, db)
 		});
 	});
 
+	/*
+	 * Get single printjob database object
+	 */
 	routes.get('/printjobs/:id', function(req, res) {
 		db.Printjob.findOne({ _id: req.params.id }).populate('materials modelfiles gcodefile printer sliceprofile').exec(function(err, printjob) {
 			if (err) return res.send(err);
@@ -19,7 +25,9 @@ module.exports = function(routes, db)
 		});
 	});
 	
-	// use to create printjob from gcodefile
+	/*
+	 * Add a custom printjob from own gcodefile upload
+	 */
 	routes.post('/printjobs', function(req, res) {
 		db.Printjob.create({
 				sliceMethod: "custom",
@@ -40,6 +48,9 @@ module.exports = function(routes, db)
 		});
 	});
 
+	/*
+	 * Delete printjob
+	 */
 	routes.delete('/printjobs/:id', function(req, res) {
 		db.Printjob.remove({ _id: req.params.id }, function(err, printjob) {
 			if (err) return res.status(400).send(err);

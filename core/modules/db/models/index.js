@@ -8,6 +8,7 @@ var mongoose = require('mongoose');
 var storage = FormideOS.appRoot + FormideOS.config.get('db.storage');
 global.TUNGUS_DB_OPTIONS =  { nativeObjectID: true, searchInArray: true };
 
+// connect to tingodb client
 try {
     mongoose.connect('tingodb://' + storage);
 }
@@ -15,6 +16,7 @@ catch(e) {
     console.log(e);
 }
 
+// export all mongoose objects
 module.exports.mongoose = mongoose;
 module.exports.AccessToken = require('./accesstoken');
 module.exports.Material = require('./material');

@@ -5,6 +5,9 @@
 
 module.exports = function(routes, db) {
 	
+	/*
+	 * Get print queue for all printers. Front-end has to filter on a specific printer if wanted.
+	 */
 	routes.get('/queue', function(req, res) {
 		db.Queueitem.find().populate('printjob printer').deepPopulate('printjob.modelfiles printjob.materials printjob.sliceprofile printjob.printer printjob.gcodefile').exec(function(err, queue) {
 			if (err) return res.send(err);
@@ -12,6 +15,9 @@ module.exports = function(routes, db) {
 		});
 	});
 
+	/*
+	 * Get a single queue item from database
+	 */
 	routes.get('/queue/:id', function(req, res) {
 		db.Queueitem.findOne({ _id: req.params.id }).populate('printjob printer').deepPopulate('printjob.modelfiles printjob.materials printjob.sliceprofile printjob.printer printjob.gcodefile').exec(function(err, queueitem) {
 			if (err) return res.send(err);
@@ -19,6 +25,9 @@ module.exports = function(routes, db) {
 		});
 	});
 
+	/*
+	 * Add a queue item by printjobID and printerID (adds the printjob to the print queue of that printer)
+	 */
 	routes.post('/queue/:printjobID/:printerID', function(req, res) {
 		db.Printjob.findOne({ _id: req.params.printjobID }, function(err, printjob) {
 			if (err) return res.json({ success: false, err: err, message: 'printjob error' });
@@ -42,6 +51,9 @@ module.exports = function(routes, db) {
 		});
 	});
 
+	/*
+	 * Delete queue item
+	 */
 	routes.delete('/queue/:id', function(req, res) {
 		db.Queueitem.remove({ _id: req.params.id }, function(err, queueitem) {
 			if (err) return res.status(400).send(err);
