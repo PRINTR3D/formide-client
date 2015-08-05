@@ -25,9 +25,8 @@ module.exports = {
 	// update system
 	updateOS: function(cb) {
 		updater.update(function(err, done) {
-			FormideOS.events.emit('update.finished', done);
-			return cb(null, done);
-		}.bind(this));
+			return cb(err, done);
+		});
 	},
 	
 	// for now updates 3rd party modules as well!
