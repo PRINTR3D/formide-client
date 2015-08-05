@@ -85,7 +85,6 @@ AbstractPrinter.prototype.getCommands = function() {
 AbstractPrinter.prototype.sendRaw = function(rawCommand, callback) {
 	var self = this;
 	self.driver.sendGcode(rawCommand, this.port, function(err, response) {
-		console.log('err', err);
 		if (callback) return callback(response);
 	});
 }
@@ -101,8 +100,9 @@ AbstractPrinter.prototype.command = function(command, parameters, callback) {
 			}
 			command[i] = command[i].replace("_" + j + "_", parameters[j]);
 		}
-		self.sendRaw(command[i], callback);
+		self.sendRaw(command[i]);
 	}
+	return callback('OK');
 }
 
 AbstractPrinter.prototype.startPrint = function(id, gcode, callback) {
@@ -110,7 +110,7 @@ AbstractPrinter.prototype.startPrint = function(id, gcode, callback) {
 	FormideOS.module('db').db.Queueitem.findOne({ _id: id, gcode: gcode }, function(err, queueitem) {
 		if (err) FormideOS.debug.log(err);
 		if (queueitem) {
-			this.driver.printFile(FormideOS.appRoot + FormideOS.config.get('paths.gcode') + '/' + gcode, id, self.port, function(err, response) {
+			self.driver.printFile(FormideOS.appRoot + FormideOS.config.get('paths.gcode') + '/' + gcode, id, self.port, function(err, response) {
 				if (err) return FormideOS.debug.log(err);
 				queueitem.status = 'printing';
 				queueitem.save();
@@ -123,7 +123,7 @@ AbstractPrinter.prototype.startPrint = function(id, gcode, callback) {
 			});
 		}
 		else {
-			return callback('queue item not found');
+			return callback({ success: false, message: 'Queue item not found' });
 		}
 	});
 }

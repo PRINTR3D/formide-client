@@ -145,7 +145,7 @@ module.exports =
 		return result;
 	},
 	
-	getCommands: function() {
+	getCommands: function(port, callback) {
 		if (this.printers[port] !== undefined) {
 			return callback(this.printers[port].getCommands());
 		}	

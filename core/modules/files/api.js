@@ -9,7 +9,7 @@ var path                = require('path');
 
 module.exports = function(routes, module)
 {	
-	routes.get('/modelfiles/download',/*   */function(req, res) {
+	routes.get('/modelfiles/download', function(req, res) {
 		module.downloadModelfile(req.query.hash, req.query.encoding, function(err, filecontents) {
 			if(err) return res.send(err);
 			return res.send(filecontents);
@@ -69,7 +69,7 @@ module.exports = function(routes, module)
 		}
 	});
 	
-	routes.post('/upload/url',/*   */function(req, res) {
+	routes.post('/upload/url', function(req, res) {
 		module.uploadFromUrl(req.body.url, req.body.filename, req.body.filetype, function(err, modelfile) {
 			return res.send({
 				success: true,
