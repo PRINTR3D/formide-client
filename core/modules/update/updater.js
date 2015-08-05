@@ -17,27 +17,35 @@ function checkForUpdates(callback) {
 		console.log("Newer version found: " + newVersion + ", dowloading update...");
 		download(function(err, downloaded) {
 			if (err) return callback(err);
-			FormideOS.events.emit('update.progress', downloaded);
-			console.log("Downloaded update");
-			console.log("Validating update...");
-			validate(function(err, validated) {
-				if (err) return callback(err);
-				FormideOS.events.emit('update.progress', validated);
-				console.log("Validated update");
-				console.log("Installing update...");
-				install(function(err, installed) {
+			process.nextTick(function() {
+				FormideOS.events.emit('update.progress', downloaded);
+				console.log("Downloaded update");
+				console.log("Validating update...");
+				validate(function(err, validated) {
 					if (err) return callback(err);
-					FormideOS.events.emit('update.progress', installed);
-					console.log("Installed update");
-					console.log("Cleaning up...");
-					cleanup(function(err, cleanedup) {
-						if (err) return callback(err);
-						FormideOS.events.emit('update.progress', cleanedup);
-						console.log("Cleaned up...");
-						callback(null, {
-							progress: 100,
-							success: true,
-							message: "Reboot your device to finish update"
+					process.nextTick(function() {
+						FormideOS.events.emit('update.progress', validated);
+						console.log("Validated update");
+						console.log("Installing update...");
+						install(function(err, installed) {
+							if (err) return callback(err);
+							process.nextTick(function() {
+								FormideOS.events.emit('update.progress', installed);
+								console.log("Installed update");
+								console.log("Cleaning up...");
+								cleanup(function(err, cleanedup) {
+									if (err) return callback(err);
+									process.nextTick(function() {
+										FormideOS.events.emit('update.progress', cleanedup);
+										console.log("Cleaned up...");
+										callback(null, {
+											progress: 100,
+											success: true,
+											message: "Reboot your device to finish update"
+										});
+									});
+								});
+							});
 						});
 					});
 				});
