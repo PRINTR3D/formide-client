@@ -33,9 +33,9 @@ module.exports = function(routes, module) {
 	});
 	
 	routes.get('/core/update', function(req, res) {
-		module.updateOS(function(err, output) {
-			if (err) return res.json({ success: false, data: output});
-			return res.json({ success: true, data: output});
+		module.updateOS(function(err, response) {
+			if (err) return res.json({ success: false, message: err});
+			return res.json({ success: true, update: response });
 		});
 	});
 	

@@ -7,6 +7,7 @@ var fs 			= require('fs');
 var npm 		= require('npm');
 var path		= require('path');
 var gitty		= require('gitty');
+var updater		= require('./updater');
 
 module.exports = {
 	
@@ -21,7 +22,18 @@ module.exports = {
 		];
 	},
 	
+	// update system
+	updateOS: function(cb) {
+		updater.update(function(progress) {
+			FormideOS.events.emit('update.progress', progress);
+		}, function(err, done) {
+			FormideOS.events.emit('update.finished', done);
+			return cb(null, done);
+		}.bind(this));
+	},
+	
 	// for now updates 3rd party modules as well!
+/*
 	updateOS: function(cb) {
 		var formideosRepo = gitty(FormideOS.appRoot);
 		formideosRepo.pull('origin', 'development', function(err) {
@@ -37,6 +49,7 @@ module.exports = {
   			});
 		});
 	},
+*/
 	
 	getPackages: function(simple, cb) {
 		var response = [];
