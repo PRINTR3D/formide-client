@@ -29,7 +29,9 @@ module.exports =
 		this.cloud = socket(config.url);
 		this.local = socket( 'ws://127.0.0.1:' + FormideOS.http.server.address().port);
 
-		// when connecting to cloud
+		/*
+		 * Connect to the cloud socket server
+	 	 */
 		this.cloud.on('connect', function() {
 			// authenticate formideos based on mac address and api token, also sends permissions for faster blocking via cloud
 			publicIp(function (err, ip) {
@@ -46,12 +48,14 @@ module.exports =
 				}, function(response) {
 					if (response.success) {
 						FormideOS.debug.log('Cloud connected');
-							// forward all events to the cloud
+						
+						// forward all events to the cloud
 						FormideOS.events.onAny(function(data) {
 							self.cloud.emit(this.event, data);
 						});
 					}
 					else {
+						// something went wrong when connecting to the cloud
 						FormideOS.debug.log('Cloud connection error: ' + response.message);
 					}
 				});
@@ -76,7 +80,9 @@ module.exports =
 			});
 		}.bind(this));
 
-		// on http proxy request
+		/*
+		 * HTTP proxy request from cloud
+		 */
 		this.cloud.on('http', function(data, callback) {
 			FormideOS.debug.log('Cloud http call: ' + data.url);
 			// call http function
@@ -85,58 +91,13 @@ module.exports =
 			});
 		}.bind(this));
 
-		// on ws proxy request
-/*
-		this.cloud.on('listen', function(data, callback) {
-			FormideOS.debug.log('Cloud ws listen: ' + data.channel);
-			// call listen function
-			this.listen(data, function(response) {
-				callback(response);
-			});
-		}.bind(this));
-*/
-
-		// emit ws to cloud
-/*
-		this.cloud.on('emit', function(data, callback) {
-			FormideOS.debug.log('Cloud ws emit: ' + data.module + '.' + data.channel);
-			// call emit function
-			this.emit(data);
-		}.bind(this));
-*/
-
-		// when disconnecting
+		/*
+		 * Handle disconnect
+	 	 */
 		this.cloud.on('disconnect', function() {
 			FormideOS.debug.log('Cloud disconnected');
 		});
 	},
-	
-/*
-	exposeSettings: function() {
-		var moduleSettings = [];
-		
-		moduleSettings.push({
-			name: "accesstoken",
-			label: "Access token",
-			description: "The access token used by the cloud to reach FormideOS. Don't change if you're not sure what this is!",
-			type: "text",
-			default: "no_key",
-			required: true
-		});
-		
-		for(var i in FormideOS.moduleManager.getModules()) {
-			moduleSettings.push({
-				type: "checkbox",
-				label: i + " cloud permission",
-				name: "permission_" + i,
-				required: true,
-				default: true
-			});
-		}
-		
-		return moduleSettings;
-	},
-*/
 
 	/*
 	 * Handles cloud authentication based on cloudConnectionToken, returns session access_token that cloud uses to perform http calls from then on
@@ -166,33 +127,5 @@ module.exports =
 		}, function( error, response, body ) {
 			return callback(body);
 		});
-	},
-
-	/*
-	 * Handles WS proxy call from cloud connection, calls own local ws server and relays calls 
-	 */
-/*
-	listen: function(data, callback) {
-		var self = this;
-		if(!this.local) {
-			this.local = socket( 'ws://127.0.0.1:' + FormideOS.http.server.address().port);
-		}
-		this.local.on(data.channel, function(response) {
-			self.cloud.emit(data.channel, response);
-		});
-	},
-*/
-
-	/*
-	 * Handles WS emits to proxy (printer status/logs/slicer status), relays local emits to cloud
-	 */
-/*
-	emit: function(data) {
-		var self = this;
-		if(!this.local) {
-			this.local = socket( 'ws://127.0.0.1:' + FormideOS.http.server.address().port);
-		}
-		this.local.emit(data.channel, data.data);
 	}
-*/
 }
