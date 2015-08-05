@@ -39,7 +39,7 @@ module.exports = function(routes, module) {
 		});
 	});
 	
-	router.get('/reboot', function(req, res) {
+	routes.get('/reboot', function(req, res) {
 		module.reboot(function(err, response) {
 			if (err) return res.json({ success: false, message: err});
 			return res.json({ success: true, message: response });

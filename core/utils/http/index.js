@@ -79,7 +79,9 @@ module.exports = {
 		this.app.use(passport.session());
 		
 		// use bearer token middleware
-		this.app.use(bearerToken());
+		this.app.use(bearerToken({
+			queryKey: 'token'
+		}));
 		
 		// use cors middleware
 		this.app.use(cors({
