@@ -24,9 +24,7 @@ module.exports = {
 	
 	// update system
 	updateOS: function(cb) {
-		updater.update(function(progress) {
-			FormideOS.events.emit('update.progress', progress);
-		}, function(err, done) {
+		updater.update(function(err, done) {
 			FormideOS.events.emit('update.finished', done);
 			return cb(null, done);
 		}.bind(this));

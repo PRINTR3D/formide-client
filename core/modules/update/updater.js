@@ -17,22 +17,22 @@ function checkForUpdates(progress, callback) {
 		console.log("Newer version found: " + newVersion + ", Starting download...");
 		download(function(err, downloaded) {
 			if (err) return callback(err);
-			progress(downloaded);
+			FormideOS.events.emit('update.progress', downloaded);
 			console.log("Downloaded update...");
 			console.log("Validating update...");
 			validate(function(err, validated) {
 				if (err) return callback(err);
-				progress(validated);
+				FormideOS.events.emit('update.progress', validated);
 				console.log("Validated update");
 				console.log("Installing update...");
 				install(function(err, installed) {
 					if (err) return callback(err);
-					progress(installed);
+					FormideOS.events.emit('update.progress', installed);
 					console.log("Installed update");
 					console.log("Cleaning up...");
 					cleanup(function(err, cleanedup) {
 						if (err) return callback(err);
-						progress(cleanedup);
+						FormideOS.events.emit('update.progress', cleanedup);
 						console.log("Cleaned up...");
 						callback(null, {
 							progress: 100,
@@ -50,6 +50,9 @@ function checkForUpdates(progress, callback) {
 }
 
 function download(next) {
+	if (!fs.existsSync(downloadDestination)){
+    	fs.mkdirSync(downloadDestination);
+	}
 	var updateFile = fs.createWriteStream(downloadDestination + "/" + newVersion + ".zip");
 	var request = https.get(downloadURL, function (response) {
     	response.pipe(updateFile);
