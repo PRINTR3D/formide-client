@@ -35,7 +35,14 @@ module.exports = function(routes, module) {
 	routes.get('/core/update', function(req, res) {
 		module.updateOS(function(err, response) {
 			if (err) return res.json({ success: false, message: err});
-			return res.json({ success: true, update: response });
+			return res.json({ success: true, message: response });
+		});
+	});
+	
+	router.get('/reboot', function(req, res) {
+		module.reboot(function(err, response) {
+			if (err) return res.json({ success: false, message: err});
+			return res.json({ success: true, message: response });
 		});
 	});
 	
