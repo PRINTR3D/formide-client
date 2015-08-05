@@ -31,6 +31,9 @@ module.exports =
 */
 
 	init: function(config) {
+		
+		var self = this;
+		
 		this.config = config;
 
 		if(process.platform == 'darwin') {
@@ -42,16 +45,15 @@ module.exports =
 			FormideOS.debug.log('Binded Formidriver in rpi/Formidriver');
 		}
 		
-		if(config.simulated) {
-			//this.printers.push(new MarlinDriver('/dev/null'));
-		}
-		else {
+		if(this.driver !== null) {
 			this.driver.start(function(err, started) {
 				if (started) {
-					this.connectPrinters();
-					this.watchPorts();
+					self.watchPorts();
 				}
 			});
+		}
+		else {
+			FormideOS.debug.log("Your system is not compatible with one of our driver binaries", true);
 		}
 	},
 	
@@ -69,10 +71,11 @@ module.exports =
 			console.log('printerlist', list);
 			
 			// check if a new printer was added
-			if (this.numberOfPorts < list.length) {
+			if (self.numberOfPorts < list.length) {
 				
 				for (var i in list) {
 					var port = list[i];
+					
 					FormideOS.module('db').db.Printer.findOne({ port: port }).exec(function(err, printer) {
 						if (err) FormideOS.debug.log(err);
 						if (!printer) {
@@ -81,19 +84,13 @@ module.exports =
 						}
 						else {
 							FormideOS.events.emit('printer.connected', { port: port });
-							self.printers[listItem.port.split("/")[2]] = new AbstractPrinter(port, self.driver, function(portName) {
-/*
-								delete self.printers[portName.split("/")[2]];
-								FormideOS.events.emit('printer.disconnected', { port: portName });
-								FormideOS.debug.log('Printer disconnected: ' + portName);
-*/
-							});
+							self.printers[port.split("/")[2]] = new AbstractPrinter(port, self.driver);
 						}
 					});
 				}
 			}
 			
-			this.numberOfPorts = list.length;
+			self.numberOfPorts = list.length;
 		});
 		
 		

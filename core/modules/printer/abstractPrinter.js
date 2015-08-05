@@ -10,25 +10,33 @@
 
 // Dependencies
 
-function AbstractPrinter(serialPort, driver, disconnectCallback) {
+function AbstractPrinter(serialPort, driver/* , disconnectCallback */) {
 	this.port = serialPort;
 	this.driver = driver;
-	this.disconnectCallback = disconnectCallback;
+// 	this.disconnectCallback = disconnectCallback;
 	this.status = {};
 	this.queueID = null;
 	
 	// ask for the status every 2 seconds
-	this.statusInterval = setInterval(this.getStatus.bind(this), 2000);
+	this.statusInterval = setInterval(this.askStatus.bind(this), 2000);
+	
+	console.log('abstract driver init for ' + this.port);
 	
 	return this;
 }
 
-AbstractPrinter.prototype.getStatus = function() {
+// fetch status async every x seconds
+AbstractPrinter.prototype.askStatus = function() {
+	var self = this;
 	this.driver.getPrinterInfo(this.port, function(err, status) {
 		FormideOS.events.emit('printer.status', status);
-		this.status = status;
-		return status;
+		self.status = status;
 	});
+}
+
+// get status sync
+AbstractPrinter.prototype.getStatus = function() {
+	return this.status;
 }
 
 // TODO: make dynamic per firmware and type
@@ -46,11 +54,15 @@ AbstractPrinter.prototype.map = {
 	"temp_extruder":		["M104 S_temp_"],
 	"power_on":				["M80"],
 	"power_off":			["M81"],
-	"power_on_steppers":	["M17"],
-	"power_off_steppers":	["M18"],
-	"stop_all":				["M112"]
+	"stop_all":				["M112"],
+	"fan_on":				["M106"],
+	"fan_off":				["M107"],
+	"gcode":				["_gcode_"]
 };
 
+// M17		power_on_steppers
+// M18		power_off_steppers
+	
 // M20: 	List SD card
 // M21: 	Initialize SD card
 // M22: 	Release SD card
@@ -61,9 +73,6 @@ AbstractPrinter.prototype.map = {
 // M28: 	Begin write to SD card
 // M29: 	Stop writing to SD card
 // M30: 	Delete a file on the SD card
-
-// M106: 	Fan On
-// M107: 	Fan Off
 
 // M119: 	Get Endstop Status
 
@@ -76,6 +85,7 @@ AbstractPrinter.prototype.getCommands = function() {
 AbstractPrinter.prototype.sendRaw = function(rawCommand, callback) {
 	var self = this;
 	self.driver.sendGcode(rawCommand, this.port, function(err, response) {
+		console.log('err', err);
 		if (callback) return callback(response);
 	});
 }

@@ -20,7 +20,7 @@ module.exports = {
 		// emit all system events
 		socketio.on('connection', function(socket) {
 			socket.on('authenticate', function(data, callback) {
-				FormideOS.db.AccessToken.findOne({ token: data.accessToken }).exec(function(err, accessToken) {
+				FormideOS.module('db').db.AccessToken.findOne({ token: data.accessToken }).exec(function(err, accessToken) {
 					if (err) {
 						callback({ success: false, message: err.message });
 						return socket.disconnect();
