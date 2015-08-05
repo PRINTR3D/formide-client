@@ -9,6 +9,9 @@ var path                = require('path');
 
 module.exports = function(routes, module)
 {	
+	/*
+	 * Download a modelfile by hash in url query
+	 */
 	routes.get('/modelfiles/download', function(req, res) {
 		module.downloadModelfile(req.query.hash, req.query.encoding, function(err, filecontents) {
 			if(err) return res.send(err);
@@ -16,6 +19,9 @@ module.exports = function(routes, module)
 		});
 	});
 
+	/*
+	 * Download a gcodefile by hash in url query
+	 */
 	routes.get('/gcodefiles/download', function(req, res) {
 		req.checkQuery('hash', 'hash invalid').notEmpty();
 		req.checkQuery('encoding', 'encoding invalid').notEmpty();
@@ -33,6 +39,9 @@ module.exports = function(routes, module)
 		});
 	});
 
+	/*
+	 * Upload a file, can be stl or gcode for now
+	 */
 	routes.post('/upload', multipartMiddleware, function(req, res) {
 		if (!req.files.file) {
 			return res.status(400).json({
@@ -69,6 +78,9 @@ module.exports = function(routes, module)
 		}
 	});
 	
+	/*
+	 * Upload a file by remote url. Needs url, filename and filetype as body params
+	 */
 	routes.post('/upload/url', function(req, res) {
 		module.uploadFromUrl(req.body.url, req.body.filename, req.body.filetype, function(err, modelfile) {
 			return res.send({

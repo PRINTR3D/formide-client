@@ -9,6 +9,9 @@ var request	= require('request');
 
 module.exports = {
 	
+	/*
+	 * Handle modelfile upload
+	 */
 	uploadModelfile: function(file, callback) {
 		fs.readFile(file.path, function(err, data) {
 			var hash = uuid.v4();
@@ -32,6 +35,9 @@ module.exports = {
 		});
 	},
 
+	/*
+	 * Handle gcodefile upload
+	 */
 	uploadGcode: function(file, callback) {
 		fs.readFile(file.path, function( err, data ) {
 			var hash = uuid.v4();
@@ -55,6 +61,9 @@ module.exports = {
 		});
 	},
 
+	/*
+	 * Handle modelfile download
+	 */
 	downloadModelfile: function(hash, encoding, callback) {
 		var filename = FormideOS.config.get('paths.modelfile') + '/' + hash;
 		fs.exists(filename, function(exists) {
@@ -81,6 +90,9 @@ module.exports = {
 		});
 	},
 
+	/*
+	 * Handle gcodefile download
+	 */
 	downloadGcode: function(hash, encoding, callback) {
 		var filename = FormideOS.config.get('paths.gcode') + '/' + hash;
 		fs.exists(filename, function(exists) {
@@ -106,6 +118,9 @@ module.exports = {
 		});
 	},
 	
+	/*
+	 * Handle upload from remote url
+	 */
 	uploadFromUrl: function(url, filename, filetype, callback) {
 		request({
 			method: 'GET',
