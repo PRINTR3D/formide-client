@@ -11,9 +11,14 @@
 
 // Dependencies
 var getMac	= require('getmac');
+var pkg		= require('./package.json');
 
 // Load formideos core file
 require('./core/FormideOS');
+
+FormideOS.debug.log('==========================================');
+FormideOS.debug.log('        Starting FORMIDEOS v' + pkg.version);
+FormideOS.debug.log('==========================================');
 
 getMac.getMac(function(err, macAddress) {
 	
