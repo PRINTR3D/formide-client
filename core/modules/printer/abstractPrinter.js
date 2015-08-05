@@ -6,14 +6,11 @@
 /*
  *	Abstract driver for FDM 3D printers. See implementation drivers for more info.
  */
-
-
-// Dependencies
-
-function AbstractPrinter(serialPort, driver/* , disconnectCallback */) {
+ 
+ 
+function AbstractPrinter(serialPort, driver) {
 	this.port = serialPort;
 	this.driver = driver;
-// 	this.disconnectCallback = disconnectCallback;
 	this.status = {};
 	this.queueID = null;
 	
@@ -23,7 +20,9 @@ function AbstractPrinter(serialPort, driver/* , disconnectCallback */) {
 	return this;
 }
 
-// fetch status async every x seconds
+/*
+ * Ask the driver every 2 seconds for the status (temperatures, status, progress)
+ */
 AbstractPrinter.prototype.askStatus = function() {
 	var self = this;
 	this.driver.getPrinterInfo(this.port, function(err, status) {
@@ -32,12 +31,17 @@ AbstractPrinter.prototype.askStatus = function() {
 	});
 }
 
-// get status sync
+/*
+ * Get current status
+ */
 AbstractPrinter.prototype.getStatus = function() {
 	return this.status;
 }
 
-// TODO: make dynamic per firmware and type
+/*
+ * Available commands mapped to gcodes
+ * TODO: make dynamic to support more printer firmwares
+ */
 AbstractPrinter.prototype.map = {
 	"home":					["G28"],
 	"home_x": 				["G28 X"],
@@ -75,10 +79,16 @@ AbstractPrinter.prototype.map = {
 
 // M600:	Pause for filament change
 
+/*
+ * Get list of available commands
+ */
 AbstractPrinter.prototype.getCommands = function() {
 	return this.map;
 }
 
+/*
+ * Send raw data to printer
+ */
 AbstractPrinter.prototype.sendRaw = function(rawCommand, callback) {
 	var self = this;
 	self.driver.sendGcode(rawCommand, this.port, function(err, response) {
@@ -86,6 +96,9 @@ AbstractPrinter.prototype.sendRaw = function(rawCommand, callback) {
 	});
 }
 
+/*
+ * Send command to printer (parsed with the map array)
+ */
 AbstractPrinter.prototype.command = function(command, parameters, callback) {
 	var self = this;
 	var command = Object.create(this.map[command]);
@@ -102,6 +115,10 @@ AbstractPrinter.prototype.command = function(command, parameters, callback) {
 	return callback('OK');
 }
 
+/*
+ * Start printing. id is printjob id and gcode is hash in database
+ * Searches for queue item in database and sends absolute file path to driver
+ */
 AbstractPrinter.prototype.startPrint = function(id, gcode, callback) {
 	var self = this;
 	FormideOS.module('db').db.Queueitem.findOne({ _id: id, gcode: gcode }, function(err, queueitem) {
@@ -125,6 +142,9 @@ AbstractPrinter.prototype.startPrint = function(id, gcode, callback) {
 	});
 }
 
+/*
+ * Pause printing the current file
+ */
 AbstractPrinter.prototype.pausePrint = function(callback) {
 	var self = this;
 	self.driver.pausePrint(self.port, function(err, response) {
@@ -137,6 +157,9 @@ AbstractPrinter.prototype.pausePrint = function(callback) {
 	})
 }
 
+/*
+ * Resume printing the current file
+ */
 AbstractPrinter.prototype.resumePrint = function(callback) {
 	var self = this;
 	self.driver.resumePrint(self.port, function(err, response) {
@@ -149,6 +172,9 @@ AbstractPrinter.prototype.resumePrint = function(callback) {
 	})
 }
 
+/*
+ * Stop printing the current file. Specify done parameter to indicate if print is finished or not
+ */
 AbstractPrinter.prototype.stopPrint = function(done, callback) {
 	var self = this;
 	self.driver.stopPrint(self.port, function(err, response) {
@@ -182,6 +208,9 @@ AbstractPrinter.prototype.stopPrint = function(done, callback) {
 	});
 }
 
+/*
+ * Send a custom gcode to the printer (raw)
+ */
 AbstractPrinter.prototype.gcode = function(command, callback) {
 	this.sendRaw(command, callback);
 }
