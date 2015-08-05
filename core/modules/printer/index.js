@@ -4,12 +4,6 @@
  */
 
 // dependencies
-//var spawn = require('child_process').spawn;
-//var fs = require('fs');
-//var net = require('net');
-//var SerialPort = require("serialport");
-//var MarlinDriver = require('./drivers/MarlinDriver');
-
 var AbstractPrinter = require('./abstractPrinter');
 
 module.exports =
