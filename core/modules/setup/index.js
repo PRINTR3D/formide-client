@@ -56,13 +56,8 @@ module.exports = {
 	listNetworks: function( callback ) {
 		networks = [
 			{
-				"ssid": "Printhom",
-				"security": "WPA2",
-				"signal": 70
-			},
-			{
 				"ssid": "MyWifiNetwork",
-				"security": "WPA",
+				"security": "WPA2",
 				"signal": 65
 			}
 		];

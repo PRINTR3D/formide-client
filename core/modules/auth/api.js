@@ -76,9 +76,27 @@ module.exports = function(routes, module) {
 	});
 	
 	/*
-	 * Invite a user to use this device based on email address.
+	 * Invite a user to use this device via the cloud proxy based on email address.
 	 */
 	routes.post('/invite', FormideOS.http.permissions.isAdmin, function(req, res) {
+		request({
+			method: "POST",
+			url: FormideOS.config.get('auth.inviteUrl'),
+			form: {
+				mac: FormideOS.macAddress,
+				email: req.body.email
+			},
+			strictSSL: false
+		}, function(err, httpResponse, body) {
+			if (err) return FormideOS.debug.log('User invitation error ' + err, true);
+			var response = JSON.parse(body);
+			return res.send({
+				success: true,
+				cloudResponse: response
+			});
+		});
+		
+/*
 		FormideOS.module('db').db.User.create({
 			email: req.body.email
 		}, function(err, user) {
@@ -105,6 +123,7 @@ module.exports = function(routes, module) {
 				});
 			});
 		});
+*/
 	});
 
 	/*

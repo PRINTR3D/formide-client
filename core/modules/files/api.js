@@ -23,16 +23,6 @@ module.exports = function(routes, module)
 	 * Download a gcodefile by hash in url query
 	 */
 	routes.get('/gcodefiles/download', function(req, res) {
-		req.checkQuery('hash', 'hash invalid').notEmpty();
-		req.checkQuery('encoding', 'encoding invalid').notEmpty();
-
-		if (req.validationErrors()) {
-			return res.status(400).json({
-				status: 400,
-				errors: req.validationErrors()
-			});
-		}
-
 		module.downloadGcode(req.query.hash, req.query.encoding, function(err, response) {
 			if(err) return res.send(err);
 			return res.send(filecontents);

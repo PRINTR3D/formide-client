@@ -73,7 +73,7 @@ module.exports =
 		 * This event is triggered when a user logs into the cloud and want to access one of his clients
 		 */
 		this.cloud.on('authenticateUser', function(data, callback) {
-			this.authenticate(data.clientToken, function(err, accessToken) {
+			this.authenticate(data, function(err, accessToken) {
 				if (err) return callback(err);
 				FormideOS.debug.log('Cloud user authorized with access_token ' + accessToken.token);
 				return callback(null, accessToken.token);
@@ -102,7 +102,13 @@ module.exports =
 	/*
 	 * Handles cloud authentication based on cloudConnectionToken, returns session access_token that cloud uses to perform http calls from then on
 	 */
-	authenticate: function(cloudConnectionToken, callback) {
+	authenticate: function(data, callback) {
+		FormideOS.module('db').db.AccessToken.generate(data, 'cloud', function(err, accessToken) {
+			if (err) return callback(err);
+			return callback(null, accessToken);
+		});
+		
+/*
 		FormideOS.module('db').db.User.findOne({ cloudConnectionToken: cloudConnectionToken }).exec(function(err, user) {
 			if (err) return callback(err);
 			if (!user) return callback({ success: false, message: 'no user found with this cloud connection token' });
@@ -111,6 +117,7 @@ module.exports =
 				return callback(null, accessToken);
 			});
 		});
+*/
 	},
 
 	/*

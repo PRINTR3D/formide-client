@@ -10,7 +10,7 @@ var uuid = require('node-uuid');
 
 var schema = new Schema({
 	token: { type: String, required: true },
-	user: { type: Schema.Types.ObjectId, ref: 'users' },
+	user: { type: String, ref: 'users' },
 	permissions: [{ type: String }],
 	sessionOrigin: { type: String, required: true }
 });
