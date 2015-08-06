@@ -1,0 +1,44 @@
+{
+	"app": {
+		"debug": true,
+		"timezone": "UTC",
+		"url": "0.0.0.0",
+		"port": 1337
+	},
+	"auth": {
+		"permission": false,
+		"inviteUrl": "http://localhost:3000/clients/register/invite"
+	},
+	"cloud": {
+		"url": "http://localhost:3000"
+	},
+	"db": {
+		"storage": "../storage/database"
+	},
+	"log": {
+		"path": "../storage"
+	},
+	"paths": {
+		"temp": "../uploads/tmp",
+		"modelfile": "../uploads/modelfiles",
+		"gcode": "../uploads/gcode"
+	},
+	"printer": {
+		"permission": false,
+		"simulated": false
+	},
+	"slicer": {
+		"port": 1339,
+		"simulated": false
+	},
+	"settings": {
+		"path": "../storage"
+	},
+	"setup": {
+		"permission": false,
+		"registerUrl": "http://localhost:3000/clients/register/token"
+	},
+	"update": {
+		"permission": false
+	}
+}
