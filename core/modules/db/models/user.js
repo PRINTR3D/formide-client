@@ -62,7 +62,8 @@ schema.set('toJSON', {
         var retJson = {
 	        _id: ret._id,
             email: ret.email,
-            permissions: ret.permissions,
+            isOwner: ret.isOwner,
+            isAdmin: ret.isAdmin,
             cloudConnectionToken: ret.cloudConnectionToken
         };
         return retJson;
