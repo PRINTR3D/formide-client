@@ -1,9 +1,9 @@
 {
 	"users": [
 		{
-			"password": "password",
-			"email": "test@user.com",
-			"permissions": ["admin"]
+			"password": "admin",
+			"email": "admin@local",
+			"isAdmin": true
 		}
 	],
 	

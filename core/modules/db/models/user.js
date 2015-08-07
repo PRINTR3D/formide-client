@@ -12,8 +12,9 @@ var SALT_WORK_FACTOR 	= 10;
 var schema = new Schema({
 	email: { type: String, unique: true, required: true },
 	password: { type: String },
-	permissions: [{ type: String }],
-	cloudConnectionToken: { type: String }
+	cloudConnectionToken: { type: String },
+	isAdmin: { type: Boolean, default: false },
+	isOwner: { type: Boolean, default: false }
 });
 schema.plugin(timestamps);
 

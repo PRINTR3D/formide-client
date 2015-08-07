@@ -33,17 +33,19 @@ module.exports = {
 	},
 	
 	addUser: function(email, password, registertoken, cb) {
-		FormideOS.module('db').db.User.find({ cloudConnectionToken: {'$ne': null } }).exec(function(err, users) {
-			if (users.length > 0) {
-				var msg = "There is already a cloud connected user, contact " + users[0].email + " to get access.";
+		FormideOS.module('db').db.User.findOne({ isOwner: true }).exec(function(err, user) {
+			if (user) {
+				var msg = "This device already has an owner, contact " + user.email + " to get access.";
 				FormideOS.debug.log(msg, true);
 				return cb(msg);
 			}
 		
+			// create a new owner/admin user
 			FormideOS.module('db').db.User.create({
 				email: email,
 				password: password,
-				permissions: ["admin"],
+				isOwner: true,
+				isAdmin: true,
 				cloudConnectionToken: registertoken
 			}, function(err, user) {
 				if (err) return cb(err);
