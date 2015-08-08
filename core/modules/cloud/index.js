@@ -86,10 +86,20 @@ module.exports =
 		this.cloud.on('http', function(data, callback) {
 			FormideOS.debug.log('Cloud http call: ' + data.url);
 			// call http function
-			this.http(data, function(response) {
+			this.http(data, function(err, response) {
 				callback(response);
 			});
 		}.bind(this));
+		
+		/*
+		 * Send a gcode file to a client to print a cloud sliced printjob
+		 */
+		this.cloud.on('gcodefile', function(data, callback) {
+			FormideOS.debug.log('Cloud gcodefile stream: ' + data.hash);
+			this.gcodefile(data, function(err, response) {
+				callback(response);
+			});
+		});
 
 		/*
 		 * Handle disconnect
@@ -132,7 +142,14 @@ module.exports =
 			},
 			form: data.data || {}
 		}, function( error, response, body ) {
-			return callback(body);
+			return callback(null, body);
 		});
+	},
+	
+	/*
+	 * Handles gcodefile stream from cloud
+	 */
+	gcodefile: function(data, callback) {
+		// callback(null, 'something');
 	}
 }

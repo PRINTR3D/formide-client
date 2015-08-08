@@ -6,13 +6,23 @@
 module.exports = function(routes, db) {
 	
 	/*
-	 * Get print queue for all printers. Front-end has to filter on a specific printer if wanted.
+	 * Get print queue for all printers or a specific printer by port
 	 */
 	routes.get('/queue', function(req, res) {
-		db.Queueitem.find().populate('printjob printer').deepPopulate('printjob.modelfiles printjob.materials printjob.sliceprofile printjob.printer printjob.gcodefile').exec(function(err, queue) {
-			if (err) return res.send(err);
-			return res.send(queue);
-		});
+		if (req.query.port) {
+			db.Printer.findOne({ port: req.query.port }).exec(function(err, printer) {
+				db.Queueitem.find({ printer: printer._id }).populate('printjob printer').deepPopulate('printjob.modelfiles printjob.materials printjob.sliceprofile printjob.printer printjob.gcodefile').exec(function(err, queue) {
+					if (err) return res.send(err);
+					return res.send(queue);
+				});
+			});
+		}
+		else {
+			db.Queueitem.find().populate('printjob printer').deepPopulate('printjob.modelfiles printjob.materials printjob.sliceprofile printjob.printer printjob.gcodefile').exec(function(err, queue) {
+				if (err) return res.send(err);
+				return res.send(queue);
+			});
+		}
 	});
 
 	/*
