@@ -178,33 +178,34 @@ AbstractPrinter.prototype.resumePrint = function(callback) {
 AbstractPrinter.prototype.stopPrint = function(done, callback) {
 	var self = this;
 	self.driver.stopPrint(self.port, function(err, response) {
-		if (err) FormideOS.debug.log(err);
-		if (response) {
-			if (done) {
-				FormideOS.module('db').db.Queueitem.findOne({ _id: self.queueID }, function(err, queueitem) {
-					queueitem.status = 'finished';
-					queueitem.save();
-					FormideOS.events.emit('printer.stopped', {
-						port: self.port,
-						printjobID: self.queueID
-					});
-					self.queueID = null;
-					return callback(err, "stopped printing");
-				});
-			}
-			else {
-				FormideOS.module('db').db.Queueitem.findOne({ _id: self.queueID }, function(err, queueitem) {
-					queueitem.status = 'queued';
-					queueitem.save();
-					FormideOS.events.emit('printer.finished', {
-						port: self.port,
-						printjobID: self.queueID
-					});
-					self.queueID = null;
-					return callback(err, "stopped printing");
-				});
-			}		
-		}
+		if (err) return FormideOS.debug.log(err);
+		FormideOS.module('db').db.Queueitem.findOne({ _id: self.queueID }, function(err, queueitem) {
+			queueitem.status = 'queued';
+			queueitem.save();
+			FormideOS.events.emit('printer.stopped', {
+				port: self.port,
+				printjobID: self.queueID
+			});
+			self.queueID = null;
+			return callback(err, "stopped printing");
+		});	
+	});
+}
+
+/*
+ * Handle print finished event. Set queue item to finished and emit event to dashboards
+ */
+AbstractPrinter.prototype.printFinished = function(printjobId) {
+	var self = this;
+	if (printjobId !== self.queueId) FormideOS.debug.log('Warning: driver queue ID and client queue ID are not the same!', true);
+	FormideOS.module('db').db.Queueitem.findOne({ _id: self.queueID }, function(err, queueitem) {
+		queueitem.status = 'finished';
+		queueitem.save();
+		FormideOS.events.emit('printer.finished', {
+			port: self.port,
+			printjobID: self.queueID
+		});
+		self.queueID = null;
 	});
 }
 

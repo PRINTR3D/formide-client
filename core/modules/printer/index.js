@@ -29,10 +29,33 @@ module.exports =
 		}
 		
 		if(this.driver !== null) {
-			this.driver.start(function(err, started) {
-				if (started) {
-					self.watchPorts();
+			this.driver.start(function(err, started, event) {
+				
+				if (err) {
+					FormideOS.debug.log('Formidriver err: ' + err);
 				}
+				
+				else if (started) {
+					FormideOS.debug.log('Formidriver started successfully');
+				}
+				
+				else if (event) {
+					// an event came back which we can use to do sometehing with!
+					
+					if (event.type === 'printerConnected') {
+						self.printerConnected(event.port);
+					}
+					else if (event.type === 'printerDisconnected') {
+						self.printerDisconnected(event.port);
+					}
+					else if (event.type === 'printerOnline') {
+						
+					}
+					else if (event.type === 'printFinished') {
+						self.printFinished(event.port, event.printjobID);
+					}
+				}
+				
 			});
 		}
 		else {
@@ -40,41 +63,34 @@ module.exports =
 		}
 	},
 	
-	watchPorts: function() {
-		setInterval(function() {
-			this.connectPrinters();
-		}.bind(this), 2000);
+	printerConnected: function(port) {
+		FormideOS.module('db').db.Printer.findOne({ port: port }).exec(function(err, printer) {
+			if (err) FormideOS.debug.log(err);
+			if (!printer) {
+				FormideOS.debug.log('Printer needs to be setup on port ' + port);
+				FormideOS.events.emit('printer.setup', { port: port });
+			}
+			else {
+				FormideOS.events.emit('printer.connected', { port: port });
+				self.printers[port.split("/")[2]] = new AbstractPrinter(port, self.driver);
+			}
+		});
 	},
 	
-	connectPrinters: function() {
-		
-		var self = this;
-		
-		this.driver.getPrinterList(function(err, list) {
-			console.log('printerlist', list);
-			
-			// check if a new printer was added
-			if (self.numberOfPorts < list.length) {
-				
-				for (var i in list) {
-					var port = list[i];
-					
-					FormideOS.module('db').db.Printer.findOne({ port: port }).exec(function(err, printer) {
-						if (err) FormideOS.debug.log(err);
-						if (!printer) {
-							FormideOS.debug.log('Printer needs to be setup on port ' + port);
-							FormideOS.events.emit('printer.setup', { port: port });
-						}
-						else {
-							FormideOS.events.emit('printer.connected', { port: port });
-							self.printers[port.split("/")[2]] = new AbstractPrinter(port, self.driver);
-						}
-					});
-				}
-			}
-			
-			self.numberOfPorts = list.length;
-		});
+	printerDisconnected: function(port) {
+		if (this.printers[port.split("/")[2]] !== undefined) {
+			delete this.printers[port.split("/")[2]];
+		}
+	},
+	
+	printerOnline: function(port) {
+		// maybe do something with this in the future
+	},
+	
+	printFinished: function(port, printjobId) {
+		if (this.printers[port.split("/")[2]] !== undefined) {
+			this.printers[port.split("/")[2]].printFinished(printjobId);
+		}
 	},
 	
 	getPrinters: function() {
