@@ -84,7 +84,7 @@ module.exports =
 	},
 	
 	printerOnline: function(port) {
-		// maybe do something with this in the future
+		FormideOS.events.emit('printer.online', { port: port });
 	},
 	
 	printFinished: function(port, printjobId) {
