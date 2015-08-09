@@ -7,9 +7,11 @@
 var net 		= require('net');
 var request 	= require('request');
 var socket 		= require('socket.io-client');
+var ss 			= require('socket.io-stream');
 var publicIp 	= require('public-ip');
 var internalIp 	= require('internal-ip');
 var fs			= require('fs');
+var uuid		= require('node-uuid');
 
 module.exports =
 {	
@@ -94,10 +96,10 @@ module.exports =
 		/*
 		 * Send a gcode file to a client to print a cloud sliced printjob
 		 */
-		this.cloud.on('gcodefile', function(data, callback) {
-			FormideOS.debug.log('Cloud gcodefile stream: ' + data.hash);
-			this.gcodefile(data, function(err, response) {
-				callback(response);
+		this.cloud.on('addToQueue', function(data, callback) {
+			FormideOS.debug.log('Cloud addToQueue: ' + data.hash);
+			self.addToQueue(data, function(err, response) {
+				callback(err, response);
 			});
 		});
 
@@ -147,9 +149,35 @@ module.exports =
 	},
 	
 	/*
-	 * Handles gcodefile stream from cloud
+	 * Handles addToQueue from cloud
 	 */
-	gcodefile: function(data, callback) {
-		// callback(null, 'something');
+	addToQueue: function(data, callback) {
+		var self = this;
+		var hash = uuid.v4();
+		
+		FormideOS.module('db').db.Printer.findOne({ port: data.port }).exec(function(err, printer) {
+			if (err) return callback(err);
+			FormideOS.module('db').db.Queueitem.create({
+				origin: 'cloud',
+				status: 'queued',
+				gcode: hash,
+				printjob: data.printjob,
+				printer: printer.toObject()
+			}, function(err, queueitem) {
+				if (err) return callback(err);
+				callback(null, {
+					success: true,
+					queueitem: queueitem
+				});
+				
+				var downloadStream = ss.createStream();
+				var newPath = FormideOS.config.get('paths.gcode') + '/' + hash;
+				// ask for gcodefile stream, also send back data for verification
+				ss(self.cloud).emit('gcodefile', downloadStream, data, function(err) {
+					FormideOS.debug.log('gcodefile stream error: ' + err);
+				});
+				downloadStream.pipe(fs.createWriteStream(newPath));
+			});
+		});
 	}
 }
