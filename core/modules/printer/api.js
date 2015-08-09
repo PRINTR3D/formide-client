@@ -34,7 +34,7 @@ module.exports = function(routes, module)
 	 * Start printjob
 	 */
 	routes.get('/:port/start', function(req, res) {
-		module.startPrint(req.params.port, req.query._id, req.query.hash, function(err, result) {
+		module.startPrint(req.params.port, req.query._id, req.query.gcode, function(err, result) {
 			if (err) return res.send(err);
 			return res.json({
 				success: true,
