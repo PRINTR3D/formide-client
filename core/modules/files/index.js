@@ -23,6 +23,7 @@ module.exports = {
 				}
 				else {
 					FormideOS.module('db').db.Modelfile.create({
+						prettyname: file.name,
 						filename: file.name,
 						filesize: file.size,
 						hash: hash
@@ -49,6 +50,7 @@ module.exports = {
 				}
 				else {
 					FormideOS.module('db').db.Gcodefile.create({
+						prettyname: filename,
 						filename: file.name,
 						filesize: file.size,
 						hash: hash
@@ -134,6 +136,7 @@ module.exports = {
 			response.pipe(fws);
 			response.on( 'end', function() {
 				FormideOS.module('db').db.Modelfile.create({
+					prettyname: filename,
 					filename: filename,
 					filesize: fws.bytesWritten,
 					filetype: filetype,
