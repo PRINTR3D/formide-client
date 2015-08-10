@@ -191,7 +191,7 @@ module.exports =
 				FormideOS.module('db').db.Printer.findOne({ port: cloudPrinter.port }).exec(function(err, printer) {
 					// no printer found for port? add it!
 					if (printer === null) {
-						Printer.create({
+						FormideOS.module('db').db.Printer.create({
 							name: cloudPrinter.name,
 							bed: cloudPrinter.bed,
 							axis: cloudPrinter.axis,
