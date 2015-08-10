@@ -41,6 +41,7 @@ AbstractPrinter.prototype.getStatus = function() {
 /*
  * Available commands mapped to gcodes
  * TODO: make dynamic to support more printer firmwares
+ * TODO: find out how to send toolhead switch in same command as extrude/retract to prevent delay
  */
 AbstractPrinter.prototype.map = {
 	"home":					["G28"],
@@ -48,8 +49,8 @@ AbstractPrinter.prototype.map = {
 	"home_y": 				["G28 Y"],
 	"home_z": 				["G28 Z"],
 	"jog":					["G91", "G21", "G1 _axis_ _dist_"],
-	"extrude":				["T_extnr_", "G91", "G21", "G1 E _dist_"],
-	"retract":				["T_extnr_", "G91", "G21", "G1 E _dist_"],
+	"extrude":				["T_extnr_ ", "G91", "G21", "G1 E _dist_"],
+	"retract":				["T_extnr_ ", "G91", "G21", "G1 E _dist_"],
 	"lcd_message":			["M117                     _msg_"],
 	"temp_bed":				["M140 S_temp_"],
 	"temp_extruder":		["T_extnr_", "M104 S_temp_"],
@@ -91,6 +92,7 @@ AbstractPrinter.prototype.getCommands = function() {
  */
 AbstractPrinter.prototype.sendRaw = function(rawCommand, callback) {
 	var self = this;
+	console.log(rawCommand);
 	self.driver.sendGcode(rawCommand, this.port, function(err, response) {
 		if (callback) return callback(response);
 	});

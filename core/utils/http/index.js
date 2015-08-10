@@ -80,7 +80,7 @@ module.exports = {
 		
 		// use bearer token middleware
 		this.app.use(bearerToken({
-			queryKey: 'token'
+			queryKey: 'access_token'
 		}));
 		
 		// use cors middleware
