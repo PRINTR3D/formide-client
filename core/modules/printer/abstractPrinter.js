@@ -175,11 +175,13 @@ AbstractPrinter.prototype.resumePrint = function(callback) {
 /*
  * Stop printing the current file. Specify done parameter to indicate if print is finished or not
  */
-AbstractPrinter.prototype.stopPrint = function(done, callback) {
+AbstractPrinter.prototype.stopPrint = function(callback) {
 	var self = this;
 	self.driver.stopPrint(self.port, function(err, response) {
 		if (err) return FormideOS.debug.log(err);
 		FormideOS.module('db').db.Queueitem.findOne({ _id: self.queueID }, function(err, queueitem) {
+			if (err) return FormideOS.debug.log(err);
+			if (!queueitem) return FormideOS.debug.log('No queue item with that ID found to stop printing');
 			queueitem.status = 'queued';
 			queueitem.save();
 			FormideOS.events.emit('printer.stopped', {
@@ -199,6 +201,8 @@ AbstractPrinter.prototype.printFinished = function(printjobId) {
 	var self = this;
 	if (printjobId !== self.queueId) FormideOS.debug.log('Warning: driver queue ID and client queue ID are not the same!', true);
 	FormideOS.module('db').db.Queueitem.findOne({ _id: self.queueID }, function(err, queueitem) {
+		if (err) return FormideOS.debug.log(err);
+		if (!queueitem) return FormideOS.debug.log('No queue item with that ID found to handle finished printing');
 		queueitem.status = 'finished';
 		queueitem.save();
 		FormideOS.events.emit('printer.finished', {
