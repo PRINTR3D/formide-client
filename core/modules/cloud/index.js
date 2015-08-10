@@ -12,6 +12,7 @@ var publicIp 	= require('public-ip');
 var internalIp 	= require('internal-ip');
 var fs			= require('fs');
 var uuid		= require('node-uuid');
+var async		= require('async');
 
 module.exports =
 {	
@@ -106,9 +107,9 @@ module.exports =
 		/*
 		 * Sync printers from local database to cloud (when adding new client or manually syncing cloud/local printers)
 		 */
-		this.cloud.on('syncPrinters', function(data, callback) {
+		this.cloud.on('syncPrinters', function(printers, callback) {
 			FormideOS.debug.log('Cloud syncPrinters');
-			self.syncPrinters(function(err, response) {
+			self.syncPrinters(printers, function(err, response) {
 				callback(err, response);
 			});
 		});
@@ -129,17 +130,6 @@ module.exports =
 			if (err) return callback(err);
 			return callback(null, accessToken);
 		});
-		
-/*
-		FormideOS.module('db').db.User.findOne({ cloudConnectionToken: cloudConnectionToken }).exec(function(err, user) {
-			if (err) return callback(err);
-			if (!user) return callback({ success: false, message: 'no user found with this cloud connection token' });
-			FormideOS.module('db').db.AccessToken.generate(user, 'cloud', function(err, accessToken) {
-				if (err) return callback(err);
-				return callback(null, accessToken);
-			});
-		});
-*/
 	},
 
 	/*
@@ -194,9 +184,26 @@ module.exports =
 	/*
 	 * Handle syncPrinters from cloud
 	 */
-	syncPrinters: function(callback) {
+	syncPrinters: function(cloudPrinters, callback) {
 		FormideOS.module('db').db.Printer.find().exec(function(err, printers) {
 			if (err) return callback(err);
+			async.each(cloudPrinters, function(cloudPrinter, callback) {
+				FormideOS.module('db').db.Printer.findOne({ port: cloudPrinter.port }).exec(function(err, printer) {
+					// no printer found for port? add it!
+					if (printer === null) {
+						Printer.create({
+							name: cloudPrinter.name,
+							bed: cloudPrinter.bed,
+							axis: cloudPrinter.axis,
+							extruders: cloudPrinter.extruders,
+							port: cloudPrinter.port,
+							baudrate: cloudPrinter.baudrate,
+						}, function(err, syncedPrinter) {
+							FormideOS.debug.log('Synced printer from cloud: ' + syncedPrinter.port)
+						});
+					}
+				});
+			});
 			return callback(null, printers);
 		});
 	}
