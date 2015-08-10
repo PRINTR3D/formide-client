@@ -102,6 +102,16 @@ module.exports =
 				callback(err, response);
 			});
 		});
+		
+		/*
+		 * Sync printers from local database to cloud (when adding new client or manually syncing cloud/local printers)
+		 */
+		this.cloud.on('syncPrinters', function(data, callback) {
+			FormideOS.debug.log('Cloud syncPrinters');
+			self.syncPrinters(function(err, response) {
+				callback(err, response);
+			});
+		});
 
 		/*
 		 * Handle disconnect
@@ -178,6 +188,16 @@ module.exports =
 				});
 				downloadStream.pipe(fs.createWriteStream(newPath));
 			});
+		});
+	},
+	
+	/*
+	 * Handle syncPrinters from cloud
+	 */
+	syncPrinters: function(callback) {
+		FormideOS.module('db').db.Printer.find().exec(function(err, printers) {
+			if (err) return callback(err);
+			return callback(null, printers);
 		});
 	}
 }
