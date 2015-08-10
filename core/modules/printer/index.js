@@ -68,10 +68,11 @@ module.exports =
 		FormideOS.module('db').db.Printer.findOne({ port: port }).exec(function(err, printer) {
 			if (err) FormideOS.debug.log(err);
 			if (!printer) {
-				FormideOS.debug.log('Printer needs to be setup on port ' + port);
+				FormideOS.debug.log('Printer needs to be setup: ' + port);
 				FormideOS.events.emit('printer.setup', { port: port });
 			}
 			else {
+				FormideOS.debug.log('Printer connected: ' + port);
 				FormideOS.events.emit('printer.connected', { port: port });
 				self.printers[port.split("/")[2]] = new AbstractPrinter(port, self.driver);
 			}
@@ -80,11 +81,14 @@ module.exports =
 	
 	printerDisconnected: function(port) {
 		if (this.printers[port.split("/")[2]] !== undefined) {
+			FormideOS.debug.log('Printer disconnected: ' + port);
+			FormideOS.events.emit('printer.disconnected', { port: port });
 			delete this.printers[port.split("/")[2]];
 		}
 	},
 	
 	printerOnline: function(port) {
+		FormideOS.debug.log('Printer online: ' + port);
 		FormideOS.events.emit('printer.online', { port: port });
 	},
 	
