@@ -124,7 +124,7 @@ AbstractPrinter.prototype.command = function(command, parameters, callback) {
 AbstractPrinter.prototype.startPrint = function(id, gcode, callback) {
 	var self = this;
 	FormideOS.module('db').db.Queueitem.findOne({ _id: id, gcode: gcode }, function(err, queueitem) {
-		if (err) FormideOS.debug.log(err);
+		if (err) return FormideOS.debug.log(err);
 		if (queueitem) {
 			self.driver.printFile(FormideOS.appRoot + FormideOS.config.get('paths.gcode') + '/' + gcode, id, self.port, function(err, response) {
 				if (err) return FormideOS.debug.log(err);

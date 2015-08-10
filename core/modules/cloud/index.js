@@ -137,17 +137,30 @@ module.exports =
 	 * Handles HTTP proxy function calls from cloud connection, calls own local http api after reconstructing HTTP request
 	 */
 	http: function(data, callback) {
-		request({
-			method: data.method,
-			uri: 'http://127.0.0.1:' + FormideOS.http.server.address().port + '/' + data.url,
-			auth: {
-				bearer: data.token // add cloud api key to authorise to local HTTP api
-			},
-			form: data.data || {},
-			qs: data.data || {}
-		}, function( error, response, body ) {
-			return callback(null, body);
-		});
+		if (data.method === 'GET') {
+			request({
+				method: 'GET',
+				uri: 'http://127.0.0.1:' + FormideOS.http.server.address().port + '/' + data.url,
+				auth: {
+					bearer: data.token // add cloud api key to authorise to local HTTP api
+				},
+				qs: data.data
+			}, function( error, response, body ) {
+				return callback(null, body);
+			});
+		}
+		else {
+			request({
+				method: data.method,
+				uri: 'http://127.0.0.1:' + FormideOS.http.server.address().port + '/' + data.url,
+				auth: {
+					bearer: data.token // add cloud api key to authorise to local HTTP api
+				},
+				form: data.data
+			}, function( error, response, body ) {
+				return callback(null, body);
+			});
+		}
 	},
 	
 	/*
