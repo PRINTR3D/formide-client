@@ -88,7 +88,6 @@ module.exports =
 		 */
 		this.cloud.on('http', function(data, callback) {
 			FormideOS.debug.log('Cloud http call: ' + data.url);
-			console.log(data);
 			// call http function
 			this.http(data, function(err, response) {
 				callback(response);
