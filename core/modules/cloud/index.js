@@ -88,6 +88,7 @@ module.exports =
 		 */
 		this.cloud.on('http', function(data, callback) {
 			FormideOS.debug.log('Cloud http call: ' + data.url);
+			console.log(data);
 			// call http function
 			this.http(data, function(err, response) {
 				callback(response);
@@ -142,7 +143,8 @@ module.exports =
 			auth: {
 				bearer: data.token // add cloud api key to authorise to local HTTP api
 			},
-			form: data.data || {}
+			form: data.data || {},
+			qs: data.data || {}
 		}, function( error, response, body ) {
 			return callback(null, body);
 		});
@@ -199,6 +201,7 @@ module.exports =
 							port: cloudPrinter.port,
 							baudrate: cloudPrinter.baudrate,
 						}, function(err, syncedPrinter) {
+							if (err) return;
 							FormideOS.debug.log('Synced printer from cloud: ' + syncedPrinter.port)
 						});
 					}
