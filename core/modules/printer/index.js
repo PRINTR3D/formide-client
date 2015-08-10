@@ -83,6 +83,7 @@ module.exports =
 		if (this.printers[port.split("/")[2]] !== undefined) {
 			FormideOS.debug.log('Printer disconnected: ' + port);
 			FormideOS.events.emit('printer.disconnected', { port: port });
+			this.printers[port.split("/").statusInterval = null];
 			delete this.printers[port.split("/")[2]];
 		}
 	},
