@@ -71,11 +71,9 @@ module.exports =
 				FormideOS.debug.log('Printer needs to be setup: ' + port);
 				FormideOS.events.emit('printer.setup', { port: port });
 			}
-			else {
-				FormideOS.debug.log('Printer connected: ' + port);
-				FormideOS.events.emit('printer.connected', { port: port });
-				self.printers[port.split("/")[2]] = new AbstractPrinter(port, self.driver);
-			}
+			FormideOS.debug.log('Printer connected: ' + port);
+			FormideOS.events.emit('printer.connected', { port: port });
+			self.printers[port.split("/")[2]] = new AbstractPrinter(port, self.driver);
 		});
 	},
 	
