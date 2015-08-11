@@ -7,7 +7,6 @@
 var net 		= require('net');
 var request 	= require('request');
 var socket 		= require('socket.io-client');
-var ss 			= require('socket.io-stream');
 var publicIp 	= require('public-ip');
 var internalIp 	= require('internal-ip');
 var fs			= require('fs');
@@ -184,13 +183,22 @@ module.exports =
 					queueitem: queueitem
 				});
 				
-				var downloadStream = ss.createStream();
-				var newPath = FormideOS.config.get('paths.gcode') + '/' + hash;
-				// ask for gcodefile stream, also send back data for verification
-				ss(self.cloud).emit('gcodefile', downloadStream, data, function(err) {
-					FormideOS.debug.log('gcodefile stream error: ' + err);
+				request({
+					method: 'GET',
+					url: FormideOS.config.get('cloud.url') + '/files/gcodefiles/public',
+					qs: {
+						hash: data.hash
+					},
+					strictSSL: false
+				})
+				.on('response', function(response) {
+					var newPath = FormideOS.config.get('paths.gcode') + '/' + hash;
+					var fws = fs.createWriteStream(newPath);
+					response.pipe(fws);
+					response.on( 'end', function() {
+						FormideOS.debug.log('finished downloading gcode. Recieved ' + fws.bytesWritten + ' bytes');
+		        	});
 				});
-				downloadStream.pipe(fs.createWriteStream(newPath));
 			});
 		});
 	},
@@ -202,24 +210,23 @@ module.exports =
 		FormideOS.module('db').db.Printer.find().exec(function(err, printers) {
 			if (err) return callback(err);
 			async.each(cloudPrinters, function(cloudPrinter, callback) {
-				FormideOS.module('db').db.Printer.findOne({ port: cloudPrinter.port }).exec(function(err, printer) {
-					// no printer found for port? add it!
-					if (printer === null) {
-						FormideOS.module('db').db.Printer.create({
-							name: cloudPrinter.name,
-							bed: cloudPrinter.bed,
-							axis: cloudPrinter.axis,
-							extruders: cloudPrinter.extruders,
-							port: cloudPrinter.port,
-							baudrate: cloudPrinter.baudrate,
-						}, function(err, syncedPrinter) {
-							if (err) return;
-							FormideOS.debug.log('Synced printer from cloud: ' + syncedPrinter.port)
-						});
-					}
+				// update or inset printer
+				FormideOS.module('db').db.Printer.update({ cloudId: cloudPrinter._id }, {
+					name: cloudPrinter.name,
+					bed: cloudPrinter.bed,
+					axis: cloudPrinter.axis,
+					extruders: cloudPrinter.extruders,
+					port: cloudPrinter.port,
+					baudrate: cloudPrinter.baudrate,
+					cloudId: cloudPrinter._id
+				}, { upsert: true }, function(err, syncedPrinter) {
+					if (err) return FormideOS.debug.log('Cloud sync error: ' + err );
+					FormideOS.debug.log('Synced printer from cloud');
+					console.log(syncedPrinter);
 				});
 			});
-			return callback(null, printers);
+			// for now always use cloud values!
+			return callback(null, {});
 		});
 	}
 }
