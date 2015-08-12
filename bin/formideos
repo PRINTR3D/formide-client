@@ -2,6 +2,6 @@
 
 'use strict';
 
-process.title = 'formideos-client';
+process.title = 'formideos';
 
 require('../bootstrap.js');

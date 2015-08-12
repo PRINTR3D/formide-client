@@ -100,7 +100,7 @@
     "npm": "~2.7.0"
   },
   "bin": {
-    "formide": "bin/formideos"
+    "formideos": "bin/formideos"
   },
   "preferGlobal": true
 }
