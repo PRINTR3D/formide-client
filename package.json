@@ -12,7 +12,7 @@
     "url": "https://github.com/PRINTR3D/formideOS-client.git/issues"
   },
   "contributors": "https://github.com/PRINTR3D/formideOS-client/graphs/contributors",
-  "licence": "https://github.com/PRINTR3D/formideos-client/blob/master/LICENSE.md",
+  "license": "https://github.com/PRINTR3D/formideos-client/blob/master/LICENSE.md",
   "scripts": {
     "start": "node bootstrap",
     "test": "NODE_ENV=testing node bootstrap"
