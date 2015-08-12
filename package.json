@@ -105,5 +105,6 @@
   },
   "bin": {
     "formide": "bin/formideos"
-  }
+  },
+  "preferGlobal": true
 }
