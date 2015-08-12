@@ -102,5 +102,8 @@
     "node": "~0.12.5",
     "iojs": "~1.2.0",
     "npm": "~2.7.0"
+  },
+  "bin": {
+    "formide": "bin/formideos"
   }
 }
