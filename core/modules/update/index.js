@@ -6,7 +6,7 @@
 var fs 			= require('fs');
 var npm 		= require('npm');
 var path		= require('path');
-var gitty		= require('gitty');
+var updater		= require('./updater');
 
 module.exports = {
 	
@@ -21,21 +21,15 @@ module.exports = {
 		];
 	},
 	
-	// for now updates 3rd party modules as well!
+	// update system
 	updateOS: function(cb) {
-		var formideosRepo = gitty(FormideOS.appRoot);
-		formideosRepo.pull('origin', 'development', function(err) {
-			if (err) return res.send(err);
-			npm.load(function (err) {
-				npm.commands.update(function (updateErr, data) {
-					if (updateErr) return cb(err);
-					return cb(null, {
-						"core": "updated",
-						"dependencies": data
-		    		});
-	  			});
-  			});
+		updater.update(function(err, done) {
+			return cb(err, done);
 		});
+	},
+	
+	reboot: function(cb) {
+		// do reboot of device
 	},
 	
 	getPackages: function(simple, cb) {

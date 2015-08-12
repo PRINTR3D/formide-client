@@ -6,27 +6,17 @@
 		<script type="text/javascript" src="http://localhost:1337/socket.io/socket.io.js"></script>
 		<script type="text/javascript">
 		  	
-			var printerWS = io("http://localhost:1337/printer?access_token=22e3c098-9049-423d-b0ac-195f2fc9b108");
-			var slicerWS = io("http://localhost:1337/slicer?access_token=22e3c098-9049-423d-b0ac-195f2fc9b108");
+			var socketio = io("http://localhost:1337");
 			
-			printerWS.on('connected', function() {
-				console.log('connected');
+			socketio.emit('authenticate', {
+				type: 'user',
+				accessToken: '9ef9fee5-d1ac-4bc2-88fe-0b5c44477b23'
+			}, function(response) {
+				console.log(response);
 			});
 			
-			printerWS.on('disconnected', function() {
-				console.log('disconnected');
-			});
-			
-			printerWS.on('finished', function() {
-				console.log('finished');
-			});
-			
-			printerWS.on('setup', function(data) {
-				console.log('setup', data);
-			});
-			
-			printerWS.on('status', function(data) {
-				//console.log(data);
+			socketio.on('update.progress', function(data) {
+				console.log(data);
 			});
 		  
 		</script>

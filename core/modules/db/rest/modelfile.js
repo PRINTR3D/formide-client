@@ -12,7 +12,7 @@ module.exports = function(routes, db)
 	 * Returns a json list of all uploaded modelfiles (their properties, not the actual files)
 	 * We use the reversePopulate plugin to also attach a list of printjobs where each modelfile is referenced
 	 */
-	routes.get('/modelfiles', FormideOS.http.permissions.check('db:modelfile:read'), function(req, res) {
+	routes.get('/modelfiles', function(req, res) {
 		db.Modelfile.find().exec(function(err, modelfiles) {
 			if (err) return res.send(err);
 			return res.send(modelfiles);
@@ -23,7 +23,7 @@ module.exports = function(routes, db)
 	 * Returns a json object with info about a single modelfile
 	 * We use the reversePopulate plugin to also attach a list of printjobs where the modelfile is referenced
 	 */
-	routes.get('/modelfiles/:id', FormideOS.http.permissions.check('db:modelfile:read'), function(req, res) {
+	routes.get('/modelfiles/:id', function(req, res) {
 		db.Modelfile.findOne({ _id: req.params.id }).lean().exec(function(err, modelfile) {
 			if (err) return res.send(err);
 			if (!modelfile) return res.json('no modelfile found with that id');
@@ -34,11 +34,23 @@ module.exports = function(routes, db)
 			});
 		});
 	});
+	
+	/*
+	 * Edit the prettyname of a modelfile (name that appears in the file list)
+	 */
+	routes.post('/modelfiles/:id', function(req, res) {
+		db.Modelfile.update({ _id: req.params.id }, { prettyname: req.body.prettyname },function(err) {
+			if (err) return res.send(err);
+			return res.send({
+				success: true
+			});
+		});
+	});
 
 	/*
 	 * Delete a modelfile entry by ID.
 	 */
-	routes.delete('/modelfiles/:id', FormideOS.http.permissions.check('db:modelfile:write'), function(req, res) {
+	routes.delete('/modelfiles/:id', function(req, res) {
 		db.Modelfile.remove({ _id: req.params.id }, function(err, modelfile) {
 			if (err) return res.status(400).send(err);
 			var filePath = FormideOS.config.get('paths.modelfile') + '/' + modelfile.hash;

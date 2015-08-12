@@ -1,8 +1,9 @@
 {
 	"users": [
 		{
-			"password": "password",
-			"email": "test@user.com"
+			"password": "admin",
+			"email": "admin@local",
+			"isAdmin": true
 		}
 	],
 	

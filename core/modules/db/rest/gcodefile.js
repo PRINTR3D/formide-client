@@ -11,7 +11,7 @@ module.exports = function(routes, db)
 	/*
 	 * Returns a json list of all uploaded modelfiles (their properties, not the actual files)
 	 */
-	routes.get('/gcodefiles', FormideOS.http.permissions.check('db:gcodefile:read'), function(req, res) {
+	routes.get('/gcodefiles', function(req, res) {
 		db.Gcodefile.find().exec(function(err, gcodefiles) {
 			if (err) return res.send(err);
 			return res.send(gcodefiles);
@@ -21,7 +21,7 @@ module.exports = function(routes, db)
 	/*
 	 * Returns a json object with info about a single modelfile
 	 */
-	routes.get('/gcodefiles/:id', FormideOS.http.permissions.check('db:gcodefile:read'), function(req, res) {
+	routes.get('/gcodefiles/:id', function(req, res) {
 		db.Gcodefile.findOne({ _id: req.params.id }).lean().exec(function(err, gcodefile) {
 			if (err) return res.send(err);
 			if (!gcodefile) return res.json('no modelfile found with that id');
@@ -32,11 +32,23 @@ module.exports = function(routes, db)
 			});
 		});
 	});
+	
+	/*
+	 * Edit the prettyname of a gcodefile (name that appears in the file list)
+	 */
+	routes.post('/modelfiles/:id', function(req, res) {
+		db.Gcodefile.update({ _id: req.params.id }, { prettyname: req.body.prettyname },function(err) {
+			if (err) return res.send(err);
+			return res.send({
+				success: true
+			});
+		});
+	});
 
 	/*
 	 * Delete a modelfile entry by ID.
 	 */
-	routes.delete('/gcodefiles/:id', FormideOS.http.permissions.check('db:gcodefile:write'), function(req, res) {
+	routes.delete('/gcodefiles/:id', function(req, res) {
 		db.Gcodefile.remove({ _id: req.params.id }, function(err, gcodefile) {
 			if (err) return res.status(400).send(err);
 			var filePath = FormideOS.config.get('paths.gcode') + '/' + gcodefile.hash;

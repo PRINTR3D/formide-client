@@ -12,9 +12,10 @@ var schema = new Schema({
 	bed: { type: Schema.Types.Mixed, required: true },
 	axis: { type: Schema.Types.Mixed, required: true, default: { x: 1, y: 1, z: 1} },
 	extruders: { type: Schema.Types.Mixed, required: true },
-	port: { type: String },
+	port: { type: String, required: true, default: 'Connect printer to select USB port' },
 	baudrate: { type: Number, required: true, default: 250000 },
-	user: { type: Schema.Types.ObjectId, ref: 'users' }
+	user: { type: Schema.Types.ObjectId, ref: 'users' },
+	cloudId: { type: String }
 });
 schema.plugin(timestamps);
 

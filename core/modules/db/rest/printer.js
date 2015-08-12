@@ -5,21 +5,30 @@
 
 module.exports = function(routes, db)
 {
-	routes.get('/printers', FormideOS.http.permissions.check('db:printer:read'), function(req, res) {
+	/*
+	 * Get a list of printer objects
+	 */
+	routes.get('/printers', function(req, res) {
 		db.Printer.find().exec(function(err, printers) {
 			if (err) return res.send(err);
 			return res.send(printers);
 		});
 	});
 
-	routes.get('/printers/:id', FormideOS.http.permissions.check('db:printer:read'), function(req, res) {
+	/*
+	 * Get a single printer object
+	 */
+	routes.get('/printers/:id', function(req, res) {
 		db.Printer.findOne({ _id: req.params.id }).exec(function(err, printer) {
 			if (err) return res.send(err);
 			return res.send(printer);
 		});
 	});
 
-	routes.post('/printers', FormideOS.http.permissions.check('db:printer:write'), function(req, res) {
+	/*
+	 * Create a new printer object. req.body should contain all items in printer database object
+	 */
+	routes.post('/printers', function(req, res) {
 		db.Printer.create(req.body, function(err, printer) {
 			if (err) return res.status(400).send(err);
 			if (printer) {
@@ -34,7 +43,10 @@ module.exports = function(routes, db)
 		});
 	});
 
-	routes.put('/printers/:id', FormideOS.http.permissions.check('db:printer:write'), function(req, res) {
+	/*
+	 * Update a printer object. req.body should contain all items in printer database object
+	 */
+	routes.put('/printers/:id', function(req, res) {
 		db.Printer.update({ _id: req.params.id }, req.body, function(err, printer) {
 			if (err) return res.status(400).send(err);
 			if (printer) {
@@ -48,7 +60,10 @@ module.exports = function(routes, db)
 		});
 	});
 
-	routes.delete('/printers/:id', FormideOS.http.permissions.check('db:printer:write'), function(req, res) {
+	/*
+	 * Delete printer object
+	 */
+	routes.delete('/printers/:id', function(req, res) {
 		db.Printer.remove({ _id: req.params.id }, function(err, printer) {
 			if (err) return res.status(400).send(err);
 			if (printer) {

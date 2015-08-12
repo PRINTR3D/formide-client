@@ -32,7 +32,7 @@ FormideOS.debug = require('./utils/debug.js');
 FormideOS.settings = require('./utils/settings.js')();
 
 // Permissions
-FormideOS.permissions = require('./utils/permissions.js');
+// FormideOS.permissions = require('./utils/permissions.js');
 
 // HTTP server
 FormideOS.http = require('./utils/http').init();

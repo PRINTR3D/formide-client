@@ -5,32 +5,53 @@
 
 module.exports = function(routes, db) {
 	
-	routes.get('/queue', FormideOS.http.permissions.check('db:queue:read'), function(req, res) {
-		db.Queueitem.find().populate('printjob printer').deepPopulate('printjob.modelfiles printjob.materials printjob.sliceprofile printjob.printer printjob.gcodefile').exec(function(err, queue) {
-			if (err) return res.send(err);
-			return res.send(queue);
-		});
+	/*
+	 * Get print queue for all printers or a specific printer by port
+	 */
+	routes.get('/queue', function(req, res) {
+		if (req.query.port) {
+			db.Printer.findOne({ port: req.query.port }).exec(function(err, printer) {
+				if (err) return res.json({ success: false, err: err, message: 'printer port error' });
+				if (!printer) return res.json({ success: false, message: 'printer with this port not found' });
+				db.Queueitem.find({ "printer._id": printer._id }).exec(function(err, queue) {
+					if (err) return res.send(err);
+					return res.send(queue);
+				});
+			});
+		}
+		else {
+			db.Queueitem.find().exec(function(err, queue) {
+				if (err) return res.send(err);
+				return res.send(queue);
+			});
+		}
 	});
 
-	routes.get('/queue/:id', FormideOS.http.permissions.check('db:queue:read'), function(req, res) {
-		db.Queueitem.findOne({ _id: req.params.id }).populate('printjob printer').deepPopulate('printjob.modelfiles printjob.materials printjob.sliceprofile printjob.printer printjob.gcodefile').exec(function(err, queueitem) {
+	/*
+	 * Get a single queue item from database
+	 */
+	routes.get('/queue/:id', function(req, res) {
+		db.Queueitem.findOne({ _id: req.params.id }).exec(function(err, queueitem) {
 			if (err) return res.send(err);
 			return res.send(queueitem);
 		});
 	});
 
-	routes.post('/queue/:printjobID/:printerID', FormideOS.http.permissions.check('db:queue:write'), function(req, res) {
-		db.Printjob.findOne({ _id: req.params.printjobID }, function(err, printjob) {
+	/*
+	 * Add a queue item by printjobID and printerID (adds the printjob to the print queue of that printer)
+	 */
+	routes.post('/queue/:printjobID/:printerID', function(req, res) {
+		db.Printjob.findOne({ _id: req.params.printjobID }).populate('modelfiles materials sliceprofile printer gcodefile').exec(function(err, printjob) {
 			if (err) return res.json({ success: false, err: err, message: 'printjob error' });
-			db.Printer.findOne({ _id: req.params.printerID }, function(err, printer) {
+			db.Printer.findOne({ _id: req.params.printerID }).exec(function(err, printer) {
 				if (err) return res.json({ success: false, err: err, message: 'printer error' });
 				if (!printer) return res.json({ success: false, message: 'no printer found with this ID' });
 				db.Queueitem.create({
 					origin: 'local',
 					status: 'queued',
 					gcode: printjob.gcode,
-					printjob: printjob._id,
-					printer: req.params.printerID
+					printjob: printjob.toObject(),
+					printer: printer.toObject()
 				}, function(err, queueitem) {
 					if (err) return res.send(err);
 					return res.send({
@@ -42,7 +63,10 @@ module.exports = function(routes, db) {
 		});
 	});
 
-	routes.delete('/queue/:id', FormideOS.http.permissions.check('db:queue:write'), function(req, res) {
+	/*
+	 * Delete queue item
+	 */
+	routes.delete('/queue/:id', function(req, res) {
 		db.Queueitem.remove({ _id: req.params.id }, function(err, queueitem) {
 			if (err) return res.status(400).send(err);
 			if (queueitem) {

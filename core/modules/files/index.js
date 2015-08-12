@@ -5,9 +5,13 @@
  
 var fs		= require('fs');
 var uuid	= require('node-uuid');
+var request	= require('request');
 
 module.exports = {
 	
+	/*
+	 * Handle modelfile upload
+	 */
 	uploadModelfile: function(file, callback) {
 		fs.readFile(file.path, function(err, data) {
 			var hash = uuid.v4();
@@ -19,6 +23,7 @@ module.exports = {
 				}
 				else {
 					FormideOS.module('db').db.Modelfile.create({
+						prettyname: file.name,
 						filename: file.name,
 						filesize: file.size,
 						hash: hash
@@ -31,6 +36,9 @@ module.exports = {
 		});
 	},
 
+	/*
+	 * Handle gcodefile upload
+	 */
 	uploadGcode: function(file, callback) {
 		fs.readFile(file.path, function( err, data ) {
 			var hash = uuid.v4();
@@ -42,6 +50,7 @@ module.exports = {
 				}
 				else {
 					FormideOS.module('db').db.Gcodefile.create({
+						prettyname: filename,
 						filename: file.name,
 						filesize: file.size,
 						hash: hash
@@ -54,6 +63,9 @@ module.exports = {
 		});
 	},
 
+	/*
+	 * Handle modelfile download
+	 */
 	downloadModelfile: function(hash, encoding, callback) {
 		var filename = FormideOS.config.get('paths.modelfile') + '/' + hash;
 		fs.exists(filename, function(exists) {
@@ -80,6 +92,9 @@ module.exports = {
 		});
 	},
 
+	/*
+	 * Handle gcodefile download
+	 */
 	downloadGcode: function(hash, encoding, callback) {
 		var filename = FormideOS.config.get('paths.gcode') + '/' + hash;
 		fs.exists(filename, function(exists) {
@@ -102,6 +117,35 @@ module.exports = {
 			else {
 				return callback('file not found');
 			}
+		});
+	},
+	
+	/*
+	 * Handle upload from remote url
+	 */
+	uploadFromUrl: function(url, filename, filetype, callback) {
+		request({
+			method: 'GET',
+			url: url
+		})
+		.on('response', function(response) {
+			var regexp = /filename=\"(.*)\"/gi;
+			var hash = uuid.v4();
+			var newPath = FormideOS.config.get('paths.modelfile') + '/' + hash;
+			var fws = fs.createWriteStream(newPath);
+			response.pipe(fws);
+			response.on( 'end', function() {
+				FormideOS.module('db').db.Modelfile.create({
+					prettyname: filename,
+					filename: filename,
+					filesize: fws.bytesWritten,
+					filetype: filetype,
+					hash: hash
+				}, function(err, modelfile) {
+					if (err) return callback(err)
+					return callback(null, modelfile);
+				});
+        	});
 		});
 	}
 }

@@ -7,10 +7,10 @@
 	},
 	"auth": {
 		"permission": false,
-		"inviteUrl": "https://api2.formide.com/clients/register/invite"
+		"inviteUrl": "http://localhost:3000/clients/register/invite"
 	},
 	"cloud": {
-		"url": "https://api2.formide.com"
+		"url": "http://localhost:3000"
 	},
 	"db": {
 		"storage": "../storage/database"
@@ -36,7 +36,7 @@
 	},
 	"setup": {
 		"permission": false,
-		"registerUrl": "https://api2.formide.com/clients/register/token"
+		"registerUrl": "http://localhost:3000/clients/register/token"
 	},
 	"update": {
 		"permission": false

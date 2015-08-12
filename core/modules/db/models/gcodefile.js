@@ -9,6 +9,7 @@ var Schema = mongoose.Schema;
 
 var schema = new Schema({
 	user: { type: Schema.Types.ObjectId, ref: 'users' },
+	prettyname: { type: String, required: true },
 	filename: { type: String, required: true },
 	filesize: { type: Number, required: true },
 	hash: { type: String, required: true }

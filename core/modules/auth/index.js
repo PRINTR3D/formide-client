@@ -7,6 +7,9 @@ var uuid = require('node-uuid');
 
 module.exports =
 {	
+	/*
+	 * Generate an access token with permissions
+	 */
 	generateAccessToken: function(permissions, callback) {
 		var token = uuid.v4();
 		
@@ -23,12 +26,18 @@ module.exports =
 		});
 	},
 
+	/*
+	 * Get access token from database
+	 */
 	getAccessTokens: function(callback) {
 		FormideOS.module('db').db.AccessToken.find().exec( function(err, tokens) {
 			return callback(tokens);
 		});
 	},
 
+	/*
+	 * Delete access token from database
+	 */
 	deleteAccessToken: function( token, callback ) {
 		FormideOS.module('db').db.AccessToken.remove({ token: token }, function(err) {
 			if (err) return callback(err);
