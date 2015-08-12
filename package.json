@@ -1,6 +1,6 @@
 {
   "name": "formideos-client",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "FORMIDEOS is a modular 3D printing operating system with the goal of serving all 3D printers.",
   "main": "bootstrap.js",
   "author": "Printr B.V. <info@printr.nl>",
@@ -12,7 +12,7 @@
     "url": "https://github.com/PRINTR3D/formideOS-client.git/issues"
   },
   "contributors": "https://github.com/PRINTR3D/formideOS-client/graphs/contributors",
-  "licence": "",
+  "licence": "https://github.com/PRINTR3D/formideos-client/blob/master/LICENSE.md",
   "scripts": {
     "start": "node bootstrap",
     "test": "NODE_ENV=testing node bootstrap"
