@@ -94,10 +94,6 @@
     "chai": "~1.4.2",
     "mocha": "*"
   },
-  "engineStrict": [
-    "darwin",
-    "linux"
-  ],
   "engines": {
     "node": "~0.12.5",
     "iojs": "~1.2.0",
