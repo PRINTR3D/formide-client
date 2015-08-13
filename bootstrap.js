@@ -41,12 +41,13 @@ getMac.getMac(function(err, macAddress) {
 	FormideOS.moduleManager.loadModule('core/modules/cloud', 	'cloud',	true);
 	
 	// Temporary for image
-	FormideOS.moduleManager.loadModule('../formideOS-interface', 'formideos-interface', false);
+	// FormideOS.moduleManager.loadModule('../formideOS-interface', 'formideos-interface', false);
 	
-	// Load all 3rd party modules
-	var modules = FormideOS.settings.get('update', 'modules') || [];
-	for(var i in modules) {
-		FormideOS.moduleManager.loadModule("node_modules/" + modules[i], modules[i]);
+	// Load all 3rd party formideos modules
+	for(var i in pkg.dependencies) {
+		if (i.indexOf("formideos-") > -1) {
+			FormideOS.moduleManager.loadModule("node_modules/" + i, i);
+		}
 	}
 
 	// Activate all loaded modules

@@ -15,7 +15,8 @@
   "license": "https://github.com/PRINTR3D/formideos-client/blob/master/LICENSE.md",
   "scripts": {
     "start": "node bootstrap",
-    "test": "NODE_ENV=testing node bootstrap"
+    "test": "NODE_ENV=testing node bootstrap",
+    "postinstall": "node scripts/post-install"
   },
   "dependencies": {
     "adm-zip": "^0.4.7",
@@ -41,7 +42,7 @@
     "express-session": "~1.10.3",
     "express-validator": "^2.9.0",
     "fancy-errors": "^0.1.2",
-    "formideos-module-camerapi": "^1.0.8",
+    "formideos-interface": "^0.2.0",
     "formideos-module-webhook": "^1.0.25",
     "getmac": "~1.0.6",
     "gitty": "^3.2.3",
