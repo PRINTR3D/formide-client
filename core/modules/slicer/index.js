@@ -246,7 +246,7 @@ module.exports = {
 				}
 				slicerequest.model.push({
 					hash: model.hash,
-					bucketIn: FormideOS.appRoot + FormideOS.config.get("paths.modelfile"),
+					bucketIn: FormideOS.config.get('app.storageDir') + FormideOS.config.get("paths.modelfile"),
 					x: 100, 		// TODO: set user specified position
 					y: 100, 		// TODO: set user specified position
 					z: 0, 			// TODO: set user specified position
@@ -271,7 +271,7 @@ module.exports = {
 				}
 			}
 			
-			slicerequest.bucketOut = FormideOS.appRoot + FormideOS.config.get("paths.gcode");
+			slicerequest.bucketOut = FormideOS.config.get('app.storageDir') + FormideOS.config.get("paths.gcode");
 			slicerequest.responseID = printjob._id.toString();
 		
 			callback(null, slicerequest);
