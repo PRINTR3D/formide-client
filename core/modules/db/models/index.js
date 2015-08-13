@@ -5,7 +5,7 @@
 
 var tungus = require('tungus');
 var mongoose = require('mongoose');
-var storage = FormideOS.appRoot + FormideOS.config.get('db.storage');
+var storage = SETUP.dbLocation || FormideOS.appRoot + FormideOS.config.get('db.storage');
 global.TUNGUS_DB_OPTIONS =  { nativeObjectID: true, searchInArray: true };
 
 // connect to tingodb client
