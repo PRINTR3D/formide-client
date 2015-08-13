@@ -14,7 +14,7 @@
   "contributors": "https://github.com/PRINTR3D/formideOS-client/graphs/contributors",
   "license": "https://github.com/PRINTR3D/formideos-client/blob/master/LICENSE.md",
   "scripts": {
-    "start": "node bootstrap",
+    "start": "NODE_ENV=production node bootstrap",
     "test": "NODE_ENV=testing node bootstrap",
     "postinstall": "node scripts/post-install"
   },

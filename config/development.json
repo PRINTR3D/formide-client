@@ -27,10 +27,6 @@
 		"permission": false,
 		"simulated": false
 	},
-	"slicer": {
-		"port": 1339,
-		"simulated": false
-	},
 	"settings": {
 		"path": "./storage"
 	},
