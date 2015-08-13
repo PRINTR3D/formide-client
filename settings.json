@@ -1,0 +1,13 @@
+{
+  "update": {
+    "modules": [
+      "formideos-interface"
+    ]
+  },
+  "formideos-interface": {
+    "auto": true
+  },
+  "formideos-module-webhook": {
+    "url": "https://myUrl.com/post?key=1234567"
+  }
+}

@@ -1,33 +1,40 @@
+var path = require('path');
+
 SETUP = {
-	dbLocation: "storage/database"
+	storageDir: path.resolve(process.env.HOME + "/formideos") || path.resolve(process.env.USERPROFILE + "/formideos")
 };
 
 var fs = require('fs');
 
 // create needed folders
-if (!fs.existsSync("storage")){
+if (!fs.existsSync(SETUP.storageDir)){
 	console.log("Storage folder not found, creating...");
-	fs.mkdirSync("storage");
+	fs.mkdirSync(SETUP.storageDir);
 }
 
-if (!fs.existsSync("storage/modelfiles")){
+if (!fs.existsSync(SETUP.storageDir + "/logs")){
+	console.log("Logs folder not found, creating...");
+	fs.mkdirSync(SETUP.storageDir + "/logs");
+}
+
+if (!fs.existsSync(SETUP.storageDir + "/modelfiles")){
 	console.log("Modelfiles folder not found, creating...");
-	fs.mkdirSync("storage/modelfiles");
+	fs.mkdirSync(SETUP.storageDir + "/modelfiles");
 }
 
-if (!fs.existsSync("storage/gcode")){
+if (!fs.existsSync(SETUP.storageDir + "/gcode")){
 	console.log("Gcode folder not found, creating...");
-	fs.mkdirSync("storage/gcode");
+	fs.mkdirSync(SETUP.storageDir + "/gcode");
 }
 
-if (!fs.existsSync("storage/tmp")){
+if (!fs.existsSync(SETUP.storageDir + "/tmp")){
 	console.log("Tmp folder not found, creating...");
-	fs.mkdirSync("storage/tmp");
+	fs.mkdirSync(SETUP.storageDir + "/tmp");
 }
 
-if (!fs.existsSync("storage/database")){
+if (!fs.existsSync(SETUP.storageDir + "/database")){
 	console.log("Database folder not found, creating...");
-	fs.mkdirSync("storage/database");
+	fs.mkdirSync(SETUP.storageDir + "/database");
 	console.log("Running DB setup");
 	require("./db-setup.js");
 }

@@ -15,7 +15,7 @@ var path	= require('path');
 module.exports = function() {
 	
 	// Settings object from json file
-	this.cfg = jsop(path.resolve(FormideOS.appRoot + FormideOS.config.get('settings.path') + '/settings.json'));
+	this.cfg = jsop(path.resolve(FormideOS.config.get('app.storageDir') + FormideOS.config.get('settings.path') + '/settings.json'));
 	
 	// What settings should look like (target)
 	this.fullCfg = {};

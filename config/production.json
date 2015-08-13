@@ -13,22 +13,22 @@
 		"url": "https://api2.formide.com"
 	},
 	"db": {
-		"storage": "./storage/database"
+		"storage": "/database"
 	},
 	"log": {
-		"path": "./storage"
+		"path": "/logs"
 	},
 	"paths": {
-		"temp": "./storage/tmp",
-		"modelfile": "./storage/modelfiles",
-		"gcode": "./storage/gcode"
+		"temp": "/tmp",
+		"modelfile": "/modelfiles",
+		"gcode": "/gcode"
 	},
 	"printer": {
 		"permission": false,
 		"simulated": false
 	},
 	"settings": {
-		"path": "./storage"
+		"path": "/"
 	},
 	"setup": {
 		"permission": false,

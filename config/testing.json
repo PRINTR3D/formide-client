@@ -13,26 +13,22 @@
 		"url": "http://localhost:3000"
 	},
 	"db": {
-		"storage": "../storage/database"
+		"storage": "/database"
 	},
 	"log": {
-		"path": "../storage"
+		"path": "/logs"
 	},
 	"paths": {
-		"temp": "../uploads/tmp",
-		"modelfile": "../uploads/modelfiles",
-		"gcode": "../uploads/gcode"
+		"temp": "/tmp",
+		"modelfile": "/modelfiles",
+		"gcode": "/gcode"
 	},
 	"printer": {
 		"permission": false,
 		"simulated": false
 	},
-	"slicer": {
-		"port": 1339,
-		"simulated": false
-	},
 	"settings": {
-		"path": "../storage"
+		"path": "/"
 	},
 	"setup": {
 		"permission": false,

@@ -7,10 +7,10 @@ var tungus = require('tungus');
 var mongoose = require('mongoose');
 
 if (typeof SETUP !== "undefined") {
-	var storage = SETUP.dbLocation;
+	var storage = SETUP.storageDir + "/database";
 }
 else {
-	var storage = FormideOS.appRoot + FormideOS.config.get('db.storage');
+	var storage = FormideOS.config.get('app.storageDir') + FormideOS.config.get('db.storage');
 }
 
 global.TUNGUS_DB_OPTIONS =  { nativeObjectID: true, searchInArray: true };
