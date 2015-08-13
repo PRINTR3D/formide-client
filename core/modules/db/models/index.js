@@ -6,7 +6,7 @@
 var tungus = require('tungus');
 var mongoose = require('mongoose');
 
-if (SETUP) {
+if (typeof SETUP !== "undefined") {
 	var storage = SETUP.dbLocation;
 }
 else {
