@@ -192,7 +192,7 @@ module.exports =
 					strictSSL: false
 				})
 				.on('response', function(response) {
-					var newPath = FormideOS.config.get('paths.gcode') + '/' + hash;
+					var newPath = FormideOS.config.get('app.storageDir') + FormideOS.config.get('paths.gcode') + '/' + hash;
 					var fws = fs.createWriteStream(newPath);
 					response.pipe(fws);
 					response.on( 'end', function() {
