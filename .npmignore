@@ -7,6 +7,3 @@ node_modules
 # katana binary log files
 KatanaLog.txt
 RequestsLog.txt
-
-# User specific folders
-storage
