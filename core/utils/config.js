@@ -18,7 +18,8 @@ module.exports = function()
 	var cfg = require('../../config/' + env + '.json');
 	
 	// get current home directory for user storage
-	cfg.app.storageDir = path.resolve(process.env.HOME + "/formideos") || path.resolve(process.env.USERPROFILE + "/formideos")
+	cfg.app.storageDir = path.resolve(process.env.HOME + "/formideos") || path.resolve(process.env.USERPROFILE + "/formideos");
+	console.log("Storage dir: " + cfg.app.storageDir);
 
 	function parts(key) {
 		if (Array.isArray(key)) return key
