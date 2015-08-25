@@ -10,13 +10,9 @@ module.exports = function(routes, db) {
 	 */
 	routes.get('/queue', function(req, res) {
 		if (req.query.port) {
-			db.Printer.findOne({ port: req.query.port }).exec(function(err, printer) {
-				if (err) return res.json({ success: false, err: err, message: 'printer port error' });
-				if (!printer) return res.json({ success: false, message: 'printer with this port not found' });
-				db.Queueitem.find({ "printer._id": printer._id }).exec(function(err, queue) {
-					if (err) return res.send(err);
-					return res.send(queue);
-				});
+			db.Queueitem.find({ "printer.port": req.query.port }).exec(function(err, queue) {
+				if (err) return res.send(err);
+				return res.send(queue);
 			});
 		}
 		else {
