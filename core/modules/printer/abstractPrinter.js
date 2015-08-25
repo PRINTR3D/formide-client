@@ -123,24 +123,30 @@ AbstractPrinter.prototype.command = function(command, parameters, callback) {
  */
 AbstractPrinter.prototype.startPrint = function(id, gcode, callback) {
 	var self = this;
-	FormideOS.module('db').db.Queueitem.findOne({ _id: id, gcode: gcode }, function(err, queueitem) {
-		if (err) return FormideOS.debug.log(err);
-		if (queueitem) {
-			self.driver.printFile(FormideOS.config.get('app.storageDir') + FormideOS.config.get('paths.gcode') + '/' + gcode, id, self.port, function(err, response) {
-				if (err) return FormideOS.debug.log(err);
-				queueitem.status = 'printing';
-				queueitem.save();
-				self.queueID = id;
-				FormideOS.events.emit('printer.started', {
-					port: self.port,
-					printjobID: self.queueID
+	// first we set all current printing db queue items for this port back to queued to prevent multiple 'printing' items
+	FormideOS.module('db').db.Queueitem.update({ status: 'printing', 'printer.port': self.port }, { status: 'queued' }, function(err, updated) {
+		// then we select the correct queue item for printing
+		FormideOS.module('db').db.Queueitem.findOne({ _id: id, gcode: gcode }, function(err, queueitem) {
+			if (err) return FormideOS.debug.log(err);
+			if (queueitem) {
+				// get the file location and send to driver
+				self.driver.printFile(FormideOS.config.get('app.storageDir') + FormideOS.config.get('paths.gcode') + '/' + gcode, id, self.port, function(err, response) {
+					if (err) return FormideOS.debug.log(err);
+					// set queue item status to printing
+					queueitem.status = 'printing';
+					queueitem.save();
+					self.queueID = id;
+					FormideOS.events.emit('printer.started', {
+						port: self.port,
+						printjobID: self.queueID
+					});
+					return callback(null, response);
 				});
-				return callback(null, response);
-			});
-		}
-		else {
-			return callback({ success: false, message: 'Queue item not found' });
-		}
+			}
+			else {
+				return callback({ success: false, message: 'Queue item not found' });
+			}
+		});
 	});
 }
 
