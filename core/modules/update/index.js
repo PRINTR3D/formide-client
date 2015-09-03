@@ -6,25 +6,31 @@
 var fs 			= require('fs');
 var npm 		= require('npm');
 var path		= require('path');
-var updater		= require('./updater');
+//var updater		= require('./updater');
+var exec 		= require('child_process').exec;
 
 module.exports = {
 	
-	exposeSettings: function() {
-		return [
-			{
-				name: "modules",
-				type: "hidden",
-				required: true,
-				default: ['formideos-interface'] // install the interface module by default, important!
-			}
-		];
-	},
-	
 	// update system
 	updateOS: function(cb) {
-		updater.update(function(err, done) {
-			return cb(err, done);
+		FormideOS.debug.log('Started update');
+		FormideOS.events.emit('update.start', {});
+		var child = exec('npm install formideos-client -g', function (error, stdout, stderr) {
+			if (stderr !== null) {
+				FormideOS.debug.log('Finished update');
+				FormideOS.events.emit('update.finished', { message: stdout });
+				cb(null, stderr);
+			}
+			if (stdout !== null) {
+				FormideOS.debug.log('Finished update');
+				FormideOS.events.emit('update.finished', { message: stdout });
+				cb(null, stdout);
+    		}
+			if (error !== null) {
+				FormideOS.debug.log('Failed update with error: ' + error);
+				FormideOS.events.emit('update.failed', { message: error });
+				cb(error);
+    		}
 		});
 	},
 	
