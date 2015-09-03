@@ -216,13 +216,12 @@ module.exports =
 					bed: cloudPrinter.bed,
 					axis: cloudPrinter.axis,
 					extruders: cloudPrinter.extruders,
-					port: cloudPrinter.port,
-					baudrate: cloudPrinter.baudrate,
+					port: cloudPrinter.port || "empty",
+					baudrate: cloudPrinter.baudrate || 250000,
 					cloudId: cloudPrinter._id
 				}, { upsert: true }, function(err, syncedPrinter) {
 					if (err) return FormideOS.debug.log('Cloud sync error: ' + err );
-					FormideOS.debug.log('Synced printer from cloud');
-					console.log(syncedPrinter);
+					FormideOS.debug.log('Synced printer from cloud: ' + syncedPrinter);
 				});
 			});
 			// for now always use cloud values!
