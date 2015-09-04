@@ -210,25 +210,40 @@ module.exports =
 		FormideOS.module('db').db.Printer.find().exec(function(err, printers) {
 			if (err) return callback(err);
 			async.each(cloudPrinters, function(cloudPrinter, cb) {
-				// update or inset printer
-				FormideOS.module('db').db.Printer.update({ cloudId: cloudPrinter._id }, {
-					name: cloudPrinter.name,
-					bed: cloudPrinter.bed,
-					axis: cloudPrinter.axis,
-					extruders: cloudPrinter.extruders,
-					port: cloudPrinter.port,
-					baudrate: cloudPrinter.baudrate,
-					cloudId: cloudPrinter._id
-				}, { upsert: true }, function(err, syncedPrinter) {
-					if (err) {
-						FormideOS.debug.log('Cloud sync error: ' + err );
-						return cb(err);
-					}
-					else {
-						FormideOS.debug.log('Synced printer from cloud: ' + syncedPrinter);
-						return cb(null, {});
-					}
-				});
+				if (cloudPrinter.delete) {
+					// delete printer
+					FormideOS.module('db').db.Printer.remove({ cloudId: cloudPrinter._id }, {
+						if (err) {
+							FormideOS.debug.log('Cloud sync error: ' + err );
+							return cb(err);
+						}
+						else {
+							FormideOS.debug.log('Synced printer from cloud: ' + syncedPrinter);
+							return cb(null, {});
+						}
+					});
+				}
+				else {
+					// update or insert printer
+					FormideOS.module('db').db.Printer.update({ cloudId: cloudPrinter._id }, {
+						name: cloudPrinter.name,
+						bed: cloudPrinter.bed,
+						axis: cloudPrinter.axis,
+						extruders: cloudPrinter.extruders,
+						port: cloudPrinter.port,
+						baudrate: cloudPrinter.baudrate,
+						cloudId: cloudPrinter._id
+					}, { upsert: true }, function(err, syncedPrinter) {
+						if (err) {
+							FormideOS.debug.log('Cloud sync error: ' + err );
+							return cb(err);
+						}
+						else {
+							FormideOS.debug.log('Synced printer from cloud: ' + syncedPrinter);
+							return cb(null, {});
+						}
+					});
+				}
 			}, function(err, results) {
 				if (err) return callback(err);
 				return callback(null, results);
