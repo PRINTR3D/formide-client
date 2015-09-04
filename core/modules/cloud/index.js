@@ -212,13 +212,13 @@ module.exports =
 			async.each(cloudPrinters, function(cloudPrinter, cb) {
 				if (cloudPrinter.delete) {
 					// delete printer
-					FormideOS.module('db').db.Printer.remove({ cloudId: cloudPrinter._id }, {
+					FormideOS.module('db').db.Printer.remove({ cloudId: cloudPrinter._id }, function(err, removedPrinter) {
 						if (err) {
 							FormideOS.debug.log('Cloud sync error: ' + err );
 							return cb(err);
 						}
 						else {
-							FormideOS.debug.log('Synced printer from cloud: ' + syncedPrinter);
+							FormideOS.debug.log('Removed printer via cloud: ' + removedPrinter);
 							return cb(null, {});
 						}
 					});
@@ -230,8 +230,8 @@ module.exports =
 						bed: cloudPrinter.bed,
 						axis: cloudPrinter.axis,
 						extruders: cloudPrinter.extruders,
-						port: cloudPrinter.port,
-						baudrate: cloudPrinter.baudrate,
+						port: cloudPrinter.port || "none",
+						baudrate: cloudPrinter.baudrate || 250000,
 						cloudId: cloudPrinter._id
 					}, { upsert: true }, function(err, syncedPrinter) {
 						if (err) {

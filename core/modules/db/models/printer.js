@@ -8,11 +8,11 @@ var timestamps  = require('mongoose-timestamp');
 var Schema = mongoose.Schema;
 
 var schema = new Schema({
-	name: { type: String, required: true, unique: true },
+	name: { type: String, required: true },
 	bed: { type: Schema.Types.Mixed, required: true },
 	axis: { type: Schema.Types.Mixed, required: true, default: { x: 1, y: 1, z: 1} },
 	extruders: { type: Schema.Types.Mixed, required: true },
-	port: { type: String, default: 'Connect printer to select USB port' },
+	port: { type: String, unique: true, default: 'Connect printer to select USB port' },
 	baudrate: { type: Number, default: 250000 },
 	user: { type: Schema.Types.ObjectId, ref: 'users' },
 	cloudId: { type: String }
