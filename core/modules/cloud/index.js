@@ -89,7 +89,7 @@ module.exports =
 			FormideOS.debug.log('Cloud http call: ' + data.url);
 			// call http function
 			this.http(data, function(err, response) {
-				callback(response);
+				return callback(response);
 			});
 		}.bind(this));
 		
@@ -99,17 +99,17 @@ module.exports =
 		this.cloud.on('addToQueue', function(data, callback) {
 			FormideOS.debug.log('Cloud addToQueue: ' + data.hash);
 			self.addToQueue(data, function(err, response) {
-				callback(err, response);
+				return callback(err, response);
 			});
 		});
 		
 		/*
 		 * Sync printers from local database to cloud (when adding new client or manually syncing cloud/local printers)
 		 */
-		this.cloud.on('syncPrinters', function(printers, callback) {
+		this.cloud.on('syncPrinters', function(cloudPrinters, callback) {
 			FormideOS.debug.log('Cloud syncPrinters');
-			self.syncPrinters(printers, function(err, response) {
-				callback(err, response);
+			self.syncPrinters(cloudPrinters, function(err, localPrinters) {
+				return callback(err, localPrinters);
 			});
 		});
 
@@ -209,23 +209,30 @@ module.exports =
 	syncPrinters: function(cloudPrinters, callback) {
 		FormideOS.module('db').db.Printer.find().exec(function(err, printers) {
 			if (err) return callback(err);
-			async.each(cloudPrinters, function(cloudPrinter, callback) {
+			async.each(cloudPrinters, function(cloudPrinter, cb) {
 				// update or inset printer
 				FormideOS.module('db').db.Printer.update({ cloudId: cloudPrinter._id }, {
 					name: cloudPrinter.name,
 					bed: cloudPrinter.bed,
 					axis: cloudPrinter.axis,
 					extruders: cloudPrinter.extruders,
-					port: cloudPrinter.port || "empty",
-					baudrate: cloudPrinter.baudrate || 250000,
+					port: cloudPrinter.port,
+					baudrate: cloudPrinter.baudrate,
 					cloudId: cloudPrinter._id
 				}, { upsert: true }, function(err, syncedPrinter) {
-					if (err) return FormideOS.debug.log('Cloud sync error: ' + err );
-					FormideOS.debug.log('Synced printer from cloud: ' + syncedPrinter);
+					if (err) {
+						FormideOS.debug.log('Cloud sync error: ' + err );
+						return cb(err);
+					}
+					else {
+						FormideOS.debug.log('Synced printer from cloud: ' + syncedPrinter);
+						return cb(null, {});
+					}
 				});
+			}, function(err, results) {
+				if (err) return callback(err);
+				return callback(null, results);
 			});
-			// for now always use cloud values!
-			return callback(null, {});
 		});
 	}
 }
