@@ -34,6 +34,7 @@
     "cookie-session": "^1.1.0",
     "cors": "~2.5.3",
     "crypto": "0.0.3",
+    "deep-extend": "^0.4.0",
     "delivery": "0.0.3",
     "epilogue": "0.3.2",
     "eventemitter2": "~0.4.14",
