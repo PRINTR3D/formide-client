@@ -95,9 +95,8 @@
     "mocha": "*"
   },
   "engines": {
-    "node": "~0.12.5",
-    "iojs": "~1.2.0",
-    "npm": "~2.7.0"
+    "node": "~4.0.0",
+    "npm": "~2.14.0"
   },
   "bin": {
     "formideos": "bin/formideos"
