@@ -18,7 +18,6 @@ module.exports = {
 	init: function(config) {
 		this.config = config;
 
-/*
 		if(process.platform == 'darwin') {
 			this.katana	= require(FormideOS.appRoot + 'bin/osx/katana');
 			FormideOS.debug.log('Binded katana in osx/katana');
@@ -27,7 +26,6 @@ module.exports = {
 			this.katana	= require(FormideOS.appRoot + 'bin/rpi/katana');
 			FormideOS.debug.log('Binded katana in rpi/katana');
 		}
-*/
 	},
 
 	// custom functions
@@ -201,7 +199,7 @@ module.exports = {
 			if (printjob.modelfiles.length < 1) return callback("Error getting printjob modelfiles");
 			if (printjob.materials.length < 1) return callback("Error getting printjob materials");
 			
-			this.checkSliceprofile(printjob.sliceprofile, function(err, fixedSliceprofile) {
+			self.checkSliceprofile(printjob.sliceprofile, function(err, fixedSliceprofile) {
 				if (err) return callback("Error checking sliceprofile: " + err.message);	
 			
 				var slicerequest = fixedSliceprofile.settings;
@@ -325,14 +323,14 @@ module.exports = {
 					
 					if(printjob.sliceSettings.modelfiles) {
 						extruderForModel = printjob.sliceSettings.modelfiles[i].extruder;
-						xPos = printjob.sliceSettings.modelfiles[i].root.x * 1000; // input is in mm
-						yPos = printjob.sliceSettings.modelfiles[i].root.z * 1000; // three.js uses y as height!
-						zPos = printjob.sliceSettings.modelfiles[i].root.y * 1000; // three.js uses y as height!
+						xPos = 100000; //printjob.sliceSettings.modelfiles[i].root.x * 1000; // input is in mm
+						yPos = 100000; //printjob.sliceSettings.modelfiles[i].root.z * 1000; // three.js uses y as height!
+						zPos = 0; //printjob.sliceSettings.modelfiles[i].root.y * 1000; // three.js uses y as height!
 					}
 					
 					slicerequest.model.push({
 						hash: model.hash,
-						bucketIn: process.env.KATANA_BUCKETIN,
+						bucketIn: FormideOS.config.get('app.storageDir') + FormideOS.config.get("paths.modelfile"),
 						x: xPos,
 						y: yPos,
 						z: zPos,
