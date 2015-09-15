@@ -42,7 +42,7 @@ getMac.getMac(function(err, macAddress) {
 	
 	// Load all 3rd party formideos modules
 	for(var i in pkg.dependencies) {
-		if (i.indexOf("formideos-") > -1) {
+		if (i.indexOf("formide-client-") > -1) {
 			FormideOS.moduleManager.loadModule("node_modules/" + i, i);
 		}
 	}
