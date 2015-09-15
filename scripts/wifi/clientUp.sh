@@ -1,0 +1,1 @@
+sudo ifup wlan0
