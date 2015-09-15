@@ -1,0 +1,14 @@
+2015-09-15.14:10:41: New request.
+2015-09-15.14:10:41: Preparing model.
+2015-09-15.14:10:41: Dividing layers over regions.
+2015-09-15.14:10:41: Processing slice data.
+2015-09-15.14:10:42: Adding up and downskin.
+2015-09-15.14:10:43: Writing Gcode.
+2015-09-15.14:10:43: Starting region algorithm (adding layers to gcode).
+2015-09-15.14:15:33: New request.
+2015-09-15.14:15:33: Preparing model.
+2015-09-15.14:15:33: Dividing layers over regions.
+2015-09-15.14:15:33: Processing slice data.
+2015-09-15.14:15:33: Adding up and downskin.
+2015-09-15.14:15:33: Writing Gcode.
+2015-09-15.14:15:33: Starting region algorithm (adding layers to gcode).
