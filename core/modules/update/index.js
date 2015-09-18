@@ -15,7 +15,7 @@ module.exports = {
 	updateOS: function(cb) {
 		FormideOS.debug.log('Started update');
 		FormideOS.events.emit('update.start', {});
-		var child = exec('npm install formideos-client -g', function (error, stdout, stderr) {
+		var child = exec('npm install formide-client -g', function (error, stdout, stderr) {
 			if (stderr !== null) {
 				FormideOS.debug.log('Finished update');
 				FormideOS.events.emit('update.finished', { message: stdout });
