@@ -29,7 +29,7 @@ module.exports =
 		
 		// init cloud with new socket io client to online cloud url
 		this.cloud = socket(config.url);
-		this.local = socket( 'ws://127.0.0.1:' + FormideOS.http.server.address().port);
+		this.local = socket('ws://127.0.0.1:' + FormideOS.http.server.address().port);
 
 		/*
 		 * Connect to the cloud socket server
