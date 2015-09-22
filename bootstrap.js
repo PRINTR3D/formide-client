@@ -36,7 +36,6 @@ getMac.getMac(function(err, macAddress) {
 	FormideOS.moduleManager.loadModule('core/modules/printer', 	'printer', 	true);
 	FormideOS.moduleManager.loadModule('core/modules/slicer', 	'slicer', 	true);
 	FormideOS.moduleManager.loadModule('core/modules/setup', 	'setup',	true);
-	//FormideOS.moduleManager.loadModule('core/modules/wifi', 	'wifi',		true);	// Wifi manager is not finished yet
 	FormideOS.moduleManager.loadModule('core/modules/update', 	'update', 	true);
 	FormideOS.moduleManager.loadModule('core/modules/cloud', 	'cloud',	true);
 	
