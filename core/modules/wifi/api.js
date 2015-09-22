@@ -4,13 +4,29 @@
  */
 
 module.exports = function(routes, module) {
-	routes.get('/client/:ssid/:password', function(req, res) {
-		module.connect(req.params.ssid, req.params,password, function(response) {
-			res.send(response);
+	
+	routes.get('/connect', function(req, res) {
+		module.connectToNetwork(req.query.ssid, req.query.password, function(err, success) {
+			if (err) return res.send(err);
+			return res.send({
+				message: success
+			});
 		});
 	});
-
-	routes.get('/ap/:ssid/:password', function(req, res) {
-
+	
+	routes.get('/accesspoint', function(req, res) {
+		module.setupAccessPoint(function(err, success) {
+			if (err) return res.send(err);
+			return res.send({
+				message: success
+			});
+		});
+	});
+	
+	routes.get('/list', function(req, res) {
+		module.list(function(err, networks) {
+			if (err) return res.send(err);
+			return res.send(networks);
+		});
 	});
 }
