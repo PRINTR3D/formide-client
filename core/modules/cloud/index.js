@@ -168,7 +168,7 @@ module.exports =
 		var self = this;
 		var hash = uuid.v4();
 		
-		FormideOS.module('db').db.Printer.findOne({ port: data.port }).exec(function(err, printer) {
+		FormideOS.module('db').db.Printer.findOne({ cloudId: data.printerId }).exec(function(err, printer) {
 			if (err) return callback(err);
 			FormideOS.module('db').db.Queueitem.create({
 				origin: 'cloud',

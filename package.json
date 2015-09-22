@@ -1,6 +1,6 @@
 {
   "name": "formide-client",
-  "version": "0.2.20",
+  "version": "0.2.23",
   "description": "FORMIDE client is a modular 3D printing operating system with the goal of serving all 3D printers.",
   "main": "bootstrap.js",
   "author": "Printr B.V. <info@printr.nl>",
@@ -12,7 +12,7 @@
     "url": "https://github.com/PRINTR3D/formide-client.git/issues"
   },
   "contributors": "https://github.com/PRINTR3D/formide-client/graphs/contributors",
-  "license": "GNU General Public License (http://www.gnu.org/licenses)",
+  "license": "GPL-2.0",
   "scripts": {
     "start": "NODE_ENV=production node bootstrap",
     "test": "NODE_ENV=testing node bootstrap",
@@ -45,7 +45,7 @@
     "fancy-errors": "^0.1.2",
     "formide-client-interface": "^0.3.2",
     "formide-client-webhook": "^1.0.27",
-    "getmac": "~1.0.6",
+    "getmac": "^1.0.7",
     "gitty": "^3.2.3",
     "install": "~0.1.8",
     "internal-ip": "^1.0.1",
