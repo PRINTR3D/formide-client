@@ -1,1 +1,0 @@
-sudo ifdown wlan0
