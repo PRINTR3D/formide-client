@@ -4,9 +4,7 @@
  */
 
 // dependencies
-var spawn 		= require('child_process').spawn;
 var fs 			= require('fs');
-var net 		= require('net');
 var uuid 		= require('node-uuid');
 var deepExtend	= require("deep-extend");
 
