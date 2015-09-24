@@ -40,6 +40,9 @@ FormideOS.ws = require('./utils/websocket').init();
 // Module manager
 FormideOS.moduleManager = require('./utils/moduleManager.js')();
 
+// Array to keep track of installed modules
+FormideOS.modules = [];
+
 // Function to get registered module in a more elegant way than directly accessing the modules object
 FormideOS.module = function(moduleName) {
 	return FormideOS.moduleManager.getModule(moduleName)

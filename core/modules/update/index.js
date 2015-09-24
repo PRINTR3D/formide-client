@@ -83,7 +83,7 @@ module.exports = {
 		var self = this;
 		npm.load(function (err) {
 			if (err) return cb(err);
-			npm.commands.update([packageName], function (updateErr, data) {
+			npm.commands.install([packageName + '@latest'], function (updateErr, data) {
 				if (updateErr) return cb(err);
 				if (data !== undefined) {
 					FormideOS.moduleManager.reloadModule(packageName);
@@ -101,10 +101,9 @@ module.exports = {
 		else {
 			npm.load({ save: true }, function (err) {
 				if (err) return cb(err);
-				npm.commands.install([packageName], function (installErr, data) {
+				npm.commands.install([packageName + '@latest'], function (installErr, data) {
 					if (installErr) return cb(err);
-					modules.push(packageName);
-					FormideOS.settings.set('update', 'modules', modules);
+					FormideOS.modules.push(packagename);
 					if (data !== undefined) {
 						FormideOS.moduleManager.loadModule('node_modules/' + packageName, packageName, false);
 						FormideOS.moduleManager.activateModule(packageName);
@@ -120,10 +119,9 @@ module.exports = {
 			if (err) return cb(err);
 			npm.commands.uninstall([packageName], function (uninstallErr, data) {
 				if (uninstallErr) return cb(err);
-				var modules = FormideOS.settings.get('update', 'modules');
+				var modules = FormideOS.modules;
 				var index = modules.indexOf(packageName);
 				modules.splice(index, 1);
-				FormideOS.settings.set('update', 'modules', modules);
 				if (data !== undefined) {
 					FormideOS.moduleManager.disposeModule(packageName);
 				}

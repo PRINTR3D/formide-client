@@ -10,7 +10,6 @@
  */
 
 // Dependencies
-var getMac	= require('getmac');
 var pkg		= require('./package.json');
 
 // Load formideos core file
@@ -19,33 +18,28 @@ require('./core/FormideOS');
 FormideOS.debug.log('==========================================');
 FormideOS.debug.log('        Starting FORMIDEOS v' + pkg.version);
 FormideOS.debug.log('==========================================');
+	
+// Load core modules
+FormideOS.moduleManager.loadModule('core/modules/process', 	'process', 	true);
+FormideOS.moduleManager.loadModule('core/modules/db', 		'db', 		true);
+FormideOS.moduleManager.loadModule('core/modules/settings',	'settings', true);
+FormideOS.moduleManager.loadModule('core/modules/auth', 	'auth', 	true);
+FormideOS.moduleManager.loadModule('core/modules/device', 	'device', 	true);
+FormideOS.moduleManager.loadModule('core/modules/log', 		'log', 		true);
+FormideOS.moduleManager.loadModule('core/modules/files', 	'files', 	true);
+FormideOS.moduleManager.loadModule('core/modules/printer', 	'printer', 	true);
+FormideOS.moduleManager.loadModule('core/modules/slicer', 	'slicer', 	true);
+FormideOS.moduleManager.loadModule('core/modules/setup', 	'setup',	true);
+FormideOS.moduleManager.loadModule('core/modules/update', 	'update', 	true);
+FormideOS.moduleManager.loadModule('core/modules/cloud', 	'cloud',	true);
 
-getMac.getMac(function(err, macAddress) {
-	
-	// Set mac address (used for cloud connection)
-	FormideOS.macAddress = FormideOS.config.get('cloud.softMac') || macAddress;
-	
-	// Load core modules
-	FormideOS.moduleManager.loadModule('core/modules/process', 	'process', 	true);
-	FormideOS.moduleManager.loadModule('core/modules/db', 		'db', 		true);
-	FormideOS.moduleManager.loadModule('core/modules/settings',	'settings', true);
-	FormideOS.moduleManager.loadModule('core/modules/auth', 	'auth', 	true);
-	FormideOS.moduleManager.loadModule('core/modules/device', 	'device', 	true);
-	FormideOS.moduleManager.loadModule('core/modules/log', 		'log', 		true);
-	FormideOS.moduleManager.loadModule('core/modules/files', 	'files', 	true);
-	FormideOS.moduleManager.loadModule('core/modules/printer', 	'printer', 	true);
-	FormideOS.moduleManager.loadModule('core/modules/slicer', 	'slicer', 	true);
-	FormideOS.moduleManager.loadModule('core/modules/setup', 	'setup',	true);
-	FormideOS.moduleManager.loadModule('core/modules/update', 	'update', 	true);
-	FormideOS.moduleManager.loadModule('core/modules/cloud', 	'cloud',	true);
-	
-	// Load all 3rd party formideos modules
-	for(var i in pkg.dependencies) {
-		if (i.indexOf("formide-client-") > -1) {
-			FormideOS.moduleManager.loadModule("node_modules/" + i, i);
-		}
+// Load all 3rd party formideos modules
+for(var i in pkg.dependencies) {
+	if (i.indexOf("formide-client-") > -1) {
+		FormideOS.modules.push(i);
+		FormideOS.moduleManager.loadModule("node_modules/" + i, i);
 	}
+}
 
-	// Activate all loaded modules
-	FormideOS.moduleManager.activateLoadedModules();
-});
+// Activate all loaded modules
+FormideOS.moduleManager.activateLoadedModules();

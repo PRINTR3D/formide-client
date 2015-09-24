@@ -12,6 +12,7 @@ var internalIp 	= require('internal-ip');
 var fs			= require('fs');
 var uuid		= require('node-uuid');
 var async		= require('async');
+var getMac		= require('getmac');
 
 module.exports =
 {	
@@ -37,29 +38,32 @@ module.exports =
 		this.cloud.on('connect', function() {
 			// authenticate formideos based on mac address and api token, also sends permissions for faster blocking via cloud
 			publicIp(function (err, ip) {
-				var pkg = fs.readFileSync(FormideOS.appRoot + 'package.json', 'utf8');
-				pkg = JSON.parse(pkg);
-				self.cloud.emit('authenticate', {
-					type: 'client',
-					mac: FormideOS.macAddress,
-					ip: ip,
-					ip_internal: internalIp(),
-					version: pkg.version,
-					environment: FormideOS.config.environment,
-					port: FormideOS.config.get('app.port')
-				}, function(response) {
-					if (response.success) {
-						FormideOS.debug.log('Cloud connected');
-						
-						// forward all events to the cloud
-						FormideOS.events.onAny(function(data) {
-							self.cloud.emit(this.event, data);
-						});
-					}
-					else {
-						// something went wrong when connecting to the cloud
-						FormideOS.debug.log('Cloud connection error: ' + response.message);
-					}
+				getMac.getMac(function(err, macAddress) {
+					macAddress = FormideOS.config.get('cloud.softMac') || macAddress;
+					var pkg = fs.readFileSync(FormideOS.appRoot + 'package.json', 'utf8');
+					pkg = JSON.parse(pkg);
+					self.cloud.emit('authenticate', {
+						type: 'client',
+						mac: macAddress,
+						ip: ip,
+						ip_internal: internalIp(),
+						version: pkg.version,
+						environment: FormideOS.config.environment,
+						port: FormideOS.config.get('app.port')
+					}, function(response) {
+						if (response.success) {
+							FormideOS.debug.log('Cloud connected');
+							
+							// forward all events to the cloud
+							FormideOS.events.onAny(function(data) {
+								self.cloud.emit(this.event, data);
+							});
+						}
+						else {
+							// something went wrong when connecting to the cloud
+							FormideOS.debug.log('Cloud connection error: ' + response.message);
+						}
+					});
 				});
 			});
 		});
