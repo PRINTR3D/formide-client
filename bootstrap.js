@@ -24,7 +24,6 @@ FormideOS.moduleManager.loadModule('core/modules/process', 	'process', 	true);
 FormideOS.moduleManager.loadModule('core/modules/db', 		'db', 		true);
 FormideOS.moduleManager.loadModule('core/modules/settings',	'settings', true);
 FormideOS.moduleManager.loadModule('core/modules/auth', 	'auth', 	true);
-FormideOS.moduleManager.loadModule('core/modules/device', 	'device', 	true);
 FormideOS.moduleManager.loadModule('core/modules/log', 		'log', 		true);
 FormideOS.moduleManager.loadModule('core/modules/files', 	'files', 	true);
 FormideOS.moduleManager.loadModule('core/modules/printer', 	'printer', 	true);
