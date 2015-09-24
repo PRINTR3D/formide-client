@@ -6,7 +6,6 @@
 var fs 			= require('fs');
 var npm 		= require('npm');
 var path		= require('path');
-//var updater		= require('./updater');
 var exec 		= require('child_process').exec;
 
 module.exports = {
@@ -14,22 +13,28 @@ module.exports = {
 	// update system
 	updateOS: function(cb) {
 		FormideOS.debug.log('Started update');
-		FormideOS.events.emit('update.start', {});
+		
+		// wait 2 seconds before sending updated.started
+		setTimeout(function() {
+			FormideOS.events.emit('update.started', {});
+		}, 2000);
+		
+		cb(null, "Started update");
 		var child = exec('npm install formide-client -g', function (error, stdout, stderr) {
 			if (stderr !== null) {
 				FormideOS.debug.log('Finished update');
 				FormideOS.events.emit('update.finished', { message: stdout });
-				cb(null, stderr);
+				//cb(null, stderr);
 			}
 			if (stdout !== null) {
 				FormideOS.debug.log('Finished update');
 				FormideOS.events.emit('update.finished', { message: stdout });
-				cb(null, stdout);
+				//cb(null, stdout);
     		}
 			if (error !== null) {
 				FormideOS.debug.log('Failed update with error: ' + error);
 				FormideOS.events.emit('update.failed', { message: error });
-				cb(error);
+				//cb(error);
     		}
 		});
 	},
