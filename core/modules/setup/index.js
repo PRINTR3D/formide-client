@@ -5,28 +5,46 @@
 
 var os 			= require('os');
 var request 	= require('request');
+var net			= require('net');
+var getMac		= require('getmac');
 
 module.exports = {
 
 	config: {},
 
 	init: function(config) {
+		var self = this;
 		this.config = config;
+		
+		var server = net.createServer(function(socket) {
+			socket.on('data', function(data) {
+				try {
+					var message = JSON.parse(data);
+					self.registerOwner(message.ownerEmail, message.ownerPassword, message.registerToken, function(err, result) {
+						socket.write(JSON.stringify({ err: err.message, result: result }));
+						return;
+					});
+				}
+				catch(e) {
+					socket.write(JSON.stringify({ err: e.message }));
+					return;
+				}
+			});
+		});
+		
+		server.listen(1338, '127.0.0.1');
 	},
 	
 	
-	registerOwner: function(owner_email, owner_password, wifi_ssid, wifi_password, registertoken, cb) {
-		
+	registerOwner: function(owner_email, owner_password, registertoken, cb) {
 		var self = this;
 		
 		FormideOS.module('db').db.User.findOne({ isOwner: true }).exec(function(err, user) {
 			if (user) {
 				var msg = "This device already has a local owner, contact " + user.email + " to get access.";
 				FormideOS.debug.log(msg, true);
-				return cb(msg);
+				return cb(new Error(msg));
 			}
-			
-			// TODO: wifi setup
 			
 			// create a new owner/admin user
 			FormideOS.module('db').db.User.create({
@@ -37,40 +55,31 @@ module.exports = {
 				cloudConnectionToken: registertoken
 			}, function(err, user) {
 				if (err) return cb(err.message);
-				request({
-					method: "POST",
-					url: self.config.registerUrl,
-					form:{
-						mac: FormideOS.macAddress,
-						registertoken: registertoken
-					},
-					strictSSL: false
-				}, function( err, httpResponse, body ) {
-					if (err) return cb(err.message);
-					var response = JSON.parse(body);
-					if (!response.clientToken) {
-						FormideOS.debug.log(response.message, true);
-						return cb(response.message);
-					}
-					FormideOS.module('db').db.User.update({ cloudConnectionToken: registertoken }, { cloudConnectionToken: response.clientToken }, function(err, user) {
-						if (err) return cb(err.message);
-						FormideOS.debug.log('cloud user connected with clientToken ' + response.clientToken);
-						return cb(null, user);
+				getMac.getMac(function(err, macAddress) {
+					if (err) return cb(err);
+					request({
+						method: "POST",
+						url: self.config.registerUrl,
+						form:{
+							mac: macAddress,
+							registertoken: registertoken
+						},
+						strictSSL: false
+					}, function( err, httpResponse, body ) {
+						if (err) return cb(err);
+						var response = JSON.parse(body);
+						if (!response.clientToken) {
+							FormideOS.debug.log(response.message, true);
+							return cb(new Error(response.message));
+						}
+						FormideOS.module('db').db.User.update({ cloudConnectionToken: registertoken }, { cloudConnectionToken: response.clientToken }, function(err, user) {
+							if (err) return cb(err.message);
+							FormideOS.debug.log('cloud user connected with clientToken ' + response.clientToken);
+							return cb(null, user);
+						});
 					});
 				});
 			});
 		});
-	},
-
-	// TODO: unfake :P
-	listNetworks: function( callback ) {
-		networks = [
-			{
-				"ssid": "MyWifiNetwork",
-				"security": "WPA2",
-				"signal": 65
-			}
-		];
-		callback( networks );
 	}
 }

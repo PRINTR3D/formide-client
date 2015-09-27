@@ -39,7 +39,6 @@ module.exports =
 			// authenticate formideos based on mac address and api token, also sends permissions for faster blocking via cloud
 			publicIp(function (err, ip) {
 				getMac.getMac(function(err, macAddress) {
-					macAddress = FormideOS.config.get('cloud.softMac') || macAddress;
 					var pkg = fs.readFileSync(FormideOS.appRoot + 'package.json', 'utf8');
 					pkg = JSON.parse(pkg);
 					self.cloud.emit('authenticate', {
