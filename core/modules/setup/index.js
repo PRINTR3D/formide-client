@@ -16,6 +16,7 @@ module.exports = {
 		var self = this;
 		this.config = config;
 		
+		// tcp server to connect to element-tools application for element setup usage
 		var server = net.createServer(function(socket) {
 			socket.on('data', function(data) {
 				try {
