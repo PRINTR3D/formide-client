@@ -14,7 +14,7 @@ module.exports = function(routes, module) {
 	 */
 	routes.post('/register', function(req, res) {
 		module.registerOwner(req.body.email, req.body.password, req.body.registertoken, function(err, user) {
-			if (err) return res.json({ success: false, error: err });
+			if (err) return res.json({ success: false, message: err.message });
 			return res.json({ success: true, user: user, message: "user registered as owner of this device" });
 		});
 	});
