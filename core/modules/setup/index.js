@@ -90,5 +90,29 @@ module.exports = {
 				});
 			});
 		});
+	},
+	
+	forceSetupOnReboot: function(force, callback) {
+		var forceSetupFile = path.resolve(FormideOS.config.get('app.storageDir') + "doSetup");
+		if (force) {
+			fs.exists(forceSetupFile, function(exists) {
+				if (!exists) {
+					fs.writeFile(forceSetupFile, "", function(err) {
+						if (err) return callback(err);
+						return callback(null, "file created");
+					});
+				}
+				return callback(null, "file exists");
+			});
+		}
+		else {
+			fs.exists(forceSetupFile, function(exists) {
+				if (exists) {
+					fs.unlinkSync(forceSetupFile);
+					return callback(null, "file deleted");
+				}
+				return callback(null, "file not found");
+			});
+		}
 	}
 }

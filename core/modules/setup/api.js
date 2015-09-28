@@ -18,4 +18,11 @@ module.exports = function(routes, module) {
 			return res.json({ success: true, user: user, message: "user registered as owner of this device" });
 		});
 	});
+	
+	routes.port('/forcesetuponreboot', function(req, res) {
+		module.forceSetupOnReboot(req.body.force, function(err, result) {
+			if (err) return res.status(400).json({ success: false, message: err.message });
+			return res.json({ success: true, force: req.body.force, result: result });
+		})
+	});
 };
