@@ -7,6 +7,7 @@ var os 			= require('os');
 var request 	= require('request');
 var net			= require('net');
 var getMac		= require('getmac');
+var fs			= require('fs');
 
 module.exports = {
 
@@ -93,26 +94,20 @@ module.exports = {
 	},
 	
 	forceSetupOnReboot: function(force, callback) {
-		var forceSetupFile = path.resolve(FormideOS.config.get('app.storageDir') + "doSetup");
-		if (force) {
-			fs.exists(forceSetupFile, function(exists) {
-				if (!exists) {
-					fs.writeFile(forceSetupFile, "", function(err) {
-						if (err) return callback(err);
-						return callback(null, "file created");
-					});
-				}
-				return callback(null, "file exists");
-			});
-		}
-		else {
-			fs.exists(forceSetupFile, function(exists) {
-				if (exists) {
-					fs.unlinkSync(forceSetupFile);
-					return callback(null, "file deleted");
-				}
-				return callback(null, "file not found");
-			});
-		}
+		var forceSetupFile = FormideOS.config.get('app.storageDir') + "/doSetup";
+		fs.exists(forceSetupFile, function(exists) {
+			if (exists && force === "false") {
+				fs.unlinkSync(forceSetupFile);
+				return callback(null, "file deleted");
+			}
+			else if (!exists && force === "true") {
+				fs.writeFileSync(forceSetupFile, "");
+				return callback(null, "file created");
+			}
+			else {
+				// do nothing, all is right
+				return callback(null, "already in correct state");
+			}
+		}.bind(force));
 	}
 }
