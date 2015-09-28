@@ -41,6 +41,8 @@ module.exports = {
 		var self = this;
 		
 		FormideOS.module('db').db.User.findOne({ isOwner: true }).exec(function(err, user) {
+			if (err) return cb(err);
+			
 			if (user) {
 				var msg = "This device already has a local owner, contact " + user.email + " to get access.";
 				FormideOS.debug.log(msg, true);
@@ -55,7 +57,7 @@ module.exports = {
 				isAdmin: true,
 				cloudConnectionToken: registertoken
 			}, function(err, user) {
-				if (err) return cb(err.message);
+				if (err) return cb(err);
 				getMac.getMac(function(err, macAddress) {
 					if (err) return cb(err);
 					request({
@@ -71,13 +73,19 @@ module.exports = {
 						var response = JSON.parse(body);
 						if (!response.clientToken) {
 							FormideOS.debug.log(response.message, true);
-							return cb(new Error(response.message));
+							// remove new local owner if cloud ownership fails
+							FormideOS.module('db').db.User.remove({ cloudConnectionToken: registertoken }, function(err) {
+								if (err) return cb(err);
+								return cb(new Error(response.message));
+							});
 						}
-						FormideOS.module('db').db.User.update({ cloudConnectionToken: registertoken }, { cloudConnectionToken: response.clientToken }, function(err, user) {
-							if (err) return cb(err.message);
-							FormideOS.debug.log('cloud user connected with clientToken ' + response.clientToken);
-							return cb(null, user);
-						});
+						else {
+							FormideOS.module('db').db.User.update({ cloudConnectionToken: registertoken }, { cloudConnectionToken: response.clientToken }, function(err, user) {
+								if (err) return cb(err);
+								FormideOS.debug.log('cloud user connected with clientToken ' + response.clientToken);
+								return cb(null, user);
+							});
+						}
 					});
 				});
 			});

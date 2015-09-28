@@ -13,8 +13,8 @@ module.exports = function(routes, module) {
 	 * Send token and wifi credentials
 	 */
 	routes.post('/register', function(req, res) {
-		module.registerOwner(req.body.email, req.body.password, req.body.registertoken, function(err, user) {
-			if (err) return res.json({ success: false, message: err.message });
+		module.registerOwner(req.body.ownerEmail, req.body.ownerPassword, req.body.registerToken, function(err, user) {
+			if (err) return res.status(400).json({ success: false, message: err.message });
 			return res.json({ success: true, user: user, message: "user registered as owner of this device" });
 		});
 	});
