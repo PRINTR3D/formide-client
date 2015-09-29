@@ -20,7 +20,6 @@ FormideOS.debug.log('        Starting FORMIDEOS v' + pkg.version);
 FormideOS.debug.log('==========================================');
 	
 // Load core modules
-//FormideOS.moduleManager.loadModule('core/modules/process', 	'process', 	true);
 FormideOS.moduleManager.loadModule('core/modules/db', 		'db', 		true);
 FormideOS.moduleManager.loadModule('core/modules/settings',	'settings', true);
 FormideOS.moduleManager.loadModule('core/modules/auth', 	'auth', 	true);
