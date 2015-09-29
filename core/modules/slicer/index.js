@@ -176,7 +176,17 @@ module.exports = {
 				}
 			}
 			
-			// 5: Save sliceprofile and use in next step.
+			// 5: Check all moved fields and transfer them
+			// TODO: recalculate if needed
+			for (var i in reference.moved) {
+				var fromField = reference.moved[i].from.split('.');
+				var toField = reference.moved[i].to.split('.');
+				if (!toField[0] && fromField[0]) {
+					settings[toField[0]][toField[1]] = settings[fromField[0]][fromField[1]];
+				}
+				delete settings[fromField[0]][fromField[1]];
+			}
+			
 			sliceprofile.settings = settings;
 			
 			FormideOS.module('db').db.Sliceprofile.update({ _id: sliceprofile._id }, { settings: settings, version: sliceprofile.version }, function(err, update) {
