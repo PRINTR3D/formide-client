@@ -20,9 +20,9 @@ module.exports = function(routes, module) {
 	});
 	
 	routes.post('/forcesetuponreboot', function(req, res) {
-		module.forceSetupOnReboot(req.body.force, function(err, result) {
+		module.forceSetupOnReboot(function(err, result) {
 			if (err) return res.status(400).json({ success: false, message: err.message });
-			return res.json({ success: true, force: req.body.force, result: result });
+			return res.json({ success: true, result: result });
 		})
 	});
 };

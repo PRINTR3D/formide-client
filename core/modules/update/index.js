@@ -89,7 +89,7 @@ module.exports = {
 		npm.load(function (err) {
 			if (err) return cb(err);
 			npm.commands.install([packageName + '@latest'], function (updateErr, data) {
-				if (updateErr) return cb(err);
+				if (updateErr) return cb(updateErr);
 				if (data !== undefined) {
 					FormideOS.moduleManager.reloadModule(packageName);
 				}
@@ -107,7 +107,7 @@ module.exports = {
 			npm.load({ save: true }, function (err) {
 				if (err) return cb(err);
 				npm.commands.install([packageName + '@latest'], function (installErr, data) {
-					if (installErr) return cb(err);
+					if (installErr) return cb(installErr);
 					FormideOS.modules.push(packagename);
 					if (data !== undefined) {
 						FormideOS.moduleManager.loadModule('node_modules/' + packageName, packageName, false);
@@ -123,7 +123,7 @@ module.exports = {
 		npm.load(function (err) {
 			if (err) return cb(err);
 			npm.commands.uninstall([packageName], function (uninstallErr, data) {
-				if (uninstallErr) return cb(err);
+				if (uninstallErr) return cb(uninstallErr);
 				var modules = FormideOS.modules;
 				var index = modules.indexOf(packageName);
 				modules.splice(index, 1);
@@ -141,7 +141,7 @@ module.exports = {
 			if (err) return cb(err);
 			self.getPackages(true, function(packages) {
 				npm.commands.outdated(packages, function (outdatedErr, data) {
-					if (outdatedErr) return cb(err);
+					if (outdatedErr) return cb(outdatedErr);
 					return cb(null, data);
 	  			});
 			});

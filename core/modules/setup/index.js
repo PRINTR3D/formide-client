@@ -93,21 +93,16 @@ module.exports = {
 		});
 	},
 	
-	forceSetupOnReboot: function(force, callback) {
+	forceSetupOnReboot: function(callback) {
 		var forceSetupFile = FormideOS.config.get('app.storageDir') + "/doSetup";
 		fs.exists(forceSetupFile, function(exists) {
-			if (exists && force === "false") {
-				fs.unlinkSync(forceSetupFile);
-				return callback(null, "file deleted");
-			}
-			else if (!exists && force === "true") {
+			if (!exists) {
 				fs.writeFileSync(forceSetupFile, "");
 				return callback(null, "file created");
 			}
 			else {
-				// do nothing, all is right
-				return callback(null, "already in correct state");
+				return callback(null, "file already exists");
 			}
-		}.bind(force));
+		});
 	}
 }

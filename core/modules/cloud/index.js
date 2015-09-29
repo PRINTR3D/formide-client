@@ -147,6 +147,7 @@ module.exports =
 				},
 				qs: data.data
 			}, function( error, response, body ) {
+				if (error) return callback(error);
 				return callback(null, body);
 			});
 		}
@@ -159,6 +160,7 @@ module.exports =
 				},
 				form: data.data
 			}, function( error, response, body ) {
+				if (error) return callback(error);
 				return callback(null, body);
 			});
 		}
