@@ -50,7 +50,7 @@ module.exports = {
 				}
 				else {
 					FormideOS.module('db').db.Gcodefile.create({
-						prettyname: filename,
+						prettyname: file.name,
 						filename: file.name,
 						filesize: file.size,
 						hash: hash
