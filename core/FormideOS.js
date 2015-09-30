@@ -4,7 +4,7 @@
  */
  
 /*
- *	This is the core of formideos-client. The global FormideOS variable is defined and all core
+ *	This is the core of formide-client. The global FormideOS variable is defined and all core
  *	utilities are added to it, including the http and ws servers, the moduleManager and the
  *	events manager.
  */

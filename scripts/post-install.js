@@ -1,5 +1,7 @@
 var path = require('path');
 
+// TODO: If it's an Element, move to /data (2nd partition)
+
 SETUP = {
 	storageDir: path.resolve(process.env.HOME + "/formideos") || path.resolve(process.env.USERPROFILE + "/formideos")
 };
