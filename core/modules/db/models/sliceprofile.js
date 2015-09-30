@@ -10,6 +10,7 @@ var Schema = mongoose.Schema;
 var schema = new Schema({
 	name: { type: String, required: true },
 	user: { type: Schema.Types.ObjectId, ref: 'users' },
+	version: { type: String, required: true, default: "0.10.0" },
 	settings: { type: Schema.Types.Mixed, required: true }
 });
 schema.plugin(timestamps);
