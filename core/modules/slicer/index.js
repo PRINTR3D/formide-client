@@ -212,6 +212,7 @@ module.exports = {
 			
 				var slicerequest = fixedSliceprofile.settings;
 				
+				// populate bed settings
 				slicerequest.bed = {
 					xlength: printjob.printer.bed.x * 1000, // input is in mm
 					ylength: printjob.printer.bed.y * 1000, // input is in mm
@@ -220,7 +221,9 @@ module.exports = {
 					firstLayersTemperature: 0
 				};
 			
+				// populate dynamic settings
 				if(printjob.sliceSettings) {
+					// brim settings
 					if(printjob.sliceSettings.brim) {
 						if(printjob.sliceSettings.brim.use === false) {
 							delete slicerequest.brim;
@@ -238,6 +241,7 @@ module.exports = {
 						return callback("No brim settings given");
 					}
 					
+					// raft settings
 					if(printjob.sliceSettings.raft) {
 						if(printjob.sliceSettings.raft.use === false) {
 							delete slicerequest.raft;
@@ -255,6 +259,7 @@ module.exports = {
 						return callback("No raft settings given");
 					}
 					
+					// support settings
 					if(printjob.sliceSettings.support) {
 						if(printjob.sliceSettings.support.use === false) {
 							delete slicerequest.support;
@@ -272,6 +277,7 @@ module.exports = {
 						return callback("No support settings given");
 					}
 					
+					// skirt settings
 					if(printjob.sliceSettings.skirt) {
 						if(printjob.sliceSettings.skirt.use === false) {
 							delete slicerequest.skirt;
@@ -289,6 +295,7 @@ module.exports = {
 						return callback("No skirt settings given");
 					}
 					
+					// fan settings
 					if(printjob.sliceSettings.fan) {
 						if(printjob.sliceSettings.fan.use === false) {
 							delete slicerequest.fan;
@@ -298,6 +305,7 @@ module.exports = {
 						return callback("No fan settings given");
 					}
 					
+					// heated bed settings
 					if(printjob.sliceSettings.bed) {
 						if(printjob.sliceSettings.bed.use !== false) {
 							if(printjob.sliceSettings.bed.temperature != undefined) {
@@ -315,38 +323,52 @@ module.exports = {
 						}
 					}
 					
+					// modelfiles settings
+					if(printjob.sliceSettings.modelfiles) {
+						if (printjob.sliceSettings.modelfiles.length !== printjob.modelfiles.length) {
+							return callback("Modelfiles and settings.modelfiles have different lengths");
+						}
+					}
+					else {
+						return callback("No modelfile settings given");
+					}
+					
 					// override slice parameters
 					if(printjob.sliceSettings.override) {
 						deepExtend(slicerequest, printjob.sliceSettings.override);
 					}
 				}
 				
+				// populate models
 				slicerequest.model = [];
 				for(var i in printjob.modelfiles) {
 					var model = printjob.modelfiles[i];
 					var extruderForModel = 0;
-					var xPos = 0;
-					var yPos = 0;
-					var zPos = 0;
 					
-					if(printjob.sliceSettings.modelfiles) {
-						extruderForModel = printjob.sliceSettings.modelfiles[i].extruder;
-						xPos = 100000; //printjob.sliceSettings.modelfiles[i].root.x * 1000; // input is in mm
-						yPos = 100000; //printjob.sliceSettings.modelfiles[i].root.z * 1000; // three.js uses y as height!
-						zPos = 0; //printjob.sliceSettings.modelfiles[i].root.y * 1000; // three.js uses y as height!
+					if(printjob.sliceSettings.modelfiles[i]) {
+						if (printjob.sliceSettings.modelfiles[i].extruder) {
+							extruderForModel = printjob.sliceSettings.modelfiles[i].extruder;
+						}
+						else {
+							return callback("No extruder given in modelfile settings for model " + i);
+						}
+					}
+					else {
+						return callback("No modelfile settings given for model " + i);
 					}
 					
 					slicerequest.model.push({
 						hash: model.hash,
-						bucketIn: FormideOS.config.get('app.storageDir') + FormideOS.config.get("paths.modelfile"),
-						x: xPos,
-						y: yPos,
-						z: zPos,
+						bucketIn: process.env.KATANA_BUCKETIN,
+						position: printjob.sliceSettings.modelfiles[i].position,
+						rotation: printjob.sliceSettings.modelfiles[i].rotation,
+						scale: printjob.sliceSettings.modelfiles[i].scale,
 						extruder: extruderForModel,
 						settings: 0
 					});
 				}
 				
+				// populate extruders
 				slicerequest.extruders = [];
 				for(var i in printjob.printer.extruders) {
 					var extruder = printjob.printer.extruders[i];
@@ -364,6 +386,12 @@ module.exports = {
 					}
 				}
 				
+				// populate gcode settings
+				slicerequest.gcode.gcodeFlavour = printjob.printer.gcodeFlavour;
+				slicerequest.gcode.startGcode = printjob.printer.startGcode;
+				slicerequest.gcode.endGcode = printjob.printer.endGcode;
+				
+				// populate other needed parameters
 				slicerequest.bucketOut = FormideOS.config.get('app.storageDir') + FormideOS.config.get("paths.gcode");
 				slicerequest.responseID = printjob._id.toString();
 				slicerequest.version = fixedSliceprofile.version;
