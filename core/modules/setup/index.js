@@ -23,8 +23,8 @@ module.exports = {
 				try {
 					var message = JSON.parse(data);
 					self.registerOwner(message.ownerEmail, message.ownerPassword, message.registerToken, function(err, result) {
-						socket.write(JSON.stringify({ err: err.message, result: result }));
-						return;
+						if (err) return socket.write(JSON.stringify({ err: err.message }));
+						return socket.write(JSON.stringify({ result: result }));
 					});
 				}
 				catch(e) {
