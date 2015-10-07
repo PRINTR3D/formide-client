@@ -55,7 +55,7 @@ module.exports = {
 			if (err) return callback(err);
 			
 			self.createSliceRequest(printjob._id, function(err, slicerequest) {
-				if (err) callback(err);
+				if (err) return callback(err);
 				
 				callback(null, printjob);
 				
@@ -396,7 +396,7 @@ module.exports = {
 				slicerequest.responseID = printjob._id.toString();
 				slicerequest.version = fixedSliceprofile.version;
 				
-				callback(null, slicerequest);
+				return callback(null, slicerequest);
 			});
 		});
 	}
