@@ -6,7 +6,6 @@
 // dependencies
 var fs 				= require('fs');
 var uuid 			= require('node-uuid');
-var deepExtend		= require('deep-extend');
 var formideTools	= require('formide-tools');
 
 module.exports = {
@@ -16,9 +15,6 @@ module.exports = {
 
 	init: function(config) {
 		this.config = config;
-		
-		process.env.KATANA_BUCKETIN = FormideOS.config.get('app.storageDir') + FormideOS.config.get("paths.modelfiles");
-		process.env.KATANA_BUCKETOUT = FormideOS.config.get('app.storageDir') + FormideOS.config.get("paths.gcode");
 
 		if(process.platform == 'darwin') {
 			this.katana	= require(FormideOS.appRoot + 'bin/osx/katana');
@@ -142,194 +138,33 @@ module.exports = {
 					if (err) return callback(err);
 					FormideOS.module('db').db.Sliceprofile.update({ _id: sliceprofile._id }, { settings: fixedSettings, version: version }, function(err, update) {
 						if (err) return callback(err);
-					
-						var slicerequest = fixedSettings;
 						
-						// populate bed settings
-						slicerequest.bed = {
-							xlength: printjob.printer.bed.x * 1000, // input is in mm
-							ylength: printjob.printer.bed.y * 1000, // input is in mm
-							zlength: printjob.printer.bed.z * 1000, // input is in mm
-							temperature: 0,
-							firstLayersTemperature: 0
-						};
-			
-						// populate dynamic settings
-						if(printjob.sliceSettings) {
-							// brim settings
-							if(printjob.sliceSettings.brim) {
-								if(printjob.sliceSettings.brim.use === false) {
-									delete slicerequest.brim;
-								}
-								else {
-									if(printjob.sliceSettings.brim.extruder != undefined) {
-										slicerequest.brim.extruder = printjob.sliceSettings.brim.extruder;
-									}
-									else {
-										return callback(new Error("No extruder given for brim"));
-									}
-								}
-							}
-							else {
-								return callback(new Error("No brim settings given"));
-							}
-					
-							// raft settings
-							if(printjob.sliceSettings.raft) {
-								if(printjob.sliceSettings.raft.use === false) {
-									delete slicerequest.raft;
-								}
-								else {
-									if(printjob.sliceSettings.raft.extruder != undefined) {
-										slicerequest.raft.extruder = printjob.sliceSettings.raft.extruder;
-									}
-									else {
-										return callback(new Error("No extruder given for raft"));
-									}
-								}
-							}
-							else {
-								return callback(new Error("No raft settings given"));
-							}
-					
-							// support settings
-							if(printjob.sliceSettings.support) {
-								if(printjob.sliceSettings.support.use === false) {
-									delete slicerequest.support;
-								}
-								else {
-									if(printjob.sliceSettings.support.extruder != undefined) {
-										slicerequest.support.extruder = printjob.sliceSettings.support.extruder;
-									}
-									else {
-										return callback(new Error("No extruder given for support"));
-									}
-								}
-							}
-							else {
-								return callback(new Error("No support settings given"));
-							}
-					
-							// skirt settings
-							if(printjob.sliceSettings.skirt) {
-								if(printjob.sliceSettings.skirt.use === false) {
-									delete slicerequest.skirt;
-								}
-								else {
-									if(printjob.sliceSettings.skirt.extruder != undefined) {
-										slicerequest.skirt.extruder = printjob.sliceSettings.skirt.extruder;
-									}
-									else {
-										return callback(new Error("No extruder given for skirt"));
-									}
-								}
-							}
-							else {
-								return callback(new Error("No skirt settings given"));
-							}
+						try {
+							// generate slicerequest from printjob
+							var sliceRequest = formideTools
+								.generateSlicerequestFromPrintjob(printjob, fixedSettings, {
+									version: version,
+									bucketIn: FormideOS.config.get('app.storageDir') + FormideOS.config.get("paths.modelfiles"),
+									bucketOut: FormideOS.config.get('app.storageDir') + FormideOS.config.get("paths.gcode"),
+									responseId: printjob._id.toString()
+								})
+								.generateBaseSettings()
+								.generatePrinterGcodeSettings()
+								.generateRaftSettings()
+								.generateSupportSettings()
+								.generateSkirtSettings()
+								.generateFanSettings()
+								.generateBedSettings()
+								.generateOverrideSettings()
+								.generateModelSettings()
+								.generateExtruderSettings()
+								.getResult();
 							
-							// fan settings
-							if(printjob.sliceSettings.fan) {
-								if(printjob.sliceSettings.fan.use === false) {
-									delete slicerequest.fan;
-								}
-							}
-							else {
-								return callback(new Error("No fan settings given"));
-							}
-					
-							// heated bed settings
-							if(printjob.sliceSettings.bed) {
-								if(printjob.sliceSettings.bed.use !== false) {
-									if(printjob.sliceSettings.bed.temperature != undefined) {
-										slicerequest.bed.temperature = printjob.sliceSettings.bed.temperature;
-									}
-									else {
-										return callback(new Error("No bed temperature given"));
-									}
-									if(printjob.sliceSettings.bed.firstLayersTemperature != undefined) {
-										slicerequest.bed.firstLayersTemperature = printjob.sliceSettings.bed.firstLayersTemperature;
-									}
-									else {
-										return callback(new Error("No bed firstLayersTemperature given"));
-									}
-								}
-							}
-							
-							// modelfiles settings
-							if(printjob.sliceSettings.modelfiles) {
-								if (printjob.sliceSettings.modelfiles.length !== printjob.modelfiles.length) {
-									return callback(new Error("Modelfiles and settings.modelfiles have different lengths"));
-								}
-							}
-							else {
-								return callback(new Error("No modelfile settings given"));
-							}
-							
-							// override slice parameters
-							if(printjob.sliceSettings.override) {
-								deepExtend(slicerequest, printjob.sliceSettings.override);
-							}
+							return callback(null, sliceRequest);
 						}
-						
-						// populate models
-						slicerequest.model = [];
-						for(var i in printjob.modelfiles) {
-							var model = printjob.modelfiles[i];
-							var extruderForModel = 0;
-							
-							if(printjob.sliceSettings.modelfiles[i]) {
-								if (printjob.sliceSettings.modelfiles[i].extruder != undefined) {
-									extruderForModel = printjob.sliceSettings.modelfiles[i].extruder;
-								}
-								else {
-									return callback(new Error("No extruder given in modelfile settings for model " + i));
-								}
-							}
-							else {
-								return callback(new Error("No modelfile settings given for model " + i));
-							}
-							
-							slicerequest.model.push({
-								hash: model.hash,
-								bucketIn: process.env.KATANA_BUCKETIN,
-								position: printjob.sliceSettings.modelfiles[i].position,
-								rotation: printjob.sliceSettings.modelfiles[i].rotation,
-								scale: printjob.sliceSettings.modelfiles[i].scale,
-								extruder: extruderForModel,
-								settings: 0
-							});
+						catch (e) {
+							return callback(e);
 						}
-				
-						// populate extruders
-						slicerequest.extruders = [];
-						for(var i in printjob.printer.extruders) {
-							var extruder = printjob.printer.extruders[i];
-							var material = printjob.materials[i];
-							if(material) {
-								slicerequest.extruders.push({
-									name: extruder.name,
-									material: material.type,
-									nozzleSize: extruder.nozzleSize,
-									temperature: material.temperature,
-									firstLayersTemperature: material.firstLayersTemperature,
-									filamentDiameter: material.filamentDiameter,
-									feedrate: material.feedrate
-								});
-							}
-						}
-						
-						// populate gcode settings
-						slicerequest.gcode.gcodeFlavour = printjob.printer.gcodeFlavour;
-						slicerequest.gcode.startGcode = printjob.printer.startGcode;
-						slicerequest.gcode.endGcode = printjob.printer.endGcode;
-						
-						// populate other needed parameters
-						slicerequest.bucketOut = process.env.KATANA_BUCKETOUT;
-						slicerequest.responseID = printjob._id.toString();
-						slicerequest.version = version;
-				
-						return callback(null, slicerequest);
 					});
 				});
 			});
