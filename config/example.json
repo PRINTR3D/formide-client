@@ -27,6 +27,9 @@
 		"permission": false,
 		"simulated": false
 	},
+	"slicer": {
+		"version": "1.0.2"	
+	},
 	"settings": {
 		"path": "/"
 	},
