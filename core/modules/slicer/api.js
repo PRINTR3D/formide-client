@@ -26,4 +26,14 @@ module.exports = function(routes, module)
 			return res.json(slicerequest);
 		});
 	});
+	
+	/*
+	 * Get the reference so the interface can build forms
+	 */
+	routes.get('/reference', function(req, res) {
+		module.getReferenceFile(function(err, reference) {
+			if (err) return res.send(err);
+			return res.json(reference);
+		});
+	});
 };

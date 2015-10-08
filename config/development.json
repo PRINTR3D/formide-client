@@ -10,7 +10,7 @@
 		"inviteUrl": "https://api2.formide.com/clients/register/invite"
 	},
 	"cloud": {
-		"url": "https://api2.formide.com"
+		"url": "https://apidev.formide.com"
 	},
 	"db": {
 		"storage": "/database"

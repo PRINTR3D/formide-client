@@ -129,7 +129,7 @@ module.exports = {
 			if (printjob.modelfiles.length < 1) return callback(new Error("Error getting printjob modelfiles"));
 			if (printjob.materials.length < 1) return callback(new Error("Error getting printjob materials"));
 			
-			var reference = require(FormideOS.appRoot + "bin/katana-" + self.config.version + ".json");
+			var reference = require(FormideOS.appRoot + "bin/reference-" + self.config.version + ".json");
 			
 			FormideOS.module('db').db.Sliceprofile.findOne({ _id: printjob.sliceprofile }).lean().exec(function(err, sliceprofile) {
 				if (err) return callback(err);
@@ -169,5 +169,10 @@ module.exports = {
 				});
 			});
 		});
+	},
+	
+	getReferenceFile: function(callback) {
+		var reference = require(FormideOS.appRoot + "bin/reference-" + this.config.version + ".json");
+		return callback(null, reference);
 	}
 }
