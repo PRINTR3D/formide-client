@@ -61,7 +61,7 @@
 				"type": "Int",
 				"mandatory": true,
 				"default": 300,
-				"minvalue": 1,
+				"minvalue": 0,
 				"label":"Base Thickness",
 				"unit":"micron"
 			},
@@ -85,7 +85,7 @@
 				"type": "Int",
 				"mandatory": true,
 				"default": 300,
-				"minvalue": 1,
+				"minvalue": 0,
 				"label":"Interface Thickness",
 				"unit":"micron"
 			},
@@ -133,7 +133,7 @@
 				"type": "Int",
 				"mandatory": true,
 				"default": 300,
-				"minvalue": 1,
+				"minvalue": 0,
 				"label":"Surface Thickness",
 				"unit":"micron"
 			},
@@ -179,11 +179,11 @@
 				"minvalue": 0,
 				"maxvalue": 100,
 				"description":"Amount of overlap with the walls/skin of the model (in percentage)",
-				"label":"Amount",
+				"label":"Overlap amount",
 				"unit":"%"
 			},
 			"pattern": {
-				"type": "select",
+				"type": "String",
 				"mandatory": true,
 				"options": [{
 					"value": "INFILL_AUTOMATIC",
@@ -203,9 +203,6 @@
 				}, {
 					"value": "INFILL_TRIANGLES",
 					"label": "Triangles"
-				}, {
-					"value":"INFILL_CUSTOM",
-					"label":"Custom"
 				}],
 				"default": "INFILL_AUTOMATIC",
 				"description":"Pattern type for infilling",
@@ -220,47 +217,13 @@
 				"description":"Infill pattern angle (custom patterns only)",
 				"label":"Custom Pattern Angle",
 				"unit":"degree"
-			},
-			"customPattern": {
-				"type": "select",
-				"mandatory": false,
-				"options": [{
-					"label":"Honeycomb",
-					"value":["0,495 250,495 500,0 1000,0 1250,495 1500,495 1500,505 1250,505 1000,1000 500,1000 250,505 0,505"]
-				}, {
-					"label":"Triangle",
-					"value":["1000,0 500,1000 0,0"]
-				}, {
-					"label":"Wave",
-					"value":["500,0 550,10 600,40 700,160 800,360 900,640 950,810 985,941 990,980 990,1020 985,1059 950,1190 900,1360 800,1640 700,1840 600,1960 550,1990 500,2000 450,1990 400,1960, 300,1840 200,1640 100,1360 50,1190 15,1059 10,1020 10,980 15,941 50,810 100,640 200,360 300,160 400,40 450,10"]
-				}],
-				"default":["1000,0 500,1000 0,0"],
-				"description":"Custom pattern type",
-				"label":"Custom Pattern"
-			},
-			"customPatternSize": {
-				"type": "select",
-				"mandatory": false,
-				"options": [{
-					"label":"Honeycomb",
-					"value":"1500 1000"
-				}, {
-					"label":"Triangle",
-					"value":"1000 1000"
-				}, {
-					"label":"Waves",
-					"value":"2000 2000"
-				}],
-				"default":"1000 1000",
-				"description":"Size of the boundary box around the custom pattern ",
-				"label":"Custom Pattern Boundary Box Size"
 			}
 		},
 		"support": {
 			"amount": {
 				"type": "Int",
 				"mandatory": true,
-				"default": 45,
+				"default": 10,
 				"minvalue": 1,
 				"maxvalue": 100,
 				"description":"Percentage of infill for support",
@@ -280,7 +243,7 @@
 			"orientationAngle": {
 				"type": "Int",
 				"mandatory": true,
-				"default": 0,
+				"default": 45,
 				"minvalue": 0,
 				"maxvalue":359,
 				"label":"Orientation Angle",
@@ -289,7 +252,7 @@
 			"wallDistance": {
 				"type": "Int",
 				"mandatory": true,
-				"default": 1000,
+				"default": 4000,
 				"minvalue": 1,
 				"label":"Wall Distance",
 				"unit":"micron"
@@ -451,7 +414,7 @@
 			"minfactor": {
 				"type": "Int",
 				"mandatory": true,
-				"default": 0,
+				"default": 60,
 				"minvalue": 0,
 				"maxvalue": 100,
 				"description":"Percentage the fanspeed can at most reduce with",
@@ -471,7 +434,7 @@
 			"minimalSeconds": {
 				"type": "Int",
 				"mandatory": true,
-				"default": 0,
+				"default": 20,
 				"minvalue": 0,
 				"description":"Minimal number of seconds printing a layer should take",
 				"label":"Minimal Print Time",
@@ -481,7 +444,7 @@
 				"type": "Int",
 				"mandatory": true,
 				"default": 0,
-				"minvalue": 0,
+				"minvalue": 50,
 				"description":"Maximal number of seconds printing a layer should take",
 				"label":"Maximal Print Time",
 				"unit":"s"
@@ -500,8 +463,8 @@
 			"layerHeight": {
 				"type": "Float",
 				"mandatory": true,
-				"default": 150,
-				"minvalue": 0,
+				"default": 250,
+				"minvalue": 1,
 				"description":"Height of the layers in the bottom in microns (set to 0 for default layerheigt)",
 				"label":"Layer Height",
 				"unit":"micron"
@@ -509,7 +472,7 @@
 			"speed": {
 				"type": "Int",
 				"mandatory": true,
-				"default": 35,
+				"default": 30,
 				"minvalue": 1,
 				"description":"Printspeed in the bottomlayers",
 				"label":"Print Speed",
@@ -562,8 +525,8 @@
 			"layerHeight": {
 				"type": "Float",
 				"mandatory": true,
-				"default": 0,
-				"minvalue": 0,
+				"default": 200,
+				"minvalue": 1,
 				"includeLowerBound": false,
 				"description":"Height of the layers in the top in microns",
 				"label":"Layer Height",
@@ -581,7 +544,7 @@
 			"amount": {
 				"type": "Int",
 				"mandatory": true,
-				"default": 2000,
+				"default": 4000,
 				"minvalue": 0,
 				"description":"Amount of retraction, (0 if not used)",
 				"label":"Retraction Amount",
@@ -590,7 +553,7 @@
 			"speed": {
 				"type": "Int",
 				"mandatory": true,
-				"default": 30,
+				"default": 20,
 				"minvalue": 1,
 				"description":"Speed at which the filament is retracted",
 				"label":"Retraction Speed",
@@ -608,7 +571,7 @@
 			"minimalExtrusionBeforeRetraction": {
 				"type": "Int",
 				"mandatory": true,
-				"default": 5,
+				"default": 15,
 				"minvalue": 1,
 				"description":"The minimal amount of extrusion that needs to be done before retracting again. This avoids retracting a lot on the same piece of filament.",
 				"label":"Minimal Extrusion Before Retraction",
@@ -803,7 +766,7 @@
 			"upskinSpeed": {
 				"type": "Int",
 				"mandatory": false,
-				"default": 60,
+				"default": 30,
 				"minvalue": 1,
 				"description":"Infill speed of the upskin",
 				"label":"Upskin Speed",
@@ -812,7 +775,7 @@
 			"downskinSpeed": {
 				"type": "Int",
 				"mandatory": false,
-				"default": 60,
+				"default": 30,
 				"minvalue": 1,
 				"description":"Infill speed of the downskin",
 				"label":"Downskin Speed",
@@ -821,7 +784,7 @@
 			"upskinCount":{
 				"type": "Int",
 				"mandatory": false,
-				"default": 2,
+				"default": 3,
 				"minvalue": 1,
 				"description":"Number of layers to check. Skin will be added if the intersection of a layer and the upskinCount layers above it is empty",
 				"label":"Upskin Count",
@@ -830,7 +793,7 @@
 			"downskinCount":{
 				"type": "Int",
 				"mandatory": false,
-				"default": 2,
+				"default": 3,
 				"minvalue": 1,
 				"description":"Number of layers to check. Skin will be added if the intersection of a layer and the downskinCount layers below it is empty",
 				"label":"Downskin Count",
@@ -872,7 +835,7 @@
 			"numberOfLayers": {
 				"type": "Int",
 				"mandatory": true,
-				"default": 1,
+				"default": 2,
 				"minvalue": 0,
 				"description": "Number of layers in which the ABS support is added",
 				"label": "Number of Layers",
@@ -1049,33 +1012,6 @@
 				"description":"Path to where the input model(s) can be found",
 				"label":"Bucket In"
 			},
-			"x": {
-				"type": "Int",
-				"mandatory": true,
-				"default": 0,
-				"minvalue": 0,
-				"description":"Offset coordinate, x direction in microns",
-				"label":"X Offset",
-				"unit":"micron"
-			},
-			"y": {
-				"type": "Int",
-				"mandatory": true,
-				"default": 0,
-				"minvalue": 0,
-				"description":"Offset coordinate, y direction in microns",
-				"label":"Y Offset",
-				"unit":"micron"
-			},
-			"z": {
-				"type": "Int",
-				"mandatory": true,
-				"default": 0,
-				"minvalue": 0,
-				"description":"Offset coordiante, z direction in microns",
-				"label":"Z Offset",
-				"unit":"micron"
-			},
 			"extruder": {
 				"type": "Int",
 				"mandatory": true,
@@ -1132,7 +1068,7 @@
 					"label":"Scale factor y direction"
 				}
 			},
-			"rotate":{
+			"rotation":{
 				"x": {
 					"type": "Float",
 					"mandatory": false,
