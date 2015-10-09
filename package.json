@@ -43,7 +43,7 @@
     "express-session": "~1.10.3",
     "express-validator": "^2.9.0",
     "fancy-errors": "^0.1.2",
-    "formide-client-interface": "^0.3.11",
+    "formide-client-interface": "^0.3.12",
     "formide-client-webhook": "^1.0.27",
     "formide-tools": "printr3d/formide-tools",
     "getmac": "^1.0.7",
