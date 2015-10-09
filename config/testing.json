@@ -20,7 +20,7 @@
 	},
 	"paths": {
 		"temp": "/tmp",
-		"modelfile": "/modelfiles",
+		"modelfiles": "/modelfiles",
 		"gcode": "/gcode"
 	},
 	"printer": {

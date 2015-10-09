@@ -15,7 +15,7 @@ module.exports = {
 	uploadModelfile: function(file, callback) {
 		fs.readFile(file.path, function(err, data) {
 			var hash = uuid.v4();
-			var newPath = FormideOS.config.get('app.storageDir') + FormideOS.config.get('paths.modelfile') + '/' + hash;
+			var newPath = FormideOS.config.get('app.storageDir') + FormideOS.config.get('paths.modelfiles') + '/' + hash;
 			fs.writeFile(newPath, data, function(err) {
 				if (err) {
 					FormideOS.debug.log(err);
@@ -67,7 +67,7 @@ module.exports = {
 	 * Handle modelfile download
 	 */
 	downloadModelfile: function(hash, encoding, callback) {
-		var filename = FormideOS.config.get('app.storageDir') + FormideOS.config.get('paths.modelfile') + '/' + hash;
+		var filename = FormideOS.config.get('app.storageDir') + FormideOS.config.get('paths.modelfiles') + '/' + hash;
 		fs.exists(filename, function(exists) {
 			if(exists) {
 				fs.readFile(filename, function(err, data) {
@@ -131,7 +131,7 @@ module.exports = {
 		.on('response', function(response) {
 			var regexp = /filename=\"(.*)\"/gi;
 			var hash = uuid.v4();
-			var newPath = FormideOS.config.get('app.storageDir') + FormideOS.config.get('paths.modelfile') + '/' + hash;
+			var newPath = FormideOS.config.get('app.storageDir') + FormideOS.config.get('paths.modelfiles') + '/' + hash;
 			var fws = fs.createWriteStream(newPath);
 			response.pipe(fws);
 			response.on( 'end', function() {
