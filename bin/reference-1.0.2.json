@@ -170,6 +170,7 @@
 				"minvalue": 0,
 				"maxvalue": 100,
 				"description":"Percentage of infill (100 is solid)",
+				"label":"Infill percentage",
 				"unit":"%"
 			},
 			"overlap": {
@@ -207,16 +208,6 @@
 				"default": "INFILL_AUTOMATIC",
 				"description":"Pattern type for infilling",
 				"label":"Pattern"
-			},
-			"angle": {
-				"type": "Int",
-				"mandatory": false,
-				"default": 30,
-				"minvalue": 0,
-				"maxvalue": 359,
-				"description":"Infill pattern angle (custom patterns only)",
-				"label":"Custom Pattern Angle",
-				"unit":"degree"
 			}
 		},
 		"support": {
@@ -739,7 +730,7 @@
 			"skin":{
 				"type":"Boolean",
 				"mandatory": true,
-				"default":false,
+				"default":true,
 				"description":"Toggle parameters for up and down skin",
 				"label":"Skin"
 			},
