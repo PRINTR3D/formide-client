@@ -1,6 +1,6 @@
 {
   "name": "formide-client",
-  "version": "0.2.37",
+  "version": "0.2.38",
   "description": "FORMIDE client is a modular 3D printing operating system with the goal of serving all 3D printers.",
   "main": "bootstrap.js",
   "author": "Printr B.V. <info@printr.nl>",
