@@ -109,12 +109,14 @@ module.exports =
 		/*
 		 * Sync printers from local database to cloud (when adding new client or manually syncing cloud/local printers)
 		 */
+/*
 		this.cloud.on('syncPrinters', function(cloudPrinters, callback) {
 			FormideOS.debug.log('Cloud syncPrinters');
 			self.syncPrinters(cloudPrinters, function(err, localPrinters) {
 				return callback(err, localPrinters);
 			});
 		});
+*/
 
 		/*
 		 * Handle disconnect
@@ -211,6 +213,7 @@ module.exports =
 	/*
 	 * Handle syncPrinters from cloud
 	 */
+/*
 	syncPrinters: function(cloudPrinters, callback) {
 		FormideOS.module('db').db.Printer.find().exec(function(err, printers) {
 			if (err) return callback(err);
@@ -255,4 +258,5 @@ module.exports =
 			});
 		});
 	}
+*/
 }
