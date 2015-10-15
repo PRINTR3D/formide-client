@@ -175,14 +175,15 @@ module.exports =
 		var self = this;
 		var hash = uuid.v4();
 		
-		FormideOS.module('db').db.Printer.findOne({ cloudId: data.printerId }).exec(function(err, printer) {
-			if (err) return callback(err);
+		//FormideOS.module('db').db.Printer.findOne({ cloudId: data.printerId }).exec(function(err, printer) {
+			//if (err) return callback(err);
 			FormideOS.module('db').db.Queueitem.create({
 				origin: 'cloud',
 				status: 'queued',
 				gcode: hash,
 				printjob: data.printjob,
-				printer: printer.toObject()
+				port: data.port
+				//printer: printer.toObject()
 			}, function(err, queueitem) {
 				if (err) return callback(err);
 				callback(null, {
@@ -207,7 +208,7 @@ module.exports =
 		        	});
 				});
 			});
-		});
+		//});
 	},
 	
 	/*

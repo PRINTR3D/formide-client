@@ -15,7 +15,7 @@ var schema = new Schema({
 	port: { type: String, unique: true, default: 'Connect printer to select USB port' },
 	baudrate: { type: Number, default: 250000 },
 	user: { type: Schema.Types.ObjectId, ref: 'users' },
-	cloudId: { type: String },
+	//cloudId: { type: String },
 	startGcode: [{ type: String }],
 	endGcode: [{ type: String }],
 	gcodeFlavour: { type: String, required: true, default: "GCODE_FLAVOR_REPRAP" }

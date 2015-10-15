@@ -10,7 +10,7 @@ module.exports = function(routes, db) {
 	 */
 	routes.get('/queue', function(req, res) {
 		if (req.query.port) {
-			db.Queueitem.find({ "printer.port": req.query.port }).exec(function(err, queue) {
+			db.Queueitem.find({ port: req.query.port }).exec(function(err, queue) {
 				if (err) return res.send(err);
 				return res.send(queue);
 			});
@@ -47,7 +47,8 @@ module.exports = function(routes, db) {
 					status: 'queued',
 					gcode: printjob.gcode,
 					printjob: printjob.toObject(),
-					printer: printer.toObject()
+					port: printer.port
+					// printer: printer.toObject()
 				}, function(err, queueitem) {
 					if (err) return res.send(err);
 					return res.send({

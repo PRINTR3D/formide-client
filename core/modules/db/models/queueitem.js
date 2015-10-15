@@ -14,7 +14,8 @@ var schema = new Schema({
 	gcode: { type: String, required: true },
 	status: { type: String, required: true },
 	printjob: { type: Schema.Types.Mixed },
-	printer: { type: Schema.Types.Mixed }
+	port: { type: String, required: true }
+	//printer: { type: Schema.Types.Mixed }
 });
 schema.plugin(timestamps);
 
