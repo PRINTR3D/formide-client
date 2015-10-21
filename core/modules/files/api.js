@@ -13,7 +13,7 @@ module.exports = function(routes, module)
 	 * Download a modelfile by hash in url query
 	 */
 	routes.get('/modelfiles/download', function(req, res) {
-		module.downloadModelfile(req.query.hash, req.query.encoding, function(err, filecontents) {
+		module.downloadFile(req.query.hash, req.query.encoding, function(err, filecontents) {
 			if(err) return res.send(err);
 			return res.send(filecontents);
 		});
@@ -22,12 +22,14 @@ module.exports = function(routes, module)
 	/*
 	 * Download a gcodefile by hash in url query
 	 */
+/*
 	routes.get('/gcodefiles/download', function(req, res) {
 		module.downloadGcode(req.query.hash, req.query.encoding, function(err, response) {
 			if(err) return res.send(err);
 			return res.send(filecontents);
 		});
 	});
+*/
 
 	/*
 	 * Upload a file, can be stl or gcode for now
@@ -42,28 +44,18 @@ module.exports = function(routes, module)
 		
 		var ext = path.extname(req.files.file.originalFilename).toLowerCase();
 
-		if (ext === '.stl') {
-			module.uploadModelfile(req.files.file, function(err, modelfile) {
+		if (ext === '.stl' || ext === '.gcode') {
+			module.uploadFile(req.files.file, "text/" + ext.replace('.', '') ,function(err, uploadedFile) {
 				if (err) return res.send(err);
 				return res.send({
-					success: true,
-					modelfile: modelfile
-				});
-			});
-		}
-		else if (ext === '.gcode') {
-			module.uploadGcode(req.files.file, function(err, gcodefile) {
-				if (err) return res.send(err);
-				return res.send({
-					success: true,
-					gcodefile: gcodefile
+					message: "Uploaded file",
+					uploadedFile: uploadedFile
 				});
 			});
 		}
         else {
 			return res.status(400).json({
-				success: false,
-				message: "Wrong file format"
+				message: "Wrong file format, we only accept stl and gcode"
 			});
 		}
 	});

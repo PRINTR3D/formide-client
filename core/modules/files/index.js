@@ -10,9 +10,9 @@ var request	= require('request');
 module.exports = {
 	
 	/*
-	 * Handle modelfile upload
+	 * Handle file upload
 	 */
-	uploadModelfile: function(file, callback) {
+	uploadFile: function(file, filetype, callback) {
 		fs.readFile(file.path, function(err, data) {
 			var hash = uuid.v4();
 			var newPath = FormideOS.config.get('app.storageDir') + FormideOS.config.get('paths.modelfiles') + '/' + hash;
@@ -26,6 +26,7 @@ module.exports = {
 						prettyname: file.name,
 						filename: file.name,
 						filesize: file.size,
+						filetype: filetype,
 						hash: hash
 					}, function(err, modelfile) {
 						if (err) return callback(err)
@@ -39,6 +40,7 @@ module.exports = {
 	/*
 	 * Handle gcodefile upload
 	 */
+/*
 	uploadGcode: function(file, callback) {
 		fs.readFile(file.path, function( err, data ) {
 			var hash = uuid.v4();
@@ -62,11 +64,12 @@ module.exports = {
 			});
 		});
 	},
+*/
 
 	/*
 	 * Handle modelfile download
 	 */
-	downloadModelfile: function(hash, encoding, callback) {
+	downloadFile: function(hash, encoding, callback) {
 		var filename = FormideOS.config.get('app.storageDir') + FormideOS.config.get('paths.modelfiles') + '/' + hash;
 		fs.exists(filename, function(exists) {
 			if(exists) {
@@ -95,6 +98,7 @@ module.exports = {
 	/*
 	 * Handle gcodefile download
 	 */
+/*
 	downloadGcode: function(hash, encoding, callback) {
 		var filename = FormideOS.config.get('app.storageDir') + FormideOS.config.get('paths.gcode') + '/' + hash;
 		fs.exists(filename, function(exists) {
@@ -119,6 +123,7 @@ module.exports = {
 			}
 		});
 	},
+*/
 	
 	/*
 	 * Handle upload from remote url
