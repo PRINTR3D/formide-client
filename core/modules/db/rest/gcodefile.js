@@ -12,10 +12,13 @@ module.exports = function(routes, db)
 	 * Returns a json list of all uploaded modelfiles (their properties, not the actual files)
 	 */
 	routes.get('/gcodefiles', function(req, res) {
+/*
 		db.Gcodefile.find().exec(function(err, gcodefiles) {
 			if (err) return res.send(err);
 			return res.send(gcodefiles);
 		});
+*/
+		return res.send([]);
 	});
 
 	/*
