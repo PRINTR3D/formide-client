@@ -115,6 +115,12 @@ module.exports = function() {
 			module.instance.init(module.info.config);
 		}
 		
+		if (fs.existsSync(module.info.root + '/models.js')) {
+			// uncache and load database models for module
+			delete require.cache[require.resolve(module.info.root + '/models.js')];
+			require(module.info.root + '/models.js');
+		}
+		
 		if (fs.existsSync(module.info.root + '/api.js')) {
 			module.hasHTTP = true;
 			
@@ -128,16 +134,6 @@ module.exports = function() {
 			
 			FormideOS.http.app.use('/api/' + module.info.namespace, router);
 		}
-		
-/*
-		if (fs.existsSync(module.info.root + '/websocket.js')) {
-			module.hasWS = true;
-			
-			// register module's ws api. Everything is in the same namespace
-			delete require.cache[require.resolve(module.info.root + '/websocket.js')];
-			require(module.info.root + '/websocket.js')(FormideOS.ws, module.instance);
-		}
-*/
 		
 		module.status = 'active';
 		FormideOS.debug.log("module " + moduleName + " activated");

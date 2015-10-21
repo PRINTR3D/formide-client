@@ -18,7 +18,7 @@ module.exports = {
 			}
 			
 			if(req.token) {
-				FormideOS.module('db').db.AccessToken.findOne({ token: req.token}).exec(function(err, accessToken) {
+				FormideOS.db.AccessToken.findOne({ token: req.token}).exec(function(err, accessToken) {
 					if (accessToken) {
 						if (FormideOS.permissions.check(accessToken.permissions, permission)) {
 							FormideOS.debug.log('Permissions correct');

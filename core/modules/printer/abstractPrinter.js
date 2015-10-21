@@ -124,10 +124,10 @@ AbstractPrinter.prototype.command = function(command, parameters, callback) {
 AbstractPrinter.prototype.startPrint = function(id, gcode, callback) {
 	var self = this;
 	// first we set all current printing db queue items for this port back to queued to prevent multiple 'printing' items
-	FormideOS.module('db').db.Queueitem.update({ 'printer.port': self.port }, { status: 'queued' }, { multi: true }, function(err, updated) {
+	FormideOS.db.Queueitem.update({ 'printer.port': self.port }, { status: 'queued' }, { multi: true }, function(err, updated) {
 		if (err) return FormideOS.debug.log(err);
 		// then we select the correct queue item for printing
-		FormideOS.module('db').db.Queueitem.findOne({ _id: id, gcode: gcode }, function(err, queueitem) {
+		FormideOS.db.Queueitem.findOne({ _id: id, gcode: gcode }, function(err, queueitem) {
 			if (err) return FormideOS.debug.log(err);
 			if (queueitem) {
 				// get the file location and send to driver
@@ -189,7 +189,7 @@ AbstractPrinter.prototype.stopPrint = function(callback) {
 	// TODO: implement custom stop gcode array
 	self.driver.stopPrint(self.port, "", function(err, response) {
 		if (err) return FormideOS.debug.log(err);
-		FormideOS.module('db').db.Queueitem.findOne({ _id: self.queueID }, function(err, queueitem) {
+		FormideOS.db.Queueitem.findOne({ _id: self.queueID }, function(err, queueitem) {
 			if (err) return FormideOS.debug.log(err);
 			if (!queueitem) return FormideOS.debug.log('No queue item with that ID found to stop printing');
 			queueitem.status = 'queued';
@@ -210,7 +210,7 @@ AbstractPrinter.prototype.stopPrint = function(callback) {
 AbstractPrinter.prototype.printFinished = function(printjobId) {
 	var self = this;
 	if (printjobId !== self.queueId) FormideOS.debug.log('Warning: driver queue ID and client queue ID are not the same!', true);
-	FormideOS.module('db').db.Queueitem.findOne({ _id: self.queueID }, function(err, queueitem) {
+	FormideOS.db.Queueitem.findOne({ _id: self.queueID }, function(err, queueitem) {
 		if (err) return FormideOS.debug.log(err);
 		if (!queueitem) return FormideOS.debug.log('No queue item with that ID found to handle finished printing');
 		queueitem.status = 'finished';

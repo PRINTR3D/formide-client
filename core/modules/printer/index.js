@@ -65,7 +65,7 @@ module.exports =
 	
 	printerConnected: function(port) {
 		var self = this;
-		//FormideOS.module('db').db.Printer.findOne({ port: port }).exec(function(err, printer) {
+		//FormideOS.db.Printer.findOne({ port: port }).exec(function(err, printer) {
 			//if (err) FormideOS.debug.log(err);
 			//if (!printer) {
 			//	FormideOS.debug.log('Printer needs to be setup: ' + port);

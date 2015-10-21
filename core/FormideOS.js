@@ -31,6 +31,9 @@ FormideOS.debug = require('./utils/debug.js');
 // Global user settings
 FormideOS.settings = require('./utils/settings.js')();
 
+// Database driver
+FormideOS.db = require('./utils/db');
+
 // HTTP server
 FormideOS.http = require('./utils/http').init();
 

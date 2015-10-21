@@ -11,7 +11,7 @@ module.exports = function(routes, module) {
 	 * Login. Post an email address and password as body, get a AccessToken object back
 	 */
 	routes.post('/login', FormideOS.http.auth.authenticate('local-login'), function(req, res) {	
-		FormideOS.module('db').db.AccessToken.generate(req.user, 'local', function(err, accessToken) {
+		FormideOS.db.AccessToken.generate(req.user, 'local', function(err, accessToken) {
 			if (err) return res.json({ success: false, message: err });
 			return res.json({ success: true, access_token: accessToken.token });
 		});
@@ -21,7 +21,7 @@ module.exports = function(routes, module) {
 	 * Get current session. Used permissions.isUser to check AccessToken (req.token), returns success and AccessToken object
 	 */
 	routes.get('/session', FormideOS.http.permissions.isUser, function(req, res) {
-		FormideOS.module('db').db.AccessToken.findOne({ token: req.token }).exec(function(err, accessToken) {
+		FormideOS.db.AccessToken.findOne({ token: req.token }).exec(function(err, accessToken) {
 			if (err) return res.json({ success: false, message: err });
 			return res.json({ success: true, session: accessToken });
 		});
@@ -59,7 +59,7 @@ module.exports = function(routes, module) {
 	 * Get list of all users
 	 */
 	routes.get('/users', FormideOS.http.permissions.isAdmin, function(req, res) {
-		FormideOS.module('db').db.User.find().exec(function(err, users) {
+		FormideOS.db.User.find().exec(function(err, users) {
 			if (err) return res.send(err);
 			return res.send(users);
 		});
@@ -69,7 +69,7 @@ module.exports = function(routes, module) {
 	 * Get a single user object
 	 */
 	routes.get('/users/:id', FormideOS.http.permissions.isAdmin, function(req, res) {
-		FormideOS.module('db').db.User.findOne({ _id: req.params.id }).exec(function(err, user) {
+		FormideOS.db.User.findOne({ _id: req.params.id }).exec(function(err, user) {
 			if (err) return res.send(err);
 			return res.send(user);
 		});
@@ -97,7 +97,7 @@ module.exports = function(routes, module) {
 		});
 		
 /*
-		FormideOS.module('db').db.User.create({
+		FormideOS.db.User.create({
 			email: req.body.email
 		}, function(err, user) {
 			if (err) return res.send({ success: false, error: err });
@@ -130,7 +130,7 @@ module.exports = function(routes, module) {
 	 * Create a new user. req.body should contain all items that User object has in database
 	 */
 	routes.post('/users', FormideOS.http.permissions.isAdmin, function(req, res) {
-		FormideOS.module('db').db.User.create(req.body, function(err, user) {
+		FormideOS.db.User.create(req.body, function(err, user) {
 			if (err) return res.status(400).send(err);
 			if (user) {
 				return res.send({
@@ -148,7 +148,7 @@ module.exports = function(routes, module) {
 	 * Update a user. req.body should contain all the items that User object has in database
 	 */
 	routes.put('/users/:id', FormideOS.http.permissions.isAdmin, function(req, res) {
-		FormideOS.module('db').db.User.update({ _id: req.params.id }, req.body, function(err, user) {
+		FormideOS.db.User.update({ _id: req.params.id }, req.body, function(err, user) {
 			if (err) return res.status(400).send(err);
 			if (user) {
 				return res.send({
@@ -165,7 +165,7 @@ module.exports = function(routes, module) {
 	 * Delete user.
 	 */
 	routes.delete('/users/:id', FormideOS.http.permissions.isAdmin, function(req, res) {
-		FormideOS.module('db').db.User.remove({ _id: req.params.id }, function(err, user) {
+		FormideOS.db.User.remove({ _id: req.params.id }, function(err, user) {
 			if (err) return res.status(400).send(err);
 			if (user) {
 				return res.send({

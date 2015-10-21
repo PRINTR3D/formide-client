@@ -130,7 +130,7 @@ module.exports =
 	 * Handles cloud authentication based on cloudConnectionToken, returns session access_token that cloud uses to perform http calls from then on
 	 */
 	authenticate: function(data, callback) {
-		FormideOS.module('db').db.AccessToken.generate(data, 'cloud', function(err, accessToken) {
+		FormideOS.db.AccessToken.generate(data, 'cloud', function(err, accessToken) {
 			if (err) return callback(err);
 			return callback(null, accessToken);
 		});
@@ -175,9 +175,9 @@ module.exports =
 		var self = this;
 		var hash = uuid.v4();
 		
-		//FormideOS.module('db').db.Printer.findOne({ cloudId: data.printerId }).exec(function(err, printer) {
+		//FormideOS.db.Printer.findOne({ cloudId: data.printerId }).exec(function(err, printer) {
 			//if (err) return callback(err);
-			FormideOS.module('db').db.Queueitem.create({
+			FormideOS.db.Queueitem.create({
 				origin: 'cloud',
 				status: 'queued',
 				gcode: hash,
@@ -216,12 +216,12 @@ module.exports =
 	 */
 /*
 	syncPrinters: function(cloudPrinters, callback) {
-		FormideOS.module('db').db.Printer.find().exec(function(err, printers) {
+		FormideOS.db.Printer.find().exec(function(err, printers) {
 			if (err) return callback(err);
 			async.each(cloudPrinters, function(cloudPrinter, cb) {
 				if (cloudPrinter.delete) {
 					// delete printer
-					FormideOS.module('db').db.Printer.remove({ cloudId: cloudPrinter._id }, function(err, removedPrinter) {
+					FormideOS.db.Printer.remove({ cloudId: cloudPrinter._id }, function(err, removedPrinter) {
 						if (err) {
 							FormideOS.debug.log('Cloud sync error: ' + err );
 							return cb(err);
@@ -234,7 +234,7 @@ module.exports =
 				}
 				else {
 					// update or insert printer
-					FormideOS.module('db').db.Printer.update({ cloudId: cloudPrinter._id }, {
+					FormideOS.db.Printer.update({ cloudId: cloudPrinter._id }, {
 						name: cloudPrinter.name,
 						bed: cloudPrinter.bed,
 						axis: cloudPrinter.axis,

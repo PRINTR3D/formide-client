@@ -43,7 +43,7 @@ module.exports = {
 		var hash = uuid.v4();
 		var callback = callback;
 		
-		FormideOS.module('db').db.Printjob.create({
+		FormideOS.db.Printjob.create({
 			modelfiles: modelfiles,
 			printer: printer,
 			sliceprofile: sliceprofile,
@@ -77,7 +77,7 @@ module.exports = {
 						var response = JSON.parse(response);
 						
 						if(response.status == 200 && response.data.responseID != null) {
-							FormideOS.module('db').db.Printjob
+							FormideOS.db.Printjob
 							.update({ _id: response.data.responseID }, {
 								gcode: response.data.gcode,
 								sliceResponse: response.data,
@@ -95,7 +95,7 @@ module.exports = {
 							FormideOS.events.emit('slicer.progress', response.data);
 						}
 						else {
-							FormideOS.module('db').db.Printjob
+							FormideOS.db.Printjob
 							.update({ _id: response.data.responseID }, {
 								sliceResponse: response.data,
 								sliceFinished: false
@@ -123,7 +123,7 @@ module.exports = {
 		var self = this;
 		
 		// creates a slice request from a printjob database entry
-		FormideOS.module('db').db.Printjob.findOne({ _id: printjobId }).lean().populate('modelfiles materials printer').exec(function(err, printjob) {
+		FormideOS.db.Printjob.findOne({ _id: printjobId }).lean().populate('modelfiles materials printer').exec(function(err, printjob) {
 			if (err) return callback(err);
 			if (printjob.printer === null) return callback(new Error("Error getting printjob printer"));
 			if (printjob.modelfiles.length < 1) return callback(new Error("Error getting printjob modelfiles"));
@@ -131,12 +131,12 @@ module.exports = {
 			
 			var reference = require(FormideOS.appRoot + "bin/reference-" + self.config.version + ".json");
 			
-			FormideOS.module('db').db.Sliceprofile.findOne({ _id: printjob.sliceprofile }).lean().exec(function(err, sliceprofile) {
+			FormideOS.db.Sliceprofile.findOne({ _id: printjob.sliceprofile }).lean().exec(function(err, sliceprofile) {
 				if (err) return callback(err);
 				if (sliceprofile === null) return callback(new Error("Error getting printjob sliceprofile"));
 				formideTools.updateSliceprofile(reference, sliceprofile.settings, function(err, fixedSettings, version) {
 					if (err) return callback(err);
-					FormideOS.module('db').db.Sliceprofile.update({ _id: sliceprofile._id }, { settings: fixedSettings, version: version }, function(err, update) {
+					FormideOS.db.Sliceprofile.update({ _id: sliceprofile._id }, { settings: fixedSettings, version: version }, function(err, update) {
 						if (err) return callback(err);
 						
 						try {

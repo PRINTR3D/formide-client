@@ -9,7 +9,7 @@
 
 module.exports = function(req, res, next) {
 	if (req.token) {
-		FormideOS.module('db').db.AccessToken.findOne({ token: req.token }).exec(function(err, accessToken) {
+		FormideOS.db.AccessToken.findOne({ token: req.token }).exec(function(err, accessToken) {
 			if (accessToken) {
 				FormideOS.debug.log('Access token found in db');
 				return next();

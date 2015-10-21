@@ -15,7 +15,7 @@ module.exports =
 		
 		permissions = JSON.parse(permissions);
 		
-		FormideOS.module('db').db.AccessToken.create({
+		FormideOS.db.AccessToken.create({
 			token: token,
 			permissions: permissions
 		}, function(err, accesstoken) {
@@ -27,7 +27,7 @@ module.exports =
 	 * Get access token from database
 	 */
 	getAccessTokens: function(callback) {
-		FormideOS.module('db').db.AccessToken.find().exec( function(err, tokens) {
+		FormideOS.db.AccessToken.find().exec( function(err, tokens) {
 			return callback(tokens);
 		});
 	},
@@ -36,7 +36,7 @@ module.exports =
 	 * Delete access token from database
 	 */
 	deleteAccessToken: function( token, callback ) {
-		FormideOS.module('db').db.AccessToken.remove({ token: token }, function(err) {
+		FormideOS.db.AccessToken.remove({ token: token }, function(err) {
 			if (err) return callback(err);
 			return callback();
 		});

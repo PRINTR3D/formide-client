@@ -32,7 +32,7 @@ var permissionsMiddleware = function (socket, next) {
 							}
 							else {
 								if (s.request._query.access_token) {
-									FormideOS.module('db').db.AccessToken.findOne({ token: s.request._query.access_token }).exec(function(err, accessToken) {
+									FormideOS.db.AccessToken.findOne({ token: s.request._query.access_token }).exec(function(err, accessToken) {
 										if (err) {
 											FormideOS.debug.log(err);
 											s.disconnect();

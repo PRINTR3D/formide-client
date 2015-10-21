@@ -96,7 +96,7 @@ module.exports = {
 		});
 		
 		passport.deserializeUser(function(id, done) {
-		  	FormideOS.module('db').db.User.findOne({ _id: id }).exec(function(err, user) {
+		  	FormideOS.db.User.findOne({ _id: id }).exec(function(err, user) {
 			  	if (err) return done('user not found', false);
 				if (user) {
 					return done(null, user);
@@ -106,7 +106,7 @@ module.exports = {
 		
 		passport.use('local-login', new LocalStrategy({ usernameField: 'email' }, function(email, password, next) {
 			FormideOS.debug.log('Login attempt for ' + email);
-			FormideOS.module('db').db.User.authenticate(email, password, function(err, user) {
+			FormideOS.db.User.authenticate(email, password, function(err, user) {
 				if (err) return next(err);
 				if (!user || user === 'undefined') {
 					return next(null, false, { message: 'Incorrect user credentials' });

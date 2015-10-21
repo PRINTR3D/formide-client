@@ -22,7 +22,7 @@ module.exports = {
 					return callback(err);
 				}
 				else {
-					FormideOS.module('db').db.Modelfile.create({
+					FormideOS.db.Modelfile.create({
 						prettyname: file.name,
 						filename: file.name,
 						filesize: file.size,
@@ -51,7 +51,7 @@ module.exports = {
 					return callback(err);
 				}
 				else {
-					FormideOS.module('db').db.Gcodefile.create({
+					FormideOS.db.Gcodefile.create({
 						prettyname: file.name,
 						filename: file.name,
 						filesize: file.size,
@@ -140,7 +140,7 @@ module.exports = {
 			var fws = fs.createWriteStream(newPath);
 			response.pipe(fws);
 			response.on( 'end', function() {
-				FormideOS.module('db').db.Modelfile.create({
+				FormideOS.db.Modelfile.create({
 					prettyname: filename,
 					filename: filename,
 					filesize: fws.bytesWritten,

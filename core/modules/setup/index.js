@@ -41,7 +41,7 @@ module.exports = {
 	registerOwner: function(owner_email, owner_password, registertoken, cb) {
 		var self = this;
 		
-		FormideOS.module('db').db.User.findOne({ isOwner: true }).exec(function(err, user) {
+		FormideOS.db.User.findOne({ isOwner: true }).exec(function(err, user) {
 			if (err) return cb(err);
 			
 			if (user) {
@@ -51,7 +51,7 @@ module.exports = {
 			}
 			
 			// create a new owner/admin user
-			FormideOS.module('db').db.User.create({
+			FormideOS.db.User.create({
 				email: owner_email,
 				password: owner_password,
 				isOwner: true,
@@ -75,13 +75,13 @@ module.exports = {
 						if (!response.clientToken) {
 							FormideOS.debug.log(response.message, true);
 							// remove new local owner if cloud ownership fails
-							FormideOS.module('db').db.User.remove({ cloudConnectionToken: registertoken }, function(err) {
+							FormideOS.db.User.remove({ cloudConnectionToken: registertoken }, function(err) {
 								if (err) return cb(err);
 								return cb(new Error(response.message));
 							});
 						}
 						else {
-							FormideOS.module('db').db.User.update({ cloudConnectionToken: registertoken }, { cloudConnectionToken: response.clientToken }, function(err, user) {
+							FormideOS.db.User.update({ cloudConnectionToken: registertoken }, { cloudConnectionToken: response.clientToken }, function(err, user) {
 								if (err) return cb(err);
 								FormideOS.debug.log('cloud user connected with clientToken ' + response.clientToken);
 								return cb(null, user);
