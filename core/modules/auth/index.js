@@ -19,10 +19,7 @@ module.exports =
 			token: token,
 			permissions: permissions
 		}, function(err, accesstoken) {
-			return callback({
-			  	success: true,
-			  	token: accesstoken
-			});
+			return callback(null, token.access_token);
 		});
 	},
 

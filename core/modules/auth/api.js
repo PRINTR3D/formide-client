@@ -32,7 +32,7 @@ module.exports = function(routes, module) {
 	 */
 	routes.get('/tokens', FormideOS.http.permissions.isAdmin, function( req, res ) {
 		module.getAccessTokens(function(tokens) {
-			return res.send(tokens);
+			return res.json(tokens);
 		});
 	});
 
@@ -41,7 +41,7 @@ module.exports = function(routes, module) {
 	 */
 	routes.post('/tokens', FormideOS.http.permissions.isAdmin, function(req, res) {
 		module.generateAccessToken(req.body.permissions, function(token) {
-			return res.send(token);
+			return res.json({ success: true, session: accessToken });
 		});
 	});
 
