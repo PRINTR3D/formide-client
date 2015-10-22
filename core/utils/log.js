@@ -11,6 +11,7 @@
 var callerId 	= require('caller-id');
 var colors 		= require('colors');
 var clc 		= require('cli-color');
+var log 		= require('captains-log')();
 
 function addZero(i) {
     if (i < 10) {
@@ -22,7 +23,10 @@ function addZero(i) {
 module.exports = {
 	
 	modules: {},
+	
+	log: log
 
+/*
 	log: function(debug, severe) {
 		if(FormideOS.config.get('app.debug') == true) {
 			severe = severe || false;
@@ -77,4 +81,5 @@ module.exports = {
 			}
 		}
 	}
+*/
 }

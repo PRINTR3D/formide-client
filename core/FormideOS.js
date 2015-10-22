@@ -26,7 +26,7 @@ FormideOS.config = require('./utils/config.js')();
 FormideOS.events = require('./utils/events.js');
 
 // Debug
-FormideOS.debug = require('./utils/debug.js');
+FormideOS.log = require('./utils/log.js');
 
 // Global user settings
 FormideOS.settings = require('./utils/settings.js')();
