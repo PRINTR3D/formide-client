@@ -12,7 +12,7 @@ module.exports = {
 	
 	// update system
 	updateOS: function(cb) {
-		FormideOS.debug.log('Started update');
+		FormideOS.log('Started update');
 		
 		// wait 2 seconds before sending updated.started
 		setTimeout(function() {
@@ -22,17 +22,17 @@ module.exports = {
 		cb(null, "Started update");
 		var child = exec('npm install formide-client -g', function (error, stdout, stderr) {
 			if (stderr !== null) {
-				FormideOS.debug.log('Finished update');
+				FormideOS.log('Finished update');
 				FormideOS.events.emit('update.finished', { message: stdout });
 				//cb(null, stderr);
 			}
 			if (stdout !== null) {
-				FormideOS.debug.log('Finished update');
+				FormideOS.log('Finished update');
 				FormideOS.events.emit('update.finished', { message: stdout });
 				//cb(null, stdout);
     		}
 			if (error !== null) {
-				FormideOS.debug.log('Failed update with error: ' + error);
+				FormideOS.log('Failed update with error: ' + error);
 				FormideOS.events.emit('update.failed', { message: error });
 				//cb(error);
     		}

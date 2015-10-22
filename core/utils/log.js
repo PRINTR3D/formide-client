@@ -8,18 +8,6 @@
  *	so feel free to make it better!
  */
 
-var log 		= require('captains-log')();
+var log = require('captains-log')();
 
-function addZero(i) {
-    if (i < 10) {
-        i = "0" + i;
-    }
-    return i;
-}
-
-module.exports = {
-	
-	modules: {},
-	
-	log: log
-}
+module.exports = log;

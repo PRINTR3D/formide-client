@@ -21,11 +21,11 @@ module.exports = {
 				FormideOS.db.AccessToken.findOne({ token: req.token}).exec(function(err, accessToken) {
 					if (accessToken) {
 						if (FormideOS.permissions.check(accessToken.permissions, permission)) {
-							FormideOS.debug.log('Permissions correct');
+							FormideOS.log('Permissions correct');
 							return next();
 						}
 						else {
-							FormideOS.debug.log('Permissions incorrect');
+							FormideOS.log('Permissions incorrect');
 							return res.json({
 								status: 401,
 								errors: 'No permission'
@@ -33,7 +33,7 @@ module.exports = {
 						}
 					}
 					else {
-						FormideOS.debug.log('No access token found in db');
+						FormideOS.log('No access token found in db');
 						return res.json({
 							status: 401,
 							errors: 'No permission'
@@ -42,7 +42,7 @@ module.exports = {
 				});
 			}
 			else {
-				FormideOS.debug.log('No token found in request');
+				FormideOS.log('No token found in request');
 				return res.json({
 					status: 401,
 					errors: 'No permission'

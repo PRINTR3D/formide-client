@@ -88,7 +88,7 @@ module.exports = function(routes, module) {
 			},
 			strictSSL: false
 		}, function(err, httpResponse, body) {
-			if (err) return FormideOS.debug.log('User invitation error ' + err, true);
+			if (err) return FormideOS.log('User invitation error ' + err, true);
 			var response = JSON.parse(body);
 			return res.send({
 				success: true,
@@ -110,12 +110,12 @@ module.exports = function(routes, module) {
 				},
 				strictSSL: false
 			}, function( err, httpResponse, body ) {
-				if (err) return FormideOS.debug.log('user invitation error ' + err, true);
+				if (err) return FormideOS.log('user invitation error ' + err, true);
 				var response = JSON.parse(body);
 				user.cloudConnectionToken = response.clientToken;
 				user.save(function(err, user) {
-					if (err) return FormideOS.debug.log(err, true);
-					FormideOS.debug.log('cloud user connected with clientToken ' + response.clientToken + '. Still waiting for user to accept');
+					if (err) return FormideOS.log(err, true);
+					FormideOS.log('cloud user connected with clientToken ' + response.clientToken + '. Still waiting for user to accept');
 					return res.send({
 						success: true,
 						user: user

@@ -18,11 +18,11 @@ module.exports = {
 
 		if(process.platform == 'darwin') {
 			this.katana	= require(FormideOS.appRoot + 'bin/osx/katana');
-			FormideOS.debug.log('Binded katana in osx/katana');
+			FormideOS.log('Binded katana in osx/katana');
 		}
 		else if(process.platform == 'linux') {
 			this.katana	= require(FormideOS.appRoot + 'bin/rpi/katana');
-			FormideOS.debug.log('Binded katana in rpi/katana');
+			FormideOS.log('Binded katana in rpi/katana');
 		}
 	},
 
@@ -83,7 +83,7 @@ module.exports = {
 								sliceResponse: response.data,
 								sliceFinished: true
 							}, function(err, printjob) {
-								if (err) FormideOS.debug.log(err);
+								if (err) FormideOS.log(err);
 								FormideOS.events.emit('slicer.finished', {
 									title: "Slicer finished",
 									message: "Finished slicing " + response.data.responseID,
@@ -100,7 +100,7 @@ module.exports = {
 								sliceResponse: response.data,
 								sliceFinished: false
 							}, function(err, printjob) {
-								if (err) FormideOS.debug.log(err);
+								if (err) FormideOS.log(err);
 								FormideOS.events.emit('slicer.failed', {
 									title: "Slicer error",
 									status: response.status,
@@ -111,7 +111,7 @@ module.exports = {
 						}
 					}
 					catch(e) {
-						FormideOS.debug.log(e);
+						FormideOS.log(e);
 					}
 				});
 			});

@@ -15,9 +15,9 @@ var pkg		= require('./package.json');
 // Load formideos core file
 require('./core/FormideOS');
 
-FormideOS.debug.log('==========================================');
-FormideOS.debug.log('        Starting FORMIDEOS v' + pkg.version);
-FormideOS.debug.log('==========================================');
+FormideOS.log('==========================================');
+FormideOS.log('        Starting FORMIDEOS v' + pkg.version);
+FormideOS.log('==========================================');
 	
 // Load core modules
 FormideOS.moduleManager.loadModule('core/modules/db', 		'db', 		true);

@@ -51,7 +51,7 @@ module.exports =
 						port: FormideOS.config.get('app.port')
 					}, function(response) {
 						if (response.success) {
-							FormideOS.debug.log('Cloud connected');
+							FormideOS.log('Cloud connected');
 							
 							// forward all events to the cloud
 							FormideOS.events.onAny(function(data) {
@@ -60,7 +60,7 @@ module.exports =
 						}
 						else {
 							// something went wrong when connecting to the cloud
-							FormideOS.debug.log('Cloud connection error: ' + response.message);
+							FormideOS.log('Cloud connection error: ' + response.message);
 						}
 					});
 				});
@@ -80,7 +80,7 @@ module.exports =
 		this.cloud.on('authenticateUser', function(data, callback) {
 			this.authenticate(data, function(err, accessToken) {
 				if (err) return callback(err);
-				FormideOS.debug.log('Cloud user authorized with access_token ' + accessToken.token);
+				FormideOS.log('Cloud user authorized with access_token ' + accessToken.token);
 				return callback(null, accessToken.token);
 			});
 		}.bind(this));
@@ -89,7 +89,7 @@ module.exports =
 		 * HTTP proxy request from cloud
 		 */
 		this.cloud.on('http', function(data, callback) {
-			FormideOS.debug.log('Cloud http call: ' + data.url);
+			FormideOS.log('Cloud http call: ' + data.url);
 			// call http function
 			this.http(data, function(err, response) {
 				return callback(response);
@@ -100,7 +100,7 @@ module.exports =
 		 * Send a gcode file to a client to print a cloud sliced printjob
 		 */
 		this.cloud.on('addToQueue', function(data, callback) {
-			FormideOS.debug.log('Cloud addToQueue: ' + data.hash);
+			FormideOS.log('Cloud addToQueue: ' + data.hash);
 			self.addToQueue(data, function(err, response) {
 				return callback(err, response);
 			});
@@ -111,7 +111,7 @@ module.exports =
 		 */
 /*
 		this.cloud.on('syncPrinters', function(cloudPrinters, callback) {
-			FormideOS.debug.log('Cloud syncPrinters');
+			FormideOS.log('Cloud syncPrinters');
 			self.syncPrinters(cloudPrinters, function(err, localPrinters) {
 				return callback(err, localPrinters);
 			});
@@ -122,7 +122,7 @@ module.exports =
 		 * Handle disconnect
 	 	 */
 		this.cloud.on('disconnect', function() {
-			FormideOS.debug.log('Cloud disconnected');
+			FormideOS.log('Cloud disconnected');
 		});
 	},
 
@@ -204,7 +204,7 @@ module.exports =
 					var fws = fs.createWriteStream(newPath);
 					response.pipe(fws);
 					response.on( 'end', function() {
-						FormideOS.debug.log('finished downloading gcode. Recieved ' + fws.bytesWritten + ' bytes');
+						FormideOS.log('finished downloading gcode. Recieved ' + fws.bytesWritten + ' bytes');
 		        	});
 				});
 			});
@@ -223,11 +223,11 @@ module.exports =
 					// delete printer
 					FormideOS.db.Printer.remove({ cloudId: cloudPrinter._id }, function(err, removedPrinter) {
 						if (err) {
-							FormideOS.debug.log('Cloud sync error: ' + err );
+							FormideOS.log('Cloud sync error: ' + err );
 							return cb(err);
 						}
 						else {
-							FormideOS.debug.log('Removed printer via cloud: ' + removedPrinter);
+							FormideOS.log('Removed printer via cloud: ' + removedPrinter);
 							return cb(null, {});
 						}
 					});
@@ -244,11 +244,11 @@ module.exports =
 						cloudId: cloudPrinter._id
 					}, { upsert: true }, function(err, syncedPrinter) {
 						if (err) {
-							FormideOS.debug.log('Cloud sync error: ' + err );
+							FormideOS.log('Cloud sync error: ' + err );
 							return cb(err);
 						}
 						else {
-							FormideOS.debug.log('Synced printer from cloud: ' + syncedPrinter);
+							FormideOS.log('Synced printer from cloud: ' + syncedPrinter);
 							return cb(null, {});
 						}
 					});

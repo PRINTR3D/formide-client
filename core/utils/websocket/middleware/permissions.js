@@ -23,38 +23,38 @@ var permissionsMiddleware = function (socket, next) {
 						if (nsp.name != '/') {
 							if (s.request.session.permissions) {
 								if (FormideOS.permissions.check(s.request.session.permissions, nsp.permissions ) === false) {
-									FormideOS.debug.log('Socket permissions incorrect');
+									FormideOS.log('Socket permissions incorrect');
 									s.disconnect();
 								}
 								else {
-									FormideOS.debug.log('Socket permissions correct');
+									FormideOS.log('Socket permissions correct');
 								}
 							}
 							else {
 								if (s.request._query.access_token) {
 									FormideOS.db.AccessToken.findOne({ token: s.request._query.access_token }).exec(function(err, accessToken) {
 										if (err) {
-											FormideOS.debug.log(err);
+											FormideOS.log(err);
 											s.disconnect();
 										}
 										if (accessToken == null) {
-											FormideOS.debug.log('No access token found');
+											FormideOS.log('No access token found');
 											s.disconnect();
 										}
 										else {
 											s.request.session.permissions = accessToken.permissions;
 											if (FormideOS.permissions.check(s.request.session.permissions, nsp.permissions ) === false) {
-												FormideOS.debug.log('Socket permissions incorrect');
+												FormideOS.log('Socket permissions incorrect');
 												s.disconnect();
 											}
 											else {
-												FormideOS.debug.log('Socket permissions correct');
+												FormideOS.log('Socket permissions correct');
 											}
 										}
 									});
 								}
 								else {
-									FormideOS.debug.log('No access token found in session or request');
+									FormideOS.log('No access token found in session or request');
 									s.disconnect();
 								}
 							}
