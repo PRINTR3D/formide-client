@@ -15,9 +15,13 @@ var pkg		= require('./package.json');
 // Load formideos core file
 require('./core/FormideOS');
 
-FormideOS.log.info('==========================================');
-FormideOS.log.info('Starting FORMIDEOS v' + pkg.version + ' as ' + process.env.NODE_ENV);
-FormideOS.log.info('==========================================');
+// Log awesome app starter logo
+require('./core/utils/logLogo');
+
+// Log app header
+FormideOS.log.info('==============================================');
+FormideOS.log.info('Starting formide-client v' + pkg.version + ' as ' + process.env.NODE_ENV);
+FormideOS.log.info('==============================================');
 
 // Load core modules
 FormideOS.moduleManager.loadModule('core/modules/db', 		'db', 		true);
