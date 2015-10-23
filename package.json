@@ -99,7 +99,6 @@
     "npm": "~2.14.0"
   },
   "bin": {
-    "formideos": "bin/formide-client",
     "formide-client": "bin/formide-client"
   },
   "preferGlobal": true
