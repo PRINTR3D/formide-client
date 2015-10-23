@@ -13,6 +13,7 @@ ADD . /srv/formide-client
 # Expose port
 EXPOSE 1337
 EXPOSE 8080
+EXPOSE 3001
 
 # Run app using nodemon
 CMD node bootstrap.js
