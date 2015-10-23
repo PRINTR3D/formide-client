@@ -60,7 +60,7 @@ module.exports =
 						}
 						else {
 							// something went wrong when connecting to the cloud
-							FormideOS.log('Cloud connection error: ' + response.message);
+							FormideOS.log.error('Cloud connection error: ' + response.message);
 						}
 					});
 				});

@@ -25,7 +25,7 @@ module.exports = {
 							return next();
 						}
 						else {
-							FormideOS.log('Permissions incorrect');
+							FormideOS.log.warn('Permissions incorrect');
 							return res.json({
 								status: 401,
 								errors: 'No permission'
@@ -33,7 +33,7 @@ module.exports = {
 						}
 					}
 					else {
-						FormideOS.log('No access token found in db');
+						FormideOS.log.warn('No access token found in db');
 						return res.json({
 							status: 401,
 							errors: 'No permission'
@@ -42,7 +42,7 @@ module.exports = {
 				});
 			}
 			else {
-				FormideOS.log('No token found in request');
+				FormideOS.log.error('No token found in request');
 				return res.json({
 					status: 401,
 					errors: 'No permission'

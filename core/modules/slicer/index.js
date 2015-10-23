@@ -83,11 +83,12 @@ module.exports = {
 								sliceResponse: response.data,
 								sliceFinished: true
 							}, function(err, printjob) {
-								if (err) FormideOS.log(err);
+								if (err) FormideOS.log.error(err.message);
 								FormideOS.events.emit('slicer.finished', {
 									title: "Slicer finished",
 									message: "Finished slicing " + response.data.responseID,
-									data: response.data
+									data: response.data,
+									notification: true
 								});
 							});
 						}
@@ -100,18 +101,19 @@ module.exports = {
 								sliceResponse: response.data,
 								sliceFinished: false
 							}, function(err, printjob) {
-								if (err) FormideOS.log(err);
+								if (err) FormideOS.log.error(err.message);
 								FormideOS.events.emit('slicer.failed', {
 									title: "Slicer error",
 									status: response.status,
 									message: response.data.msg,
-									data: response.data
+									data: response.data,
+									notification: true
 								});
 							});
 						}
 					}
 					catch(e) {
-						FormideOS.log(e);
+						FormideOS.log.error(e.message);
 					}
 				});
 			});

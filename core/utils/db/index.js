@@ -22,7 +22,7 @@ try {
     mongoose.connect('tingodb://' + storage);
 }
 catch(e) {
-    console.log(e);
+    FormideOS.log.error(e.message);
 }
 
 module.exports = {

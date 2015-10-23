@@ -19,14 +19,14 @@ FormideOS = {};
 FormideOS.coreRoot = path.resolve(__dirname) + '/';
 FormideOS.appRoot = path.resolve(__dirname + '/../') + '/';
 
+// Debug
+FormideOS.log = require('./utils/log.js');
+
 // Config
 FormideOS.config = require('./utils/config.js')();
 
 // Events
 FormideOS.events = require('./utils/events.js');
-
-// Debug
-FormideOS.log = require('./utils/log.js');
 
 // Global user settings
 FormideOS.settings = require('./utils/settings.js')();

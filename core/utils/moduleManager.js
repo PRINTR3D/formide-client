@@ -42,7 +42,7 @@ module.exports = function() {
 			moduleInfo.hasIndex = true;
 		}
 		else {
-			FormideOS.log("Module " + moduleName + " could not be loaded. No index.js file found");
+			FormideOS.log.error("Module " + moduleName + " could not be loaded. No index.js file found");
 			return;
 		}
 		
@@ -66,7 +66,7 @@ module.exports = function() {
 				moduleInfo.version = pack.version;
 			}
 			catch (e) {
-				FormideOS.log("module " + moduleName + " could not be loaded. Problem with loading package.json: " + e);
+				FormideOS.log.error("module " + moduleName + " could not be loaded. Problem with loading package.json: " + e);
 			}
 		}
 		
@@ -77,7 +77,7 @@ module.exports = function() {
 				moduleInfo.config = config;
 			}
 			catch (e) {
-				FormideOS.log("module " + moduleName + " could not be loaded. Problem with loading config.json: " + e);
+				FormideOS.log.error("module " + moduleName + " could not be loaded. Problem with loading config.json: " + e);
 			}
 		}
 		else if (FormideOS.config.get(moduleName)) {
@@ -94,7 +94,7 @@ module.exports = function() {
 			status: 'loaded'
 		}
 		
-		FormideOS.log("module " + moduleName + " loaded");
+		FormideOS.log(moduleName + " loaded");
 		FormideOS.events.emit("moduleManager.moduleLoaded", moduleInfo);
 		return modules[moduleName];
 	}
@@ -104,7 +104,7 @@ module.exports = function() {
 			return modules[moduleName];
 		}
 		else {
-			FormideOS.log("Unknown module requested: " + moduleName);
+			FormideOS.log.warn("Unknown module requested: " + moduleName);
 		}
 	}
 	
@@ -136,7 +136,7 @@ module.exports = function() {
 		}
 		
 		module.status = 'active';
-		FormideOS.log("module " + moduleName + " activated");
+		FormideOS.log(moduleName + " activated");
 		FormideOS.events.emit("moduleManager.moduleActivated", module.info);
 		
 		return module;

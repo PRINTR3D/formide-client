@@ -10,17 +10,67 @@
 
 var io 							= require('socket.io');
 //var permissionsMiddleware 		= require('./middleware/permissions');
+var ws = require("nodejs-websocket");
 
 module.exports = {
 
 	init: function() {
+		
+		// base websocket server to LCD display notifications and events
+		var server = ws.createServer(function (conn) {
+			FormideOS.log("Native UI connected");
+			conn.on("text", function (message) {
+				try {
+					var data = JSON.parse(message);
+					if (data.channel === "authenticate") {
+						authenticate(data.data.accessToken, function(err, accessToken) {
+							if (err) console.log(err);
+							
+							conn.sendText(JSON.stringify({
+								channel: "authenticate",
+								data: {
+									success: true,
+									message: "Authentication successful!",
+									notification: false
+								}
+							}))
+							
+							FormideOS.events.onAny(function(data) {
+								console.log(this.event);
+								data = data || {};
+								data.device = "LOCAL";
+								conn.sendText(JSON.stringify({
+									channel: this.event,
+									data: data
+								}));
+							});
+						});
+					}
+				}
+				catch (e) {
+					console.log(e);
+				}
+			});
+			
+		    conn.on("close", function (code, reason) {
+		        FormideOS.log("Native UI disconnected: " + reason);
+		    });
+		    
+		    conn.on("error", function (err) {
+			    FormideOS.events.offAny(function (){});
+				FormideOS.log.error(err.message);
+		    });
+		    
+		}).listen(3001)
+		
+		
 		
 		var socketio = io.listen(FormideOS.http.server);
 		
 		// emit all system events
 		socketio.on('connection', function(socket) {
 			socket.on('authenticate', function(data, callback) {
-				FormideOS.db.AccessToken.findOne({ token: data.accessToken }).exec(function(err, accessToken) {
+				authenticate(data.accessToken, function(err, accessToken) {
 					if (err) {
 						callback({ success: false, message: err.message });
 						return socket.disconnect();
@@ -39,6 +89,12 @@ module.exports = {
 				});
 			});
 		});
+		
+		function authenticate(token, callback) {
+			FormideOS.db.AccessToken.findOne({ token: token }).exec(function(err, accessToken) {
+				return callback(err, accessToken);
+			});
+		}
 		
 		return socketio;
 	}

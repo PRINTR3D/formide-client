@@ -15,7 +15,7 @@ module.exports = function(req, res, next) {
 				return next();
 			}
 			else {
-				FormideOS.log('No access token found in db');
+				FormideOS.log.warn('No access token found in db');
 				return res.json({
 					status: 401,
 					errors: 'No permission'
@@ -24,7 +24,7 @@ module.exports = function(req, res, next) {
 		});
 	}
 	else {
-		FormideOS.log('No access token found in request');
+		FormideOS.log.error('No access token found in request');
 		return res.json({
 			status: 401,
 			errors: 'No permission'

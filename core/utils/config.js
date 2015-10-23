@@ -14,12 +14,10 @@ var path = require('path');
 module.exports = function()
 {
 	var env = process.env.NODE_ENV || 'production';
-	console.log("Environment: " + env);
 	var cfg = require('../../config/' + env + '.json');
 	
 	// get current home directory for user storage
 	cfg.app.storageDir = path.resolve(process.env.HOME + "/formide") || path.resolve(process.env.USERPROFILE + "/formide");
-	console.log("Storage dir: " + cfg.app.storageDir);
 
 	function parts(key) {
 		if (Array.isArray(key)) return key

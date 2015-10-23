@@ -15,10 +15,10 @@ var pkg		= require('./package.json');
 // Load formideos core file
 require('./core/FormideOS');
 
-FormideOS.log('==========================================');
-FormideOS.log('        Starting FORMIDEOS v' + pkg.version);
-FormideOS.log('==========================================');
-	
+FormideOS.log.info('==========================================');
+FormideOS.log.info('Starting FORMIDEOS v' + pkg.version + ' as ' + process.env.NODE_ENV);
+FormideOS.log.info('==========================================');
+
 // Load core modules
 FormideOS.moduleManager.loadModule('core/modules/db', 		'db', 		true);
 FormideOS.moduleManager.loadModule('core/modules/settings',	'settings', true);

@@ -46,7 +46,7 @@ module.exports = {
 			
 			if (user) {
 				var msg = "This device already has a local owner, contact " + user.email + " to get access.";
-				FormideOS.log(msg, true);
+				FormideOS.log.warn(msg);
 				return cb(new Error(msg));
 			}
 			
@@ -73,7 +73,7 @@ module.exports = {
 						if (err) return cb(err);
 						var response = JSON.parse(body);
 						if (!response.clientToken) {
-							FormideOS.log(response.message, true);
+							FormideOS.log.warn(response.message);
 							// remove new local owner if cloud ownership fails
 							FormideOS.db.User.remove({ cloudConnectionToken: registertoken }, function(err) {
 								if (err) return cb(err);

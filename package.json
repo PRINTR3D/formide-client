@@ -62,6 +62,7 @@
     "node-uuid": "~1.4.3",
     "nodejs-config": "1.0.0",
     "nodejs-leds": "0.0.3",
+    "nodejs-websocket": "^1.4.0",
     "npm": "~2.7.0",
     "observed": "^1.1.1",
     "passport": "~0.2.1",

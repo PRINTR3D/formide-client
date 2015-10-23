@@ -70,7 +70,7 @@ usersSchema.static('comparePassword', function(candidatePassword, realPassword, 
 });
 
 usersSchema.static('getUser', function(email, password, cb) {
-	OAuthUsersModel.authenticate(email, password, function(err, user) {
+	usersSchema.authenticate(email, password, function(err, user) {
 		if (err || !user) return cb(err);
 		cb(null, user.email);
 	});
@@ -79,8 +79,9 @@ usersSchema.static('getUser', function(email, password, cb) {
 usersSchema.static('authenticate', function(email, password, cb) {
 	this.findOne({ email: email }, function(err, user) {
 		if (err || !user) return cb(err);
-		OAuthUsersModel.comparePassword(password, user.password, function(err, match) {
-			cb(null, match ? user : null)
+		bcrypt.compare(password, user.password, function(err, isMatch) {
+			if(err) return cb(err);
+			cb(null, isMatch ? user : null)
 		});
 	});
 });

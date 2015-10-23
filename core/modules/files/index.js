@@ -18,7 +18,7 @@ module.exports = {
 			var newPath = FormideOS.config.get('app.storageDir') + FormideOS.config.get('paths.modelfiles') + '/' + hash;
 			fs.writeFile(newPath, data, function(err) {
 				if (err) {
-					FormideOS.log(err);
+					FormideOS.log.error(err.message);
 					return callback(err);
 				}
 				else {
@@ -75,7 +75,7 @@ module.exports = {
 			if(exists) {
 				fs.readFile(filename, function(err, data) {
 					if (err) {
-						FormideOS.log(err, true);
+						FormideOS.log.error(err.message);
 						return callback(err);
 					}
 					else {

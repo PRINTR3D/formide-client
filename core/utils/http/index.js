@@ -59,7 +59,7 @@ module.exports = {
 		
 		// listen to port stated in app.port config (usually port 1337)
 		this.httpServer.listen(FormideOS.config.get('app.port'), function() {
-			FormideOS.log('server running on port ' + this.httpServer.address().port);
+			FormideOS.log.info('server running on port ' + this.httpServer.address().port);
 		}.bind(this));
 		
 		// use json body parser for json post requests
@@ -105,12 +105,13 @@ module.exports = {
 		});
 		
 		passport.use('local-login', new LocalStrategy({ usernameField: 'email' }, function(email, password, next) {
-			FormideOS.log('Login attempt for ' + email);
 			FormideOS.db.User.authenticate(email, password, function(err, user) {
 				if (err) return next(err);
 				if (!user || user === 'undefined') {
+					FormideOS.log.warn('Failed login for ' + email);
 					return next(null, false, { message: 'Incorrect user credentials' });
 				}
+				FormideOS.log('Successful login for ' + email);
 				return next(null, user);
 			});
 		}));

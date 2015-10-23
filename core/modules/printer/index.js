@@ -32,7 +32,7 @@ module.exports =
 			this.driver.start(function(err, started, event) {
 				
 				if (err) {
-					FormideOS.log('Formidriver err: ' + err);
+					FormideOS.log.error('Formidriver err: ' + err.message);
 				}
 				
 				else if (started) {
@@ -59,7 +59,7 @@ module.exports =
 			});
 		}
 		else {
-			FormideOS.log("Your system is not compatible with one of our driver binaries", true);
+			FormideOS.log.warn("Your system is not compatible with one of our driver binaries");
 		}
 	},
 	
@@ -72,7 +72,7 @@ module.exports =
 			//	FormideOS.events.emit('printer.setup', { port: port });
 			//}
 			FormideOS.log('Printer connected: ' + port);
-			FormideOS.events.emit('printer.connected', { port: port });
+			FormideOS.events.emit('printer.connected', { port: port, notification: true, level: "success", title: "Printer connected", message: "A printer was connected" });
 			self.printers[port.split("/")[2]] = new AbstractPrinter(port, self.driver);
 		//});
 	},
@@ -80,15 +80,15 @@ module.exports =
 	printerDisconnected: function(port) {
 		if (this.printers[port.split("/")[2]] !== undefined) {
 			FormideOS.log('Printer disconnected: ' + port);
-			FormideOS.events.emit('printer.disconnected', { port: port });
-			this.printers[port.split("/").statusInterval = null];
+			FormideOS.events.emit('printer.disconnected', { port: port, notification: true, level: "warning", title: "Printer disconnected", message: "A printer was disconnected" });
+			clearInterval(this.printers[port.split("/")[2]].statusInterval);
 			delete this.printers[port.split("/")[2]];
 		}
 	},
 	
 	printerOnline: function(port) {
 		FormideOS.log('Printer online: ' + port);
-		FormideOS.events.emit('printer.online', { port: port });
+		//FormideOS.events.emit('printer.online', { port: port });
 	},
 	
 	printFinished: function(port, printjobId) {

@@ -125,14 +125,14 @@ AbstractPrinter.prototype.startPrint = function(id, gcode, callback) {
 	var self = this;
 	// first we set all current printing db queue items for this port back to queued to prevent multiple 'printing' items
 	FormideOS.db.Queueitem.update({ 'printer.port': self.port }, { status: 'queued' }, { multi: true }, function(err, updated) {
-		if (err) return FormideOS.log(err);
+		if (err) return FormideOS.log.error(err.message);
 		// then we select the correct queue item for printing
 		FormideOS.db.Queueitem.findOne({ _id: id, gcode: gcode }, function(err, queueitem) {
-			if (err) return FormideOS.log(err);
+			if (err) return FormideOS.log.error(err.message);
 			if (queueitem) {
 				// get the file location and send to driver
 				self.driver.printFile(FormideOS.config.get('app.storageDir') + FormideOS.config.get('paths.gcode') + '/' + gcode, id, self.port, function(err, response) {
-					if (err) return FormideOS.log(err);
+					if (err) return FormideOS.log.error(err.message);
 					// set queue item status to printing
 					queueitem.status = 'printing';
 					queueitem.save();
@@ -157,7 +157,7 @@ AbstractPrinter.prototype.startPrint = function(id, gcode, callback) {
 AbstractPrinter.prototype.pausePrint = function(callback) {
 	var self = this;
 	self.driver.pausePrint(self.port, function(err, response) {
-		if (err) return FormideOS.log(err);
+		if (err) return FormideOS.log.error(err.mesasge);
 		FormideOS.events.emit('printer.paused', {
 			port: self.port,
 			printjobID: self.queueID
@@ -172,7 +172,7 @@ AbstractPrinter.prototype.pausePrint = function(callback) {
 AbstractPrinter.prototype.resumePrint = function(callback) {
 	var self = this;
 	self.driver.resumePrint(self.port, function(err, response) {
-		if (err) return FormideOS.log(err);
+		if (err) return FormideOS.log.error(err.message);
 		FormideOS.events.emit('printer.resumed', {
 			port: self.port,
 			printjobID: self.queueID
@@ -188,10 +188,10 @@ AbstractPrinter.prototype.stopPrint = function(callback) {
 	var self = this;
 	// TODO: implement custom stop gcode array
 	self.driver.stopPrint(self.port, "", function(err, response) {
-		if (err) return FormideOS.log(err);
+		if (err) return FormideOS.log.error(err.message);
 		FormideOS.db.Queueitem.findOne({ _id: self.queueID }, function(err, queueitem) {
-			if (err) return FormideOS.log(err);
-			if (!queueitem) return FormideOS.log('No queue item with that ID found to stop printing');
+			if (err) return FormideOS.log.error(err.message);
+			if (!queueitem) return FormideOS.log.warn('No queue item with that ID found to stop printing');
 			queueitem.status = 'queued';
 			queueitem.save();
 			FormideOS.events.emit('printer.stopped', {
@@ -209,10 +209,10 @@ AbstractPrinter.prototype.stopPrint = function(callback) {
  */
 AbstractPrinter.prototype.printFinished = function(printjobId) {
 	var self = this;
-	if (printjobId !== self.queueId) FormideOS.log('Warning: driver queue ID and client queue ID are not the same!', true);
+	if (printjobId !== self.queueId) FormideOS.log.warn('Warning: driver queue ID and client queue ID are not the same!', true);
 	FormideOS.db.Queueitem.findOne({ _id: self.queueID }, function(err, queueitem) {
-		if (err) return FormideOS.log(err);
-		if (!queueitem) return FormideOS.log('No queue item with that ID found to handle finished printing');
+		if (err) return FormideOS.log.error(err.message);
+		if (!queueitem) return FormideOS.log.warn('No queue item with that ID found to handle finished printing');
 		queueitem.status = 'finished';
 		queueitem.save();
 		FormideOS.events.emit('printer.finished', {

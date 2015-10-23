@@ -88,7 +88,7 @@ module.exports = function(routes, module) {
 			},
 			strictSSL: false
 		}, function(err, httpResponse, body) {
-			if (err) return FormideOS.log('User invitation error ' + err, true);
+			if (err) return FormideOS.log.error('User invitation error ' + err.message);
 			var response = JSON.parse(body);
 			return res.send({
 				success: true,
