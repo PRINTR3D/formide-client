@@ -31,7 +31,7 @@ FormideOS.moduleManager.loadModule('core/modules/log', 		'log', 		true);
 FormideOS.moduleManager.loadModule('core/modules/files', 	'files', 	true);
 FormideOS.moduleManager.loadModule('core/modules/printer', 	'printer', 	true);
 FormideOS.moduleManager.loadModule('core/modules/slicer', 	'slicer', 	true);
-FormideOS.moduleManager.loadModule('core/modules/setup', 	'setup',	true);
+// FormideOS.moduleManager.loadModule('core/modules/setup', 	'setup',	true);
 FormideOS.moduleManager.loadModule('core/modules/update', 	'update', 	true);
 FormideOS.moduleManager.loadModule('core/modules/cloud', 	'cloud',	true);
 

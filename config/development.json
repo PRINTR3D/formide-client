@@ -10,7 +10,8 @@
 		"inviteUrl": "https://api2.formide.com/clients/register/invite"
 	},
 	"cloud": {
-		"url": "https://apidev.formide.com"
+		"url": "https://apidev.formide.com",
+		"permission": false
 	},
 	"db": {
 		"storage": "/database"
@@ -32,10 +33,6 @@
 	},
 	"settings": {
 		"path": "/"
-	},
-	"setup": {
-		"permission": false,
-		"registerUrl": "https://api2.formide.com/clients/register/token"
 	},
 	"update": {
 		"permission": false

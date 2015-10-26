@@ -10,7 +10,8 @@
 		"inviteUrl": "http://localhost:3000/clients/register/invite"
 	},
 	"cloud": {
-		"url": "http://localhost:3000"
+		"url": "http://localhost:3000",
+		"permission": false
 	},
 	"db": {
 		"storage": "/database"
@@ -32,10 +33,6 @@
 	},
 	"settings": {
 		"path": "/"
-	},
-	"setup": {
-		"permission": false,
-		"registerUrl": "http://localhost:3000/clients/register/token"
 	},
 	"update": {
 		"permission": false

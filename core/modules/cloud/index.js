@@ -105,18 +105,6 @@ module.exports =
 				return callback(err, response);
 			});
 		});
-		
-		/*
-		 * Sync printers from local database to cloud (when adding new client or manually syncing cloud/local printers)
-		 */
-/*
-		this.cloud.on('syncPrinters', function(cloudPrinters, callback) {
-			FormideOS.log('Cloud syncPrinters');
-			self.syncPrinters(cloudPrinters, function(err, localPrinters) {
-				return callback(err, localPrinters);
-			});
-		});
-*/
 
 		/*
 		 * Handle disconnect
@@ -175,89 +163,89 @@ module.exports =
 		var self = this;
 		var hash = uuid.v4();
 		
-		//FormideOS.db.Printer.findOne({ cloudId: data.printerId }).exec(function(err, printer) {
-			//if (err) return callback(err);
-			FormideOS.db.Queueitem.create({
-				origin: 'cloud',
-				status: 'queued',
-				gcode: hash,
-				printjob: data.printjob,
-				port: data.port
-				//printer: printer.toObject()
-			}, function(err, queueitem) {
-				if (err) return callback(err);
-				callback(null, {
-					success: true,
-					queueitem: queueitem
-				});
-				
-				request({
-					method: 'GET',
-					url: FormideOS.config.get('cloud.url') + '/files/gcodefiles/public',
-					qs: {
-						hash: data.hash
-					},
-					strictSSL: false
-				})
-				.on('response', function(response) {
-					var newPath = FormideOS.config.get('app.storageDir') + FormideOS.config.get('paths.gcode') + '/' + hash;
-					var fws = fs.createWriteStream(newPath);
-					response.pipe(fws);
-					response.on( 'end', function() {
-						FormideOS.log('finished downloading gcode. Recieved ' + fws.bytesWritten + ' bytes');
-		        	});
-				});
+		FormideOS.db.Queueitem.create({
+			origin: 'cloud',
+			status: 'queued',
+			gcode: hash,
+			printjob: data.printjob,
+			port: data.port
+			//printer: printer.toObject()
+		}, function(err, queueitem) {
+			if (err) return callback(err);
+			callback(null, {
+				success: true,
+				queueitem: queueitem
 			});
-		//});
+			
+			// TODO: better way of fetching gcode files from cloud
+			request({
+				method: 'GET',
+				url: FormideOS.config.get('cloud.url') + '/files/gcodefiles/public',
+				qs: {
+					hash: data.hash
+				},
+				strictSSL: false
+			})
+			.on('response', function(response) {
+				var newPath = FormideOS.config.get('app.storageDir') + FormideOS.config.get('paths.gcode') + '/' + hash;
+				var fws = fs.createWriteStream(newPath);
+				response.pipe(fws);
+				response.on( 'end', function() {
+					FormideOS.log('finished downloading gcode. Recieved ' + fws.bytesWritten + ' bytes');
+	        	});
+			});
+		});
 	},
 	
 	/*
-	 * Handle syncPrinters from cloud
+	 * Register device in cloud
 	 */
-/*
-	syncPrinters: function(cloudPrinters, callback) {
-		FormideOS.db.Printer.find().exec(function(err, printers) {
-			if (err) return callback(err);
-			async.each(cloudPrinters, function(cloudPrinter, cb) {
-				if (cloudPrinter.delete) {
-					// delete printer
-					FormideOS.db.Printer.remove({ cloudId: cloudPrinter._id }, function(err, removedPrinter) {
-						if (err) {
-							FormideOS.log('Cloud sync error: ' + err );
-							return cb(err);
+	registerDevice: function (owner_email, owner_password, registertoken, cb) {
+		var self = this;
+		
+		FormideOS.db.User.findOne({
+			isOwner: true
+		}, function (err, user) {
+			if (err) return cb(err);
+			if (user) {
+				var msg = "this device already has a local owner, please contact " + user.email + " to request access to this device.";
+				FormideOS.log.warn(msg);
+				return cb(new Error(msg));
+			}
+			// create a new owner/admin user
+			FormideOS.db.User.create({
+				email: owner_email,
+				password: owner_password,
+				isOwner: true,
+				isAdmin: true,
+				cloudConnectionToken: registertoken
+			}, function (err, user) {
+				if (err) return cb(err);
+				getMac.getMac(function (err, macAddress) {
+					if (err) return cb(err);
+					self.cloud.emit("register", {
+						mac: macAddress,
+						registertoken: registertoken
+					}, function (response) {
+						if (!response.success || !response.clientToken) {
+							FormideOS.log.error(response.message);
+							FormideOS.db.User.remove({
+								cloudConnectionToken: registertoken
+							}, function (err) {
+								if (err) return cb(err);
+								return cb(new Error("Error registering device: " + response.message));
+							});
 						}
 						else {
-							FormideOS.log('Removed printer via cloud: ' + removedPrinter);
-							return cb(null, {});
+							FormideOS.db.User.update({ cloudConnectionToken: registertoken }, { cloudConnectionToken: response.clientToken }, function (err, user) {
+								if (err) return cb(err);
+								FormideOS.log('cloud user connected with clientToken ' + response.clientToken);
+								return cb(null, user);
+							});
 						}
 					});
-				}
-				else {
-					// update or insert printer
-					FormideOS.db.Printer.update({ cloudId: cloudPrinter._id }, {
-						name: cloudPrinter.name,
-						bed: cloudPrinter.bed,
-						axis: cloudPrinter.axis,
-						extruders: cloudPrinter.extruders,
-						port: cloudPrinter.port || "none",
-						baudrate: cloudPrinter.baudrate || 250000,
-						cloudId: cloudPrinter._id
-					}, { upsert: true }, function(err, syncedPrinter) {
-						if (err) {
-							FormideOS.log('Cloud sync error: ' + err );
-							return cb(err);
-						}
-						else {
-							FormideOS.log('Synced printer from cloud: ' + syncedPrinter);
-							return cb(null, {});
-						}
-					});
-				}
-			}, function(err, results) {
-				if (err) return callback(err);
-				return callback(null, results);
+				});
 			});
 		});
 	}
-*/
 }
