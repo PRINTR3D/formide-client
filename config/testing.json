@@ -6,8 +6,7 @@
 		"port": 1337
 	},
 	"auth": {
-		"permission": false,
-		"inviteUrl": "http://localhost:3000/clients/register/invite"
+		"permission": false
 	},
 	"cloud": {
 		"url": "http://localhost:3000",
