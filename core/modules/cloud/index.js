@@ -234,7 +234,7 @@ module.exports =
 						mac: macAddress,
 						registertoken: registertoken
 					}, function (response) {
-						if (!response.success || !response.clientToken) {
+						if (!response.success || !response.clientToken) { // TODO: change to deviceToken
 							FormideOS.log.error(response.message);
 							FormideOS.db.User.remove({
 								cloudConnectionToken: registertoken
