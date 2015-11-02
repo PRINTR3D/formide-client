@@ -7,6 +7,7 @@
 var net 		= require('net');
 var request 	= require('request');
 var socket 		= require('socket.io-client');
+var sailsIOClient = require('sails.io.js');
 var publicIp 	= require('public-ip');
 var internalIp 	= require('internal-ip');
 var fs			= require('fs');
@@ -32,10 +33,16 @@ module.exports =
 		this.cloud = socket(config.url);
 		this.local = socket('ws://127.0.0.1:' + FormideOS.http.server.address().port);
 
+		// handle cloud connection error
+		this.cloud.on('error', function (err) {
+			FormideOS.log.error("Error connecting to cloud: " + err);
+		});
+
 		/*
 		 * Connect to the cloud socket server
 	 	 */
-		this.cloud.on('connect', function() {
+		this.cloud.on('connect', function () {
+			
 			// authenticate formideos based on mac address and api token, also sends permissions for faster blocking via cloud
 			publicIp(function (err, ip) {
 				getMac.getMac(function(err, macAddress) {

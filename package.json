@@ -1,6 +1,6 @@
 {
   "name": "formide-client",
-  "version": "0.2.42",
+  "version": "0.3.0",
   "description": "FORMIDE client is a modular 3D printing operating system with the goal of serving all 3D printers.",
   "main": "bootstrap.js",
   "author": "Printr B.V. <info@printr.nl>",
@@ -76,6 +76,8 @@
     "request": "~2.40.0",
     "request-progress": "~0.3.1",
     "require-reload": "^0.2.2",
+    "sails.io.js": "^0.11.7",
+    "sailsjs-socket.io-client": "^0.1.2",
     "semver": "~4.3.1",
     "sha1-stream": "~0.1.0",
     "socket.io": "latest",
@@ -88,7 +90,7 @@
     "tungus": "0.0.4",
     "underscore": "^1.8.2",
     "utils-debug": "^0.5.22",
-    "winston": "~0.8.1"
+    "winston": "^0.8.3"
   },
   "devDependencies": {
     "chai": "~1.4.2",

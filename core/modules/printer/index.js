@@ -15,18 +15,9 @@ module.exports =
 
 	init: function(config) {
 		
-		var self = this;
-		
-		this.config = config;
-
-		if(process.platform == 'darwin') {
-			this.driver	= require(FormideOS.appRoot + 'bin/osx/Formidriver');
-			FormideOS.log('Binded Formidriver in osx/Formidriver');
-		}
-		else if(process.platform == 'linux') {
-			this.driver	= require(FormideOS.appRoot + 'bin/rpi/Formidriver');
-			FormideOS.log('Binded Formidriver in rpi/Formidriver');
-		}
+		var self = this;		
+		this.config = config;		
+		this.driver = require('formide-drivers');		
 		
 		if(this.driver !== null) {
 			this.driver.start(function(err, started, event) {
