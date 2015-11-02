@@ -43,7 +43,7 @@
     "fancy-errors": "^0.1.2",
     "formide-client-interface": "^0.3.24",
     "formide-client-webhook": "^1.0.27",
-    "formide-drivers": "^3.0.4",
+    "formide-drivers": "^3.0.5",
     "formide-tools": "printr3d/formide-tools",
     "getmac": "^1.0.7",
     "gitty": "^3.2.3",
