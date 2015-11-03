@@ -232,21 +232,21 @@ module.exports =
 					if (err) return cb(err);
 					self.cloud.emit("register", {
 						mac: macAddress,
-						registertoken: registertoken
+						registerToken: registertoken
 					}, function (response) {
-						if (!response.success || !response.clientToken) { // TODO: change to deviceToken
+						if (response.success === false || !response.deviceToken) {
 							FormideOS.log.error(response.message);
 							FormideOS.db.User.remove({
 								cloudConnectionToken: registertoken
 							}, function (err) {
 								if (err) return cb(err);
-								return cb(new Error("Error registering device: " + response.message));
+								return cb(new Error("Error registering device: " + response.reason));
 							});
 						}
 						else {
-							FormideOS.db.User.update({ cloudConnectionToken: registertoken }, { cloudConnectionToken: response.clientToken }, function (err, user) {
+							FormideOS.db.User.update({ cloudConnectionToken: registertoken }, { cloudConnectionToken: response.deviceToken }, function (err, user) {
 								if (err) return cb(err);
-								FormideOS.log('cloud user connected with clientToken ' + response.clientToken);
+								FormideOS.log('cloud user connected with clientToken ' + response.deviceToken);
 								return cb(null, user);
 							});
 						}
