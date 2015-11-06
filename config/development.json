@@ -13,9 +13,6 @@
 		"url": "https://apidev.formide.com",
 		"permission": false
 	},
-	"db": {
-		"storage": "/database"
-	},
 	"log": {
 		"path": "/logs"
 	},

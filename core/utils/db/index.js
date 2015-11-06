@@ -8,14 +8,22 @@ var sailsDiskAdapter 	= require('sails-disk');
 var waterline 			= new Waterline();
 var db					= null;
 
+if (typeof SETUP !== "undefined") {
+	var storage = SETUP.storageDir + "/database_";
+}
+else {
+	var storage = FormideOS.config.get('app.storageDir') + "/database_";
+}
+
 var config = {
     adapters: {
-        'disk': sailsDiskAdapter
+        'disk': sailsDiskAdapter,
     },
 
     connections: {
         default: {
-            adapter: 'disk'
+            adapter: 'disk',
+            filePath: storage
         }
     }
 };
@@ -67,43 +75,3 @@ module.exports = function(callback) {
 		});
 	});
 }
-
-
-
-/*
-var tungus = require('tungus');
-var mongoose = require('mongoose');
-var timestamps  = require('mongoose-timestamp');
-var Schema = mongoose.Schema;
-
-if (typeof SETUP !== "undefined") {
-	var storage = SETUP.storageDir + "/database";
-}
-else {
-	var storage = FormideOS.config.get('app.storageDir') + FormideOS.config.get('db.storage');
-}
-
-global.TUNGUS_DB_OPTIONS =  { nativeObjectID: true, searchInArray: true };
-
-// connect to tingodb client
-try {
-    mongoose.connect('tingodb://' + storage);
-}
-catch(e) {
-    FormideOS.log.error(e.message);
-}
-
-module.exports = {
-	
-	db: {},
-	
-	addModel: function(collectionName, modelName, schema) {
-		// define model based on schema
-		mongoose.model(collectionName, schema);
-		// put model in db
-		this[modelName] = mongoose.model(collectionName);
-	},
-	
-	mongoose: mongoose
-}
-*/

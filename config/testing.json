@@ -12,9 +12,6 @@
 		"url": "http://localhost:3000",
 		"permission": false
 	},
-	"db": {
-		"storage": "/database"
-	},
 	"log": {
 		"path": "/logs"
 	},

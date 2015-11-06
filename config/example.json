@@ -12,9 +12,6 @@
 	"cloud": {
 		"url": "https://api2.formide.com"
 	},
-	"db": {
-		"storage": "/database"
-	},
 	"log": {
 		"path": "/logs"
 	},
