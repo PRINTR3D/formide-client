@@ -42,16 +42,20 @@ module.exports = function() {
 			moduleInfo.hasIndex = true;
 		}
 		else {
-			FormideOS.debug.log("Module " + moduleName + " could not be loaded. No index.js file found");
+			FormideOS.log.error("Module " + moduleName + " could not be loaded. No index.js file found");
 			return;
 		}
 		
 		delete require.cache[require.resolve(moduleRoot + '/index.js')];
 		var instance = require(moduleRoot + '/index.js')
 		
-		if(typeof instance.exposeSettings === 'function') {
+		if (typeof instance.exposeSettings === 'function') {
 			moduleInfo.exposeSettings = instance.exposeSettings();
 			FormideOS.settings.addModuleSettings(moduleName, moduleInfo.exposeSettings);
+		}
+		
+		if (typeof instance.setup === 'function') {
+			instance.setup();
 		}
 		
 		if (fs.existsSync(moduleRoot + '/package.json')) {
@@ -62,7 +66,7 @@ module.exports = function() {
 				moduleInfo.version = pack.version;
 			}
 			catch (e) {
-				FormideOS.debug.log("module " + moduleName + " could not be loaded. Problem with loading package.json: " + e);
+				FormideOS.log.error("module " + moduleName + " could not be loaded. Problem with loading package.json: " + e);
 			}
 		}
 		
@@ -73,7 +77,7 @@ module.exports = function() {
 				moduleInfo.config = config;
 			}
 			catch (e) {
-				FormideOS.debug.log("module " + moduleName + " could not be loaded. Problem with loading config.json: " + e);
+				FormideOS.log.error("module " + moduleName + " could not be loaded. Problem with loading config.json: " + e);
 			}
 		}
 		else if (FormideOS.config.get(moduleName)) {
@@ -90,7 +94,7 @@ module.exports = function() {
 			status: 'loaded'
 		}
 		
-		FormideOS.debug.log("module " + moduleName + " loaded");
+		FormideOS.log(moduleName + " loaded");
 		FormideOS.events.emit("moduleManager.moduleLoaded", moduleInfo);
 		return modules[moduleName];
 	}
@@ -100,7 +104,7 @@ module.exports = function() {
 			return modules[moduleName];
 		}
 		else {
-			FormideOS.debug.log("Unknown module requested: " + moduleName);
+			FormideOS.log.warn("Unknown module requested: " + moduleName);
 		}
 	}
 	
@@ -111,28 +115,28 @@ module.exports = function() {
 			module.instance.init(module.info.config);
 		}
 		
+		if (fs.existsSync(module.info.root + '/models.js')) {
+			// uncache and load database models for module
+			delete require.cache[require.resolve(module.info.root + '/models.js')];
+			require(module.info.root + '/models.js');
+		}
+		
 		if (fs.existsSync(module.info.root + '/api.js')) {
 			module.hasHTTP = true;
 			
 			// register module's api as sub-app in express server
 			var router = FormideOS.http.express.Router();
-			router.use(FormideOS.http.permissions.check(module.info.namespace, module.info.config.permission));
+			if (module.info.config.permission === undefined || module.info.config.permission !== false) {
+				router.use(FormideOS.http.permissions.isUser);
+			}
 			delete require.cache[require.resolve(module.info.root + '/api.js')];
 			require(module.info.root + '/api.js')(router, module.instance);
+			
 			FormideOS.http.app.use('/api/' + module.info.namespace, router);
 		}
 		
-		if (fs.existsSync(module.info.root + '/websocket.js')) {
-			module.hasWS = true;
-			
-			// register module's ws api
-			var wsNamespace = FormideOS.ws.of('/' + module.info.namespace);
-			delete require.cache[require.resolve(module.info.root + '/websocket.js')];
-			require(module.info.root + '/websocket.js')(wsNamespace, module.instance);
-		}
-		
 		module.status = 'active';
-		FormideOS.debug.log("module " + moduleName + " activated");
+		FormideOS.log(moduleName + " activated");
 		FormideOS.events.emit("moduleManager.moduleActivated", module.info);
 		
 		return module;
@@ -144,7 +148,7 @@ module.exports = function() {
 			if(typeof module.instance.dispose === 'function') {
 				module.instance.dispose();
 			}
-			FormideOS.debug.log("module " + moduleName + " disposed");
+			FormideOS.log("module " + moduleName + " disposed");
 			FormideOS.events.emit("moduleManager.moduleDisposed", module.info);
 			delete modules[moduleName];
 		}

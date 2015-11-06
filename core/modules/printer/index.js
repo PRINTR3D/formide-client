@@ -4,81 +4,88 @@
  */
 
 // dependencies
-var spawn = require('child_process').spawn;
-var fs = require('fs');
-var net = require('net');
-var SerialPort = require("serialport");
-var MarlinDriver = require('./drivers/MarlinDriver');
+var AbstractPrinter = require('./abstractPrinter');
 
 module.exports =
 {
 	numberOfPorts: 0,
+	driver: null,
 	printers: {},
 	config: {},
-	serialPorts: [
-		"/dev/ttyUSB",
-		"/dev/ttyACM",
-		"/dev/tty.usb",
-		"/dev/cu.usb",
-		"/dev/cuaU",
-		"/dev/rfcomm"
-	],
 
 	init: function(config) {
-		this.config = config;
-
-		if(config.simulated) {
-			this.printers.push(new MarlinDriver('/dev/null'));
-		}
-		else {
-			this.connectPrinters();
-			this.watchPorts();
-		}
-	},
-	
-	watchPorts: function() {
-		setInterval(function() {
-			this.connectPrinters();
-		}.bind(this), 2000);
-	},
-	
-	connectPrinters: function() {
-		var self = this;
-		SerialPort.list( function (err, ports) {
-			if (err) {
-				FormideOS.debug.log(err);
-				this.numberOfPorts = 0; // fix for linux!
-			}
-			
-			// detect adding printer
-			if(ports) {
-				if(this.numberOfPorts < ports.length) {
-					// handle adding printer
-					for(var i in ports) {
-						var port = ports[i];
-						for(var j in self.serialPorts) {
-							if(port.comName.indexOf(self.serialPorts[j]) > -1) {
-								FormideOS.module('db').db.Printer.findOne({ port: port.comName }).exec(function(err, printer) {
-									if (err) FormideOS.debug.log(err);
-									if (!printer) {
-										FormideOS.debug.log('Printer needs to be setup on port ' + port.comName);
-										FormideOS.events.emit('printer.setup', { port: port.comName });
-									}
-									else {
-										self.printers[port.comName.split("/")[2]] = new MarlinDriver(port.comName, printer.baudrate, function(portName) {
-											delete self.printers[portName.split("/")[2]];
-											FormideOS.events.emit('printer.disconnected', { port: portName });
-											FormideOS.debug.log('Printer disconnected: ' + portName);
-										});
-									}
-								});
-							}
-						}
+		
+		var self = this;		
+		this.config = config;		
+		this.driver = require('formide-drivers');		
+		
+		if(this.driver !== null) {
+			this.driver.start(function(err, started, event) {
+				
+				if (err) {
+					FormideOS.log.error('Formidriver err: ' + err.message);
+				}
+				
+				else if (started) {
+					FormideOS.log('Formidriver started successfully');
+				}
+				
+				else if (event) {
+					// an event came back which we can use to do sometehing with!
+					
+					if (event.type === 'printerConnected') {
+						self.printerConnected(event.port);
+					}
+					else if (event.type === 'printerDisconnected') {
+						self.printerDisconnected(event.port);
+					}
+					else if (event.type === 'printerOnline') {
+						self.printerOnline(event.port);
+					}
+					else if (event.type === 'printFinished') {
+						self.printFinished(event.port, event.printjobID);
 					}
 				}
-				this.numberOfPorts = ports.length;
-			}
-		}.bind(this));
+				
+			});
+		}
+		else {
+			FormideOS.log.warn("Your system is not compatible with one of our driver binaries");
+		}
+	},
+	
+	printerConnected: function(port) {
+		var self = this;
+		//FormideOS.db.Printer.findOne({ port: port }).exec(function(err, printer) {
+			//if (err) FormideOS.log(err);
+			//if (!printer) {
+			//	FormideOS.log('Printer needs to be setup: ' + port);
+			//	FormideOS.events.emit('printer.setup', { port: port });
+			//}
+			FormideOS.log('Printer connected: ' + port);
+			FormideOS.events.emit('printer.connected', { port: port, notification: true, level: "success", title: "Printer connected", message: "A printer was connected" });
+			self.printers[port.split("/")[2]] = new AbstractPrinter(port, self.driver);
+		//});
+	},
+	
+	printerDisconnected: function(port) {
+		if (this.printers[port.split("/")[2]] !== undefined) {
+			FormideOS.log('Printer disconnected: ' + port);
+			FormideOS.events.emit('printer.disconnected', { port: port, notification: true, level: "warning", title: "Printer disconnected", message: "A printer was disconnected" });
+			clearInterval(this.printers[port.split("/")[2]].statusInterval);
+			delete this.printers[port.split("/")[2]];
+		}
+	},
+	
+	printerOnline: function(port) {
+		FormideOS.log('Printer online: ' + port);
+		//FormideOS.events.emit('printer.online', { port: port });
+	},
+	
+	printFinished: function(port, printjobId) {
+		if (this.printers[port.split("/")[2]] !== undefined) {
+			this.printers[port.split("/")[2]].printFinished(printjobId);
+		}
 	},
 	
 	getPrinters: function() {
@@ -89,31 +96,69 @@ module.exports =
 		return result;
 	},
 	
+	getCommands: function(port, callback) {
+		if (this.printers[port] !== undefined) {
+			return callback(this.printers[port].getCommands());
+		}	
+	},
+	
 	getStatus: function(port, callback) {
-		return callback(this.printers[port].getStatus());
+		if (this.printers[port] !== undefined) {
+			return callback(this.printers[port].getStatus());
+		}
 	},
 
 	printerControl: function(port, data, callback) {
-		this.printers[port].command(data.command, data.parameters, callback);
+		if (this.printers[port] !== undefined) {
+			this.printers[port].command(data.command, data.parameters, callback);
+		}
+		else {
+			return callback({ success: false, message: 'No printer on connected on this port' });
+		}
 	},
 	
 	gcode: function(port, gcode, callback) {
-		this.printers[port].gcode(gcode, callback);	
+		if (this.printers[port] !== undefined) {
+			this.printers[port].gcode(gcode, callback);	
+		}
+		else {
+			return callback({ success: false, message: 'No printer on connected on this port' });
+		}
 	},
 	
 	startPrint: function(port, id, gcode, callback) {
-		this.printers[port].startPrint(id, gcode, callback);
+		if (this.printers[port] !== undefined) {
+			this.printers[port].startPrint(id, gcode, callback);
+		}
+		else {
+			return callback({ success: false, message: 'No printer on connected on this port' });
+		}
 	},
 	
 	stopPrint: function(port, callback) {
-		this.printers[port].stopPrint(callback);
+		if (this.printers[port] !== undefined) {
+			this.printers[port].stopPrint(callback);
+		}
+		else {
+			return callback({ success: false, message: 'No printer on connected on this port' });
+		}
 	},
 	
 	pausePrint: function(port, callback) {
-		this.printers[port].pausePrint(callback);
+		if (this.printers[port] !== undefined) {
+			this.printers[port].pausePrint(callback);
+		}
+		else {
+			return callback({ success: false, message: 'No printer on connected on this port' });
+		}
 	},
 	
 	resumePrint: function(port, callback) {
-		this.printers[port].resumePrint(callback);
+		if (this.printers[port] !== undefined) {
+			this.printers[port].resumePrint(callback);
+		}
+		else {
+			return callback({ success: false, message: 'No printer on connected on this port' });
+		}
 	}
 }

@@ -5,6 +5,9 @@
 
 module.exports = function(routes, db)
 {
+	/*
+	 * Get a list of sliceprofile objects
+	 */
 	routes.get('/sliceprofiles', function(req, res) {
 		db.Sliceprofile.find().exec(function(err, sliceprofiles) {
 			if (err) return res.send(err);
@@ -12,6 +15,9 @@ module.exports = function(routes, db)
 		});
 	});
 
+	/*
+	 * Get a single sliceprofile object
+	 */
 	routes.get('/sliceprofiles/:id', function(req, res) {
 		db.Sliceprofile.findOne({ _id: req.params.id }).exec(function(err, sliceprofile) {
 			if (err) return res.send(err);
@@ -19,6 +25,9 @@ module.exports = function(routes, db)
 		});
 	});
 
+	/*
+	 * Create a new sliceprofile object. req.body should contain all items in sliceprofile database object
+	 */
 	routes.post('/sliceprofiles', function(req, res) {
 		db.Sliceprofile.create(req.body, function(err, sliceprofile) {
 			if (err) return res.status(400).send(err);
@@ -34,6 +43,9 @@ module.exports = function(routes, db)
 		});
 	});
 
+	/*
+	 * Update a sliceprofile object. req.body should contain all items in sliceprofile database object
+	 */
 	routes.put('/sliceprofiles/:id', function(req, res) {
 		db.Sliceprofile.update({ _id: req.params.id }, req.body, function(err, sliceprofile) {
 			if (err) return res.status(400).send(err);
@@ -48,6 +60,9 @@ module.exports = function(routes, db)
 		});
 	});
 
+	/*
+	 * Delete sliceprofile object
+	 */
 	routes.delete('/sliceprofiles/:id', function(req, res) {
 		db.Sliceprofile.remove({ _id: req.params.id }, function(err, sliceprofile) {
 			if (err) return res.status(400).send(err);

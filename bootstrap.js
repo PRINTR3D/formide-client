@@ -10,40 +10,40 @@
  */
 
 // Dependencies
-var getMac	= require('getmac');
+var pkg		= require('./package.json');
 
 // Load formideos core file
-require('./core/FormideOS');
-
-getMac.getMac(function(err, macAddress) {
+require('./core/FormideOS')(function (err) {
 	
-	// Set mac address (used for cloud connection)
-	FormideOS.macAddress = FormideOS.config.get('cloud.softMac') || macAddress;
+	// Log awesome app starter logo
+	require('./core/utils/logLogo');
+	
+	// Log app header
+	FormideOS.log.info('==============================================');
+	FormideOS.log.info('Starting formide-client v' + pkg.version + ' as ' + process.env.NODE_ENV);
+	FormideOS.log.info('==============================================');
 	
 	// Load core modules
-	FormideOS.moduleManager.loadModule('core/modules/process', 	'process', 	true);
 	FormideOS.moduleManager.loadModule('core/modules/db', 		'db', 		true);
 	FormideOS.moduleManager.loadModule('core/modules/settings',	'settings', true);
 	FormideOS.moduleManager.loadModule('core/modules/auth', 	'auth', 	true);
-	FormideOS.moduleManager.loadModule('core/modules/device', 	'device', 	true);
 	FormideOS.moduleManager.loadModule('core/modules/log', 		'log', 		true);
 	FormideOS.moduleManager.loadModule('core/modules/files', 	'files', 	true);
 	FormideOS.moduleManager.loadModule('core/modules/printer', 	'printer', 	true);
-	FormideOS.moduleManager.loadModule('core/modules/slicer', 	'slicer', 	true);
-	FormideOS.moduleManager.loadModule('core/modules/setup', 	'setup',	true);
-	//FormideOS.moduleManager.loadModule('core/modules/wifi', 	'wifi',		true);	// Wifi manager is not finished yet
+	// FormideOS.moduleManager.loadModule('core/modules/slicer', 	'slicer', 	true);
+	// FormideOS.moduleManager.loadModule('core/modules/setup', 	'setup',	true);
 	FormideOS.moduleManager.loadModule('core/modules/update', 	'update', 	true);
 	FormideOS.moduleManager.loadModule('core/modules/cloud', 	'cloud',	true);
 	
-	// Temporary for image
-	FormideOS.moduleManager.loadModule('../formideOS-interface', 'formideos-interface', false);
 	
-	// Load all 3rd party modules
-	var modules = FormideOS.settings.get('update', 'modules') || [];
-	for(var i in modules) {
-		FormideOS.moduleManager.loadModule("node_modules/" + modules[i], modules[i]);
+	// Load all 3rd party formideos modules
+	for(var i in pkg.dependencies) {
+		if (i.indexOf("formide-client-") > -1) {
+			FormideOS.modules.push(i);
+			FormideOS.moduleManager.loadModule("node_modules/" + i, i);
+		}
 	}
-
+	
 	// Activate all loaded modules
 	FormideOS.moduleManager.activateLoadedModules();
 });

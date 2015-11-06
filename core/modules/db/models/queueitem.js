@@ -13,8 +13,9 @@ var schema = new Schema({
 	origin: { type: String, required: true },
 	gcode: { type: String, required: true },
 	status: { type: String, required: true },
-	printjob: { type: Schema.Types.ObjectId, ref: 'printjobs', required: true },
-	printer: { type: String, ref: 'printers' }
+	printjob: { type: Schema.Types.Mixed },
+	port: { type: String, required: true }
+	//printer: { type: Schema.Types.Mixed }
 });
 schema.plugin(timestamps);
 

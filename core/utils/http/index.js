@@ -20,7 +20,9 @@ var cors 					= require('cors');
 var passport 				= require('passport');
 var LocalStrategy 			= require('passport-local').Strategy;
 var bodyParser 				= require('body-parser');
-var permissionsMiddleware	= require('./middleware/permissions');
+//var permissionsMiddleware	= require('./middleware/permissions');
+var isUserMiddleware		= require('./middleware/isUser');
+var isAdminMiddleware		= require('./middleware/isAdmin');
 var passwordHash 			= require('password-hash');
 var bearerToken 			= require('express-bearer-token');
 
@@ -40,7 +42,10 @@ module.exports = {
 			server: this.httpServer,
 			session: sessionMiddleware,
 			auth: passport,
-			permissions: permissionsMiddleware
+			permissions: {
+				isUser: isUserMiddleware,
+				isAdmin: isAdminMiddleware
+			}
 		}
 	},
 	
@@ -54,7 +59,7 @@ module.exports = {
 		
 		// listen to port stated in app.port config (usually port 1337)
 		this.httpServer.listen(FormideOS.config.get('app.port'), function() {
-			FormideOS.debug.log('server running on port ' + this.httpServer.address().port);
+			FormideOS.log.info('server running on port ' + this.httpServer.address().port);
 		}.bind(this));
 		
 		// use json body parser for json post requests
@@ -74,7 +79,9 @@ module.exports = {
 		this.app.use(passport.session());
 		
 		// use bearer token middleware
-		this.app.use(bearerToken());
+		this.app.use(bearerToken({
+			queryKey: 'access_token'
+		}));
 		
 		// use cors middleware
 		this.app.use(cors({
@@ -89,7 +96,7 @@ module.exports = {
 		});
 		
 		passport.deserializeUser(function(id, done) {
-		  	FormideOS.module('db').db.User.findOne({ _id: id }).exec(function(err, user) {
+		  	FormideOS.db.User.findOne({ _id: id }).exec(function(err, user) {
 			  	if (err) return done('user not found', false);
 				if (user) {
 					return done(null, user);
@@ -98,12 +105,13 @@ module.exports = {
 		});
 		
 		passport.use('local-login', new LocalStrategy({ usernameField: 'email' }, function(email, password, next) {
-			FormideOS.debug.log('Login attempt for ' + email);
-			FormideOS.module('db').db.User.authenticate(email, password, function(err, user) {
+			FormideOS.db.User.authenticate(email, password, function(err, user) {
 				if (err) return next(err);
 				if (!user || user === 'undefined') {
+					FormideOS.log.warn('Failed login for ' + email);
 					return next(null, false, { message: 'Incorrect user credentials' });
 				}
+				FormideOS.log('Successful login for ' + email);
 				return next(null, user);
 			});
 		}));

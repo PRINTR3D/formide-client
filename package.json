@@ -1,28 +1,31 @@
 {
-  "name": "formideOS-client",
-  "version": "0.1.0",
-  "description": "FORMIDEOS is a modular 3D printing operating system with the goal of serving all 3D printers.",
+  "name": "formide-client",
+  "version": "0.3.0",
+  "description": "FORMIDE client is a modular 3D printing operating system with the goal of serving all 3D printers.",
   "main": "bootstrap.js",
   "author": "Printr B.V. <info@printr.nl>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/PRINTR3D/formideOS-client.git"
+    "url": "https://github.com/PRINTR3D/formide-client.git"
   },
   "bugs": {
-    "url": "https://github.com/PRINTR3D/formideOS-client.git/issues"
+    "url": "https://github.com/PRINTR3D/formide-client.git/issues"
   },
-  "contributors": "https://github.com/PRINTR3D/formideOS-client/graphs/contributors",
-  "licence": "",
+  "contributors": "https://github.com/PRINTR3D/formide-client/graphs/contributors",
+  "license": "GPL-2.0",
   "scripts": {
-    "start": "node bootstrap"
+    "start": "NODE_ENV=production node bootstrap",
+    "test": "NODE_ENV=testing node bootstrap",
+    "postinstall": "node scripts/post-install"
   },
   "dependencies": {
-    "async": "^1.3.0",
+    "adm-zip": "^0.4.7",
+    "async": "^1.4.2",
+    "bcrypt": "^0.8.5",
     "bcrypt-nodejs": "0.0.3",
+    "binstring": "^0.2.1",
     "body-parser": "~1.12.0",
-    "caller-id": "~0.1.0",
-    "cli-color": "^1.0.0",
-    "colors": "~1.0.3",
+    "captains-log": "^0.11.11",
     "connect": "^3.3.5",
     "connect-multiparty": "~1.2.5",
     "cookie": "^0.1.2",
@@ -30,6 +33,8 @@
     "cookie-session": "^1.1.0",
     "cors": "~2.5.3",
     "crypto": "0.0.3",
+    "deep-extend": "^0.4.0",
+    "delivery": "0.0.3",
     "epilogue": "0.3.2",
     "eventemitter2": "~0.4.14",
     "express": "~4.12.2",
@@ -37,9 +42,9 @@
     "express-session": "~1.10.3",
     "express-validator": "^2.9.0",
     "fancy-errors": "^0.1.2",
-    "formideos-module-camerapi": "^1.0.8",
-    "formideos-module-webhook": "^1.0.25",
-    "getmac": "~1.0.6",
+    "formide-drivers": "^3.0.5",
+    "formide-tools": "printr3d/formide-tools",
+    "getmac": "^1.0.7",
     "gitty": "^3.2.3",
     "install": "~0.1.8",
     "internal-ip": "^1.0.1",
@@ -54,23 +59,27 @@
     "mongoose-timestamp": "^0.4.0",
     "multer": "~0.1.8",
     "node-schedule": "~0.1.15",
-    "node-uuid": "~1.4.3",
+    "node-uuid": "^1.4.3",
     "nodejs-config": "1.0.0",
     "nodejs-leds": "0.0.3",
+    "nodejs-websocket": "^1.4.0",
     "npm": "~2.7.0",
     "observed": "^1.1.1",
     "passport": "~0.2.1",
     "passport-http-bearer": "~1.0.1",
     "passport-local": "~1.0.0",
     "password-hash": "^1.2.2",
+    "permission": "^0.1.6",
     "polo": "~0.7.1",
     "prettify-error": "^0.1.1",
     "public-ip": "^1.0.2",
     "request": "~2.40.0",
     "request-progress": "~0.3.1",
     "require-reload": "^0.2.2",
+    "sails-disk": "^0.10.8",
+    "sails.io.js": "^0.11.7",
+    "sailsjs-socket.io-client": "^0.1.2",
     "semver": "~4.3.1",
-    "serialport": "^1.7.4",
     "sha1-stream": "~0.1.0",
     "socket.io": "latest",
     "socket.io-client": "latest",
@@ -82,20 +91,19 @@
     "tungus": "0.0.4",
     "underscore": "^1.8.2",
     "utils-debug": "^0.5.22",
-    "winston": "~0.8.1",
-    "wireless": "~0.3.2"
+    "waterline": "^0.10.26",
+    "winston": "^0.8.3"
   },
   "devDependencies": {
     "chai": "~1.4.2",
     "mocha": "*"
   },
-  "engineStrict": [
-    "darwin",
-    "linux"
-  ],
   "engines": {
-    "node": "~0.12.0",
-    "iojs": "~1.2.0",
-    "npm": "~2.7.0"
-  }
+    "node": "0.12.7",
+    "npm": "~2.14.0"
+  },
+  "bin": {
+    "formide-client": "bin/formide-client"
+  },
+  "preferGlobal": true
 }

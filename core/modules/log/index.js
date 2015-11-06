@@ -14,7 +14,7 @@ module.exports =
 			transports:
 		    [
 				new (winston.transports.File)({
-					filename: FormideOS.appRoot + config.path + '/FormideOS.log',
+					filename: FormideOS.config.get('app.storageDir') + config.path + '/FormideOS.log',
 					level: 'debug'
 				})
 		    ]

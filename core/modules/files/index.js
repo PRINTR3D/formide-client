@@ -5,22 +5,28 @@
  
 var fs		= require('fs');
 var uuid	= require('node-uuid');
+var request	= require('request');
 
 module.exports = {
 	
-	uploadModelfile: function(file, callback) {
+	/*
+	 * Handle file upload
+	 */
+	uploadFile: function(file, filetype, callback) {
 		fs.readFile(file.path, function(err, data) {
 			var hash = uuid.v4();
-			var newPath = FormideOS.config.get('paths.modelfile') + '/' + hash;
+			var newPath = FormideOS.config.get('app.storageDir') + FormideOS.config.get('paths.modelfiles') + '/' + hash;
 			fs.writeFile(newPath, data, function(err) {
 				if (err) {
-					FormideOS.debug.log(err);
+					FormideOS.log.error(err.message);
 					return callback(err);
 				}
 				else {
-					FormideOS.module('db').db.Modelfile.create({
+					FormideOS.db.Modelfile.create({
+						prettyname: file.name,
 						filename: file.name,
 						filesize: file.size,
+						filetype: filetype,
 						hash: hash
 					}, function(err, modelfile) {
 						if (err) return callback(err)
@@ -31,17 +37,22 @@ module.exports = {
 		});
 	},
 
+	/*
+	 * Handle gcodefile upload
+	 */
+/*
 	uploadGcode: function(file, callback) {
 		fs.readFile(file.path, function( err, data ) {
 			var hash = uuid.v4();
-			var newPath = FormideOS.config.get('paths.gcode') + '/' + hash;
+			var newPath = FormideOS.config.get('app.storageDir') + FormideOS.config.get('paths.gcode') + '/' + hash;
 			fs.writeFile(newPath, data, function(err) {
 				if(err) {
-					FormideOS.debug.log( err );
+					FormideOS.log( err );
 					return callback(err);
 				}
 				else {
-					FormideOS.module('db').db.Gcodefile.create({
+					FormideOS.db.Gcodefile.create({
+						prettyname: file.name,
 						filename: file.name,
 						filesize: file.size,
 						hash: hash
@@ -53,14 +64,18 @@ module.exports = {
 			});
 		});
 	},
+*/
 
-	downloadModelfile: function(hash, encoding, callback) {
-		var filename = FormideOS.config.get('paths.modelfile') + '/' + hash;
+	/*
+	 * Handle modelfile download
+	 */
+	downloadFile: function(hash, encoding, callback) {
+		var filename = FormideOS.config.get('app.storageDir') + FormideOS.config.get('paths.modelfiles') + '/' + hash;
 		fs.exists(filename, function(exists) {
 			if(exists) {
 				fs.readFile(filename, function(err, data) {
 					if (err) {
-						FormideOS.debug.log(err, true);
+						FormideOS.log.error(err.message);
 						return callback(err);
 					}
 					else {
@@ -80,13 +95,17 @@ module.exports = {
 		});
 	},
 
+	/*
+	 * Handle gcodefile download
+	 */
+/*
 	downloadGcode: function(hash, encoding, callback) {
-		var filename = FormideOS.config.get('paths.gcode') + '/' + hash;
+		var filename = FormideOS.config.get('app.storageDir') + FormideOS.config.get('paths.gcode') + '/' + hash;
 		fs.exists(filename, function(exists) {
 			if (exists) {
 				fs.readFile(filename, function(err, data) {
 					if(err) {
-						FormideOS.debug.log(err, true);
+						FormideOS.log(err, true);
 					}
 					else {
 						if(encoding == 'base64') {
@@ -102,6 +121,36 @@ module.exports = {
 			else {
 				return callback('file not found');
 			}
+		});
+	},
+*/
+	
+	/*
+	 * Handle upload from remote url
+	 */
+	uploadFromUrl: function(url, filename, filetype, callback) {
+		request({
+			method: 'GET',
+			url: url
+		})
+		.on('response', function(response) {
+			var regexp = /filename=\"(.*)\"/gi;
+			var hash = uuid.v4();
+			var newPath = FormideOS.config.get('app.storageDir') + FormideOS.config.get('paths.modelfiles') + '/' + hash;
+			var fws = fs.createWriteStream(newPath);
+			response.pipe(fws);
+			response.on( 'end', function() {
+				FormideOS.db.Modelfile.create({
+					prettyname: filename,
+					filename: filename,
+					filesize: fws.bytesWritten,
+					filetype: filetype,
+					hash: hash
+				}, function(err, modelfile) {
+					if (err) return callback(err)
+					return callback(null, modelfile);
+				});
+        	});
 		});
 	}
 }

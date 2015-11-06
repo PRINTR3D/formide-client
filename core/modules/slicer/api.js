@@ -12,11 +12,8 @@ module.exports = function(routes, module)
 	 */
 	routes.post('/slice', function(req, res) {
 		module.slice(req.body.modelfiles, req.body.sliceprofile, req.body.materials, req.body.printer, req.body.settings, function(err, printjob) {
-			if (err) res.send({ success: false, error: err });
-			return res.json({
-				success: true,
-				printjob: printjob
-			});
+			if (err) return res.send({ success: false, error: err.message });
+			return res.json({ success: true, printjob: printjob });
 		});
 	});
 	
@@ -27,6 +24,16 @@ module.exports = function(routes, module)
 		module.createSliceRequest(req.params.printjobID, function(err, slicerequest) {
 			if (err) return res.send(err);
 			return res.json(slicerequest);
+		});
+	});
+	
+	/*
+	 * Get the reference so the interface can build forms
+	 */
+	routes.get('/reference', function(req, res) {
+		module.getReferenceFile(function(err, reference) {
+			if (err) return res.send(err);
+			return res.json(reference);
 		});
 	});
 };

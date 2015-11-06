@@ -6,36 +6,41 @@
 var fs 			= require('fs');
 var npm 		= require('npm');
 var path		= require('path');
-var gitty		= require('gitty');
+var exec 		= require('child_process').exec;
 
 module.exports = {
 	
-	exposeSettings: function() {
-		return [
-			{
-				name: "modules",
-				type: "hidden",
-				required: true,
-				default: ['formideos-interface'] // install the interface module by default, important!
+	// update system
+	updateOS: function(cb) {
+		FormideOS.log.info('Started update');
+		
+		// wait 2 seconds before sending updated.started
+		setTimeout(function() {
+			FormideOS.events.emit('update.started', {});
+		}, 2000);
+		
+		cb(null, "Started update");
+		var child = exec('npm install formide-client -g', function (error, stdout, stderr) {
+			if (stderr !== null) {
+				FormideOS.log.info('Finished update');
+				FormideOS.events.emit('update.finished', { message: stdout });
+				//cb(null, stderr);
 			}
-		];
+			if (stdout !== null) {
+				FormideOS.log.info('Finished update');
+				FormideOS.events.emit('update.finished', { message: stdout });
+				//cb(null, stdout);
+    		}
+			if (error !== null) {
+				FormideOS.log.error('Failed update with error: ' + error);
+				FormideOS.events.emit('update.failed', { message: error });
+				//cb(error);
+    		}
+		});
 	},
 	
-	// for now updates 3rd party modules as well!
-	updateOS: function(cb) {
-		var formideosRepo = gitty(FormideOS.appRoot);
-		formideosRepo.pull('origin', 'development', function(err) {
-			if (err) return res.send(err);
-			npm.load(function (err) {
-				npm.commands.update(function (updateErr, data) {
-					if (updateErr) return cb(err);
-					return cb(null, {
-						"core": "updated",
-						"dependencies": data
-		    		});
-	  			});
-  			});
-		});
+	reboot: function(cb) {
+		// do reboot of device
 	},
 	
 	getPackages: function(simple, cb) {
@@ -83,8 +88,8 @@ module.exports = {
 		var self = this;
 		npm.load(function (err) {
 			if (err) return cb(err);
-			npm.commands.update([packageName], function (updateErr, data) {
-				if (updateErr) return cb(err);
+			npm.commands.install([packageName + '@latest'], function (updateErr, data) {
+				if (updateErr) return cb(updateErr);
 				if (data !== undefined) {
 					FormideOS.moduleManager.reloadModule(packageName);
 				}
@@ -101,10 +106,9 @@ module.exports = {
 		else {
 			npm.load({ save: true }, function (err) {
 				if (err) return cb(err);
-				npm.commands.install([packageName], function (installErr, data) {
-					if (installErr) return cb(err);
-					modules.push(packageName);
-					FormideOS.settings.set('update', 'modules', modules);
+				npm.commands.install([packageName + '@latest'], function (installErr, data) {
+					if (installErr) return cb(installErr);
+					FormideOS.modules.push(packagename);
 					if (data !== undefined) {
 						FormideOS.moduleManager.loadModule('node_modules/' + packageName, packageName, false);
 						FormideOS.moduleManager.activateModule(packageName);
@@ -119,11 +123,10 @@ module.exports = {
 		npm.load(function (err) {
 			if (err) return cb(err);
 			npm.commands.uninstall([packageName], function (uninstallErr, data) {
-				if (uninstallErr) return cb(err);
-				var modules = FormideOS.settings.get('update', 'modules');
+				if (uninstallErr) return cb(uninstallErr);
+				var modules = FormideOS.modules;
 				var index = modules.indexOf(packageName);
 				modules.splice(index, 1);
-				FormideOS.settings.set('update', 'modules', modules);
 				if (data !== undefined) {
 					FormideOS.moduleManager.disposeModule(packageName);
 				}
@@ -138,7 +141,7 @@ module.exports = {
 			if (err) return cb(err);
 			self.getPackages(true, function(packages) {
 				npm.commands.outdated(packages, function (outdatedErr, data) {
-					if (outdatedErr) return cb(err);
+					if (outdatedErr) return cb(outdatedErr);
 					return cb(null, data);
 	  			});
 			});

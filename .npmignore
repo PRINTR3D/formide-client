@@ -1,0 +1,12 @@
+# Dependencies
+node_modules
+
+# OSX
+.DS_Store
+
+# katana binary log files
+KatanaLog.txt
+RequestsLog.txt
+logs
+
+release

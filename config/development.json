@@ -10,33 +10,29 @@
 		"inviteUrl": "https://api2.formide.com/clients/register/invite"
 	},
 	"cloud": {
-		"url": "https://api2.formide.com",
-		"url2": "http://localhost:3000"
+		"url": "https://apidev.formide.com",
+		"permission": false
 	},
 	"db": {
-		"storage": "../storage/database"
+		"storage": "/database"
 	},
 	"log": {
-		"path": "../storage"
+		"path": "/logs"
 	},
 	"paths": {
-		"temp": "../uploads/tmp",
-		"modelfile": "../uploads/modelfiles",
-		"gcode": "../uploads/gcode"
+		"temp": "/tmp",
+		"modelfiles": "/modelfiles",
+		"gcode": "/gcode"
 	},
 	"printer": {
+		"permission": false,
 		"simulated": false
 	},
 	"slicer": {
-		"port": 1339,
-		"simulated": false
+		"version": "1.0.2"	
 	},
 	"settings": {
-		"path": "../storage"
-	},
-	"setup": {
-		"permission": false,
-		"registerUrl": "https://api2.formide.com/clients/register/token"
+		"path": "/"
 	},
 	"update": {
 		"permission": false

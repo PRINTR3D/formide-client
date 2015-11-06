@@ -34,6 +34,18 @@ module.exports = function(routes, db)
 			});
 		});
 	});
+	
+	/*
+	 * Edit the prettyname of a modelfile (name that appears in the file list)
+	 */
+	routes.post('/modelfiles/:id', function(req, res) {
+		db.Modelfile.update({ _id: req.params.id }, { prettyname: req.body.prettyname },function(err) {
+			if (err) return res.send(err);
+			return res.send({
+				success: true
+			});
+		});
+	});
 
 	/*
 	 * Delete a modelfile entry by ID.

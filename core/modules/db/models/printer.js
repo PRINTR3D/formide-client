@@ -8,12 +8,17 @@ var timestamps  = require('mongoose-timestamp');
 var Schema = mongoose.Schema;
 
 var schema = new Schema({
-	name: { type: String, required: true, unique: true },
+	name: { type: String, required: true },
 	bed: { type: Schema.Types.Mixed, required: true },
+	axis: { type: Schema.Types.Mixed, required: true, default: { x: 1, y: 1, z: 1} },
 	extruders: { type: Schema.Types.Mixed, required: true },
-	port: { type: String },
-	baudrate: { type: Number, required: true, default: 250000 },
-	user: { type: Schema.Types.ObjectId, ref: 'users' }
+	port: { type: String, unique: true, default: 'Connect printer to select USB port' },
+	baudrate: { type: Number, default: 250000 },
+	user: { type: Schema.Types.ObjectId, ref: 'users' },
+	//cloudId: { type: String },
+	startGcode: [{ type: String }],
+	endGcode: [{ type: String }],
+	gcodeFlavour: { type: String, required: true, default: "GCODE_FLAVOR_REPRAP" }
 });
 schema.plugin(timestamps);
 
