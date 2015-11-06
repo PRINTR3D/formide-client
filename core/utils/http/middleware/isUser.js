@@ -13,18 +13,25 @@ module.exports = function(req, res, next) {
 			if (err) return res.serverError(err);
 			if (accessToken) {
 				FormideOS.log('Access token found in db');
-				FormideOS.db.User.findOne({ id: accessToken.user }).exec(function (err, user) {
-					if (err) return res.serverError(err);
-					if (user) {
-						FormideOS.log('User found in db');
-						req.user = user;
-						return next();
-					}
-					else {
-						FormideOS.log.warn('User not found in db');
-						return res.unauthorized();
-					}
-				});
+				if (accessToken.sessionOrigin === 'local') {
+					FormideOS.db.User.findOne({ id: accessToken.user }).exec(function (err, user) {
+						if (err) return res.serverError(err);
+						if (user) {
+							FormideOS.log('User found in db');
+							req.user = user;
+							return next();
+						}
+						else {
+							FormideOS.log.warn('User not found in db');
+							return res.unauthorized();
+						}
+					});
+				}
+				else {
+					// TODO: figure out a good way to connect local and cloud user accounts
+					req.user = {};
+					return next();
+				}
 			}
 			else {
 				FormideOS.log.warn('Access token not found in db');
