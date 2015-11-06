@@ -32,7 +32,8 @@ module.exports = function(Waterline) {
 			
 			sessionOrigin: {
 				type: 'string',
-				required: true
+				required: true,
+				enum: ["local", "cloud"]
 			}
 		},
 		
