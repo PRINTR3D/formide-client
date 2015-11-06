@@ -1,3 +1,5 @@
+'use strict';
+
 /*
  *	This code was created for Printr B.V. It is open source under the formideos-client package.
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
@@ -28,6 +30,10 @@ module.exports =
 
 		// use self to prevent bind(this) waterfall
 		var self = this;
+
+		function forwardEvents(data) {
+			self.cloud.emit(this.event, data);
+		}
 
 		// init cloud with new socket io client to online cloud url
 		this.cloud = socket(config.url);
@@ -61,9 +67,7 @@ module.exports =
 							FormideOS.log('Cloud connected');
 
 							// forward all events to the cloud
-							FormideOS.events.onAny(function(data) {
-								self.cloud.emit(this.event, data);
-							});
+							FormideOS.events.onAny(forwardEvents);
 						}
 						else {
 							// something went wrong when connecting to the cloud
@@ -125,7 +129,10 @@ module.exports =
 		/*
 		 * Handle disconnect
 	 	 */
-		this.cloud.on('disconnect', function() {
+		this.cloud.on('disconnect', () => {
+			// turn off event forwarding
+			FormideOS.events.offAny(forwardEvents);
+
 			FormideOS.log('Cloud disconnected');
 		});
 	},
