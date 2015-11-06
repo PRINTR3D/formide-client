@@ -10,24 +10,30 @@
 module.exports = function(req, res, next) {
 	if (req.token) {
 		FormideOS.db.AccessToken.findOne({ token: req.token }).exec(function(err, accessToken) {
+			if (err) return res.serverError(err);
 			if (accessToken) {
 				FormideOS.log('Access token found in db');
-				return next();
+				FormideOS.db.User.findOne({ id: accessToken.user }).exec(function (err, user) {
+					if (err) return res.serverError(err);
+					if (user) {
+						FormideOS.log('User found in db');
+						req.user = user;
+						return next();
+					}
+					else {
+						FormideOS.log.warn('User not found in db');
+						return res.unauthorized();
+					}
+				});
 			}
 			else {
-				FormideOS.log.warn('No access token found in db');
-				return res.json({
-					status: 401,
-					errors: 'No permission'
-				});
+				FormideOS.log.warn('Access token not found in db');
+				return res.unauthorized();
 			}
 		});
 	}
 	else {
 		FormideOS.log.error('No access token found in request');
-		return res.json({
-			status: 401,
-			errors: 'No permission'
-		});
+		return res.unauthorized();
 	}
 }

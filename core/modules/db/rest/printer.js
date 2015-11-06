@@ -9,9 +9,11 @@ module.exports = function(routes, db)
 	 * Get a list of printer objects
 	 */
 	routes.get('/printers', function(req, res) {
-		db.Printer.find().exec(function(err, printers) {
-			if (err) return res.send(err);
-			return res.send(printers);
+		db.Printer
+		.find()
+		.exec(function (err, printers) {
+			if (err) return res.serverError(err);
+			return res.ok(printers);
 		});
 	});
 
@@ -19,9 +21,12 @@ module.exports = function(routes, db)
 	 * Get a single printer object
 	 */
 	routes.get('/printers/:id', function(req, res) {
-		db.Printer.findOne({ _id: req.params.id }).exec(function(err, printer) {
-			if (err) return res.send(err);
-			return res.send(printer);
+		db.Printer
+		.findOne({ id: printer.parent.id })
+		.exec(function (err, printer) {
+			if (err) return res.serverError(err);
+			if (!printer) return res.notFound();
+			return res.ok(printer);
 		});
 	});
 
@@ -29,17 +34,20 @@ module.exports = function(routes, db)
 	 * Create a new printer object. req.body should contain all items in printer database object
 	 */
 	routes.post('/printers', function(req, res) {
-		db.Printer.create(req.body, function(err, printer) {
-			if (err) return res.status(400).send(err);
-			if (printer) {
-				return res.send({
-					printer: printer,
-					success: true
-				});
-			}
-			return res.send({
-				success: false
-			});
+		db.Printer.create({
+			name: req.body.name,
+			bed: req.body.bed,
+			axis: req.body.axis,
+			extruders: req.body.extruders,
+			port: req.body.port,
+			baudrate: req.body.baudrate,
+			gcodeFlavour: req.body.gcodeFlavour,
+			startGcode: req.body.startGcode,
+			endGcode: req.body.endGcode,
+			user: req.user.id,
+		}, function (err, printer) {
+			if (err) return res.serverError(err);
+			return res.ok({ message: "Printer created", printer: printer });
 		});
 	});
 
@@ -47,16 +55,20 @@ module.exports = function(routes, db)
 	 * Update a printer object. req.body should contain all items in printer database object
 	 */
 	routes.put('/printers/:id', function(req, res) {
-		db.Printer.update({ _id: req.params.id }, req.body, function(err, printer) {
-			if (err) return res.status(400).send(err);
-			if (printer) {
-				return res.send({
-					success: true
-				});
-			}
-			return res.send({
-				success: false
-			});
+		db.Printer.update({ id: req.params.id }, {
+			name: req.body.name,
+			bed: req.body.bed,
+			axis: req.body.axis,
+			extruders: req.body.extruders,
+			port: req.body.port,
+			baudrate: req.body.baudrate,
+			gcodeFlavour: req.body.gcodeFlavour,
+			startGcode: req.body.startGcode,
+			endGcode: req.body.endGcode,
+			user: req.user.id
+		}, function (err, updated) {
+			if (err) return res.serverError(err);
+			return res.ok({ message: "Printer updated", printer: updated[0] });
 		});
 	});
 
@@ -64,16 +76,9 @@ module.exports = function(routes, db)
 	 * Delete printer object
 	 */
 	routes.delete('/printers/:id', function(req, res) {
-		db.Printer.remove({ _id: req.params.id }, function(err, printer) {
-			if (err) return res.status(400).send(err);
-			if (printer) {
-				return res.send({
-					success: true
-				});
-			}
-			return res.send({
-				success: false
-			});
+		db.Printer.destroy({ id: req.params.id }, function (err) {
+			if (err) return res.serverError(err);
+			return res.ok({ message: "Printer deleted" });
 		});
 	});
 };

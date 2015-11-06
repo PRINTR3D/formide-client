@@ -125,7 +125,13 @@ module.exports =
 	 * Handles cloud authentication based on cloudConnectionToken, returns session access_token that cloud uses to perform http calls from then on
 	 */
 	authenticate: function(data, callback) {
-		FormideOS.db.AccessToken.generate(data, 'cloud', function(err, accessToken) {
+		var permissions = [];
+		if (data.isOwner) permissions.push("owner");
+		if (data.isAdmin) permissions.push("admin");
+		FormideOS.db.AccessToken.create({
+			permissions: permissions,
+			sessionOrigin: "cloud"
+		}, function (err, accessToken) {
 			if (err) return callback(err);
 			return callback(null, accessToken);
 		});
@@ -170,13 +176,12 @@ module.exports =
 		var self = this;
 		var hash = uuid.v4();
 		
-		FormideOS.db.Queueitem.create({
+		FormideOS.db.QueueItem.create({
 			origin: 'cloud',
 			status: 'queued',
 			gcode: hash,
 			printjob: data.printjob,
 			port: data.port
-			//printer: printer.toObject()
 		}, function(err, queueitem) {
 			if (err) return callback(err);
 			callback(null, {
@@ -187,7 +192,7 @@ module.exports =
 			// TODO: better way of fetching gcode files from cloud
 			request({
 				method: 'GET',
-				url: FormideOS.config.get('cloud.url') + '/files/gcodefiles/public',
+				url: FormideOS.config.get('cloud.url') + '/files/download/gcode',
 				qs: {
 					hash: data.hash
 				},
@@ -236,7 +241,7 @@ module.exports =
 					}, function (response) {
 						if (response.success === false || !response.deviceToken) {
 							FormideOS.log.error(response.message);
-							FormideOS.db.User.remove({
+							FormideOS.db.User.destroy({
 								cloudConnectionToken: registertoken
 							}, function (err) {
 								if (err) return cb(err);
@@ -244,10 +249,10 @@ module.exports =
 							});
 						}
 						else {
-							FormideOS.db.User.update({ cloudConnectionToken: registertoken }, { cloudConnectionToken: response.deviceToken }, function (err, user) {
+							FormideOS.db.User.update({ cloudConnectionToken: registertoken }, { cloudConnectionToken: response.deviceToken }, function (err, updated) {
 								if (err) return cb(err);
 								FormideOS.log('cloud user connected with clientToken ' + response.deviceToken);
-								return cb(null, user);
+								return cb(null, updated[0]);
 							});
 						}
 					});

@@ -56,16 +56,9 @@ module.exports =
 	
 	printerConnected: function(port) {
 		var self = this;
-		//FormideOS.db.Printer.findOne({ port: port }).exec(function(err, printer) {
-			//if (err) FormideOS.log(err);
-			//if (!printer) {
-			//	FormideOS.log('Printer needs to be setup: ' + port);
-			//	FormideOS.events.emit('printer.setup', { port: port });
-			//}
-			FormideOS.log('Printer connected: ' + port);
-			FormideOS.events.emit('printer.connected', { port: port, notification: true, level: "success", title: "Printer connected", message: "A printer was connected" });
-			self.printers[port.split("/")[2]] = new AbstractPrinter(port, self.driver);
-		//});
+		FormideOS.log('Printer connected: ' + port);
+		FormideOS.events.emit('printer.connected', { port: port, notification: true, level: "success", title: "Printer connected", message: "A printer was connected" });
+		self.printers[port.split("/")[2]] = new AbstractPrinter(port, self.driver);
 	},
 	
 	printerDisconnected: function(port) {
@@ -79,7 +72,7 @@ module.exports =
 	
 	printerOnline: function(port) {
 		FormideOS.log('Printer online: ' + port);
-		//FormideOS.events.emit('printer.online', { port: port });
+		FormideOS.events.emit('printer.online', { port: port });
 	},
 	
 	printFinished: function(port, printjobId) {

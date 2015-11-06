@@ -17,7 +17,6 @@ module.exports = function(Waterline) {
 			
 			email: {
 				type: 'string',
-				email: true,
 				required: true
 			},
 			

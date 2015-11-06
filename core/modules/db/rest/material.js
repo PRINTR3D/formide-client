@@ -9,9 +9,11 @@ module.exports = function(routes, db)
 	 * Get a list of material objects
 	 */
 	routes.get('/materials', function( req, res ) {
-		db.Material.find().exec(function(err, materials) {
-			if (err) return res.send(err);
-			return res.send(materials);
+		db.Material
+		.find({ user: req.user.id }, { select: ((req.query.fields) ? req.query.fields.split(',') : "") })
+		.exec(function (err, materials) {
+			if (err) return res.serverError(err);
+			return res.ok(materials);
 		});
 	});
 
@@ -19,9 +21,11 @@ module.exports = function(routes, db)
 	 * Get a single material object
 	 */
 	routes.get('/materials/:id', function( req, res ) {
-		db.Material.findOne({ _id: req.params.id }).exec(function(err, material) {
-			if (err) return res.send(err);
-			return res.send(material);
+		db.Material
+		.findOne({ user: req.user.id, id: req.params.id })
+		.exec(function (err, material) {
+			if (err) return res.serverError(err);
+			return res.ok(material);
 		});
 	});
 
@@ -29,17 +33,18 @@ module.exports = function(routes, db)
 	 * Create a new material object. req.body should contain all items in material database object
 	 */
 	routes.post('/materials', function(req, res) {
-		db.Material.create(req.body, function(err, material) {
-			if (err) return res.status(400).send(err);
-			if (material) {
-				return res.send({
-					material: material,
-					success: true
-				});
-			}
-			return res.send({
-				success: false
-			});
+		db.Material.create({
+			name: req.body.name,
+			type: req.body.type,
+			filamentDiameter: req.body.filamentDiameter,
+			temperature: req.body.temperature,
+			firstLayersTemperature: req.body.firstLayersTemperature,
+			bedTemperature: req.body.bedTemperature,
+			firstLayersBedTemperature: req.body.firstLayersBedTemperature,
+			feedrate: req.body.feedrate
+		}, function (err, material) {
+			if (err) return res.serverError(err.message);
+			return res.ok({ message: "Material created", material: material });
 		});
 	});
 
@@ -47,16 +52,18 @@ module.exports = function(routes, db)
 	 * Update a material object. req.body should contain all items in material database object
 	 */
 	routes.put('/materials/:id', function(req, res) {
-		db.Material.update({ _id: req.params.id }, req.body, function(err, material) {
-			if (err) return res.status(400).send(err);
-			if (material) {
-				return res.send({
-					success: true
-				});
-			}
-			return res.send({
-				success: false
-			});
+		db.Material.update({ id: req.params.id, user: req.user.id }, {
+			name: req.body.name,
+			type: req.body.type,
+			filamentDiameter: req.body.filamentDiameter,
+			temperature: req.body.temperature,
+			firstLayersTemperature: req.body.firstLayersTemperature,
+			bedTemperature: req.body.bedTemperature,
+			firstLayersBedTemperature: req.body.firstLayersBedTemperature,
+			feedrate: req.body.feedrate
+		}, function (err, updated) {
+			if (err) return res.serverError(err.message);
+			return res.ok({ message: "Material updated", material: updated[0] });
 		});
 	});
 
@@ -64,16 +71,9 @@ module.exports = function(routes, db)
 	 * Delete material object
 	 */
 	routes.delete('/materials/:id', function(req, res) {
-		db.Material.remove({ _id: req.params.id }, function(err, material) {
-			if (err) return res.status(400).send(err);
-			if (material) {
-				return res.send({
-					success: true
-				});
-			}
-			return res.send({
-				success: false
-			});
+		db.Material.destroy({ user: req.user.id, id: req.params.id }, function (err) {
+			if (err) return res.serverError(err.message);
+			return res.ok({ message: "Material deleted" });
 		});
 	});
 };

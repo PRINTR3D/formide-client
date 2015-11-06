@@ -27,16 +27,13 @@ require('./core/FormideOS')(function (err) {
 	FormideOS.moduleManager.loadModule('core/modules/db', 		'db', 		true);
 	FormideOS.moduleManager.loadModule('core/modules/settings',	'settings', true);
 	FormideOS.moduleManager.loadModule('core/modules/auth', 	'auth', 	true);
-	FormideOS.moduleManager.loadModule('core/modules/log', 		'log', 		true);
+	// FormideOS.moduleManager.loadModule('core/modules/log', 		'log', 		true); // TODO: log to db
 	FormideOS.moduleManager.loadModule('core/modules/files', 	'files', 	true);
 	FormideOS.moduleManager.loadModule('core/modules/printer', 	'printer', 	true);
-	// FormideOS.moduleManager.loadModule('core/modules/slicer', 	'slicer', 	true);
-	// FormideOS.moduleManager.loadModule('core/modules/setup', 	'setup',	true);
-	FormideOS.moduleManager.loadModule('core/modules/update', 	'update', 	true);
+	// FormideOS.moduleManager.loadModule('core/modules/slicer', 	'slicer', 	true); // TODO: compile for node v4
 	FormideOS.moduleManager.loadModule('core/modules/cloud', 	'cloud',	true);
 	
-	
-	// Load all 3rd party formideos modules
+	// Load all via npm installed formide-client modules
 	for(var i in pkg.dependencies) {
 		if (i.indexOf("formide-client-") > -1) {
 			FormideOS.modules.push(i);

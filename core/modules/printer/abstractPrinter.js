@@ -124,22 +124,22 @@ AbstractPrinter.prototype.command = function(command, parameters, callback) {
 AbstractPrinter.prototype.startPrint = function(id, gcode, callback) {
 	var self = this;
 	// first we set all current printing db queue items for this port back to queued to prevent multiple 'printing' items
-	FormideOS.db.Queueitem.update({ 'printer.port': self.port }, { status: 'queued' }, { multi: true }, function(err, updated) {
+	FormideOS.db.QueueItem.update({ 'printer.port': self.port }, { status: 'queued' }, { multi: true }, function(err, updated) {
 		if (err) return FormideOS.log.error(err.message);
 		// then we select the correct queue item for printing
-		FormideOS.db.Queueitem.findOne({ _id: id, gcode: gcode }, function(err, queueitem) {
+		FormideOS.db.QueueItem.findOne({ id: id, gcode: gcode }, function(err, queueItem) {
 			if (err) return FormideOS.log.error(err.message);
-			if (queueitem) {
+			if (queueItem) {
 				// get the file location and send to driver
 				self.driver.printFile(FormideOS.config.get('app.storageDir') + FormideOS.config.get('paths.gcode') + '/' + gcode, id, self.port, function(err, response) {
 					if (err) return FormideOS.log.error(err.message);
 					// set queue item status to printing
-					queueitem.status = 'printing';
-					queueitem.save();
+					queueItem.status = 'printing';
+					queueItem.save();
 					self.queueID = id;
 					FormideOS.events.emit('printer.started', {
 						port: self.port,
-						printjobID: self.queueID
+						printjobId: self.queueID
 					});
 					return callback(null, response);
 				});
@@ -160,7 +160,7 @@ AbstractPrinter.prototype.pausePrint = function(callback) {
 		if (err) return FormideOS.log.error(err.mesasge);
 		FormideOS.events.emit('printer.paused', {
 			port: self.port,
-			printjobID: self.queueID
+			printjobId: self.queueID
 		});
 		return callback(null, response);
 	})
@@ -175,7 +175,7 @@ AbstractPrinter.prototype.resumePrint = function(callback) {
 		if (err) return FormideOS.log.error(err.message);
 		FormideOS.events.emit('printer.resumed', {
 			port: self.port,
-			printjobID: self.queueID
+			printjobId: self.queueID
 		});
 		return callback(null, response);
 	});
@@ -189,14 +189,14 @@ AbstractPrinter.prototype.stopPrint = function(callback) {
 	// TODO: implement custom stop gcode array
 	self.driver.stopPrint(self.port, "", function(err, response) {
 		if (err) return FormideOS.log.error(err.message);
-		FormideOS.db.Queueitem.findOne({ _id: self.queueID }, function(err, queueitem) {
+		FormideOS.db.QueueItem.findOne({ id: self.queueID }, function(err, queueItem) {
 			if (err) return FormideOS.log.error(err.message);
-			if (!queueitem) return FormideOS.log.warn('No queue item with that ID found to stop printing');
-			queueitem.status = 'queued';
-			queueitem.save();
+			if (!queueItem) return FormideOS.log.warn('No queue item with that ID found to stop printing');
+			queueItem.status = 'queued';
+			queueItem.save();
 			FormideOS.events.emit('printer.stopped', {
 				port: self.port,
-				printjobID: self.queueID
+				printjobId: self.queueID
 			});
 			self.queueID = null;
 			return callback(err, "stopped printing");
@@ -210,11 +210,11 @@ AbstractPrinter.prototype.stopPrint = function(callback) {
 AbstractPrinter.prototype.printFinished = function(printjobId) {
 	var self = this;
 	if (printjobId !== self.queueId) FormideOS.log.warn('Warning: driver queue ID and client queue ID are not the same!', true);
-	FormideOS.db.Queueitem.findOne({ _id: self.queueID }, function(err, queueitem) {
+	FormideOS.db.QueueItem.findOne({ id: self.queueID }, function(err, queueItem) {
 		if (err) return FormideOS.log.error(err.message);
-		if (!queueitem) return FormideOS.log.warn('No queue item with that ID found to handle finished printing');
-		queueitem.status = 'finished';
-		queueitem.save();
+		if (!queueItem) return FormideOS.log.warn('No queue item with that ID found to handle finished printing');
+		queueItem.status = 'finished';
+		queueItem.save();
 		FormideOS.events.emit('printer.finished', {
 			port: self.port,
 			printjobID: self.queueID

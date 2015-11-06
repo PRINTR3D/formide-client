@@ -37,8 +37,8 @@ module.exports = function(Waterline) {
 		},
 		
 		// hash password before saving user to database
-		beforeCreate: function (user, next) {
-			values.token = uuid.v4();
+		beforeCreate: function (accessToken, next) {
+			accessToken.token = uuid.v4();
 			next();
 		}
 	});

@@ -9,9 +9,19 @@ module.exports = function(routes, db)
 	 * Get a list of printjobs from database and populate with connected resources
 	 */
 	routes.get('/printjobs', function(req, res) {
-		db.Printjob.find().populate('materials modelfiles gcodefile printer sliceprofile').exec(function(err, printjobs) {
-			if (err) return res.send(err);
-			return res.send(printjobs);
+		db.Printjob
+		.find({ user: req.user.id }, { select: ((req.query.fields) ? req.query.fields.split(',') : "") })
+		.populate('printer')
+		.populate('sliceprofile')
+		.populate('materials')
+		.populate('files')
+/*
+		.skip(req.pagination.offset)
+		.limit(req.pagination.limit)
+*/
+		.exec(function (err, printjobs) {
+			if (err) return res.serverError(err);
+			return res.ok(printjobs);
 		});
 	});
 
@@ -19,9 +29,15 @@ module.exports = function(routes, db)
 	 * Get single printjob database object
 	 */
 	routes.get('/printjobs/:id', function(req, res) {
-		db.Printjob.findOne({ _id: req.params.id }).populate('materials modelfiles gcodefile printer sliceprofile').exec(function(err, printjob) {
-			if (err) return res.send(err);
-			return res.send(printjob);
+		db.Printjob
+		.find({ user: req.user.id, id: req.params.id })
+		.populate('printer')
+		.populate('sliceprofile')
+		.populate('materials')
+		.populate('files')
+		.exec(function (err, printjob) {
+			if (err) return res.serverError(err);
+			return res.ok(printjob);
 		});
 	});
 	
@@ -30,20 +46,17 @@ module.exports = function(routes, db)
 	 */
 	routes.post('/printjobs', function(req, res) {
 		db.Printjob.create({
-				sliceMethod: "custom",
-				sliceFinished: true,
-				gcode: req.body.gcodeHash,
-				gcodefile: req.body.gcodeID
-			}, function(err, printjob) {
-			if (err) return res.status(400).send(err);
-			if (printjob) {
-				return res.send({
-					printjob: printjob,
-					success: true
-				});
-			}
-			return res.send({
-				success: false
+			sliceMethod: "custom",
+			sliceFinished: true,
+			gcode: req.body.gcodeHash,
+			files: [ req.body.gcodeID ],
+			user: req.user.id
+		}, function (err, printjob) {
+			if (err) return res.serverError(err);
+			if (!printjob) return res.notFound();
+			return res.ok({
+				message: "Printjob created from custom gcode file",
+				prinjob: printjob
 			});
 		});
 	});
@@ -52,9 +65,11 @@ module.exports = function(routes, db)
 	 * Delete printjob
 	 */
 	routes.delete('/printjobs/:id', function(req, res) {
-		db.Printjob.remove({ _id: req.params.id }, function(err, printjob) {
-			if (err) return res.status(400).send(err);
-			return res.send({ success: true });
+		db.Printjob.destroy({ id: req.params.id, user: req.user.id }, function (err) {
+			if (err) return res.serverError(err);
+			return res.ok({
+				message: "Printjob deleted"
+			});
 		});
 	});
 };

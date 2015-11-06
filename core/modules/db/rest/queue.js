@@ -10,15 +10,19 @@ module.exports = function(routes, db) {
 	 */
 	routes.get('/queue', function(req, res) {
 		if (req.query.port) {
-			db.Queueitem.find({ port: req.query.port }).exec(function(err, queue) {
-				if (err) return res.send(err);
-				return res.send(queue);
+			db.QueueItem
+			.find({ port: req.query.port })
+			.exec(function (err, queueItems) {
+				if (err) return res.serverError(err);
+				return res.ok(queueItems);
 			});
 		}
 		else {
-			db.Queueitem.find().exec(function(err, queue) {
-				if (err) return res.send(err);
-				return res.send(queue);
+			db.QueueItem
+			.find()
+			.exec(function (err, queueItems) {
+				if (err) return res.serverError(err);
+				return res.ok(queueItems);
 			});
 		}
 	});
@@ -27,36 +31,44 @@ module.exports = function(routes, db) {
 	 * Get a single queue item from database
 	 */
 	routes.get('/queue/:id', function(req, res) {
-		db.Queueitem.findOne({ _id: req.params.id }).exec(function(err, queueitem) {
-			if (err) return res.send(err);
-			return res.send(queueitem);
+		db.QueueItem
+		.findOne({ id: req.params.id })
+		.exec(function (err, queueItem) {
+			if (err) return res.serverError(err);
+			return res.ok(queueItem);
 		});
 	});
 
 	/*
 	 * Add a queue item by printjobID and printerID (adds the printjob to the print queue of that printer)
 	 */
-	routes.post('/queue/:printjobID/:printerID', function(req, res) {
-		db.Printjob.findOne({ _id: req.params.printjobID }).populate('modelfiles materials sliceprofile printer gcodefile').exec(function(err, printjob) {
-			if (err) return res.json({ success: false, err: err, message: 'printjob error' });
-			db.Printer.findOne({ _id: req.params.printerID }).exec(function(err, printer) {
-				if (err) return res.json({ success: false, err: err, message: 'printer error' });
-				if (!printer) return res.json({ success: false, message: 'no printer found with this ID' });
-				db.Queueitem.create({
-					origin: 'local',
-					status: 'queued',
+	routes.post('/queue/:printjobId/:printerId', function(req, res) {
+		db.Printjob
+		.findOne({ id: req.params.printjobId, user: req.user.id })
+		.populate('files')
+		.populate('materials')
+		.populate('sliceprofile')
+		.populate('printer')
+		.exec(function (err, printjob) {
+			if (err) return res.serverError(err);
+			db.Printer
+			.findOne({ id: req.params.printerId })
+			.exec(function (err, printer) {
+				if (err) return res.serverError(err);
+				
+				db.QueueItem.create({
+					origin: "local",
 					gcode: printjob.gcode,
 					printjob: printjob.toObject(),
 					port: printer.port
-					// printer: printer.toObject()
-				}, function(err, queueitem) {
-					if (err) return res.send(err);
-					return res.send({
-						success: true,
-						queueitem: queueitem
+				}, function (err, queueItem) {
+					if (err) return res.serverError(err);
+					return res.ok({
+						message: "Printjob added to queue",
+						queueItem: queueItem
 					});
-				});
-			});
+				})
+			})
 		});
 	});
 
@@ -64,15 +76,10 @@ module.exports = function(routes, db) {
 	 * Delete queue item
 	 */
 	routes.delete('/queue/:id', function(req, res) {
-		db.Queueitem.remove({ _id: req.params.id }, function(err, queueitem) {
-			if (err) return res.status(400).send(err);
-			if (queueitem) {
-				return res.send({
-					success: true
-				});
-			}
-			return res.send({
-				success: false
+		db.QueueItem.destroy({ id: req.params.id }, function (err) {
+			if (err) return res.serverError(err);
+			return res.ok({
+				message: "Queue item deleted"
 			});
 		});
 	});

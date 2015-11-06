@@ -7,8 +7,7 @@ module.exports = function(routes, module) {
 	
 	// require submodules for individual rest resources
 	require('./rest/material.js')(routes, FormideOS.db);
-	require('./rest/modelfile.js')(routes, FormideOS.db);
-	require('./rest/gcodefile.js')(routes, FormideOS.db);
+	require('./rest/userfile.js')(routes, FormideOS.db);
 	require('./rest/printer.js')(routes, FormideOS.db);
 	require('./rest/printjob.js')(routes, FormideOS.db);
 	require('./rest/queue.js')(routes, FormideOS.db);
