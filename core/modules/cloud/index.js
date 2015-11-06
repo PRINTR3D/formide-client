@@ -16,7 +16,7 @@ var async		= require('async');
 var getMac		= require('getmac');
 
 module.exports =
-{	
+{
 	// socket connections
 	cloud: null,
 	local: null,
@@ -25,10 +25,10 @@ module.exports =
 	 * Init for cloud module
 	 */
 	init: function(config) {
-		
+
 		// use self to prevent bind(this) waterfall
 		var self = this;
-		
+
 		// init cloud with new socket io client to online cloud url
 		this.cloud = socket(config.url);
 		this.local = socket('ws://127.0.0.1:' + FormideOS.http.server.address().port);
@@ -42,7 +42,7 @@ module.exports =
 		 * Connect to the cloud socket server
 	 	 */
 		this.cloud.on('connect', function () {
-			
+
 			// authenticate formideos based on mac address and api token, also sends permissions for faster blocking via cloud
 			publicIp(function (err, ip) {
 				getMac.getMac(function(err, macAddress) {
@@ -59,7 +59,7 @@ module.exports =
 					}, function(response) {
 						if (response.success) {
 							FormideOS.log('Cloud connected');
-							
+
 							// forward all events to the cloud
 							FormideOS.events.onAny(function(data) {
 								self.cloud.emit(this.event, data);
@@ -73,14 +73,14 @@ module.exports =
 				});
 			});
 		});
-		
+
 		/*
 		 * See if client is online
 		 */
-		this.cloud.on('ping', function(data, callback) {
-			return callback('pong');
+		this.cloud.on('ping', function(data) {
+			self.cloud.emit('pong', data);
 		});
-		
+
 		/*
 		 * This event is triggered when a user logs into the cloud and want to access one of his clients
 		 */
@@ -99,17 +99,23 @@ module.exports =
 			FormideOS.log('Cloud http call: ' + data.url);
 			// call http function
 			this.http(data, function(err, response) {
-				return callback(response);
+				self.cloud.emit('http', {
+					id:     data._callbackId,
+					result: response
+				});
 			});
 		}.bind(this));
-		
+
 		/*
 		 * Send a gcode file to a client to print a cloud sliced printjob
 		 */
-		this.cloud.on('addToQueue', function(data, callback) {
+		this.cloud.on('addToQueue', function(data) {
 			FormideOS.log('Cloud addToQueue: ' + data.hash);
 			self.addToQueue(data, function(err, response) {
-				return callback(err, response);
+				self.cloud.emit('addToQueue', {
+					id:     data._callbackId,
+					result: response
+				});
 			});
 		});
 
@@ -162,14 +168,14 @@ module.exports =
 			});
 		}
 	},
-	
+
 	/*
 	 * Handles addToQueue from cloud
 	 */
 	addToQueue: function(data, callback) {
 		var self = this;
 		var hash = uuid.v4();
-		
+
 		FormideOS.db.Queueitem.create({
 			origin: 'cloud',
 			status: 'queued',
@@ -183,7 +189,7 @@ module.exports =
 				success: true,
 				queueitem: queueitem
 			});
-			
+
 			// TODO: better way of fetching gcode files from cloud
 			request({
 				method: 'GET',
@@ -203,13 +209,13 @@ module.exports =
 			});
 		});
 	},
-	
+
 	/*
 	 * Register device in cloud
 	 */
 	registerDevice: function (owner_email, owner_password, registertoken, cb) {
 		var self = this;
-		
+
 		FormideOS.db.User.findOne({
 			isOwner: true
 		}, function (err, user) {
