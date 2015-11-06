@@ -77,47 +77,47 @@ module.exports =
 		/*
 		 * See if client is online
 		 */
-		this.cloud.on('ping', function(data) {
+		this.cloud.on('ping', data => {
 			self.cloud.emit('pong', data);
 		});
 
 		/*
 		 * This event is triggered when a user logs into the cloud and want to access one of his clients
 		 */
-		this.cloud.on('authenticateUser', function(data, callback) {
+		this.cloud.on('authenticateUser', data => {
 			FormideOS.log("Cloud authenticate user:" + data.id);
-			this.authenticate(data, function(err, accessToken) {
+			this.authenticate(data, (err, accessToken) => {
 				FormideOS.log('Cloud user authorized with access_token ' + accessToken.token);
 				self.cloud.emit('authenticateUser', {
-					id:     data._callbackId,
-					result: accessToken.token
+					_callbackId: data._callbackId,
+					result:      accessToken.token
 				});
 			});
-		}.bind(this));
+		});
 
 		/*
 		 * HTTP proxy request from cloud
 		 */
-		this.cloud.on('http', function(data, callback) {
+		this.cloud.on('http', data => {
 			FormideOS.log('Cloud http call: ' + data.url);
 			// call http function
-			this.http(data, function(err, response) {
+			this.http(data, (err, response) => {
 				self.cloud.emit('http', {
-					id:     data._callbackId,
-					result: response
+					_callbackId: data._callbackId,
+					result:      response
 				});
 			});
-		}.bind(this));
+		});
 
 		/*
 		 * Send a gcode file to a client to print a cloud sliced printjob
 		 */
-		this.cloud.on('addToQueue', function(data) {
+		this.cloud.on('addToQueue', data => {
 			FormideOS.log('Cloud addToQueue: ' + data.hash);
-			self.addToQueue(data, function(err, response) {
+			self.addToQueue(data, (err, response) => {
 				self.cloud.emit('addToQueue', {
-					id:     data._callbackId,
-					result: response
+					_callbackId: data._callbackId,
+					result:      response
 				});
 			});
 		});
@@ -184,7 +184,7 @@ module.exports =
 	addToQueue: function(data, callback) {
 		var self = this;
 		var hash = uuid.v4();
-		
+
 		FormideOS.db.QueueItem.create({
 			origin: 'cloud',
 			status: 'queued',
