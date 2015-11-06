@@ -1,0 +1,83 @@
+{
+  "data": {
+    "user": [
+      {
+        "firstName": "Chris",
+        "lastName": "ter Beke",
+        "createdAt": "2015-11-06T09:48:46.879Z",
+        "updatedAt": "2015-11-06T09:48:46.879Z",
+        "id": 1
+      }
+    ],
+    "accesstoken": []
+  },
+  "schema": {
+    "user": {
+      "email": {
+        "type": "string"
+      },
+      "password": {
+        "type": "string"
+      },
+      "cloudConnectionToken": {
+        "type": "string"
+      },
+      "isAdmin": {
+        "type": "boolean",
+        "defaultsTo": false
+      },
+      "isOwner": {
+        "type": "boolean",
+        "defaultsTo": false
+      },
+      "id": {
+        "type": "integer",
+        "autoIncrement": true,
+        "primaryKey": true,
+        "unique": true
+      },
+      "createdAt": {
+        "type": "datetime"
+      },
+      "updatedAt": {
+        "type": "datetime"
+      }
+    },
+    "accesstoken": {
+      "user": {
+        "type": "integer",
+        "model": "user",
+        "foreignKey": true,
+        "alias": "user"
+      },
+      "token": {
+        "type": "string"
+      },
+      "permissions": {
+        "type": "array",
+        "defaultsTo": []
+      },
+      "sessionOrigin": {
+        "type": "string"
+      },
+      "id": {
+        "type": "integer",
+        "autoIncrement": true,
+        "primaryKey": true,
+        "unique": true
+      },
+      "createdAt": {
+        "type": "datetime"
+      },
+      "updatedAt": {
+        "type": "datetime"
+      }
+    }
+  },
+  "counters": {
+    "user": {
+      "id": 1
+    },
+    "accesstoken": {}
+  }
+}
