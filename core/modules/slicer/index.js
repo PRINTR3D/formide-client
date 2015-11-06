@@ -16,6 +16,7 @@ module.exports = {
 	init: function(config) {
 		this.config = config;
 
+		// TODO: update slicer to load as npm module
 		if(process.platform == 'darwin') {
 			this.katana	= require(FormideOS.appRoot + 'bin/osx/katana');
 			FormideOS.log('Binded katana in osx/katana');
@@ -54,7 +55,7 @@ module.exports = {
 		}, function(err, printjob) {
 			if (err) return callback(err);
 			
-			self.createSliceRequest(printjob._id, function(err, slicerequest) {
+			self.createSliceRequest(printjob.id, function(err, slicerequest) {
 				if (err) return callback(err);
 				
 				callback(null, printjob);
@@ -67,7 +68,7 @@ module.exports = {
 				// write slicerequest to local Katana instance
 				FormideOS.events.emit('slicer.started', {
 					title: "Slicer started",
-					message: "Started slicing " + printjob._id,
+					message: "Started slicing " + printjob.id,
 					data: slicerequest
 				});
 				
@@ -78,7 +79,7 @@ module.exports = {
 						
 						if(response.status == 200 && response.data.responseID != null) {
 							FormideOS.db.Printjob
-							.update({ _id: response.data.responseID }, {
+							.update({ id: response.data.responseID }, {
 								gcode: response.data.gcode,
 								sliceResponse: response.data,
 								sliceFinished: true
@@ -97,7 +98,7 @@ module.exports = {
 						}
 						else {
 							FormideOS.db.Printjob
-							.update({ _id: response.data.responseID }, {
+							.update({ id: response.data.responseID }, {
 								sliceResponse: response.data,
 								sliceFinished: false
 							}, function(err, printjob) {
@@ -125,7 +126,7 @@ module.exports = {
 		var self = this;
 		
 		// creates a slice request from a printjob database entry
-		FormideOS.db.Printjob.findOne({ _id: printjobId }).lean().populate('modelfiles materials printer').exec(function(err, printjob) {
+		FormideOS.db.Printjob.findOne({ id: printjobId }).lean().populate('modelfiles materials printer').exec(function(err, printjob) {
 			if (err) return callback(err);
 			if (printjob.printer === null) return callback(new Error("Error getting printjob printer"));
 			if (printjob.modelfiles.length < 1) return callback(new Error("Error getting printjob modelfiles"));
@@ -133,12 +134,12 @@ module.exports = {
 			
 			var reference = require(FormideOS.appRoot + "bin/reference-" + self.config.version + ".json");
 			
-			FormideOS.db.Sliceprofile.findOne({ _id: printjob.sliceprofile }).lean().exec(function(err, sliceprofile) {
+			FormideOS.db.Sliceprofile.findOne({ id: printjob.sliceprofile }).lean().exec(function(err, sliceprofile) {
 				if (err) return callback(err);
 				if (sliceprofile === null) return callback(new Error("Error getting printjob sliceprofile"));
 				formideTools.updateSliceprofile(reference, sliceprofile.settings, function(err, fixedSettings, version) {
 					if (err) return callback(err);
-					FormideOS.db.Sliceprofile.update({ _id: sliceprofile._id }, { settings: fixedSettings, version: version }, function(err, update) {
+					FormideOS.db.Sliceprofile.update({ id: sliceprofile.id }, { settings: fixedSettings, version: version }, function(err, update) {
 						if (err) return callback(err);
 						
 						try {
@@ -148,7 +149,7 @@ module.exports = {
 									version: version,
 									bucketIn: FormideOS.config.get('app.storageDir') + FormideOS.config.get("paths.modelfiles"),
 									bucketOut: FormideOS.config.get('app.storageDir') + FormideOS.config.get("paths.gcode"),
-									responseId: printjob._id.toString()
+									responseId: printjob.id.toString()
 								})
 								.generateBaseSettings()
 								.generatePrinterGcodeSettings()
@@ -173,6 +174,7 @@ module.exports = {
 		});
 	},
 	
+	// TODO: update to load slicer as npm module
 	getReferenceFile: function(callback) {
 		var reference = require(FormideOS.appRoot + "bin/reference-" + this.config.version + ".json");
 		return callback(null, reference);
