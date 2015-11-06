@@ -4,7 +4,7 @@
  */
 
 var Waterline 			= require('waterline');
-var sailsDiskAdapter 	= require('sails-disk');
+var sailsDiskAdapter 	= require('sails-disk'); // yes, we know the respository says it's not for production, but it fits our needs perfectly :P
 var waterline 			= new Waterline();
 var db					= null;
 
@@ -19,7 +19,6 @@ var config = {
     adapters: {
         'disk': sailsDiskAdapter,
     },
-
     connections: {
         default: {
             adapter: 'disk',

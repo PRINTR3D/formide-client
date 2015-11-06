@@ -3,36 +3,61 @@
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
+var async = require('async');
 
-var db 			= require('../core/modules/db/models');	
-var setupConfig = require('./setup.json');
-
-db.Modelfile.remove({}, function(err) {});
-db.Gcodefile.remove({}, function(err) {});
-db.Printjob.remove({}, function(err) {});
-db.Queueitem.remove({}, function(err) {});
-db.AccessToken.remove({}, function(err) {});
-
-db.User.remove({}, function(err) {
-	db.User.create(setupConfig.users, function(err) {
-		if (err) console.log('db users create err: ' + err);
+require('../core/utils/db')(function (err, db) {
+	if (err) {
+		FormideOS.log.err(err);
+		process.exit(1);
+	}
+	
+	db.User.create({
+		email: "admin@local",
+		password: "admin",
+		isAdmin: true
+	}, function (err, users) {
+		if (err) console.log(err);
 	});
-});
-
-db.Printer.remove({}, function(err) {
-	db.Printer.create(setupConfig.printers, function(err) {
-		if (err) console.log('db printers create err: ' + err);
+	
+/*
+	async.series([
+		function (callback) {
+		    db.User.drop(function (err) {
+			    if (err) return callback(err);
+				db.User.create({
+					email: "admin@local",
+					password: "admin",
+					isAdmin: true
+				}, function (err, users) {
+					if (err) return callback(err);
+					callback(null, users);
+				});
+			});
+	    },
+	    function (callback) {
+		    db.UserFile.drop(callback);
+	    },
+		function (callback) {
+		    db.Printjob.drop(callback);
+	    },
+	    function (callback) {
+		    db.QueueItem.drop(callback);
+	    },
+	    function (callback) {
+		    db.AccessToken.drop(callback);
+	    },
+	    function (callback) {
+		    db.Printer.drop(callback);
+	    },
+	    function (callback) {
+		    db.Material.drop(callback);
+	    },
+	    function (callback) {
+		    db.Sliceprofile.drop(callback);
+	    }
+	], function (err) {
+		if (err) console.log(err);
+		console.log("Done clearing and seeding database");
 	});
-});
-
-db.Material.remove({}, function(err) {
-	db.Material.create(setupConfig.materials, function(err) {
-		if (err) console.log('db materials create err: ' + err);
-	});
-});
-
-db.Sliceprofile.remove({}, function(err) {
-	db.Sliceprofile.create(setupConfig.sliceprofiles, function(err) {
-		if (err) console.log('db sliceprofiles create err: ' + err);
-	});
+*/
 });
