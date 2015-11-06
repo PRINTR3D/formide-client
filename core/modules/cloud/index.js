@@ -85,10 +85,13 @@ module.exports =
 		 * This event is triggered when a user logs into the cloud and want to access one of his clients
 		 */
 		this.cloud.on('authenticateUser', function(data, callback) {
+			FormideOS.log("Cloud authenticate user:" + data.id);
 			this.authenticate(data, function(err, accessToken) {
-				if (err) return callback(err);
 				FormideOS.log('Cloud user authorized with access_token ' + accessToken.token);
-				return callback(null, accessToken.token);
+				self.cloud.emit('authenticateUser', {
+					id:     data._callbackId,
+					result: accessToken.token
+				});
 			});
 		}.bind(this));
 
