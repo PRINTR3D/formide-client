@@ -99,8 +99,8 @@
     "mocha": "*"
   },
   "engines": {
-    "node": "0.12.7",
-    "npm": "~2.14.0"
+    "node": "4.2.2",
+    "npm": "3.3.10"
   },
   "bin": {
     "formide-client": "bin/formide-client"
