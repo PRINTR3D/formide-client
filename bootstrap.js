@@ -10,10 +10,16 @@
  */
 
 // Dependencies
-var pkg		= require('./package.json');
+var pkg = require('./package.json');
 
 // Load formideos core file
 require('./core/FormideOS')(function (err) {
+	
+	// Memory watching during development
+	if (process.env.NODE_ENV !== 'production') {
+		var heapdump = require('heapdump');
+		heapdump.writeSnapshot('logs/' + Date.now() + '.heapsnapshot');
+	}
 	
 	// Log awesome app starter logo
 	require('./core/utils/logLogo');

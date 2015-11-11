@@ -191,6 +191,8 @@ module.exports =
 	addToQueue: function(data, callback) {
 		var self = this;
 		var hash = uuid.v4();
+		
+		console.log('addToQueue', data);
 
 		FormideOS.db.QueueItem.create({
 			origin: 'cloud',
