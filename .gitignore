@@ -4,9 +4,11 @@ node_modules
 # OSX
 .DS_Store
 
-# katana binary log files
+# Log files
 KatanaLog.txt
 RequestsLog.txt
 logs
+npm-debug.log
 
+# Tools
 release
