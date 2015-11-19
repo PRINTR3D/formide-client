@@ -25,7 +25,7 @@ module.exports = function() {
 	var loadModule = function(moduleLocation, moduleName, core) {
 
 		core = core || false;
-		var moduleRoot = FormideOS.appRoot + moduleLocation;
+		var moduleRoot = path.join(FormideOS.appRoot, moduleLocation);
 
 		var moduleInfo = {
 			namespace:		moduleName,
