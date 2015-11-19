@@ -16,7 +16,7 @@ module.exports = {
 	init: function(config) {
 		this.config = config;
 
-		// TODO: update slicer to load as npm module
+		// TODO: update slicer to load as npm module like drivers
 		if(process.platform == 'darwin') {
 			this.katana	= require(FormideOS.appRoot + 'bin/osx/katana');
 			FormideOS.log('Binded katana in osx/katana');
@@ -39,11 +39,11 @@ module.exports = {
 
 	// custom functions
 	slice: function(modelfiles, sliceprofile, materials, printer, settings, callback) {
-		
+
 		var self = this;
 		var hash = uuid.v4();
 		var callback = callback;
-		
+
 		FormideOS.db.Printjob.create({
 			modelfiles: modelfiles,
 			printer: printer,
@@ -54,32 +54,32 @@ module.exports = {
 			sliceMethod: "local"
 		}, function(err, printjob) {
 			if (err) return callback(err);
-			
+
 			self.createSliceRequest(printjob.id, function(err, slicerequest) {
 				if (err) return callback(err);
-				
+
 				callback(null, printjob);
-				
+
 				var sliceData = {
 					type: "slice",
 					data: slicerequest
 				};
-				
+
 				// write slicerequest to local Katana instance
 				FormideOS.events.emit('slicer.started', {
 					title: "Slicer started",
 					message: "Started slicing " + printjob.id,
 					data: slicerequest
 				});
-				
+
 				self.katana.slice(JSON.stringify(sliceData), function(response) {
-					
+
 					try {
 						var response = JSON.parse(response);
-						
-						if(response.status == 200 && response.data.responseID != null) {
+
+						if(response.status == 200 && response.data.responseId != null) {
 							FormideOS.db.Printjob
-							.update({ id: response.data.responseID }, {
+							.update({ id: response.data.responseId }, {
 								gcode: response.data.gcode,
 								sliceResponse: response.data,
 								sliceFinished: true
@@ -87,7 +87,7 @@ module.exports = {
 								if (err) FormideOS.log.error(err.message);
 								FormideOS.events.emit('slicer.finished', {
 									title: "Slicer finished",
-									message: "Finished slicing " + response.data.responseID,
+									message: "Finished slicing " + response.data.responseId,
 									data: response.data,
 									notification: true
 								});
@@ -98,7 +98,7 @@ module.exports = {
 						}
 						else {
 							FormideOS.db.Printjob
-							.update({ id: response.data.responseID }, {
+							.update({ id: response.data.responseId }, {
 								sliceResponse: response.data,
 								sliceFinished: false
 							}, function(err, printjob) {
@@ -120,20 +120,20 @@ module.exports = {
 			});
 		});
 	},
-	
+
 	createSliceRequest: function(printjobId, callback) {
-		
+
 		var self = this;
-		
+
 		// creates a slice request from a printjob database entry
 		FormideOS.db.Printjob.findOne({ id: printjobId }).lean().populate('modelfiles materials printer').exec(function(err, printjob) {
 			if (err) return callback(err);
 			if (printjob.printer === null) return callback(new Error("Error getting printjob printer"));
 			if (printjob.modelfiles.length < 1) return callback(new Error("Error getting printjob modelfiles"));
 			if (printjob.materials.length < 1) return callback(new Error("Error getting printjob materials"));
-			
-			var reference = require(FormideOS.appRoot + "bin/reference-" + self.config.version + ".json");
-			
+
+			var reference = require(FormideOS.appRoot + "/bin/reference-" + self.config.version + ".json");
+
 			FormideOS.db.Sliceprofile.findOne({ id: printjob.sliceprofile }).lean().exec(function(err, sliceprofile) {
 				if (err) return callback(err);
 				if (sliceprofile === null) return callback(new Error("Error getting printjob sliceprofile"));
@@ -141,7 +141,7 @@ module.exports = {
 					if (err) return callback(err);
 					FormideOS.db.Sliceprofile.update({ id: sliceprofile.id }, { settings: fixedSettings, version: version }, function(err, update) {
 						if (err) return callback(err);
-						
+
 						try {
 							// generate slicerequest from printjob
 							var sliceRequest = formideTools
@@ -162,7 +162,7 @@ module.exports = {
 								.generateModelSettings()
 								.generateExtruderSettings()
 								.getResult();
-							
+
 							return callback(null, sliceRequest);
 						}
 						catch (e) {
@@ -173,10 +173,10 @@ module.exports = {
 			});
 		});
 	},
-	
+
 	// TODO: update to load slicer as npm module
 	getReferenceFile: function(callback) {
-		var reference = require(FormideOS.appRoot + "bin/reference-" + this.config.version + ".json");
+		var reference = require(FormideOS.appRoot + "/bin/reference-" + this.config.version + ".json");
 		return callback(null, reference);
 	}
 }

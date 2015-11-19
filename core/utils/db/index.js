@@ -7,24 +7,28 @@ var Waterline 			= require('waterline');
 var sailsDiskAdapter 	= require('sails-disk'); // yes, we know the respository says it's not for production, but it fits our needs perfectly :P
 var waterline 			= new Waterline();
 var db					= null;
+var path				= require('path');
 
 if (typeof SETUP !== "undefined") {
-	var storage = SETUP.storageDir + "/database_";
+	var storage = path.join(SETUP.storageDir, "database_");
 }
 else {
-	var storage = FormideOS.config.get('app.storageDir') + "/database_";
+	var storage = path.join(FormideOS.config.get('app.storageDir'), "database_");
 }
 
 var config = {
     adapters: {
-        'disk': sailsDiskAdapter,
+        disk: sailsDiskAdapter
     },
     connections: {
         default: {
             adapter: 'disk',
             filePath: storage
         }
-    }
+    },
+	defaults: {
+		migrate: 'safe'
+	}
 };
 
 var userCollection = require('./models/User')(Waterline);
@@ -55,12 +59,12 @@ var queueItemCollection = require('./models/Queueitem')(Waterline);
 waterline.loadCollection(queueItemCollection);
 
 module.exports = function(callback) {
-	
+
 	waterline.initialize(config, function (err, ontology) {
 		if (err) {
 			return callback(err);
 		}
-	
+
 		callback(null, {
 			User: ontology.collections.user,
 			AccessToken: ontology.collections.accesstoken,

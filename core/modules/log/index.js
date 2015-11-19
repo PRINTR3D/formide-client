@@ -4,9 +4,10 @@
  */
 
 var winston = require('winston');
+var path	= require('path');
 
 module.exports =
-{	
+{
 	logger: {},
 
 	init: function(config) {
@@ -14,7 +15,7 @@ module.exports =
 			transports:
 		    [
 				new (winston.transports.File)({
-					filename: FormideOS.config.get('app.storageDir') + config.path + '/FormideOS.log',
+					filename: path.join(FormideOS.config.get('app.storageDir'), config.path, 'FormideOS.log'),
 					level: 'debug'
 				})
 		    ]

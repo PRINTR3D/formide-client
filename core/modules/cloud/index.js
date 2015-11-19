@@ -6,16 +6,17 @@
  */
 
 // dependencies
-var net 		= require('net');
-var request 	= require('request');
-var socket 		= require('socket.io-client');
-var sailsIOClient = require('sails.io.js');
-var publicIp 	= require('public-ip');
-var internalIp 	= require('internal-ip');
-var fs			= require('fs');
-var uuid		= require('node-uuid');
-var async		= require('async');
-var getMac		= require('getmac');
+var net 			= require('net');
+var request 		= require('request');
+var socket 			= require('socket.io-client');
+var sailsIOClient	= require('sails.io.js');
+var publicIp 		= require('public-ip');
+var internalIp 		= require('internal-ip');
+var fs				= require('fs');
+var path			= require('path');
+var uuid			= require('node-uuid');
+var async			= require('async');
+var getMac			= require('getmac');
 
 module.exports =
 {
@@ -52,8 +53,8 @@ module.exports =
 			// authenticate formideos based on mac address and api token, also sends permissions for faster blocking via cloud
 			publicIp(function (err, ip) {
 				getMac.getMac(function(err, macAddress) {
-					var pkg = fs.readFileSync(FormideOS.appRoot + 'package.json', 'utf8');
-					pkg = JSON.parse(pkg);
+					var pkg = fs.readFileSync(path.join(FormideOS.appRoot, 'package.json'), 'utf8');
+					pkg = JSON.parse(pkg); // no try needed, since package.json needs to be valid for the app to boot at all
 					self.cloud.emit('authenticate', {
 						type: 'client',
 						mac: macAddress,
@@ -191,7 +192,7 @@ module.exports =
 	addToQueue: function(data, callback) {
 		var self = this;
 		var hash = uuid.v4();
-		
+
 		console.log('addToQueue', data);
 
 		FormideOS.db.QueueItem.create({
@@ -217,7 +218,7 @@ module.exports =
 				strictSSL: false
 			})
 			.on('response', function(response) {
-				var newPath = FormideOS.config.get('app.storageDir') + FormideOS.config.get('paths.gcode') + '/' + hash;
+				var newPath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.gcode'), hash);
 				var fws = fs.createWriteStream(newPath);
 				response.pipe(fws);
 				response.on( 'end', function() {

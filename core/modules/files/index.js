@@ -2,20 +2,21 @@
  *	This code was created for Printr B.V. It is open source under the formideos-client package.
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
- 
+
 var fs		= require('fs');
+var paths   = require('path');
 var uuid	= require('node-uuid');
 var request	= require('request');
 
 module.exports = {
-	
+
 	/*
 	 * Handle file upload
 	 */
 	uploadFile: function(file, filetype, userId, callback) {
 		fs.readFile(file.path, function(err, data) {
 			var hash = uuid.v4();
-			var newPath = FormideOS.config.get('app.storageDir') + FormideOS.config.get('paths.modelfiles') + '/' + hash;
+			var newPath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.modelfiles'), hash);
 			fs.writeFile(newPath, data, function(err) {
 				if (err) {
 					FormideOS.log.error(err.message);
@@ -43,7 +44,7 @@ module.exports = {
 	 */
 	downloadFile: function(hash, encoding, userId, callback) {
 		// TODO: check user ID
-		var filename = FormideOS.config.get('app.storageDir') + FormideOS.config.get('paths.modelfiles') + '/' + hash;
+		var filename = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.modelfiles'), hash);
 		fs.exists(filename, function(exists) {
 			if(exists) {
 				fs.readFile(filename, function(err, data) {
@@ -67,7 +68,7 @@ module.exports = {
 			}
 		});
 	},
-	
+
 	/*
 	 * Handle upload from remote url
 	 */
@@ -79,7 +80,7 @@ module.exports = {
 		.on('response', function(response) {
 			var regexp = /filename=\"(.*)\"/gi;
 			var hash = uuid.v4();
-			var newPath = FormideOS.config.get('app.storageDir') + FormideOS.config.get('paths.modelfiles') + '/' + hash;
+			var newPath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.modelfiles'), hash);
 			var fws = fs.createWriteStream(newPath);
 			response.pipe(fws);
 			response.on( 'end', function() {

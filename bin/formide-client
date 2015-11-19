@@ -1,9 +1,5 @@
 #!/usr/bin/env node
-
 process.env.NODE_ENV = "production";
-
 'use strict';
-
-process.title = 'formideos';
-
+process.title = 'formide-client';
 require('../bootstrap.js');
