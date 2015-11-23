@@ -96,7 +96,7 @@
   },
   "devDependencies": {
     "chai": "~1.4.2",
-    "mocha": "*"
+    "mocha": "^2.3.4"
   },
   "engines": {
     "node": "4.2.2",
