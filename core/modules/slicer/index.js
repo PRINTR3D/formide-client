@@ -16,7 +16,7 @@ module.exports = {
 	init: function(config) {
 		this.config = config;
 
-		// loaded via formide-drivers npm package and node-pre-gyp
+		// loaded via katana-slicer npm package and node-pre-gyp
 		this.katana = require('katana-slicer');
 	},
 

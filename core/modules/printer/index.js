@@ -25,11 +25,10 @@ module.exports =
 			this.driver.start(function(err, started, event) {
 
 				if (err) {
-					FormideOS.log.error('Formidriver err: ' + err.message);
+					FormideOS.log.error('formide-drivers err: ' + err.message);
 				}
-
 				else if (started) {
-					FormideOS.log('Formidriver started successfully');
+					FormideOS.log('formide-drivers started successfully');
 				}
 
 				else if (event) {
