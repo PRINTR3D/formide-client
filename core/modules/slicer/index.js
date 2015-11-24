@@ -16,15 +16,8 @@ module.exports = {
 	init: function(config) {
 		this.config = config;
 
-		// TODO: update slicer to load as npm module like drivers
-		if(process.platform == 'darwin') {
-			this.katana	= require(FormideOS.appRoot + 'bin/osx/katana');
-			FormideOS.log('Binded katana in osx/katana');
-		}
-		else if(process.platform == 'linux') {
-			this.katana	= require(FormideOS.appRoot + 'bin/rpi/katana');
-			FormideOS.log('Binded katana in rpi/katana');
-		}
+		// loaded via formide-drivers npm package and node-pre-gyp
+		this.katana = require('katana-slicer');
 	},
 
 	// custom functions
