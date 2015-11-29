@@ -2,18 +2,18 @@
  *	This code was created for Printr B.V. It is open source under the formideos-client package.
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
- 
+
 /*
  *	Abstract driver for FDM 3D printers. See implementation drivers for more info.
  */
- 
- 
+
+
 function AbstractPrinter(serialPort, driver) {
 	this.port = serialPort;
 	this.driver = driver;
 	this.status = {};
 	this.queueID = null;
-	
+
 	// ask for the status every 2 seconds
 	this.statusInterval = setInterval(this.askStatus.bind(this), 2000);
 
@@ -64,7 +64,7 @@ AbstractPrinter.prototype.map = {
 
 // M17		power_on_steppers
 // M18		power_off_steppers
-	
+
 // M20: 	List SD card
 // M21: 	Initialize SD card
 // M22: 	Release SD card
@@ -92,7 +92,6 @@ AbstractPrinter.prototype.getCommands = function() {
  */
 AbstractPrinter.prototype.sendRaw = function(rawCommand, callback) {
 	var self = this;
-	console.log(rawCommand);
 	self.driver.sendGcode(rawCommand, this.port, function(err, response) {
 		if (callback) return callback(response);
 	});
@@ -160,7 +159,7 @@ AbstractPrinter.prototype.pausePrint = function(callback) {
 		if (err) return FormideOS.log.error(err.mesasge);
 		FormideOS.events.emit('printer.paused', {
 			port: self.port,
-			printjobId: self.queueID
+			printJobId: self.queueID
 		});
 		return callback(null, response);
 	})
@@ -175,7 +174,7 @@ AbstractPrinter.prototype.resumePrint = function(callback) {
 		if (err) return FormideOS.log.error(err.message);
 		FormideOS.events.emit('printer.resumed', {
 			port: self.port,
-			printjobId: self.queueID
+			printJobId: self.queueID
 		});
 		return callback(null, response);
 	});
@@ -196,11 +195,11 @@ AbstractPrinter.prototype.stopPrint = function(callback) {
 			queueItem.save();
 			FormideOS.events.emit('printer.stopped', {
 				port: self.port,
-				printjobId: self.queueID
+				printJobId: self.queueID
 			});
 			self.queueID = null;
 			return callback(err, "stopped printing");
-		});	
+		});
 	});
 }
 
@@ -217,7 +216,7 @@ AbstractPrinter.prototype.printFinished = function(printjobId) {
 		queueItem.save();
 		FormideOS.events.emit('printer.finished', {
 			port: self.port,
-			printjobID: self.queueID
+			printJobId: self.queueID
 		});
 		self.queueID = null;
 	});

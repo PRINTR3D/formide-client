@@ -6,63 +6,68 @@
 module.exports = function(Waterline) {
 
 	var Printjob = Waterline.Collection.extend({
-	
+
 		identity: 'printjob',
-		
+
 		connection: 'default',
-		
+
 		attributes: {
-			user: {
-				model: 'User',
+			createdBy: {
+				model: 'user',
+				via: 'printJobs',
 				required: true
 			},
-			
+
 			files: {
-				collection: 'UserFile',
+				collection: 'userfile',
+				via: 'printJobs',
 				required: true
 			},
-			
+
 			printer: {
-				model: 'Printer',
+				model: 'printer',
+				via: 'printJobs',
 				required: true
 			},
-			
-			sliceprofile: {
-				model: 'Sliceprofile',
+
+			sliceProfile: {
+				model: 'sliceprofile',
+				via: 'printJobs',
 				required: true
 			},
-			
+
 			materials: {
-				collection: 'Material',
+				collection: 'material',
+				via: 'printJobs',
 				required: true
 			},
-			
+
 			gcode: {
 				type: 'string'
 			},
-			
+
 			responseId: {
 				type: 'string',
-				required: true	
+				required: true
 			},
-			
+
 			sliceSettings: {
 				type: 'object'
 			},
-			
+
 			sliceRequest: {
 				type: 'object'
 			},
-			
+
 			sliceResponse: {
 				type: 'object'
 			},
-			
+
 			sliceFinished: {
 				type: 'boolean',
 				defaultsTo: false
 			},
-			
+
 			sliceMethod: {
 				type: 'string',
 				required: true,
@@ -70,6 +75,6 @@ module.exports = function(Waterline) {
 			}
 		}
 	});
-	
+
 	return Printjob;
 }

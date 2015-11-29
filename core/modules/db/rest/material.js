@@ -10,7 +10,7 @@ module.exports = function(routes, db)
 	 */
 	routes.get('/materials', function( req, res ) {
 		db.Material
-		.find({ user: req.user.id }, { select: ((req.query.fields) ? req.query.fields.split(',') : "") })
+		.find({ createdBy: req.user.id }, { select: ((req.query.fields) ? req.query.fields.split(',') : "") })
 		.exec(function (err, materials) {
 			if (err) return res.serverError(err);
 			return res.ok(materials);
@@ -22,7 +22,7 @@ module.exports = function(routes, db)
 	 */
 	routes.get('/materials/:id', function( req, res ) {
 		db.Material
-		.findOne({ user: req.user.id, id: req.params.id })
+		.findOne({ createdBy: req.user.id, id: req.params.id })
 		.exec(function (err, material) {
 			if (err) return res.serverError(err);
 			return res.ok(material);
@@ -41,7 +41,8 @@ module.exports = function(routes, db)
 			firstLayersTemperature: req.body.firstLayersTemperature,
 			bedTemperature: req.body.bedTemperature,
 			firstLayersBedTemperature: req.body.firstLayersBedTemperature,
-			feedrate: req.body.feedrate
+			feedrate: req.body.feedrate,
+			createdBy: req.user.id
 		}, function (err, material) {
 			if (err) return res.serverError(err.message);
 			return res.ok({ message: "Material created", material: material });
@@ -52,7 +53,7 @@ module.exports = function(routes, db)
 	 * Update a material object. req.body should contain all items in material database object
 	 */
 	routes.put('/materials/:id', function(req, res) {
-		db.Material.update({ id: req.params.id, user: req.user.id }, {
+		db.Material.update({ id: req.params.id, createdBy: req.user.id }, {
 			name: req.body.name,
 			type: req.body.type,
 			filamentDiameter: req.body.filamentDiameter,
@@ -71,7 +72,7 @@ module.exports = function(routes, db)
 	 * Delete material object
 	 */
 	routes.delete('/materials/:id', function(req, res) {
-		db.Material.destroy({ user: req.user.id, id: req.params.id }, function (err) {
+		db.Material.destroy({ createdBy: req.user.id, id: req.params.id }, function (err) {
 			if (err) return res.serverError(err.message);
 			return res.ok({ message: "Material deleted" });
 		});

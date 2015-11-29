@@ -10,7 +10,7 @@ module.exports = function(routes, db)
 	 */
 	routes.get('/files', function(req, res) {
 		db.UserFile
-		.find({ user: req.user.id }, { select: ((req.query.fields) ? req.query.fields.split(',') : "") })
+		.find({ createdBy: req.user.id }, { select: ((req.query.fields) ? req.query.fields.split(',') : "") })
 /*
 		.skip(req.query.offset || 0)
 		.limit(req.query.limit || 25)
@@ -27,7 +27,7 @@ module.exports = function(routes, db)
 	 */
 	routes.get('/files/:id', function(req, res) {
 		db.UserFile
-		.findOne({ user: req.user.id, id: req.params.id })
+		.findOne({ createdBy: req.user.id, id: req.params.id })
 		.exec(function( err, userFile) {
 			if (err) return res.serverError(err);
 			if (!userFile) return res.notFound("File not found");
@@ -45,13 +45,14 @@ module.exports = function(routes, db)
 			});
 		});
 	});
-	
+
 	/*
 	 * Edit the prettyname of a userfile (name that appears in the file list)
 	 */
 	routes.post('/files/:id', function(req, res) {
-		db.UserFile.update({ id: req.params.id }, {
-			prettyname: req.body.prettyname
+		db.UserFile.update({ id: req.params.id, createdBy: req.user.id }, {
+			prettyname: req.body.prettyname,
+			createdBy: req.user.id
 		}, function (err, updated) {
 			if (err) return res.serverError(err);
 			return res.send({
@@ -65,7 +66,7 @@ module.exports = function(routes, db)
 	 * Delete a userfile entry by ID.
 	 */
 	routes.delete('/files/:id', function(req, res) {
-		db.UserFile.destroy({ id: req.params.id }, function (err) {
+		db.UserFile.destroy({ id: req.params.id, createdBy: req.user.id }, function (err) {
 			if (err) return res.serverError(err);
 			return res.send({
 				message: "Userfile deleted"

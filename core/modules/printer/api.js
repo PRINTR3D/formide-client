@@ -11,7 +11,7 @@ module.exports = function(routes, module)
 	routes.get('/', function(req, res) {
 		return res.send(module.getPrinters());
 	});
-	
+
 	/**
 	 * Get a list of printer commands
 	 */
@@ -29,12 +29,12 @@ module.exports = function(routes, module)
 			return res.json(status);
 		});
 	});
-	
+
 	/*
 	 * Start printjob
 	 */
 	routes.get('/:port/start', function(req, res) {
-		module.startPrint(req.params.port, req.query._id, req.query.gcode, function(err, result) {
+		module.startPrint(req.params.port, req.query.id, req.query.gcode, function(err, result) {
 			if (err) return res.send(err);
 			return res.json({
 				success: true,
@@ -42,7 +42,7 @@ module.exports = function(routes, module)
 			});
 		});
 	});
-	
+
 	/*
 	 * Stop printjob
 	 */
@@ -55,7 +55,7 @@ module.exports = function(routes, module)
 			});
 		});
 	});
-	
+
 	/*
 	 * Pause printjob
 	 */
@@ -68,7 +68,7 @@ module.exports = function(routes, module)
 			});
 		});
 	});
-	
+
 	/*
 	 * Resume printjob
 	 */
@@ -81,7 +81,7 @@ module.exports = function(routes, module)
 			});
 		});
 	});
-	
+
 	/*
 	 * Send command to printer
 	 */

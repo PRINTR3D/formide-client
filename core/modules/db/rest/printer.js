@@ -44,7 +44,7 @@ module.exports = function(routes, db)
 			gcodeFlavour: req.body.gcodeFlavour,
 			startGcode: req.body.startGcode,
 			endGcode: req.body.endGcode,
-			user: req.user.id,
+			createdBy: req.user.id,
 		}, function (err, printer) {
 			if (err) return res.serverError(err);
 			return res.ok({ message: "Printer created", printer: printer });
@@ -65,7 +65,7 @@ module.exports = function(routes, db)
 			gcodeFlavour: req.body.gcodeFlavour,
 			startGcode: req.body.startGcode,
 			endGcode: req.body.endGcode,
-			user: req.user.id
+			createdBy: req.user.id
 		}, function (err, updated) {
 			if (err) return res.serverError(err);
 			return res.ok({ message: "Printer updated", printer: updated[0] });

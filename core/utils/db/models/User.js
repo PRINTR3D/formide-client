@@ -8,38 +8,38 @@ var bcrypt = require('bcrypt');
 module.exports = function(Waterline) {
 
 	var User = Waterline.Collection.extend({
-	
+
 		identity: 'user',
-		
+
 		connection: 'default',
-		
+
 		attributes: {
-			
+
 			email: {
 				type: 'string',
 				required: true
 			},
-			
+
 			password: {
 				type: 'string',
 				protected: true
 			},
-			
+
 			cloudConnectionToken: {
 				type: 'string'
 			},
-			
+
 			isAdmin: {
 				type: 'boolean',
 				defaultsTo: false
 			},
-			
+
 			isOwner: {
 				type: 'boolean',
 				defaultsTo: false
 			}
 		},
-		
+
 		// hash password before saving user to database
 		beforeCreate: function (user, next) {
 			if (user.password) {
@@ -58,7 +58,7 @@ module.exports = function(Waterline) {
 				next();
 			}
 		},
-		
+
 		// hash password before saving to database
 		beforeUpdate: function (user, next) {
 			if (user.password) {
@@ -78,6 +78,6 @@ module.exports = function(Waterline) {
 			}
 		}
 	});
-	
+
 	return User;
 }

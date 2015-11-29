@@ -6,41 +6,45 @@
 module.exports = function(Waterline) {
 
 	var QueueItem = Waterline.Collection.extend({
-	
+
 		identity: 'queueitem',
-		
+
 		connection: 'default',
-		
+
 		attributes: {
-			
+
 			origin: {
 				type: 'string',
 				required: true,
 				enum: ['cloud', 'local', 'custom']
 			},
-			
+
 			gcode: {
 				type: 'string',
 				required: true
 			},
-			
+
 			status: {
 				type: 'string',
 				enum: ["queued", "printing", "finished"],
 				defaultsTo: "queued"
 			},
-			
-			printjob: {
-				model: 'Printjob',
+
+			printJob: {
+				model: 'printjob',
 				required: true
 			},
-			
+
 			port: {
 				type: 'string',
 				required: true
+			},
+
+			createdBy: {
+				model: 'user'
 			}
 		}
 	});
-	
+
 	return QueueItem;
 }

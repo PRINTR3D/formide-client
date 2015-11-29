@@ -31,31 +31,31 @@ var config = {
 	}
 };
 
-var userCollection = require('./models/User')(Waterline);
+var userCollection = require('./models/user')(Waterline);
 waterline.loadCollection(userCollection);
 
-var accessTokenCollection = require('./models/AccessToken')(Waterline);
+var accessTokenCollection = require('./models/accesstoken')(Waterline);
 waterline.loadCollection(accessTokenCollection);
 
-var logCollection = require('./models/Log')(Waterline);
+var logCollection = require('./models/log')(Waterline);
 waterline.loadCollection(logCollection);
 
-var userFileColleciton = require('./models/UserFile')(Waterline);
+var userFileColleciton = require('./models/userfile')(Waterline);
 waterline.loadCollection(userFileColleciton);
 
-var materialCollection = require('./models/Material')(Waterline);
+var materialCollection = require('./models/material')(Waterline);
 waterline.loadCollection(materialCollection);
 
-var printerCollection = require('./models/Printer')(Waterline);
+var printerCollection = require('./models/printer')(Waterline);
 waterline.loadCollection(printerCollection);
 
-var sliceprofileCollection = require('./models/Sliceprofile')(Waterline);
+var sliceprofileCollection = require('./models/sliceprofile')(Waterline);
 waterline.loadCollection(sliceprofileCollection);
 
-var printjobCollection = require('./models/Printjob')(Waterline);
+var printjobCollection = require('./models/printjob')(Waterline);
 waterline.loadCollection(printjobCollection);
 
-var queueItemCollection = require('./models/Queueitem')(Waterline);
+var queueItemCollection = require('./models/queueitem')(Waterline);
 waterline.loadCollection(queueItemCollection);
 
 module.exports = function(callback) {
@@ -72,8 +72,8 @@ module.exports = function(callback) {
 			UserFile: ontology.collections.userfile,
 			Material: ontology.collections.material,
 			Printer: ontology.collections.printer,
-			Sliceprofile: ontology.collections.sliceprofile,
-			Printjob: ontology.collections.printjob,
+			SliceProfile: ontology.collections.sliceprofile,
+			PrintJob: ontology.collections.printjob,
 			QueueItem: ontology.collections.queueitem
 		});
 	});

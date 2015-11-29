@@ -6,68 +6,69 @@
 module.exports = function(Waterline) {
 
 	var UserFile = Waterline.Collection.extend({
-	
+
 		identity: 'userfile',
-		
+
 		connection: 'default',
-		
+
 		attributes: {
-			
-			user: {
+
+			createdBy: {
 				model: 'User',
 				required: true
 			},
-			
+
 			hash: {
 				type: 'string',
 				required: true
 			},
-			
+
 			filename: {
 				type: 'string',
 				required: true
 			},
-			
+
 			folder: {
 				type: 'string',
 				defaultsTo: '/'
 			},
-			
+
 			prettyname: {
 				type: 'string',
 				required: true
 			},
-			
+
 			filetype: {
 				type: 'string',
 				required: true,
 				enum: ['text/stl', 'text/gcode']
 			},
-			
+
 			filesize: {
 				type: 'int',
 				required: true
 			},
-			
+
 /*
 			images: {
 				collection: 'Image'
 			},
 */
-			
+
 			tags: {
 				type: 'array'
 			},
-			
+
 			description: {
 				type: 'string'
 			},
-			
-			printjobs: {
-				collection: "Printjob"
+
+			printJobs: {
+				collection: 'printjob',
+				via: 'files'
 			}
 		}
 	});
-	
+
 	return UserFile;
 }

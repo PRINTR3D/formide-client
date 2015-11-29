@@ -4,7 +4,7 @@
  */
 
 var fs		= require('fs');
-var paths   = require('path');
+var path	= require('path');
 var uuid	= require('node-uuid');
 var request	= require('request');
 
@@ -29,7 +29,7 @@ module.exports = {
 						filesize: file.size,
 						filetype: filetype,
 						hash: hash,
-						user: userId
+						createdBy: userId
 					}, function(err, userFile) {
 						if (err) return callback(err)
 						return callback(null, userFile);
@@ -72,30 +72,30 @@ module.exports = {
 	/*
 	 * Handle upload from remote url
 	 */
-	uploadFromUrl: function(url, filename, filetype, userId, callback) {
-		request({
-			method: 'GET',
-			url: url
-		})
-		.on('response', function(response) {
-			var regexp = /filename=\"(.*)\"/gi;
-			var hash = uuid.v4();
-			var newPath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.modelfiles'), hash);
-			var fws = fs.createWriteStream(newPath);
-			response.pipe(fws);
-			response.on( 'end', function() {
-				FormideOS.db.UserFile.create({
-					prettyname: filename,
-					filename: filename,
-					filesize: fws.bytesWritten,
-					filetype: filetype,
-					hash: hash,
-					user: userId
-				}, function(err, userFile) {
-					if (err) return callback(err)
-					return callback(null, userFile);
-				});
-        	});
-		});
-	}
+	// uploadFromUrl: function(url, filename, filetype, userId, callback) {
+	// 	request({
+	// 		method: 'GET',
+	// 		url: url
+	// 	})
+	// 	.on('response', function(response) {
+	// 		var regexp = /filename=\"(.*)\"/gi;
+	// 		var hash = uuid.v4();
+	// 		var newPath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.modelfiles'), hash);
+	// 		var fws = fs.createWriteStream(newPath);
+	// 		response.pipe(fws);
+	// 		response.on( 'end', function() {
+	// 			FormideOS.db.UserFile.create({
+	// 				prettyname: filename,
+	// 				filename: filename,
+	// 				filesize: fws.bytesWritten,
+	// 				filetype: filetype,
+	// 				hash: hash,
+	// 				createdBy: userId
+	// 			}, function(err, userFile) {
+	// 				if (err) return callback(err)
+	// 				return callback(null, userFile);
+	// 			});
+    //     	});
+	// 	});
+	// }
 }

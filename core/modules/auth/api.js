@@ -6,11 +6,11 @@
 var request = require('request');
 
 module.exports = function(routes, module) {
-	
+
 	/*
 	 * Login. Post an email address and password as body, get a AccessToken object back
 	 */
-	routes.post('/login', FormideOS.http.auth.authenticate('local-login'), function(req, res) {	
+	routes.post('/login', FormideOS.http.auth.authenticate('local-login'), function(req, res) {
 		if (req.user.id === null) {
 			return res.notFound();
 		}
@@ -18,7 +18,7 @@ module.exports = function(routes, module) {
 		if (req.user.isOwner) permissions.push("owner");
 		if (req.user.isAdmin) permissions.push("admin");
 		FormideOS.db.AccessToken.create({
-			user: req.user.id,
+			createdBy: req.user.id,
 			sessionOrigin: "local",
 			permissions: permissions
 		}, function (err, accessToken) {
@@ -35,11 +35,10 @@ module.exports = function(routes, module) {
 	routes.get('/session', FormideOS.http.permissions.isUser, function(req, res) {
 		FormideOS.db.AccessToken
 		.findOne({ token: req.token })
+		.populate('createdBy')
 		.exec(function (err, accessToken) {
 			if (err) return res.serverError(err);
-			return res.ok({
-				session: accessToken
-			});
+			return res.ok(accessToken);
 		});
 	});
 
@@ -49,6 +48,7 @@ module.exports = function(routes, module) {
 	routes.get('/tokens', FormideOS.http.permissions.isAdmin, function( req, res ) {
 		FormideOS.db.AccessToken
 		.find()
+		.populate('createdBy')
 		.exec( function(err, accessTokens) {
 			if (err) return res.serverError(err);
 			return res.ok(accessTokens);
@@ -60,7 +60,8 @@ module.exports = function(routes, module) {
 	 */
 	routes.post('/tokens', FormideOS.http.permissions.isAdmin, function(req, res) {
 		FormideOS.db.AccessToken.create({
-			permissions: req.body.permissions
+			permissions: req.body.permissions,
+			createdBy: req.user.id
 		}, function (accessToken) {
 			if (err) return res.serverError(err);
 			return res.ok({
@@ -81,7 +82,7 @@ module.exports = function(routes, module) {
 			})
 		});
 	});
-	
+
 	/*
 	 * Get list of all users
 	 */

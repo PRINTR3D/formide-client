@@ -4,7 +4,7 @@
  */
 
 module.exports = function(routes, db) {
-	
+
 	/*
 	 * Get print queue for all printers or a specific printer by port
 	 */
@@ -43,23 +43,23 @@ module.exports = function(routes, db) {
 	 * Add a queue item by printjobID and printerID (adds the printjob to the print queue of that printer)
 	 */
 	routes.post('/queue/:printjobId/:printerId', function(req, res) {
-		db.Printjob
-		.findOne({ id: req.params.printjobId, user: req.user.id })
+		db.PrintJob
+		.findOne({ id: req.params.printjobId, createdBy: req.user.id })
 		.populate('files')
 		.populate('materials')
 		.populate('sliceprofile')
 		.populate('printer')
-		.exec(function (err, printjob) {
+		.exec(function (err, printJob) {
 			if (err) return res.serverError(err);
 			db.Printer
 			.findOne({ id: req.params.printerId })
 			.exec(function (err, printer) {
 				if (err) return res.serverError(err);
-				
+
 				db.QueueItem.create({
 					origin: "local",
 					gcode: printjob.gcode,
-					printjob: printjob.toObject(),
+					printJob: printJob.toObject(),
 					port: printer.port
 				}, function (err, queueItem) {
 					if (err) return res.serverError(err);

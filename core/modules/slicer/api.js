@@ -6,27 +6,27 @@
 var util = require('util');
 
 module.exports = function(routes, module)
-{	
+{
 	/*
 	 *	Start a new slice request and creates a new printjob in the database. Uses modelfiles, sliprofile, materials, printer and optional settings as input.
 	 */
 	routes.post('/slice', function(req, res) {
-		module.slice(req.body.modelfiles, req.body.sliceprofile, req.body.materials, req.body.printer, req.body.settings, function(err, printjob) {
-			if (err) return res.send({ success: false, error: err.message });
-			return res.json({ success: true, printjob: printjob });
+		module.slice(req.user.id, req.body.files, req.body.sliceProfile, req.body.materials, req.body.printer, req.body.settings, function(err, printJob) {
+			if (err) return res.serverError(err);
+			return res.ok({ printJob: printJob });
 		});
 	});
-	
+
 	/*
 	 * Get the generated slicerequest for an existing printjob.
 	 */
-	routes.get('/generaterequest/:printjobID', function(req, res) {
-		module.createSliceRequest(req.params.printjobID, function(err, slicerequest) {
+	routes.get('/generaterequest/:printJobId', function(req, res) {
+		module.createSliceRequest(req.params.printJobId, function(err, sliceRequest) {
 			if (err) return res.send(err);
-			return res.json(slicerequest);
+			return res.json(sliceRequest);
 		});
 	});
-	
+
 	/*
 	 * Get the reference so the interface can build forms
 	 */
