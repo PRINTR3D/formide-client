@@ -8,25 +8,26 @@ module.exports = function(routes, db)
 	/*
 	 * Get a list of material objects
 	 */
-	routes.get('/materials', function( req, res ) {
+	routes.get('/materials', (req, res) => {
 		db.Material
 		.find({ createdBy: req.user.id }, { select: ((req.query.fields) ? req.query.fields.split(',') : "") })
-		.exec(function (err, materials) {
-			if (err) return res.serverError(err);
-			return res.ok(materials);
-		});
+		.populate('createdBy')
+		.then(res.ok)
+		.error(res.serverError);
 	});
 
 	/*
 	 * Get a single material object
 	 */
-	routes.get('/materials/:id', function( req, res ) {
+	routes.get('/materials/:id', (req, res) => {
 		db.Material
 		.findOne({ createdBy: req.user.id, id: req.params.id })
-		.exec(function (err, material) {
-			if (err) return res.serverError(err);
+		.populate('createdBy')
+		.then((material) => {
+			if (!material) return res.notFound();
 			return res.ok(material);
-		});
+		})
+		.error(res.serverError);
 	});
 
 	/*
@@ -41,7 +42,7 @@ module.exports = function(routes, db)
 			firstLayersTemperature: req.body.firstLayersTemperature,
 			bedTemperature: req.body.bedTemperature,
 			firstLayersBedTemperature: req.body.firstLayersBedTemperature,
-			feedrate: req.body.feedrate,
+			feedRate: req.body.feedRate,
 			createdBy: req.user.id
 		}, function (err, material) {
 			if (err) return res.serverError(err.message);
@@ -61,7 +62,7 @@ module.exports = function(routes, db)
 			firstLayersTemperature: req.body.firstLayersTemperature,
 			bedTemperature: req.body.bedTemperature,
 			firstLayersBedTemperature: req.body.firstLayersBedTemperature,
-			feedrate: req.body.feedrate
+			feedRate: req.body.feedRate
 		}, function (err, updated) {
 			if (err) return res.serverError(err.message);
 			return res.ok({ message: "Material updated", material: updated[0] });
