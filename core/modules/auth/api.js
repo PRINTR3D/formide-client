@@ -21,12 +21,11 @@ module.exports = function(routes, module) {
 			createdBy: req.user.id,
 			sessionOrigin: "local",
 			permissions: permissions
-		}, function (err, accessToken) {
-			if (err) return res.serverError(err);
-			return res.ok({
-				access_token: accessToken.token
-			});
-		});
+		})
+		.then((accessToken) => {
+			return res.ok({ access_token: accessToken.token });
+		})
+		.error(res.serverError);
 	});
 
 	/*
@@ -58,11 +57,12 @@ module.exports = function(routes, module) {
 	/*
 	 * Generate an AccessToken manually with the given permissions (only permission available right now is 'admin')
 	 */
-	routes.post('/tokens', FormideOS.http.permissions.isAdmin, function(req, res) {
+	routes.post('/tokens', FormideOS.http.permissions.isUser, FormideOS.http.permissions.isAdmin, function(req, res) {
 		FormideOS.db.AccessToken.create({
 			permissions: req.body.permissions,
-			createdBy: req.user.id
-		}, function (accessToken) {
+			createdBy: req.user.id,
+			sessionOrigin: 'local'
+		}, function (err, accessToken) {
 			if (err) return res.serverError(err);
 			return res.ok({
 				message: "Access token created",

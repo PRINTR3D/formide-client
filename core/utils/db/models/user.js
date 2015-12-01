@@ -17,7 +17,8 @@ module.exports = function(Waterline) {
 
 			email: {
 				type: 'string',
-				required: true
+				required: true,
+				unique: true
 			},
 
 			password: {
@@ -45,10 +46,7 @@ module.exports = function(Waterline) {
 			if (user.password) {
 				bcrypt.genSalt(10, function(err, salt) {
 					bcrypt.hash(user.password, salt, function(err, hash) {
-						if (err) {
-							sails.log(err);
-							next(err);
-						}
+						if (err) next(err);
 						user.password = hash;
 						next();
 					})
@@ -64,10 +62,7 @@ module.exports = function(Waterline) {
 			if (user.password) {
 				bcrypt.genSalt(10, function(err, salt) {
 					bcrypt.hash(user.password, salt, function(err, hash) {
-						if (err) {
-							sails.log(err);
-							next(err);
-						}
+						if (err) next(err);
 						user.password = hash;
 						next();
 					})

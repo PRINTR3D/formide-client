@@ -15,7 +15,8 @@ module.exports = function(routes, db)
 		.skip(req.query.offset || 0)
 		.limit(req.query.limit || 25)
 */
-		.populate('printjobs')
+		.populate('printJobs')
+		.populate('createdBy')
 		.exec(function (err, userFiles) {
 			if (err) return res.serverError(err);
 			return res.ok(userFiles);
@@ -28,14 +29,15 @@ module.exports = function(routes, db)
 	routes.get('/files/:id', function(req, res) {
 		db.UserFile
 		.findOne({ createdBy: req.user.id, id: req.params.id })
+		.populate('createdBy')
 		.exec(function( err, userFile) {
 			if (err) return res.serverError(err);
 			if (!userFile) return res.notFound("File not found");
-			db.Printjob
+			db.PrintJob
 			.find({ files: userFile.id })
 			.populate('materials')
 			.populate('printer')
-			.populate('sliceprofile')
+			.populate('sliceProfile')
 			.populate('files')
 			.exec(function (err, printjobs) {
 				if (err) return res.serverError(err);
