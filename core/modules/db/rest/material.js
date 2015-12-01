@@ -4,8 +4,9 @@
  */
 
 module.exports = (routes, db) => {
-	/*
-	 * Get a list of material objects
+
+	/**
+	 * Get a list of material
 	 */
 	routes.get('/materials', (req, res) => {
 		db.Material
@@ -15,8 +16,8 @@ module.exports = (routes, db) => {
 		.error(res.serverError);
 	});
 
-	/*
-	 * Get a single material object
+	/**
+	 * Get a single material
 	 */
 	routes.get('/materials/:id', (req, res) => {
 		db.Material
@@ -29,11 +30,12 @@ module.exports = (routes, db) => {
 		.error(res.serverError);
 	});
 
-	/*
-	 * Create a new material object. req.body should contain all items in material database object
+	/**
+	 * Create a new material
 	 */
 	routes.post('/materials', (req, res) => {
-		db.Material.create({
+		db.Material
+		.create({
 			name:						req.body.name,
 			type:						req.body.type,
 			filamentDiameter:			req.body.filamentDiameter,
@@ -50,11 +52,12 @@ module.exports = (routes, db) => {
 		.error(res.serverError);
 	});
 
-	/*
-	 * Update a material object. req.body should contain all items in material database object
+	/**
+	 * Update a material
 	 */
 	routes.put('/materials/:id', (req, res) => {
-		db.Material.update({ id: req.params.id, createdBy: req.user.id }, {
+		db.Material
+		.update({ id: req.params.id, createdBy: req.user.id }, {
 			name:						req.body.name,
 			type:						req.body.type,
 			filamentDiameter:			req.body.filamentDiameter,
@@ -65,16 +68,17 @@ module.exports = (routes, db) => {
 			feedRate:					req.body.feedRate
 		})
 		.then((updated) => {
-			return res.ok({ message: "Material created", material: updated[0] });
+			return res.ok({ message: "Material updated", material: updated[0] });
 		})
 		.error(res.serverError);
 	});
 
-	/*
-	 * Delete material object
+	/**
+	 * Delete a material
 	 */
 	routes.delete('/materials/:id', (req, res) => {
-		db.Material.destroy({ createdBy: req.user.id, id: req.params.id })
+		db.Material
+		.destroy({ createdBy: req.user.id, id: req.params.id })
 		.then(() => {
 			return res.ok({ message: "Material deleted" });
 		})
