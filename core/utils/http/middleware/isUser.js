@@ -2,7 +2,7 @@
  *	This code was created for Printr B.V. It is open source under the formideos-client package.
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
- 
+
 /*
  *	User permission middleware for http server. Checks if permission is needed to use endpoint
  */
@@ -14,7 +14,7 @@ module.exports = function(req, res, next) {
 			if (accessToken) {
 				FormideOS.log('Access token found in db');
 				if (accessToken.sessionOrigin === 'local') {
-					FormideOS.db.User.findOne({ id: accessToken.user }).exec(function (err, user) {
+					FormideOS.db.User.findOne({ id: accessToken.createdBy }).exec(function (err, user) {
 						if (err) return res.serverError(err);
 						if (user) {
 							FormideOS.log('User found in db');
