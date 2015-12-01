@@ -138,7 +138,7 @@ AbstractPrinter.prototype.startPrint = function(id, gcode, callback) {
 					self.queueID = id;
 					FormideOS.events.emit('printer.started', {
 						port: self.port,
-						printjobId: self.queueID
+						printJobId: self.queueID
 					});
 					return callback(null, response);
 				});
