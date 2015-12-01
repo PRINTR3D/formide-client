@@ -3,8 +3,8 @@
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
-module.exports = function(routes, module) {
-	
+module.exports = (routes, module) => {
+
 	// require submodules for individual rest resources
 	require('./rest/material.js')(routes, FormideOS.db);
 	require('./rest/userfile.js')(routes, FormideOS.db);
