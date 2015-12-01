@@ -4,20 +4,23 @@ const assert  = require('assert');
 const co      = require('co');
 const getmac  = require('getmac');
 const thenify = require('thenify');
-
 const ENDPOINT = '/api/db/printers';
-const ACCESS_TOKEN = '';
 
 describe('Printers', function() {
-    this.slow(500);
 
     let $ = null;
+
+    before(done => seed(FormideOS.db).then(_$ => {
+        $ = _$;
+    }).then(() => done(), done));
+
+    after(done => unseed(FormideOS.db).then(() => done()));
 
     describe(`GET ${ENDPOINT}`, () => {
         it('should return printers with valid token', done => {
 
             GET `${ENDPOINT}`
-                .query({ access_token: ACCESS_TOKEN })
+                .query({ access_token: $.accessToken })
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(res => {
@@ -27,3 +30,61 @@ describe('Printers', function() {
         });
     });
 });
+
+const seed = co.wrap(_seed);
+
+function* _seed(collections) {
+
+    const user = yield collections.User.create({
+        email:    'john@test.com',
+        password: 'password'
+    });
+
+    const accessToken = yield collections.AccessToken.create({
+        createdBy:     user.id,
+        permissions:   [],
+        sessionOrigin: 'local'
+    });
+
+    const userPrinter = yield collections.Printer.create({
+        name:         'User printer',
+        bed:          { x: 200, y: 200, z: 200, heated: false },
+        axis:         { x: 1, y: 1, z: 1 },
+        extruders:    [{
+            id:         0,
+            name:       'Extruder 1',
+            nozzleSize: 350
+        }],
+        port:         null,
+        createdBy:    user.id,
+        device:       device2.id,
+        baudrate:     250000,
+        gcodeFlavour: 'GCODE_FLAVOR_REPRAP',
+        startGcode:   [],
+        endGcode:     [],
+        parent:       null,
+        public:       null,
+        type:         'fdm',
+        preset:       false
+    });
+
+    return {
+        accessToken:  accessToken.token,
+        printer:      printer.id,
+        user:         user.id
+    }
+}
+
+function unseed(collections) {
+    assert(collections);
+
+    return collections.accesstoken.destroy()
+        .then(() => collections.printer.destroy())
+        .then(() => collections.user.destroy());
+}
+
+function reseed(collections) {
+    assert(collections);
+
+    return unseed(collections).then(() => seed(collections));
+}

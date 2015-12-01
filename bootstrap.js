@@ -16,6 +16,8 @@ var path 	= require('path');
 // Load formideos core file
 require('./core/FormideOS')(function (err) {
 
+	if (err) throw err;
+
 	// Memory watching during development
 	if (process.env.NODE_ENV !== 'production') {
 		var heapdump = require('heapdump');
