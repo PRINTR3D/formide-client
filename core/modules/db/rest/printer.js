@@ -53,9 +53,9 @@ module.exports = (routes, db) => {
 	});
 
 	/*
-	 * Update a printer object. req.body should contain all items in printer database object
+	 * Update a printer
 	 */
-	routes.put('/printers/:id', function(req, res) {
+	routes.put('/printers/:id', (req, res) => {
 		db.Printer
 		.update({ id: req.params.id }, {
 			name:			req.body.name,
@@ -76,9 +76,9 @@ module.exports = (routes, db) => {
 	});
 
 	/*
-	 * Delete printer object
+	 * Delete a printer
 	 */
-	routes.delete('/printers/:id', function(req, res) {
+	routes.delete('/printers/:id', (req, res) => {
 		db.Printer
 		.destroy({ id: req.params.id })
 		.then(() => {
