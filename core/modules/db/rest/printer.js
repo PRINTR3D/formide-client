@@ -52,7 +52,7 @@ module.exports = (routes, db) => {
 		.error(res.serverError);
 	});
 
-	/*
+	/**
 	 * Update a printer
 	 */
 	routes.put('/printers/:id', (req, res) => {
@@ -75,7 +75,7 @@ module.exports = (routes, db) => {
 		.error(res.serverError);
 	});
 
-	/*
+	/**
 	 * Delete a printer
 	 */
 	routes.delete('/printers/:id', (req, res) => {

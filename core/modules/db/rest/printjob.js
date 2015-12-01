@@ -3,73 +3,66 @@
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
-module.exports = function(routes, db)
-{
-	/*
-	 * Get a list of printjobs from database and populate with connected resources
+module.exports = (routes, db) => {
+
+	/**
+	 * Get a list of printJobs
 	 */
-	routes.get('/printjobs', function(req, res) {
+	routes.get('/printjobs', (req, res) => {
 		db.PrintJob
 		.find({ createdBy: req.user.id }, { select: ((req.query.fields) ? req.query.fields.split(',') : "") })
 		.populate('printer')
 		.populate('sliceProfile')
 		.populate('materials')
 		.populate('files')
-/*
-		.skip(req.pagination.offset)
-		.limit(req.pagination.limit)
-*/
-		.exec(function (err, printJobs) {
-			if (err) return res.serverError(err);
-			return res.ok(printJobs);
-		});
+		.then(res.ok)
+		.error(res.serverError);
 	});
 
-	/*
-	 * Get single printjob database object
+	/**
+	 * Get single printJob
 	 */
-	routes.get('/printjobs/:id', function(req, res) {
+	routes.get('/printjobs/:id', (req, res) => {
 		db.PrintJob
-		.find({ createdBy: req.user.id, id: req.params.id })
+		.find({  id: req.params.id, createdBy: req.user.id })
 		.populate('printer')
 		.populate('sliceProfile')
 		.populate('materials')
 		.populate('files')
-		.exec(function (err, printJob) {
-			if (err) return res.serverError(err);
-			return res.ok(printJob);
-		});
-	});
-
-	/*
-	 * Add a custom printjob from own gcodefile upload
-	 */
-	routes.post('/printjobs', function(req, res) {
-		db.PrintJob.create({
-			sliceMethod: "custom",
-			sliceFinished: true,
-			gcode: req.body.gcodeHash,
-			files: [ req.body.gcodeID ],
-			createdBy: req.user.id
-		}, function (err, printJob) {
-			if (err) return res.serverError(err);
+		.then((printJob) => {
 			if (!printJob) return res.notFound();
-			return res.ok({
-				message: "Printjob created from custom gcode file",
-				prinjob: printJob
-			});
-		});
+			return res.ok(printJob);
+		})
+		.error(res.serverError);
 	});
 
-	/*
-	 * Delete printjob
+	/**
+	 * Add a printJob from custom gcode
+	 */
+	routes.post('/printjobs', (req, res) => {
+		db.PrintJob
+		.create({
+			sliceMethod:	"custom",
+			sliceFinished:	true,
+			gcode:			req.body.gcodeHash,		// TODO: make better
+			files:			[ req.body.gcodeId ],	// TODO: make better
+			createdBy:		req.user.id
+		})
+		.then((printJob) => {
+			return res.ok({ message: "Printjob created from custom gcode", printJob: printJob });
+		})
+		.error(res.serverError);
+	});
+
+	/**
+	 * Delete a printJob
 	 */
 	routes.delete('/printjobs/:id', function(req, res) {
-		db.PrintJob.destroy({ id: req.params.id, createdBy: req.user.id }, function (err) {
-			if (err) return res.serverError(err);
-			return res.ok({
-				message: "Printjob deleted"
-			});
-		});
+		db.PrintJob
+		.destroy({ id: req.params.id, createdBy: req.user.id })
+		.then(() => {
+			return res.ok({ message: "Printjob deleted" });
+		})
+		.error(res.serverError);
 	});
 };
