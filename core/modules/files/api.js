@@ -7,15 +7,15 @@ var multipart 			= require('connect-multiparty');
 var multipartMiddleware = multipart();
 var path                = require('path');
 
-module.exports = function(routes, module)
-{
+module.exports = function(routes, module) {
+
 	/*
 	 * Download a modelfile by hash in url query
 	 */
 	routes.get('/download', function(req, res) {
 		module.downloadFile(req.query.hash, req.query.encoding, req.user.id, function(err, filecontents) {
 			if(err) return res.serverError(err);
-			return res.send(filecontents);
+			return res.send(filecontents); // don't use res.ok here!
 		});
 	});
 
@@ -31,7 +31,7 @@ module.exports = function(routes, module)
 		if (ext === '.stl' || ext === '.gcode') {
 			module.uploadFile(req.files.file, "text/" + ext.replace('.', ''), req.user.id, function(err, uploadedFile) {
 				if(err) return res.serverError(err);
-				return res.send({
+				return res.ok({
 					message: "Uploaded file",
 					file: uploadedFile
 				});
