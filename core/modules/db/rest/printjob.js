@@ -49,7 +49,7 @@ module.exports = (routes, db) => {
 			createdBy:		req.user.id
 		})
 		.then((printJob) => {
-			return res.ok({ message: "Printjob created from custom gcode", printJob: printJob });
+			return res.ok({ message: "Printjob created from custom gcode", printJob });
 		})
 		.error(res.serverError);
 	});
@@ -57,7 +57,7 @@ module.exports = (routes, db) => {
 	/**
 	 * Delete a printJob
 	 */
-	routes.delete('/printjobs/:id', function(req, res) {
+	routes.delete('/printjobs/:id', (req, res) => {
 		db.PrintJob
 		.destroy({ id: req.params.id, createdBy: req.user.id })
 		.then(() => {

@@ -47,7 +47,7 @@ module.exports = (routes, db) => {
 			createdBy:					req.user.id
 		})
 		.then((material) => {
-			return res.ok({ message: "Material created", material: material });
+			return res.ok({ message: "Material created", material });
 		})
 		.error(res.serverError);
 	});

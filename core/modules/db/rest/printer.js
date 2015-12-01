@@ -47,7 +47,7 @@ module.exports = (routes, db) => {
 			createdBy:		req.user.id,
 		})
 		.then((printer) => {
-			return res.ok({ message: "Printer created", printer: printer });
+			return res.ok({ message: "Printer created", printer });
 		})
 		.error(res.serverError);
 	});
