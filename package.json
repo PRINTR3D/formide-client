@@ -15,7 +15,8 @@
   "license": "GPL-2.0",
   "scripts": {
     "start": "NODE_ENV=production node bootstrap",
-    "test": "NODE_ENV=testing node bootstrap",
+    "test": "NODE_ENV=test mocha --harmony test/**/*.test.js",
+    "test-cov": "NODE_ENV=test node --harmony node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- test/bootstrap.test.js test/**/*.test.js --reporter dot",
     "postinstall": "node scripts/post-install"
   },
   "dependencies": {
@@ -98,8 +99,11 @@
   },
   "devDependencies": {
     "chai": "~1.4.2",
+    "co": "^4.6.0",
     "heapdump": "^0.3.7",
-    "mocha": "^2.3.4"
+    "mocha": "^2.3.4",
+    "supertest": "^1.1.0",
+    "thenify": "^3.1.1"
   },
   "engines": {
     "node": "4.2.2",
