@@ -6,7 +6,7 @@
 module.exports = (routes, db) => {
 
 	/**
-	 * Get a list of material
+	 * Get a list of materials
 	 */
 	routes.get('/materials', (req, res) => {
 		db.Material
