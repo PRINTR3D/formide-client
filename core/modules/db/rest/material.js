@@ -3,8 +3,7 @@
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
-module.exports = function(routes, db)
-{
+module.exports = (routes, db) => {
 	/*
 	 * Get a list of material objects
 	 */
@@ -33,49 +32,52 @@ module.exports = function(routes, db)
 	/*
 	 * Create a new material object. req.body should contain all items in material database object
 	 */
-	routes.post('/materials', function(req, res) {
+	routes.post('/materials', (req, res) => {
 		db.Material.create({
-			name: req.body.name,
-			type: req.body.type,
-			filamentDiameter: req.body.filamentDiameter,
-			temperature: req.body.temperature,
-			firstLayersTemperature: req.body.firstLayersTemperature,
-			bedTemperature: req.body.bedTemperature,
-			firstLayersBedTemperature: req.body.firstLayersBedTemperature,
-			feedRate: req.body.feedRate,
-			createdBy: req.user.id
-		}, function (err, material) {
-			if (err) return res.serverError(err.message);
+			name:						req.body.name,
+			type:						req.body.type,
+			filamentDiameter:			req.body.filamentDiameter,
+			temperature:				req.body.temperature,
+			firstLayersTemperature:		req.body.firstLayersTemperature,
+			bedTemperature:				req.body.bedTemperature,
+			firstLayersBedTemperature:	req.body.firstLayersBedTemperature,
+			feedRate:					req.body.feedRate,
+			createdBy:					req.user.id
+		})
+		.then((material) => {
 			return res.ok({ message: "Material created", material: material });
-		});
+		})
+		.error(res.serverError);
 	});
 
 	/*
 	 * Update a material object. req.body should contain all items in material database object
 	 */
-	routes.put('/materials/:id', function(req, res) {
+	routes.put('/materials/:id', (req, res) => {
 		db.Material.update({ id: req.params.id, createdBy: req.user.id }, {
-			name: req.body.name,
-			type: req.body.type,
-			filamentDiameter: req.body.filamentDiameter,
-			temperature: req.body.temperature,
-			firstLayersTemperature: req.body.firstLayersTemperature,
-			bedTemperature: req.body.bedTemperature,
-			firstLayersBedTemperature: req.body.firstLayersBedTemperature,
-			feedRate: req.body.feedRate
-		}, function (err, updated) {
-			if (err) return res.serverError(err.message);
-			return res.ok({ message: "Material updated", material: updated[0] });
-		});
+			name:						req.body.name,
+			type:						req.body.type,
+			filamentDiameter:			req.body.filamentDiameter,
+			temperature:				req.body.temperature,
+			firstLayersTemperature:		req.body.firstLayersTemperature,
+			bedTemperature:				req.body.bedTemperature,
+			firstLayersBedTemperature:	req.body.firstLayersBedTemperature,
+			feedRate:					req.body.feedRate
+		})
+		.then((updated) => {
+			return res.ok({ message: "Material created", material: updated[0] });
+		})
+		.error(res.serverError);
 	});
 
 	/*
 	 * Delete material object
 	 */
-	routes.delete('/materials/:id', function(req, res) {
-		db.Material.destroy({ createdBy: req.user.id, id: req.params.id }, function (err) {
-			if (err) return res.serverError(err.message);
+	routes.delete('/materials/:id', (req, res) => {
+		db.Material.destroy({ createdBy: req.user.id, id: req.params.id })
+		.then(() => {
 			return res.ok({ message: "Material deleted" });
-		});
+		})
+		.error(res.serverError);
 	});
 };
