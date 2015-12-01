@@ -3,76 +3,66 @@
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
-module.exports = function(routes, db)
-{
-	/*
-	 * Returns a json list of all uploaded userfiles (their properties, not the actual file contents)
+module.exports = (routes, db) => {
+
+	/**
+	 * List all userFiles
 	 */
-	routes.get('/files', function(req, res) {
+	routes.get('/files', (req, res) => {
 		db.UserFile
 		.find({ createdBy: req.user.id }, { select: ((req.query.fields) ? req.query.fields.split(',') : "") })
-/*
-		.skip(req.query.offset || 0)
-		.limit(req.query.limit || 25)
-*/
-		.populate('printJobs')
 		.populate('createdBy')
-		.exec(function (err, userFiles) {
-			if (err) return res.serverError(err);
-			return res.ok(userFiles);
-		});
+		.then(res.ok)
+		.error(res.serverError);
 	});
 
-	/*
-	 * Returns a json object with info about a single userfile including printjobs
+	/**
+	 * Get a single userFile with all it's sliced versions (printJobs)
 	 */
-	routes.get('/files/:id', function(req, res) {
+	routes.get('/files/:id', (req, res) => {
 		db.UserFile
 		.findOne({ createdBy: req.user.id, id: req.params.id })
 		.populate('createdBy')
-		.exec(function( err, userFile) {
-			if (err) return res.serverError(err);
-			if (!userFile) return res.notFound("File not found");
+		.then((userFile) => {
 			db.PrintJob
 			.find({ files: userFile.id })
 			.populate('materials')
 			.populate('printer')
 			.populate('sliceProfile')
 			.populate('files')
-			.exec(function (err, printjobs) {
-				if (err) return res.serverError(err);
+			.then((printJobs) => {
 				userFile = userFile.toObject();
-				userFile.printjobs = printjobs;
+				userFile.printJobs = printJobs;
 				return res.ok(userFile);
-			});
-		});
+			})
+			.error(res.serverError);
+		})
+		.error(res.serverError);
 	});
 
-	/*
-	 * Edit the prettyname of a userfile (name that appears in the file list)
+	/**
+	 * Update a userFile
 	 */
 	routes.post('/files/:id', function(req, res) {
-		db.UserFile.update({ id: req.params.id, createdBy: req.user.id }, {
-			prettyname: req.body.prettyname,
-			createdBy: req.user.id
-		}, function (err, updated) {
-			if (err) return res.serverError(err);
-			return res.send({
-				message: "Userfile updated",
-				file: updated[0]
-			});
-		});
+		db.UserFile
+		.update({ id: req.params.id, createdBy: req.user.id }, {
+			prettyname:	req.body.prettyname
+		})
+		.then((updated) => {
+			return res.ok({ message: "File updated", file: updated[0] })
+		})
+		.error(res.serverError);
 	});
 
-	/*
-	 * Delete a userfile entry by ID.
+	/**
+	 * Delete a userFile
 	 */
 	routes.delete('/files/:id', function(req, res) {
-		db.UserFile.destroy({ id: req.params.id, createdBy: req.user.id }, function (err) {
-			if (err) return res.serverError(err);
-			return res.send({
-				message: "Userfile deleted"
-			});
-		});
+		db.UserFile
+		.destroy({ id: req.params.id, createdBy: req.user.id })
+		.then(() => {
+			return res.ok({ message: "File deleted" });
+		})
+		.error(res.serverError);
 	});
 };
