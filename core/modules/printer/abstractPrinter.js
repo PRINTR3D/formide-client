@@ -12,7 +12,7 @@ function AbstractPrinter(serialPort, driver) {
 	this.port = serialPort;
 	this.driver = driver;
 	this.status = {};
-	this.queueID = null;
+	this.queueItemId = null;
 
 	// ask for the status every 2 seconds
 	this.statusInterval = setInterval(this.askStatus.bind(this), 2000);
@@ -135,10 +135,10 @@ AbstractPrinter.prototype.startPrint = function(id, gcode, callback) {
 					// set queue item status to printing
 					queueItem.status = 'printing';
 					queueItem.save();
-					self.queueID = id;
+					self.queueItemId = id;
 					FormideOS.events.emit('printer.started', {
 						port: self.port,
-						printJobId: self.queueID
+						queueItemId: self.queueItemId
 					});
 					return callback(null, response);
 				});
@@ -159,7 +159,7 @@ AbstractPrinter.prototype.pausePrint = function(callback) {
 		if (err) return FormideOS.log.error(err.mesasge);
 		FormideOS.events.emit('printer.paused', {
 			port: self.port,
-			printJobId: self.queueID
+			queueItemId: self.queueItemId
 		});
 		return callback(null, response);
 	})
@@ -174,7 +174,7 @@ AbstractPrinter.prototype.resumePrint = function(callback) {
 		if (err) return FormideOS.log.error(err.message);
 		FormideOS.events.emit('printer.resumed', {
 			port: self.port,
-			printJobId: self.queueID
+			queueItemId: self.queueItemId
 		});
 		return callback(null, response);
 	});
@@ -188,16 +188,16 @@ AbstractPrinter.prototype.stopPrint = function(callback) {
 	// TODO: implement custom stop gcode array
 	self.driver.stopPrint(self.port, "", function(err, response) {
 		if (err) return FormideOS.log.error(err.message);
-		FormideOS.db.QueueItem.findOne({ id: self.queueID }, function(err, queueItem) {
+		FormideOS.db.QueueItem.findOne({ id: self.queueItemId }, function(err, queueItem) {
 			if (err) return FormideOS.log.error(err.message);
 			if (!queueItem) return FormideOS.log.warn('No queue item with that ID found to stop printing');
 			queueItem.status = 'queued';
 			queueItem.save();
 			FormideOS.events.emit('printer.stopped', {
 				port: self.port,
-				printJobId: self.queueID
+				queueItemId: self.queueItemId
 			});
-			self.queueID = null;
+			self.queueItemId = null;
 			return callback(err, "stopped printing");
 		});
 	});
@@ -206,19 +206,19 @@ AbstractPrinter.prototype.stopPrint = function(callback) {
 /*
  * Handle print finished event. Set queue item to finished and emit event to dashboards
  */
-AbstractPrinter.prototype.printFinished = function(printjobId) {
+AbstractPrinter.prototype.printFinished = function(queueItemId) {
 	var self = this;
-	if (printjobId !== self.queueId) FormideOS.log.warn('Warning: driver queue ID and client queue ID are not the same!', true);
-	FormideOS.db.QueueItem.findOne({ id: self.queueID }, function(err, queueItem) {
+	if (queueItemId !== self.queueItemId) FormideOS.log.warn('Warning: driver queue ID and client queue ID are not the same!', true);
+	FormideOS.db.QueueItem.findOne({ id: self.queueItemId }, function(err, queueItem) {
 		if (err) return FormideOS.log.error(err.message);
 		if (!queueItem) return FormideOS.log.warn('No queue item with that ID found to handle finished printing');
 		queueItem.status = 'finished';
 		queueItem.save();
 		FormideOS.events.emit('printer.finished', {
 			port: self.port,
-			printJobId: self.queueID
+			queueItemId: self.queueItemId
 		});
-		self.queueID = null;
+		self.queueItemId = null;
 	});
 }
 
