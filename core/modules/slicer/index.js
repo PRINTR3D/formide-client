@@ -79,7 +79,7 @@ module.exports = {
 						if(response.status == 200 && response.data.responseId != null) {
 							FormideOS.db.PrintJob
 							.update({ responseId: response.data.responseId }, {
-								gcode: response.data.gcode,
+								gcode: response.data.hash,
 								sliceResponse: response.data,
 								sliceFinished: true
 							}, function(err, printJob) {
@@ -160,26 +160,32 @@ module.exports = {
 					.exec((err, printJob) => {
 						if (err) return callback(err);
 
-						var sliceRequest = formideTools
-						.generateSlicerequestFromPrintjob(printJob.toObject(), {
-							version: version,
-							bucketIn: FormideOS.config.get('app.storageDir') + FormideOS.config.get("paths.modelfiles"),
-							bucketOut: FormideOS.config.get('app.storageDir') + FormideOS.config.get("paths.gcode"),
-							responseId: printJob.responseId
-						})
-						.generateBaseSettings()
-						.generatePrinterGcodeSettings()
-						.generateRaftSettings()
-						.generateSupportSettings()
-						.generateSkirtSettings()
-						.generateFanSettings()
-						.generateBedSettings()
-						.generateOverrideSettings()
-						.generateModelSettings()
-						.generateExtruderSettings()
-						.getResult();
+						try {
+							var sliceRequest = formideTools
+							.generateSlicerequestFromPrintjob(printJob.toObject(), {
+								version: version,
+								bucketIn: FormideOS.config.get('app.storageDir') + FormideOS.config.get("paths.modelfiles"),
+								bucketOut: FormideOS.config.get('app.storageDir') + FormideOS.config.get("paths.gcode"),
+								responseId: printJob.responseId
+							})
+							.generateBaseSettings()
+							.generatePrinterGcodeSettings()
+							.generateRaftSettings()
+							.generateSupportSettings()
+							.generateSkirtSettings()
+							.generateFanSettings()
+							.generateBedSettings()
+							.generateOverrideSettings()
+							.generateModelSettings()
+							.generateExtruderSettings()
+							.getResult();
 
-						return callback(null, sliceRequest);
+							return callback(null, sliceRequest);
+						}
+						catch(e) {
+							return callback(e);
+						}
+
 					});
 				});
 			});

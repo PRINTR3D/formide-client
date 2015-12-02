@@ -3,16 +3,26 @@
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
+const assert = require('assert');
+
 module.exports = (routes, db) => {
 
 	/**
 	 * Get all queueItems or for a single printer
 	 */
 	routes.get('/queue', (req, res) => {
-		db.QueueItem
-		.find({ port: ((req.query.port) ? req.query.port : null) })
-		.then(res.ok)
-		.error(res.serverError);
+		if (req.query.port) {
+			db.QueueItem
+			.find({ port: req.query.port })
+			.then(res.ok)
+			.error(res.serverError);
+		}
+		else {
+			db.QueueItem
+			.find()
+			.then(res.ok)
+			.error(res.serverError);
+		}
 	});
 
 	/**
@@ -31,30 +41,35 @@ module.exports = (routes, db) => {
 	/**
 	 * Add a queueItem by printJobId and printerId -> port
 	 */
-	routes.post('/queue/:printjobId/:printerId', (req, res) => {
+	routes.post('/queue', (req, res) => {
+
+		assert(req.body);
+		assert(req.body.printJob);
+		assert(req.body.port);
+
 		db.PrintJob
-		.findOne({ id: req.params.printjobId, createdBy: req.user.id })
+		.findOne({ id: req.body.printJob, createdBy: req.user.id })
 		.populate('files')
 		.populate('materials')
 		.populate('sliceProfile')
 		.populate('printer')
 		.then((printJob) => {
-			db.Printer
-			.findOne({ id: req.params.printerId })
-			.then((printer) => {
+			//db.Printer
+			//.findOne({ id: req.params.printerId })
+			//.then((printer) => {
 				db.QueueItem
 				.create({
 					origin:		'local',
 					gcode:		printJob.gcode,
 					printJob:	printJob.toObject(),
-					port:		printer.port
+					port:		req.body.port
 				})
 				.then((queueItem) => {
 					return res.ok({ message: "Printjob added to queue", queueItem });
 				})
 				.error(res.serverError);
-			})
-			.error(res.serverError);
+			//})
+			//.error(res.serverError);
 		})
 		.error(res.serverError);
 	});

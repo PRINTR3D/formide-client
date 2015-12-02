@@ -30,8 +30,13 @@ module.exports = function(Waterline) {
 				defaultsTo: "queued"
 			},
 
+			// printJob: {
+			// 	model: 'printjob',
+			// 	required: true
+			// },
+
 			printJob: {
-				model: 'printjob',
+				type: 'object',
 				required: true
 			},
 
