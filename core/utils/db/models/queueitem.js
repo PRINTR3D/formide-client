@@ -3,48 +3,42 @@
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
-module.exports = function(Waterline) {
+module.exports = {
+	identity: 'queueitem',
 
-	var QueueItem = Waterline.Collection.extend({
+	connection: 'default',
 
-		identity: 'queueitem',
+	attributes: {
 
-		connection: 'default',
+		origin: {
+			type: 'string',
+			required: true,
+			enum: ['cloud', 'local', 'custom']
+		},
 
-		attributes: {
+		gcode: {
+			type: 'string',
+			required: true
+		},
 
-			origin: {
-				type: 'string',
-				required: true,
-				enum: ['cloud', 'local', 'custom']
-			},
+		status: {
+			type: 'string',
+			enum: ["queued", "printing", "finished"],
+			defaultsTo: "queued"
+		},
 
-			gcode: {
-				type: 'string',
-				required: true
-			},
+		printJob: {
+			model: 'printjob',
+			required: true
+		},
 
-			status: {
-				type: 'string',
-				enum: ["queued", "printing", "finished"],
-				defaultsTo: "queued"
-			},
+		port: {
+			type: 'string',
+			required: true
+		},
 
-			printJob: {
-				model: 'printjob',
-				required: true
-			},
-
-			port: {
-				type: 'string',
-				required: true
-			},
-
-			createdBy: {
-				model: 'user'
-			}
+		createdBy: {
+			model: 'user'
 		}
-	});
-
-	return QueueItem;
-}
+	}
+};

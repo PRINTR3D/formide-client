@@ -5,54 +5,48 @@
 
 var uuid = require('node-uuid');
 
-module.exports = function(Waterline) {
+module.exports = {
+	identity: 'log',
 
-	var Log = Waterline.Collection.extend({
+	connection: 'default',
 
-		identity: 'log',
+	attributes: {
 
-		connection: 'default',
-
-		attributes: {
-			
-			createdBy: {
-				model: 'user',
-				required: true
-			},
-
-			data: {
-				type: 'object',
-				required: true
-			},
-
-			type: {
-				type: 'string',
-				required: true,
-				enum: ["slicer", "printer", "device", "session", "account"]
-			},
-
-			message: {
-				type: 'string',
-				required: true
-			},
-
-			level: {
-				type: 'string',
-				required: true,
-				enum: ["info", "warning", "error", "silly"]
-			},
-
-			uuid: {
-				type: 'string'
-			}
+		createdBy: {
+			model: 'user',
+			required: true
 		},
 
-		// hash password before saving user to database
-		beforeCreate: function (log, next) {
-			log.uuid = uuid.v4();
-			next();
-		}
-	});
+		data: {
+			type: 'object',
+			required: true
+		},
 
-	return Log;
-}
+		type: {
+			type: 'string',
+			required: true,
+			enum: ["slicer", "printer", "device", "session", "account"]
+		},
+
+		message: {
+			type: 'string',
+			required: true
+		},
+
+		level: {
+			type: 'string',
+			required: true,
+			enum: ["info", "warning", "error", "silly"]
+		},
+
+		uuid: {
+			type: 'string'
+		}
+	},
+
+	// hash password before saving user to database
+	beforeCreate: function (log, next) {
+		log.uuid = uuid.v4();
+		next();
+	}
+};

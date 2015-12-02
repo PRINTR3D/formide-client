@@ -3,72 +3,66 @@
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
-module.exports = function(Waterline) {
+module.exports = {
+	identity: 'userfile',
 
-	var UserFile = Waterline.Collection.extend({
+	connection: 'default',
 
-		identity: 'userfile',
+	attributes: {
 
-		connection: 'default',
+		createdBy: {
+			model: 'User',
+			required: true
+		},
 
-		attributes: {
+		hash: {
+			type: 'string',
+			required: true
+		},
 
-			createdBy: {
-				model: 'User',
-				required: true
-			},
+		filename: {
+			type: 'string',
+			required: true
+		},
 
-			hash: {
-				type: 'string',
-				required: true
-			},
+		folder: {
+			type: 'string',
+			defaultsTo: '/'
+		},
 
-			filename: {
-				type: 'string',
-				required: true
-			},
+		prettyname: {
+			type: 'string',
+			required: true
+		},
 
-			folder: {
-				type: 'string',
-				defaultsTo: '/'
-			},
+		filetype: {
+			type: 'string',
+			required: true,
+			enum: ['text/stl', 'text/gcode']
+		},
 
-			prettyname: {
-				type: 'string',
-				required: true
-			},
-
-			filetype: {
-				type: 'string',
-				required: true,
-				enum: ['text/stl', 'text/gcode']
-			},
-
-			filesize: {
-				type: 'int',
-				required: true
-			},
+		filesize: {
+			type: 'int',
+			required: true
+		},
 
 /*
-			images: {
-				collection: 'Image'
-			},
+		images: {
+			collection: 'Image'
+		},
 */
 
-			tags: {
-				type: 'array'
-			},
+		tags: {
+			type: 'array'
+		},
 
-			description: {
-				type: 'string'
-			},
+		description: {
+			type: 'string'
+		},
 
-			printJobs: {
-				collection: 'printjob',
-				via: 'files'
-			}
+		printJobs: {
+			collection: 'printjob',
+			via: 'files'
 		}
-	});
-
-	return UserFile;
-}
+	}
+};

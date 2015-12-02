@@ -3,133 +3,127 @@
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
-module.exports = function(Waterline) {
+module.exports = {
+	identity: 'printer',
 
-	var Printer = Waterline.Collection.extend({
+	connection: 'default',
 
-		identity: 'printer',
+	attributes: {
 
-		connection: 'default',
-
-		attributes: {
-
-			// name of printer
-			name: {
-				type: 'string',
-				required: true
-			},
-
-			// printer type
-			type: {
-				type: 'string',
-				enum: ['fdm', 'fff', 'sla', 'sls', 'dlp'],
-				defaultsTo: 'fdm' // for now
-			},
-
-			// printer manufacturer
-			manufacturer: {
-				type: 'string'
-			},
-
-			// object with bed information (like size and heated)
-			bed: {
-				type: 'object',
-				is_valid_bed: true,
-				required: true
-			},
-
-			// object with axis directions
-			axis: {
-				type: 'object',
-				is_valid_axis: true,
-				required: true
-			},
-
-			// array with extruder objects
-			extruders: {
-				type: 'array',
-				is_valid_extruders: true,
-				required: true
-			},
-
-			// usb port that printer is connected to
-			port: {
-				type: 'string'
-			},
-
-			// baudrate of the printer, also autodetected by driver
-			baudrate: {
-				type: 'integer'
-			},
-
-			// custom gcode commands for this printer that will appear as a set of buttons in the interface
-			customCommands: {
-				type: 'array',
-				is_valid_custom_commands: true
-			},
-
-			// user that created printer entry
-			createdBy: {
-				model: 'user',
-				required: true
-			},
-
-			// custom start gcode (put in front of gcode file)
-			startGcode: {
-				type: 'array',
-				defaultsTo: []
-			},
-
-			// custom end gcode (put at end of gcode file)
-			endGcode: {
-				type: 'array',
-				defaultsTo: []
-			},
-
-			// gcode type to use when slicing for this printer
-			gcodeFlavour: {
-				type: 'string',
-				defaultsTo: "GCODE_FLAVOR_REPRAP"
-			},
-
-			printJobs: {
-				collection: 'printjob',
-				via: 'printer'
-			}
+		// name of printer
+		name: {
+			type: 'string',
+			required: true
 		},
 
-		types: {
-			// custom validation for bed object
-			is_valid_bed: function (val) {
-				return (typeof val.x === "number") && (typeof val.y === "number") && (typeof val.z === "number") && (typeof val.heated === "boolean");
-			},
+		// printer type
+		type: {
+			type: 'string',
+			enum: ['fdm', 'fff', 'sla', 'sls', 'dlp'],
+			defaultsTo: 'fdm' // for now
+		},
 
-			// custom validation for axis object
-			is_valid_axis: function (val) {
-				return (val.x === 1 || val.x === -1) && (val.y === 1 || val.y === -1) && (val.z === 1 || val.z === -1);
-			},
+		// printer manufacturer
+		manufacturer: {
+			type: 'string'
+		},
 
-			// custom validation for extruder objects
-			is_valid_extruders: function (val) {
-				for (var i in val) {
-					if (typeof val[i] !== "object") return false;
-					if (typeof val[i].id !== "number") return false;
-					if (typeof val[i].name !== "string") return false;
-					if (typeof val[i].nozzleSize !== "number") return false;
-				}
-				return true;
-			},
+		// object with bed information (like size and heated)
+		bed: {
+			type: 'object',
+			is_valid_bed: true,
+			required: true
+		},
 
-			is_valid_custom_commands: function (val) {
-				for (var i in val) {
-					if (typeof val[i] !== "object") return false;
-					if (typeof val[i].label !== "string") return false;
-					if (typeof val[i].command !== "string") return false;
-				}
-				return true;
-			}
+		// object with axis directions
+		axis: {
+			type: 'object',
+			is_valid_axis: true,
+			required: true
+		},
+
+		// array with extruder objects
+		extruders: {
+			type: 'array',
+			is_valid_extruders: true,
+			required: true
+		},
+
+		// usb port that printer is connected to
+		port: {
+			type: 'string'
+		},
+
+		// baudrate of the printer, also autodetected by driver
+		baudrate: {
+			type: 'integer'
+		},
+
+		// custom gcode commands for this printer that will appear as a set of buttons in the interface
+		customCommands: {
+			type: 'array',
+			is_valid_custom_commands: true
+		},
+
+		// user that created printer entry
+		createdBy: {
+			model: 'user',
+			required: true
+		},
+
+		// custom start gcode (put in front of gcode file)
+		startGcode: {
+			type: 'array',
+			defaultsTo: []
+		},
+
+		// custom end gcode (put at end of gcode file)
+		endGcode: {
+			type: 'array',
+			defaultsTo: []
+		},
+
+		// gcode type to use when slicing for this printer
+		gcodeFlavour: {
+			type: 'string',
+			defaultsTo: "GCODE_FLAVOR_REPRAP"
+		},
+
+		printJobs: {
+			collection: 'printjob',
+			via: 'printer'
 		}
-	});
+	},
 
-	return Printer;
-}
+	types: {
+		// custom validation for bed object
+		is_valid_bed: function (val) {
+			return (typeof val.x === "number") && (typeof val.y === "number") && (typeof val.z === "number") && (typeof val.heated === "boolean");
+		},
+
+		// custom validation for axis object
+		is_valid_axis: function (val) {
+			return (val.x === 1 || val.x === -1) && (val.y === 1 || val.y === -1) && (val.z === 1 || val.z === -1);
+		},
+
+		// custom validation for extruder objects
+		is_valid_extruders: function (val) {
+			for (var i in val) {
+				if (typeof val[i] !== "object") return false;
+				if (typeof val[i].id !== "number") return false;
+				if (typeof val[i].name !== "string") return false;
+				if (typeof val[i].nozzleSize !== "number") return false;
+			}
+			return true;
+		},
+
+		is_valid_custom_commands: function (val) {
+			for (var i in val) {
+				if (typeof val[i] !== "object") return false;
+				if (typeof val[i].label !== "string") return false;
+				if (typeof val[i].command !== "string") return false;
+			}
+			return true;
+		}
+	}
+};

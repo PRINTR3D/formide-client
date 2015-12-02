@@ -1,80 +1,42 @@
+'use strict';
+
 /*
  *	This code was created for Printr B.V. It is open source under the formideos-client package.
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
-var Waterline 			= require('waterline');
-var sailsDiskAdapter 	= require('sails-disk'); // yes, we know the respository says it's not for production, but it fits our needs perfectly :P
-var waterline 			= new Waterline();
-var db					= null;
-var path				= require('path');
+const fs        = require('fs');
+const thenify   = require('thenify');
+const Waterline = require('waterline');
 
-if (typeof SETUP !== "undefined") {
-	var storage = path.join(SETUP.storageDir, "database_");
-}
-else {
-	var storage = path.join(FormideOS.config.get('app.storageDir'), "database_");
-}
+const readdir = thenify(fs.readdir);
 
-var config = {
-    adapters: {
-        disk: sailsDiskAdapter
-    },
-    connections: {
-        default: {
-            adapter: 'disk',
-            filePath: storage
-        }
-    },
-	defaults: {
-		migrate: 'safe'
-	}
-};
+function initializeDb(config) {
+	const waterline = new Waterline();
 
-var userCollection = require('./models/user')(Waterline);
-waterline.loadCollection(userCollection);
+	// load all models
+	return readdir('core/utils/db/models').then(files => {
+		files.forEach(file => {
+			if (file.match(/\.js$/) == null || file === 'index.js')
+				return;
 
-var accessTokenCollection = require('./models/accesstoken')(Waterline);
-waterline.loadCollection(accessTokenCollection);
-
-var logCollection = require('./models/log')(Waterline);
-waterline.loadCollection(logCollection);
-
-var userFileColleciton = require('./models/userfile')(Waterline);
-waterline.loadCollection(userFileColleciton);
-
-var materialCollection = require('./models/material')(Waterline);
-waterline.loadCollection(materialCollection);
-
-var printerCollection = require('./models/printer')(Waterline);
-waterline.loadCollection(printerCollection);
-
-var sliceprofileCollection = require('./models/sliceprofile')(Waterline);
-waterline.loadCollection(sliceprofileCollection);
-
-var printjobCollection = require('./models/printjob')(Waterline);
-waterline.loadCollection(printjobCollection);
-
-var queueItemCollection = require('./models/queueitem')(Waterline);
-waterline.loadCollection(queueItemCollection);
-
-module.exports = function(callback) {
-
-	waterline.initialize(config, function (err, ontology) {
-		if (err) {
-			return callback(err);
-		}
-
-		callback(null, {
-			User: ontology.collections.user,
-			AccessToken: ontology.collections.accesstoken,
-			Log: ontology.collections.log,
-			UserFile: ontology.collections.userfile,
-			Material: ontology.collections.material,
-			Printer: ontology.collections.printer,
-			SliceProfile: ontology.collections.sliceprofile,
-			PrintJob: ontology.collections.printjob,
-			QueueItem: ontology.collections.queueitem
+			const modelName = file.replace('.js', '');
+			const model     = require(`./models/${modelName}`);
+			waterline.loadCollection(Waterline.Collection.extend(model));
 		});
-	});
+	})
+	.then(() => thenify(cb => waterline.initialize(config, cb))())
+	.then(models => ({
+		AccessToken:  models.collections.accesstoken,
+		Log:          models.collections.log,
+		Material:     models.collections.material,
+		Printer:      models.collections.printer,
+		PrintJob:     models.collections.printjob,
+		QueueItem:    models.collections.queueitem,
+		SliceProfile: models.collections.sliceprofile,
+		User:         models.collections.user,
+		UserFile:     models.collections.userfile
+	}));
 }
+
+module.exports = initializeDb;

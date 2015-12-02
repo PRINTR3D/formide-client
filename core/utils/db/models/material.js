@@ -5,68 +5,62 @@
 
 var uuid = require('node-uuid');
 
-module.exports = function(Waterline) {
+module.exports = {
+	identity: 'material',
 
-	var Material = Waterline.Collection.extend({
+	connection: 'default',
 
-		identity: 'material',
+	attributes: {
 
-		connection: 'default',
+		name: {
+			type: 'string',
+			required: true
+		},
 
-		attributes: {
+		type: {
+			type: 'string',
+			required: true
+		},
 
-			name: {
-				type: 'string',
-				required: true
-			},
+		filamentDiameter: {
+			type: 'integer',
+			required: true,
+			defaultsTo: 1750
+		},
 
-			type: {
-				type: 'string',
-				required: true
-			},
+		temperature: {
+			type: 'integer',
+			required: true
+		},
 
-			filamentDiameter: {
-				type: 'integer',
-				required: true,
-				defaultsTo: 1750
-			},
+		firstLayersTemperature: {
+			type: 'integer',
+			required: true
+		},
 
-			temperature: {
-				type: 'integer',
-				required: true
-			},
+		bedTemperature: {
+			type: 'integer',
+			required: true
+		},
 
-			firstLayersTemperature: {
-				type: 'integer',
-				required: true
-			},
+		firstLayersBedTemperature: {
+			type: 'integer',
+			required: true
+		},
 
-			bedTemperature: {
-				type: 'integer',
-				required: true
-			},
+		feedRate: {
+			type: 'integer',
+			defaultsTo: 100
+		},
 
-			firstLayersBedTemperature: {
-				type: 'integer',
-				required: true
-			},
+		createdBy: {
+			model: 'user',
+			required: true
+		},
 
-			feedRate: {
-				type: 'integer',
-				defaultsTo: 100
-			},
-
-			createdBy: {
-				model: 'user',
-				required: true
-			},
-
-			printJobs: {
-				collection: 'printjob',
-				via: 'materials'
-			}
+		printJobs: {
+			collection: 'printjob',
+			via: 'materials'
 		}
-	});
-
-	return Material;
-}
+	}
+};

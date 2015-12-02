@@ -5,74 +5,68 @@
 
 var bcrypt = require('bcrypt');
 
-module.exports = function(Waterline) {
+module.exports = {
+	identity: 'user',
 
-	var User = Waterline.Collection.extend({
+	connection: 'default',
 
-		identity: 'user',
+	attributes: {
 
-		connection: 'default',
-
-		attributes: {
-
-			email: {
-				type: 'string',
-				required: true,
-				unique: true
-			},
-
-			password: {
-				type: 'string',
-				protected: true
-			},
-
-			cloudConnectionToken: {
-				type: 'string'
-			},
-
-			isAdmin: {
-				type: 'boolean',
-				defaultsTo: false
-			},
-
-			isOwner: {
-				type: 'boolean',
-				defaultsTo: false
-			}
+		email: {
+			type: 'string',
+			required: true,
+			unique: true
 		},
 
-		// hash password before saving user to database
-		beforeCreate: function (user, next) {
-			if (user.password) {
-				bcrypt.genSalt(10, function(err, salt) {
-					bcrypt.hash(user.password, salt, function(err, hash) {
-						if (err) next(err);
-						user.password = hash;
-						next();
-					})
-				})
-			}
-			else {
-				next();
-			}
+		password: {
+			type: 'string',
+			protected: true
 		},
 
-		// hash password before saving to database
-		beforeUpdate: function (user, next) {
-			if (user.password) {
-				bcrypt.genSalt(10, function(err, salt) {
-					bcrypt.hash(user.password, salt, function(err, hash) {
-						if (err) next(err);
-						user.password = hash;
-						next();
-					})
-				})
-			}
-			else {
-				next();
-			}
+		cloudConnectionToken: {
+			type: 'string'
+		},
+
+		isAdmin: {
+			type: 'boolean',
+			defaultsTo: false
+		},
+
+		isOwner: {
+			type: 'boolean',
+			defaultsTo: false
 		}
-	});
+	},
 
-	return User;
+	// hash password before saving user to database
+	beforeCreate: function (user, next) {
+		if (user.password) {
+			bcrypt.genSalt(10, function(err, salt) {
+				bcrypt.hash(user.password, salt, function(err, hash) {
+					if (err) next(err);
+					user.password = hash;
+					next();
+				})
+			})
+		}
+		else {
+			next();
+		}
+	},
+
+	// hash password before saving to database
+	beforeUpdate: function (user, next) {
+		if (user.password) {
+			bcrypt.genSalt(10, function(err, salt) {
+				bcrypt.hash(user.password, salt, function(err, hash) {
+					if (err) next(err);
+					user.password = hash;
+					next();
+				})
+			})
+		}
+		else {
+			next();
+		}
+	}
 }
