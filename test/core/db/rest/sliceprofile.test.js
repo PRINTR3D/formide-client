@@ -7,7 +7,7 @@ const thenify = require('thenify');
 
 const ENDPOINT = '/api/db/sliceprofiles';
 
-describe('Sliceprofiles', function() {
+describe('SliceProfiles', function() {
 
     let $ = null;
 
@@ -18,7 +18,7 @@ describe('Sliceprofiles', function() {
     after(done => unseed(FormideOS.db).then(() => done()));
 
     describe(`GET ${ENDPOINT}`, () => {
-        it('should return sliceprofiles', () => GET `${ENDPOINT}`
+        it('should return sliceProfiles', () => GET `${ENDPOINT}`
             .query({ access_token: $.accessToken })
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
