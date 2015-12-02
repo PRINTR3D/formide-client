@@ -4,10 +4,10 @@
  */
 
 // dependencies
-var AbstractPrinter = require('./abstractPrinter');
+const AbstractPrinter = require('./abstractPrinter');
 
-module.exports =
-{
+module.exports = {
+
 	numberOfPorts: 0,
 	driver: null,
 	printers: {},
@@ -21,38 +21,32 @@ module.exports =
 		// loaded via formide-drivers npm package and node-pre-gyp
 		this.driver = require('formide-drivers');
 
-		if(this.driver !== null) {
-			this.driver.start(function(err, started, event) {
+		// start drivers
+		this.driver.start(function(err, started, event) {
+			if (err) {
+				FormideOS.log.error('formide-drivers err: ' + err.message);
+			}
+			else if (started) {
+				FormideOS.log('formide-drivers started successfully');
+			}
 
-				if (err) {
-					FormideOS.log.error('formide-drivers err: ' + err.message);
+			else if (event) {
+				// an event came back which we can use to do sometehing with!
+
+				if (event.type === 'printerConnected') {
+					self.printerConnected(event.port);
 				}
-				else if (started) {
-					FormideOS.log('formide-drivers started successfully');
+				else if (event.type === 'printerDisconnected') {
+					self.printerDisconnected(event.port);
 				}
-
-				else if (event) {
-					// an event came back which we can use to do sometehing with!
-
-					if (event.type === 'printerConnected') {
-						self.printerConnected(event.port);
-					}
-					else if (event.type === 'printerDisconnected') {
-						self.printerDisconnected(event.port);
-					}
-					else if (event.type === 'printerOnline') {
-						self.printerOnline(event.port);
-					}
-					else if (event.type === 'printFinished') {
-						self.printFinished(event.port, event.printjobID);
-					}
+				else if (event.type === 'printerOnline') {
+					self.printerOnline(event.port);
 				}
-
-			});
-		}
-		else {
-			FormideOS.log.warn("Your system is not compatible with one of our driver binaries");
-		}
+				else if (event.type === 'printFinished') {
+					self.printFinished(event.port, event.printjobID);
+				}
+			}
+		});
 	},
 
 	printerConnected: function(port) {
@@ -91,68 +85,42 @@ module.exports =
 	},
 
 	getCommands: function(port, callback) {
-		if (this.printers[port] !== undefined) {
-			return callback(this.printers[port].getCommands());
-		}
+		if (this.printers[port] == undefined) return callback(new Error('No printer connected on this port'));
+		callback(this.printers[port].getCommands());
 	},
 
 	getStatus: function(port, callback) {
-		if (this.printers[port] !== undefined) {
-			return callback(this.printers[port].getStatus());
-		}
+		if (this.printers[port] == undefined) return callback(new Error('No printer connected on this port'));
+		callback(this.printers[port].getStatus());
 	},
 
 	printerControl: function(port, data, callback) {
-		if (this.printers[port] !== undefined) {
-			this.printers[port].command(data.command, data.parameters, callback);
-		}
-		else {
-			return callback({ success: false, message: 'No printer connected on this port' });
-		}
+		if (this.printers[port] == undefined) return callback(new Error('No printer connected on this port'));
+		this.printers[port].command(data.command, data.parameters, callback);
 	},
 
 	gcode: function(port, gcode, callback) {
-		if (this.printers[port] !== undefined) {
-			this.printers[port].gcode(gcode, callback);
-		}
-		else {
-			return callback({ success: false, message: 'No printer connected on this port' });
-		}
+		if (this.printers[port] == undefined) return callback(new Error('No printer connected on this port'));
+		this.printers[port].gcode(gcode, callback);
 	},
 
-	startPrint: function(port, id, gcode, callback) {
-		if (this.printers[port] !== undefined) {
-			this.printers[port].startPrint(id, gcode, callback);
-		}
-		else {
-			return callback({ success: false, message: 'No printer connected on this port' });
-		}
+	startPrint: function(port, id, callback) {
+		if (this.printers[port] == undefined) return callback(new Error('No printer connected on this port'));
+		this.printers[port].startPrint(id, callback);
 	},
 
 	stopPrint: function(port, callback) {
-		if (this.printers[port] !== undefined) {
-			this.printers[port].stopPrint(callback);
-		}
-		else {
-			return callback({ success: false, message: 'No printer connected on this port' });
-		}
+		if (this.printers[port] == undefined) return callback(new Error('No printer connected on this port'));
+		this.printers[port].stopPrint(callback);
 	},
 
 	pausePrint: function(port, callback) {
-		if (this.printers[port] !== undefined) {
-			this.printers[port].pausePrint(callback);
-		}
-		else {
-			return callback({ success: false, message: 'No printer connected on this port' });
-		}
+		if (this.printers[port] == undefined) return callback(new Error('No printer connected on this port'));
+		this.printers[port].pausePrint(callback);
 	},
 
 	resumePrint: function(port, callback) {
-		if (this.printers[port] !== undefined) {
-			this.printers[port].resumePrint(callback);
-		}
-		else {
-			return callback({ success: false, message: 'No printer connected on this port' });
-		}
+		if (this.printers[port] == undefined) return callback(new Error('No printer connected on this port'));
+		this.printers[port].resumePrint(callback);
 	}
 }
