@@ -29,33 +29,18 @@ describe('Printers', function() {
                 for (const printer of body) {
                     assert(printer.createdAt);
                     assert(printer.updatedAt);
+                    assert(printer.createdBy);
 
                     // delete generated columns before validation
                     delete printer.createdAt;
                     delete printer.updatedAt;
-
-                    if (printer.device)
-                        delete printer.device;
-
-                    if (printer.children)
-                        delete printer.children;
-
-                    if (printer.parent) {
-                        assert.strictEqual(printer.parent.id, $.userPrinter);
-                        delete printer.parent;
-                    }
-
-                    if (printer.materials)
-                        delete printer.materials;
-
-                    if (printer.sliceProfiles)
-                        delete printer.sliceProfiles;
+                    delete printer.createdBy;
                 }
             })
             .expect(200, [{
                 // createdAt: { GENERATED }
                 // updatedAt: { GENERATED }
-                createdBy:     $.user,
+                // createdBy:
                 id:            $.printer,
                 name:          'User printer',
                 bed:           { x: 200, y: 200, z: 200, heated: false },
@@ -66,12 +51,11 @@ describe('Printers', function() {
                 startGcode:    [],
                 endGcode:      [],
                 type:          'fdm',
-
                 extruders: [{
                     id:         0,
                     name:       'Extruder 1',
                     nozzleSize: 350
-                }],
+                }]
             }]));
     });
 });

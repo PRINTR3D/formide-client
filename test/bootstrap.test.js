@@ -7,9 +7,8 @@
  */
 
 const memoryAdapter = require('sails-memory');
-
-const pkg         = require('../package.json');
-const initFormide = require('../core/FormideOS');
+const pkg           = require('../package.json');
+const initFormide   = require('../core/FormideOS');
 
 before(function(done) {
     this.timeout(5000);

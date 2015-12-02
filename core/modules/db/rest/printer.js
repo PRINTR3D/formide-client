@@ -11,6 +11,7 @@ module.exports = (routes, db) => {
 	routes.get('/printers', (req, res) => {
 		db.Printer
 		.find()
+		.populate('createdBy')
 		.then(res.ok)
 		.error(res.serverError);
 	});
