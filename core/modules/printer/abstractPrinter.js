@@ -115,7 +115,6 @@ AbstractPrinter.prototype.startPrint = function(queueItemId, callback) {
 			if (err) return callback(err);
 			if (!queueItem) return callback(null, null);
 			var filePath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.gcode'), queueItem.gcode);
-			console.log(filePath);
 			self.driver.printFile(filePath, queueItem.id, self.port, function(err, response) {
 				if (err) return callback(err);
 				FormideOS.db.QueueItem
