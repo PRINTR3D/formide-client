@@ -3,78 +3,72 @@
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
-module.exports = function(Waterline) {
+module.exports = {
+	identity: 'printjob',
 
-	var Printjob = Waterline.Collection.extend({
+	connection: 'default',
 
-		identity: 'printjob',
+	attributes: {
+		createdBy: {
+			model: 'user',
+			via: 'printJobs',
+			required: true
+		},
 
-		connection: 'default',
+		files: {
+			collection: 'userfile',
+			via: 'printJobs',
+			required: true
+		},
 
-		attributes: {
-			createdBy: {
-				model: 'user',
-				via: 'printJobs',
-				required: true
-			},
+		printer: {
+			model: 'printer',
+			via: 'printJobs',
+			required: true
+		},
 
-			files: {
-				collection: 'userfile',
-				via: 'printJobs',
-				required: true
-			},
+		sliceProfile: {
+			model: 'sliceprofile',
+			via: 'printJobs',
+			required: true
+		},
 
-			printer: {
-				model: 'printer',
-				via: 'printJobs',
-				required: true
-			},
+		materials: {
+			collection: 'material',
+			via: 'printJobs',
+			required: true
+		},
 
-			sliceProfile: {
-				model: 'sliceprofile',
-				via: 'printJobs',
-				required: true
-			},
+		gcode: {
+			type: 'string'
+		},
 
-			materials: {
-				collection: 'material',
-				via: 'printJobs',
-				required: true
-			},
+		responseId: {
+			type: 'string',
+			required: true
+		},
 
-			gcode: {
-				type: 'string'
-			},
+		sliceSettings: {
+			type: 'object'
+		},
 
-			responseId: {
-				type: 'string',
-				required: true
-			},
+		sliceRequest: {
+			type: 'object'
+		},
 
-			sliceSettings: {
-				type: 'object'
-			},
+		sliceResponse: {
+			type: 'object'
+		},
 
-			sliceRequest: {
-				type: 'object'
-			},
+		sliceFinished: {
+			type: 'boolean',
+			defaultsTo: false
+		},
 
-			sliceResponse: {
-				type: 'object'
-			},
-
-			sliceFinished: {
-				type: 'boolean',
-				defaultsTo: false
-			},
-
-			sliceMethod: {
-				type: 'string',
-				required: true,
-				enum: ["cloud", "local", "custom"]
-			}
+		sliceMethod: {
+			type: 'string',
+			required: true,
+			enum: ["cloud", "local", "custom"]
 		}
-	});
-
-	return Printjob;
-}
+	}
+};

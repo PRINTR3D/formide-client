@@ -4,6 +4,7 @@ const assert  = require('assert');
 const co      = require('co');
 const getmac  = require('getmac');
 const thenify = require('thenify');
+
 const ENDPOINT = '/api/db/printers';
 
 describe('Printers', function() {
@@ -17,17 +18,60 @@ describe('Printers', function() {
     after(done => unseed(FormideOS.db).then(() => done()));
 
     describe(`GET ${ENDPOINT}`, () => {
-        it('should return printers with valid token', done => {
+        it('should return printers', () => GET `${ENDPOINT}`
+            .query({ access_token: $.accessToken })
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+            .expect(res => {
+                const body = res.body;
 
-            GET `${ENDPOINT}`
-                .query({ access_token: $.accessToken })
-                .set('Accept', 'application/json')
-                .expect('Content-Type', /json/)
-                .expect(res => {
-                    const body = res.body;
-                    console.log(body);
-                });
-        });
+                assert.strictEqual(body.length, 1);
+                for (const printer of body) {
+                    assert(printer.createdAt);
+                    assert(printer.updatedAt);
+                    // assert(printer.createdBy);
+                    assert(printer.extruders);
+
+                    // delete generated columns before validation
+                    delete printer.createdAt;
+                    delete printer.updatedAt;
+                    // delete printer.createdBy;
+                    delete printer.extruders;
+
+                    if (printer.device)
+                        delete printer.device;
+
+                    if (printer.children)
+                        delete printer.children;
+
+                    if (printer.parent) {
+                        assert.strictEqual(printer.parent.id, $.userPrinter);
+                        delete printer.parent;
+                    }
+
+                    if (printer.materials)
+                        delete printer.materials;
+
+                    if (printer.sliceProfiles)
+                        delete printer.sliceProfiles;
+                }
+            })
+            .expect(200, [{
+                // createdAt: { GENERATED }
+                // updatedAt: { GENERATED }
+                // extruders: { ??? },
+                createdBy:     $.user,
+                id:            $.printer,
+                name:          'User printer',
+                bed:           { x: 200, y: 200, z: 200, heated: false },
+                axis:          { x: 1, y: 1, z: 1 },
+                port:          null,
+                baudrate:      250000,
+                gcodeFlavour:  'GCODE_FLAVOR_REPRAP',
+                startGcode:    [],
+                endGcode:      [],
+                type:          'fdm',
+            }]));
     });
 });
 
@@ -46,7 +90,7 @@ function* _seed(collections) {
         sessionOrigin: 'local'
     });
 
-    const userPrinter = yield collections.Printer.create({
+    const printer = yield collections.Printer.create({
         name:         'User printer',
         bed:          { x: 200, y: 200, z: 200, heated: false },
         axis:         { x: 1, y: 1, z: 1 },
@@ -74,9 +118,9 @@ function* _seed(collections) {
 function unseed(collections) {
     assert(collections);
 
-    return collections.accesstoken.destroy()
-        .then(() => collections.printer.destroy())
-        .then(() => collections.user.destroy());
+    return collections.AccessToken.destroy()
+        .then(() => collections.Printer.destroy())
+        .then(() => collections.User.destroy());
 }
 
 function reseed(collections) {

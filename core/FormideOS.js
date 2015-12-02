@@ -1,3 +1,5 @@
+'use strict';
+
 /*
  *	This code was created for Printr B.V. It is open source under the formideos-client package.
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
@@ -9,14 +11,15 @@
  *	events manager.
  */
 
-// Dependencies
-var path 	= require('path');
+const path             = require('path');
+const sailsDiskAdapter = require('sails-disk');
+
+const initDb = require('./utils/db');
 
 // FormideOS global object
-FormideOS = {};
+global.FormideOS = {};
 
-module.exports = function (cb) {
-
+module.exports = dbConfig => {
 	// Paths
 	FormideOS.coreRoot = path.resolve(__dirname, './');
 	FormideOS.appRoot = path.resolve(__dirname, '../');
@@ -45,19 +48,37 @@ module.exports = function (cb) {
 	// Array to keep track of installed modules
 	FormideOS.modules = [];
 
-	// Function to get registered module in a more elegant way than directly accessing the modules object
-	FormideOS.module = function(moduleName) {
-		return FormideOS.moduleManager.getModule(moduleName)
-	};
+	// Function to get registered module in a more elegant way than directly
+	// accessing the modules object
+	FormideOS.module =
+		moduleName => FormideOS.moduleManager.getModule(moduleName);
 
-	// Database driver
-	require('./utils/db')(function (err, db) {
-		if (err) {
+	if (!dbConfig) {
+		let storage = null;
+		if (typeof SETUP !== 'undefined')
+			storage = path.join(SETUP.storageDir, 'database_');
+		else
+			storage = path.join(
+				FormideOS.config.get('app.storageDir'), 'database_');
+
+		dbConfig = {
+			adapters: { disk: sailsDiskAdapter },
+			connections: {
+				default: {
+					adapter:  'disk',
+					filePath: storage
+				}
+			},
+			defaults: { migrate: 'safe' }
+		};
+	}
+
+	return initDb(dbConfig).then(
+		db => {
+			FormideOS.db = db;
+		},
+		err => {
 			FormideOS.log.error(err);
 			process.exit(1);
-		}
-		FormideOS.db = db;
-
-		return cb();
-	});
+		});
 }

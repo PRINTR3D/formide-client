@@ -14,10 +14,9 @@ var pkg 	= require('./package.json');
 var path 	= require('path');
 
 // Load formideos core file
-require('./core/FormideOS')(function (err) {
+const initFormide = require('./core/FormideOS');
 
-	if (err) throw err;
-
+initFormide().then(() => {
 	// Memory watching during development
 	if (process.env.NODE_ENV !== 'production') {
 		var heapdump = require('heapdump');

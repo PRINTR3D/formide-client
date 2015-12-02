@@ -5,44 +5,38 @@
 
 var uuid = require('node-uuid');
 
-module.exports = function(Waterline) {
+module.exports = {
+	identity: 'accesstoken',
 
-	var AccessToken = Waterline.Collection.extend({
+	connection: 'default',
 
-		identity: 'accesstoken',
+	attributes: {
 
-		connection: 'default',
-
-		attributes: {
-
-			// authorized user
-			createdBy: {
-				model: 'user'
-			},
-
-			// the actual access token
-			token: {
-				type: 'string'
-			},
-
-			permissions: {
-				type: 'array',
-				defaultsTo: []
-			},
-
-			sessionOrigin: {
-				type: 'string',
-				required: true,
-				enum: ["local", "cloud"]
-			}
+		// authorized user
+		createdBy: {
+			model: 'user'
 		},
 
-		// hash password before saving user to database
-		beforeCreate: function (accessToken, next) {
-			accessToken.token = uuid.v4();
-			next();
-		}
-	});
+		// the actual access token
+		token: {
+			type: 'string'
+		},
 
-	return AccessToken;
-}
+		permissions: {
+			type: 'array',
+			defaultsTo: []
+		},
+
+		sessionOrigin: {
+			type: 'string',
+			required: true,
+			enum: ["local", "cloud"]
+		}
+	},
+
+	// hash password before saving user to database
+	beforeCreate: function (accessToken, next) {
+		accessToken.token = uuid.v4();
+		next();
+	}
+};
