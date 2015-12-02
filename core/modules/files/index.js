@@ -64,7 +64,7 @@ module.exports = {
 				});
 			}
 			else {
-				return callback('file not found');
+				return callback(null, null);
 			}
 		});
 	},

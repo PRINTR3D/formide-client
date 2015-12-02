@@ -15,6 +15,7 @@ module.exports = function(routes, module) {
 	routes.get('/download', function(req, res) {
 		module.downloadFile(req.query.hash, req.query.encoding, req.user.id, function(err, filecontents) {
 			if(err) return res.serverError(err);
+			if (!filecontents) return res.notFound();
 			return res.send(filecontents); // don't use res.ok here!
 		});
 	});
