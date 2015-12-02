@@ -34,7 +34,7 @@ require('./core/FormideOS')(function (err) {
 
 	// Load core modules
 	FormideOS.moduleManager.loadModule('/core/modules/db',			'db',           true);
-	FormideOS.moduleManager.loadModule('/core/modules/settings',	'settings',     true);
+	// FormideOS.moduleManager.loadModule('/core/modules/settings',	'settings',     true);
 	FormideOS.moduleManager.loadModule('/core/modules/auth',		'auth',         true);
 	// FormideOS.moduleManager.loadModule('core/modules/log', 		'log', 		true); // TODO: log to db
 	FormideOS.moduleManager.loadModule('/core/modules/files', 	    'files',        true);

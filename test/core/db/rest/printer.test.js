@@ -57,15 +57,11 @@ function* _seed(collections) {
         }],
         port:         null,
         createdBy:    user.id,
-        device:       device2.id,
         baudrate:     250000,
         gcodeFlavour: 'GCODE_FLAVOR_REPRAP',
         startGcode:   [],
         endGcode:     [],
-        parent:       null,
-        public:       null,
-        type:         'fdm',
-        preset:       false
+        type:         'fdm'
     });
 
     return {

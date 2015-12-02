@@ -3,13 +3,13 @@
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
-module.exports = function(routes, module)
-{
+module.exports = function(routes, module) {
+
 	/*
 	 * Get list of connected printers and their status
 	 */
 	routes.get('/', function(req, res) {
-		return res.send(module.getPrinters());
+		return res.ok(module.getPrinters());
 	});
 
 	/**
@@ -17,7 +17,7 @@ module.exports = function(routes, module)
 	 */
 	routes.get('/:port/commands', function(req, res) {
 		module.getCommands(req.params.port, function(commands) {
-			return res.json(commands);
+			return res.ok(commands);
 		});
 	});
 
@@ -26,7 +26,7 @@ module.exports = function(routes, module)
 	 */
 	routes.get('/:port/status', function(req, res) {
 		module.getStatus(req.params.port, function(status) {
-			return res.json(status);
+			return res.ok(status);
 		});
 	});
 
@@ -36,10 +36,7 @@ module.exports = function(routes, module)
 	routes.get('/:port/start', function(req, res) {
 		module.startPrint(req.params.port, req.query.id, req.query.gcode, function(err, result) {
 			if (err) return res.send(err);
-			return res.json({
-				success: true,
-				message: result
-			});
+			return res.ok({ success: true, message: result });
 		});
 	});
 
@@ -49,10 +46,7 @@ module.exports = function(routes, module)
 	routes.get('/:port/stop', function(req, res) {
 		module.stopPrint(req.params.port, function(err, result) {
 			if (err) return res.send(err);
-			return res.json({
-				success: true,
-				message: result
-			});
+			return res.json({ success: true, message: result });
 		});
 	});
 
@@ -62,10 +56,7 @@ module.exports = function(routes, module)
 	routes.get('/:port/pause', function(req, res) {
 		module.pausePrint(req.params.port, function(err, result) {
 			if (err) return res.send(err);
-			return res.json({
-				success: true,
-				message: result
-			});
+			return res.json({ success: true, message: result });
 		});
 	});
 
@@ -75,10 +66,7 @@ module.exports = function(routes, module)
 	routes.get('/:port/resume', function(req, res) {
 		module.resumePrint(req.params.port, function(err, result) {
 			if (err) return res.send(err);
-			return res.json({
-				success: true,
-				message: result
-			});
+			return res.json({ success: true, message: result });
 		});
 	});
 
