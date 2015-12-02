@@ -29,14 +29,10 @@ describe('Printers', function() {
                 for (const printer of body) {
                     assert(printer.createdAt);
                     assert(printer.updatedAt);
-                    // assert(printer.createdBy);
-                    assert(printer.extruders);
 
                     // delete generated columns before validation
                     delete printer.createdAt;
                     delete printer.updatedAt;
-                    // delete printer.createdBy;
-                    delete printer.extruders;
 
                     if (printer.device)
                         delete printer.device;
@@ -59,7 +55,6 @@ describe('Printers', function() {
             .expect(200, [{
                 // createdAt: { GENERATED }
                 // updatedAt: { GENERATED }
-                // extruders: { ??? },
                 createdBy:     $.user,
                 id:            $.printer,
                 name:          'User printer',
@@ -71,6 +66,12 @@ describe('Printers', function() {
                 startGcode:    [],
                 endGcode:      [],
                 type:          'fdm',
+
+                extruders: [{
+                    id:         0,
+                    name:       'Extruder 1',
+                    nozzleSize: 350
+                }],
             }]));
     });
 });
