@@ -17,34 +17,34 @@ describe('PrintJobs', function() {
 
     after(done => unseed(FormideOS.db).then(() => done()));
 
-    describe(`GET ${ENDPOINT}`, () => {
-        it('should return printJobs', () => GET `${ENDPOINT}`
-            .query({ access_token: $.accessToken })
-            .set('Accept', 'application/json')
-            .expect('Content-Type', /json/)
-            .expect(res => {
-                const body = res.body;
-
-                assert.strictEqual(body.length, 1);
-                for (const printJob of body) {
-                    assert(printJob.createdAt);
-                    assert(printJob.updatedAt);
-                    assert(printJob.createdBy);
-
-                    // delete generated columns before validation
-                    delete printJob.createdAt;
-                    delete printJob.updatedAt;
-                    delete printJob.createdBy;
-                }
-            })
-            .expect(200, [{
-                // createdAt: { GENERATED }
-                // updatedAt: { GENERATED }
-                // createdBy:
-                id:             $.printJob,
-
-            }]));
-    });
+    // describe(`GET ${ENDPOINT}`, () => {
+    //     it('should return printJobs', () => GET `${ENDPOINT}`
+    //         .query({ access_token: $.accessToken })
+    //         .set('Accept', 'application/json')
+    //         .expect('Content-Type', /json/)
+    //         .expect(res => {
+    //             const body = res.body;
+    //
+    //             assert.strictEqual(body.length, 1);
+    //             for (const printJob of body) {
+    //                 assert(printJob.createdAt);
+    //                 assert(printJob.updatedAt);
+    //                 assert(printJob.createdBy);
+    //
+    //                 // delete generated columns before validation
+    //                 delete printJob.createdAt;
+    //                 delete printJob.updatedAt;
+    //                 delete printJob.createdBy;
+    //             }
+    //         })
+    //         .expect(200, [{
+    //             // createdAt: { GENERATED }
+    //             // updatedAt: { GENERATED }
+    //             // createdBy:
+    //             id:             $.printJob,
+    //
+    //         }]));
+    // });
 });
 
 const seed = co.wrap(_seed);
