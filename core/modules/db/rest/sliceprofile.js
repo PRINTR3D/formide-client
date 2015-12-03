@@ -86,6 +86,7 @@ module.exports = (routes, db) => {
 
 		const content = fs.readFileSync(req.files.file.path, 'utf-8');
 
+		// TODO: fix filling in missing params in formideTools.createSliceprofileFromCura()
 		formideTools.createSliceprofileFromCura(content, function(err, katanaSettings) {
 			db.SliceProfile.create({
 				createdBy:	req.user.id,
