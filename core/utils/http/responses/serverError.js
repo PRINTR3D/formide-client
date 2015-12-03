@@ -9,19 +9,24 @@ module.exports = function badRequest(error) {
 	var res = this.res;
 	var statusCode = 500;
 	var statusName = "Server Error";
-	
+
 	// Set status code
 	res.status(statusCode);
-	
+
 	if (process.env.NODE_ENV === 'production') {
-		error = undefined;
+		return res.json({
+			statusCode: statusCode,
+			statusName: statusName,
+			message: error.message
+		});
 	}
-	
-	return res.json({
-		statusCode: statusCode,
-		statusName: statusName,
-		message: error.message,
-		error: error,
-		stack: error.stack
-	});
+	else {
+		return res.json({
+			statusCode: statusCode,
+			statusName: statusName,
+			message: error.message,
+			error: error,
+			stack: error.stack
+		});
+	}
 };
