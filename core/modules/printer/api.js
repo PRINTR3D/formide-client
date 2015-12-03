@@ -28,6 +28,7 @@ module.exports = function(routes, module) {
 	routes.get('/:port/status', function(req, res) {
 		module.getStatus(req.params.port, function(err, status) {
 			if (err) return res.serverError(err);
+			if (!result) return res.notFound('No printer on this port');
 			return res.ok(status);
 		});
 	});
@@ -38,6 +39,7 @@ module.exports = function(routes, module) {
 	routes.get('/:port/start', function(req, res) {
 		module.startPrint(req.params.port, req.query.queueItem, function(err, result) {
 			if (err) return res.serverError(err);
+			if (!result) return res.notFound('No printer on this port');
 			return res.ok({ message: "Printer starting" });
 		});
 	});
@@ -48,6 +50,7 @@ module.exports = function(routes, module) {
 	routes.get('/:port/stop', function(req, res) {
 		module.stopPrint(req.params.port, function(err, result) {
 			if (err) return res.serverError(err);
+			if (!result) return res.notFound('No printer on this port');
 			return res.ok({ message: "Printer stopping" });
 		});
 	});
@@ -58,6 +61,7 @@ module.exports = function(routes, module) {
 	routes.get('/:port/pause', function(req, res) {
 		module.pausePrint(req.params.port, function(err, result) {
 			if (err) return res.serverError(err);
+			if (!result) return res.notFound('No printer on this port');
 			return res.ok({ message: "Printer pausing" });
 		});
 	});
@@ -68,6 +72,7 @@ module.exports = function(routes, module) {
 	routes.get('/:port/resume', function(req, res) {
 		module.resumePrint(req.params.port, function(err, result) {
 			if (err) return res.serverError(err);
+			if (!result) return res.notFound('No printer on this port');
 			return res.ok({ message: "Printer resuming" });
 		});
 	});
@@ -78,6 +83,7 @@ module.exports = function(routes, module) {
 	routes.get('/:port/:command', function(req, res) {
 		module.printerControl(req.params.port, { command: req.params.command, parameters: req.query }, function(err, result) {
 			if (err) return res.serverError(err);
+			if (!result) return res.notFound('No printer on this port');
 			return res.ok({ message: "Command executing" });
 		});
 	});
