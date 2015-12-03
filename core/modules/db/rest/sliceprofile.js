@@ -3,6 +3,13 @@
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
+const fs       				= require('fs');
+const thenify  				= require('thenify');
+const readFile 				= thenify(fs.readFile);
+const formideTools			= require('formide-tools');
+const multipart 			= require('connect-multiparty');
+const multipartMiddleware	= multipart();
+
 module.exports = (routes, db) => {
 
 	/**
@@ -69,5 +76,26 @@ module.exports = (routes, db) => {
 			return res.ok({ message: "Sliceprofile deleted" });
 		})
 		.error(res.serverError);
+	});
+
+	/**
+	 * Import slice settings from Cura
+	 */
+	routes.post('/sliceprofiles/cura', multipartMiddleware, (req, res) => {
+		if (!req.files || !req.files.file) return res.badRequest('Cura file must be attached');
+
+		const content = fs.readFileSync(req.files.file.path, 'utf-8');
+
+		formideTools.createSliceprofileFromCura(content, function(err, katanaSettings) {
+			db.SliceProfile.create({
+				createdBy:	req.user.id,
+				name:		req.files.file.name,
+				settings:	katanaSettings
+			})
+			.then((sliceProfile) => {
+				return res.ok({ message: 'SliceProfile imported from Cura', sliceProfile: sliceProfile });
+			})
+			.error(res.serverError);
+		});
 	});
 };

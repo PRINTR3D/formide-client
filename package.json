@@ -89,6 +89,7 @@
     "socket.io-stream": "~0.6.0",
     "stack-trace": "0.0.9",
     "sudo": "~1.0.3",
+    "thenify": "^3.1.1",
     "tingodb": "^0.3.4",
     "tungus": "0.0.4",
     "underscore": "^1.8.2",
