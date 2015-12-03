@@ -51,6 +51,7 @@
     "internal-ip": "^1.0.1",
     "jsonstorage": "0.0.12",
     "jsop": "^0.3.1",
+    "katana-slicer": "github:printr3d/katana-slicer#v1.0.6",
     "lodash": "2.4.1",
     "minimist": "~1.1.0",
     "moment": "^2.10.3",
