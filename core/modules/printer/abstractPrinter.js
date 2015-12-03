@@ -145,7 +145,7 @@ AbstractPrinter.prototype.pausePrint = function(callback) {
 			queueItemId: self.queueItemId
 		});
 		return callback(null, response);
-	})
+	});
 }
 
 /*

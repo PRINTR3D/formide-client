@@ -15,8 +15,14 @@ module.exports = {
 	 */
 	uploadFile: function(file, filetype, userId, callback) {
 		fs.readFile(file.path, function(err, data) {
+			if (err) {
+				FormideOS.log.error(err.message);
+				return callback(err);
+			}
+
 			var hash = uuid.v4();
 			var newPath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.modelfiles'), hash);
+
 			fs.writeFile(newPath, data, function(err) {
 				if (err) {
 					FormideOS.log.error(err.message);

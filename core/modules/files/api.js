@@ -24,7 +24,7 @@ module.exports = function(routes, module) {
 	 * Upload a file, can be stl or gcode for now
 	 */
 	routes.post('/upload', multipartMiddleware, function(req, res) {
-		if (!req.files.file) {
+		if (!req.files && !req.files.file) {
 			return res.badRequest("No file found in request");
 		}
 
