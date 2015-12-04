@@ -16,7 +16,7 @@ function initializeDb(config) {
 	const waterline = new Waterline();
 
 	// load all models
-	return readdir(path.join(FormideOS.coreRoot, 'utils/db/models')).then(files => {
+	return readdir(path.join(__dirname, './models')).then(files => {
 		files.forEach(file => {
 			if (file.match(/\.js$/) == null || file === 'index.js')
 				return;

@@ -11,11 +11,11 @@
 
 var path = require('path');
 
-module.exports = function()
-{
+module.exports = function() {
+
 	var env = process.env.NODE_ENV || 'production';
 	var cfg = require('../../config/' + env + '.json');
-	
+
 	// get current home directory for user storage
 	cfg.app.storageDir = path.resolve(process.env.HOME + "/formide") || path.resolve(process.env.USERPROFILE + "/formide");
 
