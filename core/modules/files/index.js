@@ -3,10 +3,11 @@
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
-var fs		= require('fs');
-var path	= require('path');
-var uuid	= require('node-uuid');
-var request	= require('request');
+var fs			= require('fs');
+var path		= require('path');
+var uuid		= require('node-uuid');
+var request		= require('request');
+var diskspace	= require('diskspace');
 
 module.exports = {
 
@@ -104,4 +105,14 @@ module.exports = {
     //     	});
 	// 	});
 	// }
+
+	/**
+	 * Get disk space on user data partition
+	 */
+	getDiskSpace: function(callback) {
+		diskspace.check('/data', function (err, total, free, status) {
+			if (err) return callback(err);
+			return callback(null, { total, free, status });
+		});
+	}
 }

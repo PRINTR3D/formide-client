@@ -56,4 +56,11 @@ module.exports = function(routes, module) {
 	// 		});
 	// 	});
 	// });
+
+	routes.get('/diskspace', function(req, res) {
+		module.getDiskSpace(function(err, result) {
+			if (err) return res.serverError(err);
+			return res.ok(result);
+		});
+	});
 };
