@@ -3,16 +3,19 @@ FROM    node:4.2
 
 # Provides cached layer for node_modules
 ADD package.json /tmp/package.json
-RUN cd /tmp && npm install
+RUN cd /tmp && npm install --production
 RUN mkdir -p /srv/formide-client && cp -a /tmp/node_modules /srv/formide-client
 
 # Define working directory and add root app dir to it
 WORKDIR /srv/formide-client
 ADD . /srv/formide-client
 
-# Expose port
+# Expose ports
+# API
 EXPOSE 1337
+# UI
 EXPOSE 8080
+# Sockets
 EXPOSE 3001
 
 # Run app using nodemon
