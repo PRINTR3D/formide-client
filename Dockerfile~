@@ -1,5 +1,5 @@
 # Set the base image to Node
-FROM    node:4.2
+FROM    node:0.12
 
 # Provides cached layer for node_modules
 ADD package.json /tmp/package.json
