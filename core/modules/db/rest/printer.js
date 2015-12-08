@@ -21,7 +21,7 @@ module.exports = (routes, db) => {
 	 */
 	routes.get('/printers/:id', (req, res) => {
 		db.Printer
-		.findOne({ id: printer.id })
+		.findOne({ id: req.params.id })
 		.populate('createdBy')
 		.then((printer) => {
 			if (!printer) return res.notFound();
