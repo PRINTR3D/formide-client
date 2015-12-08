@@ -113,10 +113,12 @@ module.exports = {
 				if (typeof val[i].id !== "number") return false;
 				if (typeof val[i].name !== "string") return false;
 				if (typeof val[i].nozzleSize !== "number") return false;
+				if (typeof val[i].filamentDiameter !== "number") return false;
 			}
 			return true;
 		},
 
+		// custom validation for custom commands
 		is_valid_custom_commands: function (val) {
 			for (var i in val) {
 				if (typeof val[i] !== "object") return false;

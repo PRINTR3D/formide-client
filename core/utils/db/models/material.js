@@ -22,12 +22,6 @@ module.exports = {
 			required: true
 		},
 
-		filamentDiameter: {
-			type: 'integer',
-			required: true,
-			defaultsTo: 1750
-		},
-
 		temperature: {
 			type: 'integer',
 			required: true
