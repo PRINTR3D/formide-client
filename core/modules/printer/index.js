@@ -91,7 +91,7 @@ module.exports = {
 
 	getStatus: function(port, callback) {
 		if (this.printers[port] == undefined) return callback();
-		callback(this.printers[port].getStatus());
+		callback(null, this.printers[port].getStatus());
 	},
 
 	printerControl: function(port, data, callback) {

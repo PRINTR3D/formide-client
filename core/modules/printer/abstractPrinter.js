@@ -96,7 +96,7 @@ AbstractPrinter.prototype.command = function(command, parameters, callback) {
 		}
 		self.sendRaw(command[i]);
 	}
-	return callback();
+	return callback(null, 'OK');
 }
 
 /*

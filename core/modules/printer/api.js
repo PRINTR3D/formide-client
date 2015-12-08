@@ -28,7 +28,7 @@ module.exports = function(routes, module) {
 	routes.get('/:port/status', function(req, res) {
 		module.getStatus(req.params.port, function(err, status) {
 			if (err) return res.serverError(err);
-			if (!result) return res.notFound('No printer on this port');
+			if (!status) return res.notFound('No printer on this port');
 			return res.ok(status);
 		});
 	});
