@@ -21,16 +21,12 @@
 		"gcode": "/gcode"
 	},
 	"printer": {
-		"permission": false,
-		"simulated": false
+		"permission": false
 	},
 	"slicer": {
-		"version": "1.0.2"
+		"version": "1.0.6"
 	},
 	"settings": {
 		"path": "/"
-	},
-	"update": {
-		"permission": false
 	}
 }

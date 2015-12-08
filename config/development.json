@@ -6,11 +6,10 @@
 		"port": 1337
 	},
 	"auth": {
-		"permission": false,
-		"inviteUrl": "https://api2.formide.com/clients/register/invite"
+		"permission": false
 	},
 	"cloud": {
-		"url": "https://apidev.formide.com",
+		"url": "http://localhost:3000",
 		"permission": false
 	},
 	"log": {
@@ -22,16 +21,12 @@
 		"gcode": "/gcode"
 	},
 	"printer": {
-		"permission": false,
-		"simulated": false
+		"permission": false
 	},
 	"slicer": {
-		"version": "1.0.2"	
+		"version": "1.0.6"
 	},
 	"settings": {
 		"path": "/"
-	},
-	"update": {
-		"permission": false
 	}
 }
