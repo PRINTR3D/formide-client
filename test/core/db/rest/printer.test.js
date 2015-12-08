@@ -54,7 +54,8 @@ describe('Printers', function() {
                 extruders: [{
                     id:         0,
                     name:       'Extruder 1',
-                    nozzleSize: 350
+                    nozzleSize: 350,
+                    filamentDiameter: 1750
                 }]
             }]));
     });
@@ -82,7 +83,8 @@ function* _seed(collections) {
         extruders:    [{
             id:         0,
             name:       'Extruder 1',
-            nozzleSize: 350
+            nozzleSize: 350,
+            filamentDiameter: 1750
         }],
         port:         null,
         createdBy:    user.id,
