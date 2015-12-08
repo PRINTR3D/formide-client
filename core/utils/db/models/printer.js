@@ -71,6 +71,11 @@ module.exports = {
 			required: true
 		},
 
+		// user that updated printer liast
+		updatedBy: {
+			model: 'user'
+		},
+
 		// custom start gcode (put in front of gcode file)
 		startGcode: {
 			type: 'array',

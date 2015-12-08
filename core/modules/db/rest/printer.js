@@ -68,7 +68,7 @@ module.exports = (routes, db) => {
 			gcodeFlavour:		req.body.gcodeFlavour,
 			startGcode:			req.body.startGcode,
 			endGcode:			req.body.endGcode,
-			createdBy:			req.user.id
+			updatedBy:			req.user.id
 		})
 		.then((updated) => {
 			return res.ok({ message: "Printer updated", printer: updated[0] });
