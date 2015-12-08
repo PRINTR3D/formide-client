@@ -1,9 +1,12 @@
 # Set the base image to Node
 FROM    node:4.2
 
+# Update to npm 3.x
+RUN npm install -g npm
+
 # Provides cached layer for node_modules
 ADD package.json /tmp/package.json
-RUN cd /tmp && npm install --production && npm install printr3d/katana-slicer-npm && npm install printr3d/formide-drivers-npm
+RUN cd /tmp && npm install --production
 RUN mkdir -p /srv/formide-client && cp -a /tmp/node_modules /srv/formide-client
 
 # Define working directory and add root app dir to it

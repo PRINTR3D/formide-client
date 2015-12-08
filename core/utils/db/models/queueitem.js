@@ -17,8 +17,7 @@ module.exports = {
 		},
 
 		gcode: {
-			type: 'string',
-			required: true
+			type: 'string'
 		},
 
 		status: {

@@ -118,7 +118,7 @@ module.exports =
 		 * Send a gcode file to a client to print a cloud sliced printjob
 		 */
 		this.cloud.on('addToQueue', data => {
-			FormideOS.log('Cloud addToQueue: ' + data.hash);
+			FormideOS.log('Cloud addToQueue: ' + data.gcode);
 			self.addToQueue(data, (err, response) => {
 				self.cloud.emit('addToQueue', {
 					_callbackId: data._callbackId,
@@ -193,19 +193,17 @@ module.exports =
 		var self = this;
 		var hash = uuid.v4();
 
-		console.log('addToQueue', data);
-
 		FormideOS.db.QueueItem.create({
 			origin: 'cloud',
 			status: 'queued',
-			gcode: hash,
-			printjob: data.printjob,
+			gcode: hash, // create a new hash for local file storage!
+			printJob: data.printJob,
 			port: data.port
 		}, function(err, queueitem) {
 			if (err) return callback(err);
 			callback(null, {
 				success: true,
-				queueitem: queueitem
+				queueItem: queueItem
 			});
 
 			// TODO: better way of fetching gcode files from cloud
@@ -213,7 +211,7 @@ module.exports =
 				method: 'GET',
 				url: FormideOS.config.get('cloud.url') + '/files/download/gcode',
 				qs: {
-					hash: data.hash
+					hash: data.gcode
 				},
 				strictSSL: false
 			})
