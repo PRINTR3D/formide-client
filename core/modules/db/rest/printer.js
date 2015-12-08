@@ -45,7 +45,6 @@ module.exports = (routes, db) => {
 			gcodeFlavour:		req.body.gcodeFlavour,
 			startGcode:			req.body.startGcode,
 			endGcode:			req.body.endGcode,
-			filamentDiameter: 	req.body.filamentDiameter,
 			createdBy:			req.user.id,
 		})
 		.then((printer) => {
@@ -69,7 +68,6 @@ module.exports = (routes, db) => {
 			gcodeFlavour:		req.body.gcodeFlavour,
 			startGcode:			req.body.startGcode,
 			endGcode:			req.body.endGcode,
-			filamentDiameter: 	req.body.filamentDiameter,
 			createdBy:			req.user.id
 		})
 		.then((updated) => {
