@@ -36,16 +36,17 @@ module.exports = (routes, db) => {
 	routes.post('/printers', (req, res) => {
 		db.Printer
 		.create({
-			name:			req.body.name,
-			bed:			req.body.bed,
-			axis:			req.body.axis,
-			extruders:		req.body.extruders,
-			port:			req.body.port,
-			baudrate:		req.body.baudrate,
-			gcodeFlavour:	req.body.gcodeFlavour,
-			startGcode:		req.body.startGcode,
-			endGcode:		req.body.endGcode,
-			createdBy:		req.user.id,
+			name:				req.body.name,
+			bed:				req.body.bed,
+			axis:				req.body.axis,
+			extruders:			req.body.extruders,
+			port:				req.body.port,
+			baudrate:			req.body.baudrate,
+			gcodeFlavour:		req.body.gcodeFlavour,
+			startGcode:			req.body.startGcode,
+			endGcode:			req.body.endGcode,
+			filamentDiameter: 	req.body.filamentDiameter,
+			createdBy:			req.user.id,
 		})
 		.then((printer) => {
 			return res.ok({ message: "Printer created", printer });
@@ -59,16 +60,17 @@ module.exports = (routes, db) => {
 	routes.put('/printers/:id', (req, res) => {
 		db.Printer
 		.update({ id: req.params.id }, {
-			name:			req.body.name,
-			bed:			req.body.bed,
-			axis:			req.body.axis,
-			extruders:		req.body.extruders,
-			port:			req.body.port,
-			baudrate:		req.body.baudrate,
-			gcodeFlavour:	req.body.gcodeFlavour,
-			startGcode:		req.body.startGcode,
-			endGcode:		req.body.endGcode,
-			createdBy:		req.user.id
+			name:				req.body.name,
+			bed:				req.body.bed,
+			axis:				req.body.axis,
+			extruders:			req.body.extruders,
+			port:				req.body.port,
+			baudrate:			req.body.baudrate,
+			gcodeFlavour:		req.body.gcodeFlavour,
+			startGcode:			req.body.startGcode,
+			endGcode:			req.body.endGcode,
+			filamentDiameter: 	req.body.filamentDiameter,
+			createdBy:			req.user.id
 		})
 		.then((updated) => {
 			return res.ok({ message: "Printer updated", printer: updated[0] });

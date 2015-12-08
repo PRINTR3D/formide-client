@@ -38,7 +38,6 @@ module.exports = (routes, db) => {
 		.create({
 			name:						req.body.name,
 			type:						req.body.type,
-			filamentDiameter:			req.body.filamentDiameter,
 			temperature:				req.body.temperature,
 			firstLayersTemperature:		req.body.firstLayersTemperature,
 			bedTemperature:				req.body.bedTemperature,
@@ -60,7 +59,6 @@ module.exports = (routes, db) => {
 		.update({ id: req.params.id, createdBy: req.user.id }, {
 			name:						req.body.name,
 			type:						req.body.type,
-			filamentDiameter:			req.body.filamentDiameter,
 			temperature:				req.body.temperature,
 			firstLayersTemperature:		req.body.firstLayersTemperature,
 			bedTemperature:				req.body.bedTemperature,
