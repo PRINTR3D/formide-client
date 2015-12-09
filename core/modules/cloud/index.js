@@ -199,7 +199,7 @@ module.exports =
 			gcode: hash, // create a new hash for local file storage!
 			printJob: data.printJob,
 			port: data.port
-		}, function(err, queueitem) {
+		}, function(err, queueItem) {
 			if (err) return callback(err);
 			callback(null, {
 				success: true,
