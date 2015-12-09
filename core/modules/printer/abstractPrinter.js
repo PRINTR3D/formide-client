@@ -107,7 +107,8 @@ AbstractPrinter.prototype.startPrint = function(queueItemId, callback) {
 	var self = this;
 	// first we set all current printing db queue items for this port back to queued to prevent multiple 'printing' items
 	FormideOS.db.QueueItem
-	.update({ port: self.port }, { status: 'queued' }, function(err, updated) {
+	.update({ port: self.port }, { status: 'queued' })
+	.exec(function(err, updated) {
 		if (err) return callback(err);
 		FormideOS.db.QueueItem
 		.findOne({ id: queueItemId })
