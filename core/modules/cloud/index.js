@@ -5,21 +5,17 @@
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
-// dependencies
 var net 			= require('net');
 var request 		= require('request');
 var socket 			= require('socket.io-client');
-var sailsIOClient	= require('sails.io.js');
 var publicIp 		= require('public-ip');
 var internalIp 		= require('internal-ip');
 var fs				= require('fs');
 var path			= require('path');
 var uuid			= require('node-uuid');
-var async			= require('async');
 var getMac			= require('getmac');
 
-module.exports =
-{
+module.exports = {
 	// socket connections
 	cloud: null,
 	local: null,
@@ -47,7 +43,7 @@ module.exports =
 
 		/*
 		 * Connect to the cloud socket server
-	 	 */
+		  */
 		this.cloud.on('connect', function () {
 
 			// authenticate formideos based on mac address and api token, also sends permissions for faster blocking via cloud
@@ -93,10 +89,9 @@ module.exports =
 			FormideOS.log("Cloud authenticate user:" + data.id);
 			this.authenticate(data, (err, accessToken) => {
 				FormideOS.log('Cloud user authorized with access_token ' + accessToken.token);
-				self.cloud.emit('authenticateUser', {
-					_callbackId: data._callbackId,
-					result:      accessToken.token
-				});
+				self.cloud.emit(
+					'authenticateUser',
+					getCallbackData(data._callbackId, err, result));
 			});
 		});
 
@@ -107,10 +102,9 @@ module.exports =
 			FormideOS.log('Cloud http call: ' + data.url);
 			// call http function
 			this.http(data, (err, response) => {
-				self.cloud.emit('http', {
-					_callbackId: data._callbackId,
-					result:      response
-				});
+				self.cloud.emit(
+					'http',
+					getCallbackData(data._callbackId, err, result));
 			});
 		});
 
@@ -120,16 +114,15 @@ module.exports =
 		this.cloud.on('addToQueue', data => {
 			FormideOS.log('Cloud addToQueue: ' + data.gcode);
 			self.addToQueue(data, (err, response) => {
-				self.cloud.emit('addToQueue', {
-					_callbackId: data._callbackId,
-					result:      response
-				});
+				self.cloud.emit(
+					'addToQueue',
+					getCallbackData(data._callbackId, err, result));
 			});
 		});
 
 		/*
 		 * Handle disconnect
-	 	 */
+		  */
 		this.cloud.on('disconnect', () => {
 			// turn off event forwarding
 			FormideOS.events.offAny(forwardEvents);
@@ -221,7 +214,7 @@ module.exports =
 				response.pipe(fws);
 				response.on( 'end', function() {
 					FormideOS.log('finished downloading gcode. Recieved ' + fws.bytesWritten + ' bytes');
-	        	});
+				});
 			});
 		});
 	},
@@ -277,4 +270,15 @@ module.exports =
 			});
 		});
 	}
+};
+
+function getCallbackData(callbackId, err, result) {
+	const data = { _callbackId: callbackId };
+
+	if (err)
+		data.error = { message: err.message };
+	else
+		data.result = result;
+
+	return data;
 }
