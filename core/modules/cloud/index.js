@@ -91,7 +91,7 @@ module.exports = {
 				FormideOS.log('Cloud user authorized with access_token ' + accessToken.token);
 				self.cloud.emit(
 					'authenticateUser',
-					getCallbackData(data._callbackId, err, accessToken));
+					getCallbackData(data._callbackId, err, accessToken.token));
 			});
 		});
 
