@@ -34,7 +34,7 @@ module.exports = function(routes, module) {
 				if(err) return res.serverError(err);
 				return res.ok({
 					message: "Uploaded file",
-					file: uploadedFile
+					uploadedFile: uploadedFile
 				});
 			});
 		}
