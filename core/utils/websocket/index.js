@@ -8,7 +8,7 @@
  *	FormideOS.
  */
 
-var io 							= require('socket.io');
+var io = require('socket.io');
 //var permissionsMiddleware 		= require('./middleware/permissions');
 var ws = require("nodejs-websocket");
 
@@ -18,7 +18,6 @@ module.exports = {
 
 		// base websocket server to LCD display notifications and events
 		var server = ws.createServer(function (conn) {
-			FormideOS.log("Native UI connected");
 			conn.on("text", function (message) {
 				try {
 					var data = JSON.parse(message);
@@ -33,10 +32,9 @@ module.exports = {
 									message: "Authentication successful!",
 									notification: false
 								}
-							}))
+							}));
 
 							FormideOS.events.onAny(function(data) {
-								console.log(this.event);
 								data = data || {};
 								data.device = "LOCAL";
 								conn.sendText(JSON.stringify({
@@ -48,16 +46,16 @@ module.exports = {
 					}
 				}
 				catch (e) {
-					console.log(e);
+					FormideOS.log.error(e.message);
 				}
 			});
 
 		    conn.on("close", function (code, reason) {
-		        FormideOS.log("Native UI disconnected: " + reason);
+		        FormideOS.log("Socket disconnected: " + reason);
 		    });
 
 		    conn.on("error", function (err) {
-			    FormideOS.events.offAny(function (){});
+			    // FormideOS.events.offAny(function (){});
 				FormideOS.log.error(err.message);
 		    });
 
