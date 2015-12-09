@@ -91,7 +91,7 @@ module.exports = {
 				FormideOS.log('Cloud user authorized with access_token ' + accessToken.token);
 				self.cloud.emit(
 					'authenticateUser',
-					getCallbackData(data._callbackId, err, result));
+					getCallbackData(data._callbackId, err, accessToken));
 			});
 		});
 
@@ -104,7 +104,7 @@ module.exports = {
 			this.http(data, (err, response) => {
 				self.cloud.emit(
 					'http',
-					getCallbackData(data._callbackId, err, result));
+					getCallbackData(data._callbackId, err, response));
 			});
 		});
 
@@ -116,7 +116,7 @@ module.exports = {
 			self.addToQueue(data, (err, response) => {
 				self.cloud.emit(
 					'addToQueue',
-					getCallbackData(data._callbackId, err, result));
+					getCallbackData(data._callbackId, err, response));
 			});
 		});
 
