@@ -18,7 +18,7 @@ module.exports = (routes, module) => {
 	routes.post('/register', (req, res) => {
 		// TODO: register existing local user as owner instead of creating new one
 		module.registerDevice(req.body.ownerEmail, req.body.ownerPassword, req.body.registerToken, function(err, user) {
-			if (err) return res.serverError(err);
+			if (err) return res.badRequest(err.message);
 			return res.ok({ message: "User created and registered as owner" });
 		});
 	});
