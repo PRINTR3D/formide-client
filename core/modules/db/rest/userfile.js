@@ -3,6 +3,8 @@
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
+const async = require('async');
+
 module.exports = (routes, db) => {
 
 	/**
@@ -12,6 +14,7 @@ module.exports = (routes, db) => {
 		db.UserFile
 		.find({ createdBy: req.user.id }, { select: ((req.query.fields) ? req.query.fields.split(',') : "") })
 		.populate('createdBy')
+		.populate('printJobs')
 		.then(res.ok)
 		.error(res.serverError);
 	});
@@ -22,20 +25,31 @@ module.exports = (routes, db) => {
 	routes.get('/files/:id', (req, res) => {
 		db.UserFile
 		.findOne({ createdBy: req.user.id, id: req.params.id })
-		.populate('createdBy')
-		.then((userFile) => {
-			db.PrintJob
-			.find({ files: userFile.id })
-			.populate('materials')
-			.populate('printer')
-			.populate('sliceProfile')
-			.populate('files')
-			.then((printJobs) => {
-				userFile = userFile.toObject();
-				userFile.printJobs = printJobs;
+		.populate('printJobs')
+		.then(userFile => {
+			if (!userFile) return res.notFound();
+			async.map(userFile.printJobs, (printjob, callback) => {
+				db.PrintJob
+				.find({ id: printjob.id, createdBy: req.user.id })
+				.populate('materials')
+				.populate('printer')
+				.populate('sliceProfile')
+				.then(printers => {
+					return callback(null, printers);
+				})
+				.error(callback);
+			}, (asyncErr, results) => {
+				if (asyncErr) return res.serverError(asyncErr);
+				var response = [];
+				for (var i in results) {
+					for (var j in results[i]) {
+						response.push(results[i][j]);
+					}
+				}
+				userFile = userFile.toJSON();
+				userFile.printJobs = response;
 				return res.ok(userFile);
-			})
-			.error(res.serverError);
+			});
 		})
 		.error(res.serverError);
 	});
