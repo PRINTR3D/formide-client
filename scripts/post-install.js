@@ -1,9 +1,7 @@
 var path = require('path');
 
-// TODO: If it's an Element, move to /data (2nd partition)
-
 SETUP = {
-	storageDir: path.resolve(process.env.HOME + "/formideos") || path.resolve(process.env.USERPROFILE + "/formideos")
+	storageDir: path.resolve(process.env.HOME + "/formide") || path.resolve(process.env.USERPROFILE + "/formide")
 };
 
 var fs = require('fs');
@@ -29,14 +27,5 @@ if (!fs.existsSync(SETUP.storageDir + "/gcode")){
 	fs.mkdirSync(SETUP.storageDir + "/gcode");
 }
 
-if (!fs.existsSync(SETUP.storageDir + "/tmp")){
-	console.log("Tmp folder not found, creating...");
-	fs.mkdirSync(SETUP.storageDir + "/tmp");
-}
-
-if (!fs.existsSync(SETUP.storageDir + "/database")){
-	console.log("Database folder not found, creating...");
-	fs.mkdirSync(SETUP.storageDir + "/database");
-	console.log("Running DB setup");
-	require("./db-setup.js");
-}
+console.log("Running DB setup");
+require("./db-setup.js");

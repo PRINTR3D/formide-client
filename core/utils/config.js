@@ -2,7 +2,7 @@
  *	This code was created for Printr B.V. It is open source under the formideos-client package.
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
- 
+
 /*
  *	System configuration. Loads main config and config from 3rd party modules to be used in the system.
  *	Supports multiple environments for the main system config file. TODO: add environment support to
@@ -11,15 +11,13 @@
 
 var path = require('path');
 
-module.exports = function()
-{
+module.exports = function() {
+
 	var env = process.env.NODE_ENV || 'production';
-	console.log("Environment: " + env);
 	var cfg = require('../../config/' + env + '.json');
-	
+
 	// get current home directory for user storage
-	cfg.app.storageDir = path.resolve(process.env.HOME + "/formideos") || path.resolve(process.env.USERPROFILE + "/formideos");
-	console.log("Storage dir: " + cfg.app.storageDir);
+	cfg.app.storageDir = path.resolve(process.env.HOME + "/formide") || path.resolve(process.env.USERPROFILE + "/formide");
 
 	function parts(key) {
 		if (Array.isArray(key)) return key
@@ -42,7 +40,7 @@ module.exports = function()
   			}
   			return obj;
 		},
-		
+
 		set: function(key, value) {
 			cfg[key] = value;
 			return this;

@@ -3,8 +3,6 @@
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
-var models = require('./models');
-
 module.exports = {
-	db: models
+    // no main functions for this module
 }

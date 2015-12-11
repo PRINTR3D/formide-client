@@ -1,21 +1,21 @@
+'use strict';
+
 /*
  *	This code was created for Printr B.V. It is open source under the formideos-client package.
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
-// dependencies
-var net 		= require('net');
-var request 	= require('request');
-var socket 		= require('socket.io-client');
-var publicIp 	= require('public-ip');
-var internalIp 	= require('internal-ip');
-var fs			= require('fs');
-var uuid		= require('node-uuid');
-var async		= require('async');
-var getMac		= require('getmac');
+var net 			= require('net');
+var request 		= require('request');
+var socket 			= require('socket.io-client');
+var publicIp 		= require('public-ip');
+var internalIp 		= require('internal-ip');
+var fs				= require('fs');
+var path			= require('path');
+var uuid			= require('node-uuid');
+var getMac			= require('getmac');
 
-module.exports =
-{	
+module.exports = {
 	// socket connections
 	cloud: null,
 	local: null,
@@ -24,23 +24,33 @@ module.exports =
 	 * Init for cloud module
 	 */
 	init: function(config) {
-		
+
 		// use self to prevent bind(this) waterfall
 		var self = this;
-		
+
+		function forwardEvents(data) {
+			self.cloud.emit(this.event, data);
+		}
+
 		// init cloud with new socket io client to online cloud url
 		this.cloud = socket(config.url);
 		this.local = socket('ws://127.0.0.1:' + FormideOS.http.server.address().port);
 
+		// handle cloud connection error
+		this.cloud.on('error', function (err) {
+			FormideOS.log.error("Error connecting to cloud: " + err);
+		});
+
 		/*
 		 * Connect to the cloud socket server
-	 	 */
-		this.cloud.on('connect', function() {
+		  */
+		this.cloud.on('connect', function () {
+
 			// authenticate formideos based on mac address and api token, also sends permissions for faster blocking via cloud
 			publicIp(function (err, ip) {
 				getMac.getMac(function(err, macAddress) {
-					var pkg = fs.readFileSync(FormideOS.appRoot + 'package.json', 'utf8');
-					pkg = JSON.parse(pkg);
+					var pkg = fs.readFileSync(path.join(FormideOS.appRoot, 'package.json'), 'utf8');
+					pkg = JSON.parse(pkg); // no try needed, since package.json needs to be valid for the app to boot at all
 					self.cloud.emit('authenticate', {
 						type: 'client',
 						mac: macAddress,
@@ -51,78 +61,73 @@ module.exports =
 						port: FormideOS.config.get('app.port')
 					}, function(response) {
 						if (response.success) {
-							FormideOS.debug.log('Cloud connected');
-							
+							FormideOS.log('Cloud connected');
+
 							// forward all events to the cloud
-							FormideOS.events.onAny(function(data) {
-								self.cloud.emit(this.event, data);
-							});
+							FormideOS.events.onAny(forwardEvents);
 						}
 						else {
 							// something went wrong when connecting to the cloud
-							FormideOS.debug.log('Cloud connection error: ' + response.message);
+							FormideOS.log.error('Cloud connection error: ' + response.message);
 						}
 					});
 				});
 			});
 		});
-		
+
 		/*
 		 * See if client is online
 		 */
-		this.cloud.on('ping', function(data, callback) {
-			return callback('pong');
+		this.cloud.on('ping', data => {
+			self.cloud.emit('pong', data);
 		});
-		
+
 		/*
 		 * This event is triggered when a user logs into the cloud and want to access one of his clients
 		 */
-		this.cloud.on('authenticateUser', function(data, callback) {
-			this.authenticate(data, function(err, accessToken) {
-				if (err) return callback(err);
-				FormideOS.debug.log('Cloud user authorized with access_token ' + accessToken.token);
-				return callback(null, accessToken.token);
+		this.cloud.on('authenticateUser', data => {
+			FormideOS.log("Cloud authenticate user:" + data.id);
+			this.authenticate(data, (err, accessToken) => {
+				FormideOS.log('Cloud user authorized with access_token ' + accessToken.token);
+				self.cloud.emit(
+					'authenticateUser',
+					getCallbackData(data._callbackId, err, accessToken.token));
 			});
-		}.bind(this));
+		});
 
 		/*
 		 * HTTP proxy request from cloud
 		 */
-		this.cloud.on('http', function(data, callback) {
-			FormideOS.debug.log('Cloud http call: ' + data.url);
+		this.cloud.on('http', data => {
+			FormideOS.log('Cloud http call: ' + data.url);
 			// call http function
-			this.http(data, function(err, response) {
-				return callback(response);
+			this.http(data, (err, response) => {
+				self.cloud.emit(
+					'http',
+					getCallbackData(data._callbackId, err, response));
 			});
-		}.bind(this));
-		
+		});
+
 		/*
 		 * Send a gcode file to a client to print a cloud sliced printjob
 		 */
-		this.cloud.on('addToQueue', function(data, callback) {
-			FormideOS.debug.log('Cloud addToQueue: ' + data.hash);
-			self.addToQueue(data, function(err, response) {
-				return callback(err, response);
+		this.cloud.on('addToQueue', data => {
+			FormideOS.log('Cloud addToQueue: ' + data.gcode);
+			self.addToQueue(data, (err, response) => {
+				self.cloud.emit(
+					'addToQueue',
+					getCallbackData(data._callbackId, err, response));
 			});
 		});
-		
-		/*
-		 * Sync printers from local database to cloud (when adding new client or manually syncing cloud/local printers)
-		 */
-/*
-		this.cloud.on('syncPrinters', function(cloudPrinters, callback) {
-			FormideOS.debug.log('Cloud syncPrinters');
-			self.syncPrinters(cloudPrinters, function(err, localPrinters) {
-				return callback(err, localPrinters);
-			});
-		});
-*/
 
 		/*
 		 * Handle disconnect
-	 	 */
-		this.cloud.on('disconnect', function() {
-			FormideOS.debug.log('Cloud disconnected');
+		  */
+		this.cloud.on('disconnect', () => {
+			// turn off event forwarding
+			FormideOS.events.offAny(forwardEvents);
+
+			FormideOS.log('Cloud disconnected');
 		});
 	},
 
@@ -130,7 +135,13 @@ module.exports =
 	 * Handles cloud authentication based on cloudConnectionToken, returns session access_token that cloud uses to perform http calls from then on
 	 */
 	authenticate: function(data, callback) {
-		FormideOS.module('db').db.AccessToken.generate(data, 'cloud', function(err, accessToken) {
+		var permissions = [];
+		if (data.isOwner) permissions.push("owner");
+		if (data.isAdmin) permissions.push("admin");
+		FormideOS.db.AccessToken.create({
+			permissions: permissions,
+			sessionOrigin: "cloud"
+		}, function (err, accessToken) {
 			if (err) return callback(err);
 			return callback(null, accessToken);
 		});
@@ -167,97 +178,107 @@ module.exports =
 			});
 		}
 	},
-	
+
 	/*
 	 * Handles addToQueue from cloud
 	 */
 	addToQueue: function(data, callback) {
 		var self = this;
 		var hash = uuid.v4();
-		
-		//FormideOS.module('db').db.Printer.findOne({ cloudId: data.printerId }).exec(function(err, printer) {
-			//if (err) return callback(err);
-			FormideOS.module('db').db.Queueitem.create({
-				origin: 'cloud',
-				status: 'queued',
-				gcode: hash,
-				printjob: data.printjob,
-				port: data.port
-				//printer: printer.toObject()
-			}, function(err, queueitem) {
-				if (err) return callback(err);
-				callback(null, {
-					success: true,
-					queueitem: queueitem
-				});
-				
-				request({
-					method: 'GET',
-					url: FormideOS.config.get('cloud.url') + '/files/gcodefiles/public',
-					qs: {
-						hash: data.hash
-					},
-					strictSSL: false
-				})
-				.on('response', function(response) {
-					var newPath = FormideOS.config.get('app.storageDir') + FormideOS.config.get('paths.gcode') + '/' + hash;
-					var fws = fs.createWriteStream(newPath);
-					response.pipe(fws);
-					response.on( 'end', function() {
-						FormideOS.debug.log('finished downloading gcode. Recieved ' + fws.bytesWritten + ' bytes');
-		        	});
+
+		FormideOS.db.QueueItem.create({
+			origin: 'cloud',
+			status: 'queued',
+			gcode: hash, // create a new hash for local file storage!
+			printJob: data.printJob,
+			port: data.port
+		}, function(err, queueItem) {
+			if (err) return callback(err);
+			callback(null, {
+				success: true,
+				queueItem: queueItem
+			});
+
+			// TODO: better way of fetching gcode files from cloud
+			request({
+				method: 'GET',
+				url: FormideOS.config.get('cloud.url') + '/files/download/gcode',
+				qs: {
+					hash: data.gcode
+				},
+				strictSSL: false
+			})
+			.on('response', function(response) {
+				var newPath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.gcode'), hash);
+				var fws = fs.createWriteStream(newPath);
+				response.pipe(fws);
+				response.on( 'end', function() {
+					FormideOS.log('finished downloading gcode. Recieved ' + fws.bytesWritten + ' bytes');
 				});
 			});
-		//});
+		});
 	},
-	
+
 	/*
-	 * Handle syncPrinters from cloud
+	 * Register device in cloud
 	 */
-/*
-	syncPrinters: function(cloudPrinters, callback) {
-		FormideOS.module('db').db.Printer.find().exec(function(err, printers) {
-			if (err) return callback(err);
-			async.each(cloudPrinters, function(cloudPrinter, cb) {
-				if (cloudPrinter.delete) {
-					// delete printer
-					FormideOS.module('db').db.Printer.remove({ cloudId: cloudPrinter._id }, function(err, removedPrinter) {
-						if (err) {
-							FormideOS.debug.log('Cloud sync error: ' + err );
-							return cb(err);
+	registerDevice: function (owner_email, owner_password, registertoken, cb) {
+		var self = this;
+
+		FormideOS.db.User.findOne({
+			isOwner: true
+		}, function (err, user) {
+			if (err) return cb(err);
+			if (user) {
+				var msg = "this device already has a local owner, please contact " + user.email + " to request access to this device.";
+				FormideOS.log.warn(msg);
+				return cb(new Error(msg));
+			}
+			// create a new owner/admin user
+			FormideOS.db.User.create({
+				email: owner_email,
+				password: owner_password,
+				isOwner: true,
+				isAdmin: true,
+				cloudConnectionToken: registertoken
+			}, function (err, user) {
+				if (err) return cb(err);
+				getMac.getMac(function (err, macAddress) {
+					if (err) return cb(err);
+					self.cloud.emit("register", {
+						mac: macAddress,
+						registerToken: registertoken
+					}, function (response) {
+						if (response.success === false || !response.deviceToken) {
+							FormideOS.log.error(response.message);
+							FormideOS.db.User.destroy({
+								cloudConnectionToken: registertoken
+							}, function (err) {
+								if (err) return cb(err);
+								return cb(new Error("Error registering device: " + response.reason));
+							});
 						}
 						else {
-							FormideOS.debug.log('Removed printer via cloud: ' + removedPrinter);
-							return cb(null, {});
+							FormideOS.db.User.update({ cloudConnectionToken: registertoken }, { cloudConnectionToken: response.deviceToken }, function (err, updated) {
+								if (err) return cb(err);
+								FormideOS.log('cloud user connected with clientToken ' + response.deviceToken);
+								return cb(null, updated[0]);
+							});
 						}
 					});
-				}
-				else {
-					// update or insert printer
-					FormideOS.module('db').db.Printer.update({ cloudId: cloudPrinter._id }, {
-						name: cloudPrinter.name,
-						bed: cloudPrinter.bed,
-						axis: cloudPrinter.axis,
-						extruders: cloudPrinter.extruders,
-						port: cloudPrinter.port || "none",
-						baudrate: cloudPrinter.baudrate || 250000,
-						cloudId: cloudPrinter._id
-					}, { upsert: true }, function(err, syncedPrinter) {
-						if (err) {
-							FormideOS.debug.log('Cloud sync error: ' + err );
-							return cb(err);
-						}
-						else {
-							FormideOS.debug.log('Synced printer from cloud: ' + syncedPrinter);
-							return cb(null, {});
-						}
-					});
-				}
-			}, function(err, results) {
-				if (err) return callback(err);
-				return callback(null, results);
+				});
 			});
 		});
 	}
-*/
+};
+
+function getCallbackData(callbackId, err, result) {
+	const data = { _callbackId: callbackId };
+
+	if (err)
+		data.error = { message: err.message };
+	else
+		data.result = result;
+
+	return data;
 }

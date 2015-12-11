@@ -3,77 +3,83 @@
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
-module.exports = function(routes, db)
-{
-	/*
-	 * Get a list of material objects
+module.exports = (routes, db) => {
+
+	/**
+	 * Get a list of materials
 	 */
-	routes.get('/materials', function( req, res ) {
-		db.Material.find().exec(function(err, materials) {
-			if (err) return res.send(err);
-			return res.send(materials);
-		});
+	routes.get('/materials', (req, res) => {
+		db.Material
+		.find({ createdBy: req.user.id }, { select: ((req.query.fields) ? req.query.fields.split(',') : "") })
+		.populate('createdBy')
+		.then(res.ok)
+		.error(res.serverError);
 	});
 
-	/*
-	 * Get a single material object
+	/**
+	 * Get a single material
 	 */
-	routes.get('/materials/:id', function( req, res ) {
-		db.Material.findOne({ _id: req.params.id }).exec(function(err, material) {
-			if (err) return res.send(err);
-			return res.send(material);
-		});
+	routes.get('/materials/:id', (req, res) => {
+		db.Material
+		.findOne({ createdBy: req.user.id, id: req.params.id })
+		.populate('createdBy')
+		.then((material) => {
+			if (!material) return res.notFound();
+			return res.ok(material);
+		})
+		.error(res.serverError);
 	});
 
-	/*
-	 * Create a new material object. req.body should contain all items in material database object
+	/**
+	 * Create a new material
 	 */
-	routes.post('/materials', function(req, res) {
-		db.Material.create(req.body, function(err, material) {
-			if (err) return res.status(400).send(err);
-			if (material) {
-				return res.send({
-					material: material,
-					success: true
-				});
-			}
-			return res.send({
-				success: false
-			});
-		});
+	routes.post('/materials', (req, res) => {
+		db.Material
+		.create({
+			name:						req.body.name,
+			type:						req.body.type,
+			temperature:				req.body.temperature,
+			firstLayersTemperature:		req.body.firstLayersTemperature,
+			bedTemperature:				req.body.bedTemperature,
+			firstLayersBedTemperature:	req.body.firstLayersBedTemperature,
+			feedRate:					req.body.feedRate,
+			createdBy:					req.user.id
+		})
+		.then((material) => {
+			return res.ok({ message: "Material created", material });
+		})
+		.error(res.serverError);
 	});
 
-	/*
-	 * Update a material object. req.body should contain all items in material database object
+	/**
+	 * Update a material
 	 */
-	routes.put('/materials/:id', function(req, res) {
-		db.Material.update({ _id: req.params.id }, req.body, function(err, material) {
-			if (err) return res.status(400).send(err);
-			if (material) {
-				return res.send({
-					success: true
-				});
-			}
-			return res.send({
-				success: false
-			});
-		});
+	routes.put('/materials/:id', (req, res) => {
+		db.Material
+		.update({ id: req.params.id, createdBy: req.user.id }, {
+			name:						req.body.name,
+			type:						req.body.type,
+			temperature:				req.body.temperature,
+			firstLayersTemperature:		req.body.firstLayersTemperature,
+			bedTemperature:				req.body.bedTemperature,
+			firstLayersBedTemperature:	req.body.firstLayersBedTemperature,
+			feedRate:					req.body.feedRate
+		})
+		.then((updated) => {
+			return res.ok({ message: "Material updated", material: updated[0] });
+		})
+		.error(res.serverError);
 	});
 
-	/*
-	 * Delete material object
+	/**
+	 * Delete a material
 	 */
-	routes.delete('/materials/:id', function(req, res) {
-		db.Material.remove({ _id: req.params.id }, function(err, material) {
-			if (err) return res.status(400).send(err);
-			if (material) {
-				return res.send({
-					success: true
-				});
-			}
-			return res.send({
-				success: false
-			});
-		});
+	routes.delete('/materials/:id', (req, res) => {
+		db.Material
+		.destroy({ createdBy: req.user.id, id: req.params.id })
+		.then(() => {
+			return res.ok({ message: "Material deleted" });
+		})
+		.error(res.serverError);
 	});
 };

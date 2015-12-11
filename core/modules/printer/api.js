@@ -3,21 +3,22 @@
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
-module.exports = function(routes, module)
-{
+module.exports = function(routes, module) {
+
 	/*
 	 * Get list of connected printers and their status
 	 */
 	routes.get('/', function(req, res) {
-		return res.send(module.getPrinters());
+		return res.ok(module.getPrinters());
 	});
-	
+
 	/**
 	 * Get a list of printer commands
 	 */
 	routes.get('/:port/commands', function(req, res) {
-		module.getCommands(req.params.port, function(commands) {
-			return res.json(commands);
+		module.getCommands(req.params.port, function(err, commands) {
+			if (err) return res.serverError(err);
+			return res.ok(commands);
 		});
 	});
 
@@ -25,70 +26,65 @@ module.exports = function(routes, module)
 	 * Get the current status of the printer
 	 */
 	routes.get('/:port/status', function(req, res) {
-		module.getStatus(req.params.port, function(status) {
-			return res.json(status);
+		module.getStatus(req.params.port, function(err, status) {
+			if (err) return res.serverError(err);
+			if (!status) return res.notFound('No printer on this port');
+			return res.ok(status);
 		});
 	});
-	
+
 	/*
 	 * Start printjob
 	 */
 	routes.get('/:port/start', function(req, res) {
-		module.startPrint(req.params.port, req.query._id, req.query.gcode, function(err, result) {
-			if (err) return res.send(err);
-			return res.json({
-				success: true,
-				message: result
-			});
+		module.startPrint(req.params.port, req.query.queueItem, function(err, result) {
+			if (err) return res.serverError(err);
+			if (!result) return res.notFound('No printer on this port');
+			return res.ok({ message: "Printer starting" });
 		});
 	});
-	
+
 	/*
 	 * Stop printjob
 	 */
 	routes.get('/:port/stop', function(req, res) {
 		module.stopPrint(req.params.port, function(err, result) {
-			if (err) return res.send(err);
-			return res.json({
-				success: true,
-				message: result
-			});
+			if (err) return res.serverError(err);
+			if (!result) return res.notFound('No printer on this port');
+			return res.ok({ message: "Printer stopping" });
 		});
 	});
-	
+
 	/*
 	 * Pause printjob
 	 */
 	routes.get('/:port/pause', function(req, res) {
 		module.pausePrint(req.params.port, function(err, result) {
-			if (err) return res.send(err);
-			return res.json({
-				success: true,
-				message: result
-			});
+			if (err) return res.serverError(err);
+			if (!result) return res.notFound('No printer on this port');
+			return res.ok({ message: "Printer pausing" });
 		});
 	});
-	
+
 	/*
 	 * Resume printjob
 	 */
 	routes.get('/:port/resume', function(req, res) {
 		module.resumePrint(req.params.port, function(err, result) {
-			if (err) return res.send(err);
-			return res.json({
-				success: true,
-				message: result
-			});
+			if (err) return res.serverError(err);
+			if (!result) return res.notFound('No printer on this port');
+			return res.ok({ message: "Printer resuming" });
 		});
 	});
-	
+
 	/*
 	 * Send command to printer
 	 */
 	routes.get('/:port/:command', function(req, res) {
 		module.printerControl(req.params.port, { command: req.params.command, parameters: req.query }, function(err, result) {
-			if (err) return res.json(err);
-			return res.json(result);
+			if (err) return res.serverError(err);
+			if (!result) return res.notFound('No printer on this port');
+			return res.ok({ message: "Command executing" });
 		});
 	});
 }

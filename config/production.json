@@ -6,14 +6,11 @@
 		"port": 1337
 	},
 	"auth": {
-		"permission": false,
-		"inviteUrl": "https://api2.formide.com/clients/register/invite"
+		"permission": false
 	},
 	"cloud": {
-		"url": "https://api2.formide.com"
-	},
-	"db": {
-		"storage": "/database"
+		"url": "https://api.formide.com",
+		"permission": false
 	},
 	"log": {
 		"path": "/logs"
@@ -24,20 +21,12 @@
 		"gcode": "/gcode"
 	},
 	"printer": {
-		"permission": false,
-		"simulated": false
+		"permission": false
 	},
 	"slicer": {
-		"version": "1.0.2"	
+		"version": "1.0.6"
 	},
 	"settings": {
 		"path": "/"
-	},
-	"setup": {
-		"permission": false,
-		"registerUrl": "https://api2.formide.com/clients/register/token"
-	},
-	"update": {
-		"permission": false
 	}
 }

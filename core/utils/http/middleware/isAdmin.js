@@ -11,14 +11,14 @@ module.exports = function(req, res, next) {
 	
 	// check if user has admin permission
 	if(req.token) {
-		FormideOS.module('db').db.AccessToken.findOne({ token: req.token}).exec(function(err, accessToken) {
+		FormideOS.db.AccessToken.findOne({ token: req.token}).exec(function(err, accessToken) {
 			if (accessToken) {
 				if (accessToken.permissions.indexOf('admin') > -1) {
-					FormideOS.debug.log('Permissions correct');
+					FormideOS.log('Permissions correct');
 					return next();
 				}
 				else {
-					FormideOS.debug.log('Permissions incorrect');
+					FormideOS.log.warn('Permissions incorrect');
 					return res.json({
 						status: 401,
 						errors: 'No admin permission'
@@ -26,7 +26,7 @@ module.exports = function(req, res, next) {
 				}
 			}
 			else {
-				FormideOS.debug.log('No access token found in db');
+				FormideOS.log.warn('No access token found in db');
 				return res.json({
 					status: 401,
 					errors: 'No admin permission'
@@ -35,7 +35,7 @@ module.exports = function(req, res, next) {
 		});
 	}
 	else {
-		FormideOS.debug.log('No token found in request');
+		FormideOS.log.error('No token found in request');
 		return res.json({
 			status: 401,
 			errors: 'No admin permission'

@@ -25,6 +25,7 @@ var isUserMiddleware		= require('./middleware/isUser');
 var isAdminMiddleware		= require('./middleware/isAdmin');
 var passwordHash 			= require('password-hash');
 var bearerToken 			= require('express-bearer-token');
+var bcrypt					= require('bcrypt');
 
 module.exports = {
 	
@@ -59,7 +60,7 @@ module.exports = {
 		
 		// listen to port stated in app.port config (usually port 1337)
 		this.httpServer.listen(FormideOS.config.get('app.port'), function() {
-			FormideOS.debug.log('server running on port ' + this.httpServer.address().port);
+			FormideOS.log.info('server running on port ' + this.httpServer.address().port);
 		}.bind(this));
 		
 		// use json body parser for json post requests
@@ -88,15 +89,28 @@ module.exports = {
 			origin: true,
 			credentials: true
 		}));
+		
+		// use response handlers
+		this.app.use(function (req, res, next) {
+			res.ok = require('./responses/ok').bind({ req: req, res: res });
+			res.badRequest = require('./responses/badRequest').bind({ req: req, res: res });
+			res.conflict = require('./responses/conflict').bind({ req: req, res: res });
+			res.forbidden = require('./responses/forbidden').bind({ req: req, res: res });
+			res.notFound = require('./responses/notFound').bind({ req: req, res: res });
+			res.paginate = require('./responses/paginate').bind({ req: req, res: res });
+			res.serverError = require('./responses/serverError').bind({ req: req, res: res });
+			res.unauthorized = require('./responses/unauthorized').bind({ req: req, res: res });
+			next();
+		});
 	},
 	
 	setupPassport: function() {
 		passport.serializeUser(function(user, done) {
-		  	done(null, user._id);
+		  	done(null, user.id);
 		});
 		
 		passport.deserializeUser(function(id, done) {
-		  	FormideOS.module('db').db.User.findOne({ _id: id }).exec(function(err, user) {
+		  	FormideOS.db.User.findOne({ id: id }).exec(function(err, user) {
 			  	if (err) return done('user not found', false);
 				if (user) {
 					return done(null, user);
@@ -105,13 +119,17 @@ module.exports = {
 		});
 		
 		passport.use('local-login', new LocalStrategy({ usernameField: 'email' }, function(email, password, next) {
-			FormideOS.debug.log('Login attempt for ' + email);
-			FormideOS.module('db').db.User.authenticate(email, password, function(err, user) {
+			
+			FormideOS.log("Attempt login for " + email);
+			
+			FormideOS.db.User.findOne({ email: email}, function (err, user) {
 				if (err) return next(err);
-				if (!user || user === 'undefined') {
-					return next(null, false, { message: 'Incorrect user credentials' });
-				}
-				return next(null, user);
+				if (!user) return next(null, false, { message: "Incorrect credentials" });
+				
+				bcrypt.compare(password, user.password, function(err, isMatch) {
+					if(err) return next(err);
+					next(null, isMatch ? user : null)
+				});
 			});
 		}));
 	}
