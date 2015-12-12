@@ -4,8 +4,7 @@ before_install:
 script:
   - npm run-script test
 env:
-  - NODE_ENV=test
-  - CXX=g++-4.8
+  - NODE_ENV=test CXX=g++-4.8
 node_js:
   - "4.2"
 addons:
