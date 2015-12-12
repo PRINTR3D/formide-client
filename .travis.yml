@@ -1,4 +1,8 @@
 language: node_js
+branches:
+  only:
+    - master
+    - development
 before_install:
   - npm install node-pre-gyp
 script:
