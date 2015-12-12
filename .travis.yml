@@ -1,0 +1,7 @@
+language: node_js
+script:
+    - npm run-script test
+env:
+    - NODE_ENV=test
+node_js:
+  - "4.2"
