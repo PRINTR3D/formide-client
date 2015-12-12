@@ -102,7 +102,6 @@
   "devDependencies": {
     "chai": "~1.4.2",
     "co": "^4.6.0",
-    "heapdump": "^0.3.7",
     "mocha": "^2.3.4",
     "sails-memory": "0.10.5",
     "supertest": "^1.1.0"
