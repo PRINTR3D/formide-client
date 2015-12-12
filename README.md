@@ -1,6 +1,9 @@
 formide-client
 =================
 
+## Build status
+[![Build Status](https://travis-ci.org/PRINTR3D/formide-client.svg?branch=master)](https://travis-ci.org/PRINTR3D/formide-client)
+
 ## Installation and setup
 Check developers.formide.com for installation instructions and a complete reference documentation of the FORMIDE platform.
 
