@@ -1,4 +1,6 @@
 language: node_js
+node_js:
+  - "4.2"
 branches:
   only:
     - master
@@ -9,8 +11,9 @@ script:
   - npm run-script test
 env:
   - NODE_ENV=test CXX=g++-4.8
-node_js:
-  - "4.2"
+cache:
+  directories:
+    - node_modules
 addons:
   apt:
     sources:
