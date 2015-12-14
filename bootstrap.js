@@ -18,10 +18,10 @@ const initFormide = require('./core/FormideOS');
 
 initFormide().then(() => {
 	// Memory watching during development
-	if (process.env.NODE_ENV !== 'production') {
-		var heapdump = require('heapdump');
-		heapdump.writeSnapshot(path.join('logs', Date.now() + '.heapsnapshot'));
-	}
+	// if (process.env.NODE_ENV !== 'production') {
+	// 	var heapdump = require('heapdump');
+	// 	heapdump.writeSnapshot(path.join('logs', Date.now() + '.heapsnapshot'));
+	// }
 
 	// Log awesome app starter logo
 	require('./core/utils/logLogo');
