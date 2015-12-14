@@ -1,0 +1,32 @@
+{
+	"app": {
+		"debug": true,
+		"timezone": "UTC",
+		"url": "0.0.0.0",
+		"port": 1337
+	},
+	"auth": {
+		"permission": false
+	},
+	"cloud": {
+		"url": "https://api-dev.formide.com",
+		"permission": false
+	},
+	"log": {
+		"path": "/logs"
+	},
+	"paths": {
+		"temp": "/tmp",
+		"modelfiles": "/modelfiles",
+		"gcode": "/gcode"
+	},
+	"printer": {
+		"permission": false
+	},
+	"slicer": {
+		"version": "1.0.6"
+	},
+	"settings": {
+		"path": "/"
+	}
+}
