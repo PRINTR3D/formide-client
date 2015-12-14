@@ -21,7 +21,7 @@
 		"gcode": "/gcode"
 	},
 	"printer": {
-		"permission": false
+		
 	},
 	"slicer": {
 		"version": "1.0.6"
