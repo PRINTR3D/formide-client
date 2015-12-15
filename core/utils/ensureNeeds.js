@@ -25,11 +25,3 @@ if (!fs.existsSync(gcodeDir)){
 	console.log("Gcode folder not found, creating...");
 	fs.mkdirSync(gcodeDir);
 }
-
-// FormideOS.db.User.create({
-// 	email: "admin@local",
-// 	password: "admin",
-// 	isAdmin: true
-// }, function (err, users) {
-// 	// if (err) console.log(err);
-// });

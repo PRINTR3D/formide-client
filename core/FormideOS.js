@@ -75,6 +75,15 @@ module.exports = dbConfig => {
 
 	return initDb(dbConfig).then(
 		db => {
+
+			db.User.create({
+				email: "admin@local",
+				password: "admin",
+				isAdmin: true
+			}, function (err, users) {
+				// if (err) console.log(err);
+			});
+
 			FormideOS.db = db;
 		},
 		err => {

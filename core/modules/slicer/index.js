@@ -142,7 +142,7 @@ module.exports = {
 			//assert(printJob.materials.length < 1, 'materials should be 1 or larger');
 			assert(printJob.sliceProfile, 'no sliceprofile found');
 
-			var reference = require(FormideOS.appRoot + "/node_modules/katana-slicer/reference.json");
+			var reference = require('katana-slicer/reference.json');
 			var version = printJob.sliceProfile.version || reference.version;
 
 			formideTools.updateSliceprofile(reference, version, printJob.sliceProfile.settings, function(err, fixedSettings, version) {
@@ -192,9 +192,8 @@ module.exports = {
 		});
 	},
 
-	// TODO: put reference file as function in slicer, e.g. this.slicer.getReference(function(err, reference) {});
 	getReferenceFile: function(callback) {
-		var reference = require(FormideOS.appRoot + "/node_modules/katana-slicer/reference.json");
+		var reference = require('katana-slicer/reference.json');
 		return callback(null, reference);
 	}
 }
