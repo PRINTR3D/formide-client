@@ -54,12 +54,8 @@ module.exports = dbConfig => {
 		moduleName => FormideOS.moduleManager.getModule(moduleName);
 
 	if (!dbConfig) {
-		let storage = null;
-		if (typeof SETUP !== 'undefined')
-			storage = path.join(SETUP.storageDir, 'database_');
-		else
-			storage = path.join(
-				FormideOS.config.get('app.storageDir'), 'database_');
+		let storage = path.join(
+			FormideOS.config.get('app.storageDir'), 'database_');
 
 		dbConfig = {
 			adapters: { disk: sailsDiskAdapter },
