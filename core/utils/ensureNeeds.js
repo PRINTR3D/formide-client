@@ -26,10 +26,10 @@ if (!fs.existsSync(gcodeDir)){
 	fs.mkdirSync(gcodeDir);
 }
 
-FormideOS.db.User.create({
-	email: "admin@local",
-	password: "admin",
-	isAdmin: true
-}, function (err, users) {
-	// if (err) console.log(err);
-});
+// FormideOS.db.User.create({
+// 	email: "admin@local",
+// 	password: "admin",
+// 	isAdmin: true
+// }, function (err, users) {
+// 	// if (err) console.log(err);
+// });

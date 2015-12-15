@@ -20,12 +20,16 @@ const initDb = require('./utils/db');
 global.FormideOS = {};
 
 module.exports = dbConfig => {
+
 	// Paths
 	FormideOS.coreRoot = path.resolve(__dirname, './');
 	FormideOS.appRoot = path.resolve(__dirname, '../');
 
 	// Config
 	FormideOS.config = require('./utils/config.js')();
+
+	// Ensure needed files and dirs are available
+    require('./utils/ensureNeeds');
 
 	// Events
 	FormideOS.events = require('./utils/events.js');
