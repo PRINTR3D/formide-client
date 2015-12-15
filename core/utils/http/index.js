@@ -27,6 +27,8 @@ var passwordHash 			= require('password-hash');
 var bearerToken 			= require('express-bearer-token');
 var bcrypt					= require('bcryptjs');
 
+var morgan = require('morgan');
+
 module.exports = {
 
 	app: null,
@@ -62,6 +64,9 @@ module.exports = {
 		this.httpServer.listen(FormideOS.config.get('app.port'), function() {
 			FormideOS.log.info('server running on port ' + this.httpServer.address().port);
 		}.bind(this));
+
+		if (this.app.get('env') !== 'production')
+			this.app.use(morgan('dev'));
 
 		// use json body parser for json post requests
 		this.app.use(bodyParser.json());
@@ -106,12 +111,12 @@ module.exports = {
 
 	setupPassport: function() {
 		passport.serializeUser(function(user, done) {
-		  	done(null, user.id);
+			  done(null, user.id);
 		});
 
 		passport.deserializeUser(function(id, done) {
-		  	FormideOS.db.User.findOne({ id: id }).exec(function(err, user) {
-			  	if (err) return done('user not found', false);
+			  FormideOS.db.User.findOne({ id: id }).exec(function(err, user) {
+				  if (err) return done('user not found', false);
 				if (user) {
 					return done(null, user);
 				}
