@@ -123,6 +123,7 @@ AbstractPrinter.prototype.startPrint = function(queueItemId, callback) {
 					status: 'printing'
 				}, function(err, updated) {
 					if (err) return callback(err);
+					self.queueItemId = queueItemId;
 					FormideOS.events.emit('printer.started', {
 						port:		 self.port,
 						queueItemId: self.queueItemId

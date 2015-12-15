@@ -11,9 +11,6 @@ script:
   - npm run-script test
 env:
   - NODE_ENV=test CXX=g++-4.8
-cache:
-  directories:
-    - node_modules
 addons:
   apt:
     sources:
