@@ -1,9 +1,9 @@
 const path			= require('path');
 const fs			= require('fs');
 const storageDir	= FormideOS.config.get('app.storageDir');
-const logDir		= Path.join(FormideOS.config.get('app.storageDir'), 'logs');
-const filesDir		= Path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.modelfiles'));
-const gcodeDir		= Path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.gcode'));
+const logDir		= path.join(FormideOS.config.get('app.storageDir'), 'logs');
+const filesDir		= path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.modelfiles'));
+const gcodeDir		= path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.gcode'));
 
 // create needed folders
 if (!fs.existsSync(storageDir)) {
@@ -26,12 +26,10 @@ if (!fs.existsSync(gcodeDir)){
 	fs.mkdirSync(gcodeDir);
 }
 
-console.log("Running DB setup");
-
 FormideOS.db.User.create({
 	email: "admin@local",
 	password: "admin",
 	isAdmin: true
 }, function (err, users) {
-	if (err) console.log(err);
+	// if (err) console.log(err);
 });

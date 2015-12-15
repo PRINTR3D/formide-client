@@ -23,6 +23,10 @@ initFormide().then(() => {
 	// 	heapdump.writeSnapshot(path.join('logs', Date.now() + '.heapsnapshot'));
 	// }
 
+	// Ensure needed files and dirs are available
+	FormideOS.log.info('Ensuring needed files and dirs');
+	require('./core/utils/ensureNeeds');
+
 	// Log awesome app starter logo
 	require('./core/utils/logLogo');
 
