@@ -25,6 +25,11 @@ before(function(done) {
 
     // Load formideos core file
     return initFormide(dbConfig).then(() => {
+
+        // Ensure needed files and dirs are available
+        FormideOS.log.info('Ensuring needed files and dirs');
+        require('../core/utils/ensureNeeds');
+
         // Load core modules
         FormideOS.moduleManager.loadModule('/core/modules/db', 'db', true);
         // FormideOS.moduleManager.loadModule('/core/modules/settings', 'settings', true);
