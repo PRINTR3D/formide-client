@@ -175,9 +175,9 @@ module.exports = {
 							.generateSkirtSettings()
 							.generateFanSettings()
 							.generateBedSettings()
-							.generateOverrideSettings()
 							.generateModelSettings()
 							.generateExtruderSettings()
+							.generateOverrideSettings()
 							.getResult();
 
 							return callback(null, sliceRequest);
