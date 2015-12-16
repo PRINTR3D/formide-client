@@ -11,13 +11,18 @@
 
 var path = require('path');
 
+function getUserHome() {
+    if (process.platform === 'win32') return process.env.USERPROFILE;
+    return process.env.HOME;
+}
+
 module.exports = function() {
 
 	var env = process.env.NODE_ENV || 'production';
 	var cfg = require('../../config/' + env + '.json');
 
 	// get current home directory for user storage
-	cfg.app.storageDir = path.resolve(process.env.HOME + "/formide") || path.resolve(process.env.USERPROFILE + "/formide");
+	cfg.app.storageDir = path.join(getUserHome(), 'formide');
 
 	function parts(key) {
 		if (Array.isArray(key)) return key
