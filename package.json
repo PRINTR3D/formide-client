@@ -41,7 +41,7 @@
     "express-session": "~1.10.3",
     "express-validator": "^2.9.0",
     "fancy-errors": "^0.1.2",
-    "formide-client-interface": "^0.3.36",
+    "formide-client-interface": "^0.3.37",
     "formide-drivers": "git+https://github.com/printr3d/formide-drivers-npm.git",
     "formide-tools": "git+https://github.com/printr3d/formide-tools.git",
     "getmac": "^1.0.7",
