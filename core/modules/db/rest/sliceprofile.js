@@ -88,10 +88,11 @@ module.exports = (routes, db) => {
 		const reference = require('katana-slicer/reference.json');
 		const content = fs.readFileSync(req.files.file.path, 'utf-8');
 
-		let curaProfile = null;
+		var curaProfile = null;
 		try {
 			curaProfile = parseIni(content);
-		} catch (e) {
+		}
+		catch (e) {
 			FormideOS.log.error('Failed to parse Cura profile\n', e);
 			return res.badRequest('Failed to parse Cura profile');
 		}
