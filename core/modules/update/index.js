@@ -50,6 +50,7 @@ module.exports = {
     },
 
     checkForUpdate: function(callback) {
+        if (!fs.existsSync(this.currentVersionLocation)) return callback(new Error('Current version file not found'));
         var currentVersion = ini.parse(fs.readFileSync(this.currentVersionLocation, 'utf-8'));
         request(
             FormideOS.config.get('cloud.url') + '/products/client/latest/' + this.channel,
