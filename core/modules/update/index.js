@@ -53,8 +53,11 @@ module.exports = {
         );
     },
 
-    doUpdate: function() {
+    doUpdate: function(callback) {
         // yup, that's all there is to it :P
-        exec(this.updateScriptLocation);
+        exec(this.updateScriptLocation, function(error, stdout, stderr) {
+            if (err) return callback(err);
+            return callback(null);
+        });
     }
 }
