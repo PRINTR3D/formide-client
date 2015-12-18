@@ -31,6 +31,13 @@ module.exports = {
 	},
 
     getUpdateStatus: function(callback) {
+        if (!process.env.UPDATE_STATUS) {
+            return callback(null, {
+                success: true,
+                message: 'There was no update during the latest reboot'
+            });
+        }
+
         if (process.env.UPDATE_STATUS === 'success') {
             return callback(null, {
                 success: true,
