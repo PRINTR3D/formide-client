@@ -50,17 +50,21 @@ module.exports = {
     },
 
     checkForUpdate: function(callback) {
-        if (!fs.existsSync(this.currentVersionLocation)) return callback(new Error('Current version file not found'));
-        var currentVersion = ini.parse(fs.readFileSync(this.currentVersionLocation, 'utf-8'));
+
+        var self = this;
+
+        if (!fs.existsSync(self.currentVersionLocation)) return callback(new Error('Current version file not found'));
+        var currentVersion = ini.parse(fs.readFileSync(self.currentVersionLocation, 'utf-8'));
         request(
-            FormideOS.config.get('cloud.url') + '/products/client/latest/' + this.channel,
+            FormideOS.config.get('cloud.url') + '/products/client/latest/' + self.channel,
             function(err, response, body) {
                 if (err) return callback(err);
                 if (response.statusCode !== 200) return callback(new Error('There was an issue fetching the latest version from the cloud'));
 
-                assert(body.releaseNumber);
+                body = JSON.parse(body);
+                if(typeof body.releaseNumber === 'undefined') return callback(null, { message: 'no releaseNumber found when checking for updates' });
 
-                if (body.releaseNumber > currentVersion.RELEASE) {
+                if (parseInt(body.releaseNumber) > parseInt(currentVersion.RELEASE)) {
                     assert(body.version);
                     assert(body.url);
                     assert(body.signature);
@@ -75,11 +79,11 @@ module.exports = {
                     body.message = 'update found';
                     body.needsUpdate = true;
 
-                    fs.writeFileSync(this.newVersionLocation, newVersionFile);
+                    fs.writeFileSync(self.newVersionLocation, newVersionFile);
                     return callback(null, body);
                 }
                 else {
-                    return callback(null, { message: 'no update found', needsUpdate: false });
+                    return callback(null, { message: 'There is no update available at this moment', needsUpdate: false });
                 }
             }
         );
@@ -87,8 +91,8 @@ module.exports = {
 
     doUpdate: function(callback) {
         // yup, that's all there is to it :P
-        exec(this.updateScriptLocation, function(error, stdout, stderr) {
-            if (err) return callback(err);
+        exec(this.updateScriptLocation, function(err, stdout, stderr) {
+            if (err || stderr) return callback(err || stderr);
             return callback(null);
         });
     }

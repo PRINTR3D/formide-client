@@ -31,6 +31,6 @@
 		"updateScriptLocation": "/opt/update.sh",
 		"currentVersionLocation": "/data/formide/currentVersion",
 		"newVersionLocation": "/data/formide/newVersion",
-		"channel": "nightly"
+		"channel": "beta"
 	}
 }
