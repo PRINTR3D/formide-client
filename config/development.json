@@ -20,13 +20,17 @@
 		"modelfiles": "/modelfiles",
 		"gcode": "/gcode"
 	},
-	"printer": {
-		
-	},
+	"printer": {},
 	"slicer": {
 		"version": "1.0.6"
 	},
 	"settings": {
 		"path": "/"
+	},
+	"update": {
+		"updateScriptLocation": "/opt/update.sh",
+		"currentVersionLocation": "/data/formide/currentVersion",
+		"newVersionLocation": "/data/formide/newVersion",
+		"channel": "beta"
 	}
 }
