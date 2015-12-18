@@ -15,11 +15,13 @@ module.exports = {
 
     updateScriptLocation: null,
     newVersionLocation: null,
+    currentVersionLocation: null,
     channel: null,
 
 	init: function(config) {
         this.updateScriptLocation = config.updateScriptLocation;
         this.newVersionLocation = config.newVersionLocation;
+        this.currentVersionLocation = config.currentVersionLocation;
         this.channel = config.channel;
 
         this.checkForUpdate(function(err, response) {
@@ -28,27 +30,47 @@ module.exports = {
         });
 	},
 
+    getUpdateStatus: function(callback) {
+        if (process.env.UPDATE_STATUS === 'success') {
+            return callback(null, {
+                success: true,
+                message: 'The device has successfully updated during the latest reboot'
+            });
+        }
+        else {
+            return callback(new Error(process.env.UPDATE_ERR));
+        }
+    },
+
     checkForUpdate: function(callback) {
+        var currentVersion = ini.parse(fs.readFileSync(this.currentVersionLocation, 'utf-8'));
         request(
             FormideOS.config.get('cloud.url') + '/products/client/latest/' + this.channel,
             function(err, response, body) {
                 if (err) return callback(err);
                 if (response.statusCode !== 200) return callback(new Error('Not 200'));
 
-                assert(body.releaseNumber);
-                assert(body.version);
-                assert(body.url);
-                assert(body.signature);
+                if (body.releaseNumber > currentVersion.RELEASE) {
+                    assert(body.releaseNumber);
+                    assert(body.version);
+                    assert(body.url);
+                    assert(body.signature);
 
-                var newVersionFile = ini.stringify({
-                    RELEASE:        body.releaseNumber,
-                    VERSION:        body.version,
-                    IMAGE_LOCATION: downloadRoot + body.url,
-                    SIGNATURE:      body.signature
-                });
+                    var newVersionFile = ini.stringify({
+                        RELEASE:        body.releaseNumber,
+                        VERSION:        body.version,
+                        IMAGE_LOCATION: downloadRoot + body.url,
+                        SIGNATURE:      body.signature
+                    });
 
-                fs.writeFileSync(this.newVersionLocation, newVersionFile);
-                return callback(null, body);
+                    body.message = 'update found');
+
+                    fs.writeFileSync(this.newVersionLocation, newVersionFile);
+                    return callback(null, body);
+                }
+                else {
+                    return callback(null, { message: 'no update found' });
+                }
             }
         );
     },
