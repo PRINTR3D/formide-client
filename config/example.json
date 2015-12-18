@@ -28,5 +28,10 @@
 	},
 	"settings": {
 		"path": "/"
+	},
+	"update": {
+		"updateScriptLocation": "/opt/update.sh",
+		"newVersionLocation": "/home/formide/formide/newVersion",
+		"channel": "release"
 	}
 }

@@ -33,13 +33,13 @@ initFormide().then(() => {
 
 	// Load core modules
 	FormideOS.moduleManager.loadModule('/core/modules/db',			'db',           true);
-	// FormideOS.moduleManager.loadModule('/core/modules/settings',	'settings',     true);
 	FormideOS.moduleManager.loadModule('/core/modules/auth',		'auth',         true);
 	// FormideOS.moduleManager.loadModule('core/modules/log', 		'log', 		true); // TODO: log to db
 	FormideOS.moduleManager.loadModule('/core/modules/files', 	    'files',        true);
 	FormideOS.moduleManager.loadModule('/core/modules/printer', 	'printer',      true);
-	FormideOS.moduleManager.loadModule('core/modules/slicer',		'slicer',		true);
+	FormideOS.moduleManager.loadModule('/core/modules/slicer',		'slicer',		true);
 	FormideOS.moduleManager.loadModule('/core/modules/cloud',       'cloud',	    true);
+	FormideOS.moduleManager.loadModule('/core/modules/update',		'update',		true);
 
 	// Load all via npm installed formide-client modules
 	for(var i in pkg.dependencies) {
