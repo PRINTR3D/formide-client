@@ -10,7 +10,7 @@ module.exports = function(routes, module) {
             if (err) return res.serverError(err);
             return res.ok(success);
         });
-    })
+    });
 
     routes.get('/check', function (req, res) {
         module.checkForUpdate(function (err, response) {

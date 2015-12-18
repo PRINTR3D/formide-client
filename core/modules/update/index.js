@@ -70,13 +70,14 @@ module.exports = {
                         SIGNATURE:      body.signature
                     });
 
-                    body.message = 'update found');
+                    body.message = 'update found';
+                    body.needsUpdate = true;
 
                     fs.writeFileSync(this.newVersionLocation, newVersionFile);
                     return callback(null, body);
                 }
                 else {
-                    return callback(null, { message: 'no update found' });
+                    return callback(null, { message: 'no update found', needsUpdate: false });
                 }
             }
         );
