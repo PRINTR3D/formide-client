@@ -56,10 +56,11 @@ module.exports = {
             FormideOS.config.get('cloud.url') + '/products/client/latest/' + this.channel,
             function(err, response, body) {
                 if (err) return callback(err);
-                if (response.statusCode !== 200) return callback(new Error('Not 200'));
+                if (response.statusCode !== 200) return callback(new Error('There was an issue fetching the latest version from the cloud'));
+
+                assert(body.releaseNumber);
 
                 if (body.releaseNumber > currentVersion.RELEASE) {
-                    assert(body.releaseNumber);
                     assert(body.version);
                     assert(body.url);
                     assert(body.signature);
