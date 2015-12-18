@@ -10,7 +10,7 @@ module.exports = (routes, db) => {
 	 */
 	routes.get('/printers', (req, res) => {
 		db.Printer
-		.find()
+		.find({ preset: false })
 		.populate('createdBy')
 		.then(res.ok)
 		.error(res.serverError);
@@ -21,7 +21,7 @@ module.exports = (routes, db) => {
 	 */
 	routes.get('/printers/:id', (req, res) => {
 		db.Printer
-		.findOne({ id: req.params.id })
+		.findOne({ id: req.params.id, preset: false })
 		.populate('createdBy')
 		.then((printer) => {
 			if (!printer) return res.notFound();
@@ -81,7 +81,7 @@ module.exports = (routes, db) => {
 	 */
 	routes.delete('/printers/:id', (req, res) => {
 		db.Printer
-		.destroy({ id: req.params.id })
+		.destroy({ id: req.params.id, preset: false })
 		.then(() => {
 			return res.ok({ message: "Printer deleted" });
 		})
