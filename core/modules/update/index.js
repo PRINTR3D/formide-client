@@ -25,8 +25,8 @@ module.exports = {
         this.channel = config.channel;
 
         this.checkForUpdate(function(err, response) {
-            if (err) return FormideOS.log.error('Checking for update', err);
-            return FormideOS.log.debug(response);
+            if (err) return FormideOS.log.error('Checking for updates', err);
+            return FormideOS.log.debug('Checking for updates', response);
         });
 	},
 
