@@ -1,5 +1,4 @@
-#!/usr/bin/env node
-process.env.NODE_ENV = "production";
-'use strict';
-process.title = 'formide-client';
-require('../bootstrap.js');
+#!/bin/bash
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd $DIR/..
+node --nouse-idle-notification bootstrap
