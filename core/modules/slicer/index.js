@@ -18,7 +18,12 @@ module.exports = {
 		this.config = config;
 
 		// loaded via katana-slicer npm package and node-pre-gyp
-		this.katana = require('katana-slicer');
+		try {
+			this.katana = require('katana-slicer');
+		}
+		catch (e) {
+			FormideOS.log.error('error loading katana-slicer bin', e);
+		}
 	},
 
 	// custom functions
@@ -33,6 +38,8 @@ module.exports = {
 
 	// custom functions
 	slice: function(userId, files, sliceProfile, materials, printer, settings, callback) {
+
+		if (this.katana === null) return res.serverError(new Error('slicer not loaded'));
 
 		var self = this;
 		var hash = uuid.v4();

@@ -17,9 +17,14 @@ module.exports = {
 
 		var self = this;
 		this.config = config;
-
-		// loaded via formide-drivers npm package and node-pre-gyp
-		this.driver = require('formide-drivers');
+		
+		// loaded via katana-slicer npm package and node-pre-gyp
+		try {
+			this.driver = require('formide-drivers');
+		}
+		catch (e) {
+			FormideOS.log.error('error loading formide-drivers bin', e);
+		}
 
 		// start drivers
 		this.driver.start(function(err, started, event) {
