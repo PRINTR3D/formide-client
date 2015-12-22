@@ -4,5 +4,5 @@
  */
 
 module.exports = {
-    // no main functions for this module
+
 }

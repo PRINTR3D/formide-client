@@ -225,24 +225,24 @@ module.exports = {
 	registerDevice: function (owner_email, owner_password, registertoken, cb) {
 		var self = this;
 
-		FormideOS.db.User.findOne({
-			isOwner: true
-		}, function (err, user) {
-			if (err) return cb(err);
-			if (user) {
-				var msg = "this device already has a local owner, please contact " + user.email + " to request access to this device.";
-				FormideOS.log.warn(msg);
-				return cb(new Error(msg));
-			}
+		// FormideOS.db.User.findOne({
+		// 	isOwner: true
+		// }, function (err, user) {
+		// 	if (err) return cb(err);
+		// 	if (user) {
+		// 		var msg = "this device already has a local owner, please contact " + user.email + " to request access to this device.";
+		// 		FormideOS.log.warn(msg);
+		// 		return cb(new Error(msg));
+		// 	}
 			// create a new owner/admin user
-			FormideOS.db.User.create({
-				email: owner_email,
-				password: owner_password,
-				isOwner: true,
-				isAdmin: true,
-				cloudConnectionToken: registertoken
-			}, function (err, user) {
-				if (err) return cb(err);
+			// FormideOS.db.User.create({
+			// 	email: owner_email,
+			// 	password: owner_password,
+			// 	isOwner: true,
+			// 	isAdmin: true,
+			// 	cloudConnectionToken: registertoken
+			// }, function (err, user) {
+			// 	if (err) return cb(err);
 				getMac.getMac(function (err, macAddress) {
 					if (err) return cb(err);
 					self.cloud.emit("register", {
@@ -251,24 +251,30 @@ module.exports = {
 					}, function (response) {
 						if (response.success === false || !response.deviceToken) {
 							FormideOS.log.error(response.message);
-							FormideOS.db.User.destroy({
-								cloudConnectionToken: registertoken
-							}, function (err) {
-								if (err) return cb(err);
-								return cb(new Error("Error registering device: " + response.reason));
-							});
+							return cb(new Error("Error registering device: " + response.reason));
 						}
-						else {
-							FormideOS.db.User.update({ cloudConnectionToken: registertoken }, { cloudConnectionToken: response.deviceToken }, function (err, updated) {
-								if (err) return cb(err);
-								FormideOS.log('cloud user connected with clientToken ' + response.deviceToken);
-								return cb(null, updated[0]);
-							});
-						}
+						return cb(null, response);
+
+						// if (response.success === false || !response.deviceToken) {
+						// 	FormideOS.log.error(response.message);
+						// 	FormideOS.db.User.destroy({
+						// 		cloudConnectionToken: registertoken
+						// 	}, function (err) {
+						// 		if (err) return cb(err);
+						// 		return cb(new Error("Error registering device: " + response.reason));
+						// 	});
+						// }
+						// else {
+						// 	FormideOS.db.User.update({ cloudConnectionToken: registertoken }, { cloudConnectionToken: response.deviceToken }, function (err, updated) {
+						// 		if (err) return cb(err);
+						// 		FormideOS.log('cloud user connected with clientToken ' + response.deviceToken);
+						// 		return cb(null, updated[0]);
+						// 	});
+						// }
 					});
 				});
-			});
-		});
+			// });
+		// });
 	}
 };
 
