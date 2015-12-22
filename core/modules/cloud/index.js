@@ -253,7 +253,7 @@ module.exports = {
 							FormideOS.log.error(response.message);
 							return cb(new Error("Error registering device: " + response.reason));
 						}
-						return cb(null, updated[0]);
+						return cb(null, response);
 
 						// if (response.success === false || !response.deviceToken) {
 						// 	FormideOS.log.error(response.message);
