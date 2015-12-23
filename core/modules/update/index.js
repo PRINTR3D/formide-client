@@ -16,45 +16,57 @@ module.exports = {
     updateScriptLocation: null,
     newVersionLocation: null,
     currentVersionLocation: null,
+    updateStatusLocation: null,
     channel: null,
 
 	init: function(config) {
         this.updateScriptLocation = config.updateScriptLocation;
         this.newVersionLocation = config.newVersionLocation;
         this.currentVersionLocation = config.currentVersionLocation;
+        this.updateStatusLocation = config.updateStatusLocation;
         this.channel = config.channel;
 
-        this.checkForUpdate(function(err, response) {
-            if (err) return FormideOS.log.error('Checking for updates', err);
-            return FormideOS.log.debug('Checking for updates', response);
+        this.checkForUpdate(function (err, response) {
+            if (err)
+                FormideOS.log.error('Checking for updates', err);
+            else
+                FormideOS.log.debug('Checking for updates', response);
+        });
+
+        this.getUpdateStatus(function (err, response) {
+            console.log(e, response);
         });
 	},
 
     getUpdateStatus: function(callback) {
-        if (!process.env.UPDATE_STATUS) {
-            return callback(null, {
-                success: true,
-                message: 'There was no update during the latest reboot'
-            });
-        }
+        try {
+            var updateStatus = ini.parse(fs.readFileSync(this.updateStatusLocation, 'utf-8'));
 
-        if (process.env.UPDATE_STATUS === 'success') {
-            return callback(null, {
-                success: true,
-                message: 'The device has successfully updated during the latest reboot'
-            });
+            if (updateStatus.UPDATE_STATUS === 'success') {
+                return callback(null, {
+                    success: true,
+                    timestamp: updateStatus.TIME,
+                    message: 'The device was successfully updated'
+                });
+            }
+            else {
+                return callback(null, {
+                    success: false,
+                    timestamp: updateStatus.TIME,
+                    message: updateStatus.UPDATE_ERR
+                });
+            }
         }
-        else {
-            return callback(new Error(process.env.UPDATE_ERR));
+        catch (e) {
+            return callback(e);
         }
     },
 
     checkForUpdate: function(callback) {
-
         var self = this;
-
         if (!fs.existsSync(self.currentVersionLocation)) return callback(new Error('Current version file not found'));
         var currentVersion = ini.parse(fs.readFileSync(self.currentVersionLocation, 'utf-8'));
+
         request(
             FormideOS.config.get('cloud.url') + '/products/client/latest/' + self.channel,
             function(err, response, body) {
