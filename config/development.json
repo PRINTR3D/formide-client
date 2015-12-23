@@ -28,9 +28,10 @@
 		"path": "/"
 	},
 	"update": {
-		"updateScriptLocation": "/opt/update.sh",
+		"updateScriptLocation": "/opt/start_OTA_update",
 		"currentVersionLocation": "/data/formide/currentVersion",
 		"newVersionLocation": "/data/formide/newVersion",
+		"updateStatusLocation": "/var/updateStatus",
 		"channel": "beta"
 	}
 }
