@@ -28,7 +28,7 @@
 		"path": "/"
 	},
 	"update": {
-		"updateScriptLocation": "/opt/start_OTA_update",
+		"updateScriptLocation": "/opt/start_ota_update",
 		"currentVersionLocation": "/data/formide/currentVersion",
 		"newVersionLocation": "/data/formide/newVersion",
 		"updateStatusLocation": "/var/updateStatus",
