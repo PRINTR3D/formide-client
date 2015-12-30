@@ -12,6 +12,9 @@ module.exports = (routes, module) => {
 		return res.ok('OK');
 	});
 
+	/**
+	 * Go to setup mode (enable AP)
+	 */
 	routes.post('/setup', (req, res) => {
 		module.setupMode(err => {
 			if (err) return res.serverError(err.message);
