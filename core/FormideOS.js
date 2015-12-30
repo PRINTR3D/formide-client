@@ -20,6 +20,12 @@ const initDb = require('./utils/db');
 global.FormideOS = {};
 
 module.exports = dbConfig => {
+	try {
+		require('element-tools');
+	}
+	catch (e) {
+		console.log('element-tools not found');
+	}
 
 	// Paths
 	FormideOS.coreRoot = path.resolve(__dirname, './');
