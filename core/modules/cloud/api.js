@@ -13,6 +13,16 @@ module.exports = (routes, module) => {
 	});
 
 	/**
+	 * List nearby networks
+	 */
+	routes.get('/networks', (req, res) => {
+		module.getNetworks((err, networks) => {
+			if (err) return res.serverError(err.message);
+			return res.ok(networks);
+		});
+	});
+
+	/**
 	 * Go to setup mode (enable AP)
 	 */
 	routes.post('/setup', (req, res) => {
@@ -25,7 +35,7 @@ module.exports = (routes, module) => {
 	/**
 	 * Connect to a network
 	 */
-	routest.post('/connect', (req, res) => {
+	routes.post('/connect', (req, res) => {
 		module.connect((err, success) => {
 			if (err) return res.serverError(err.message);
 			return res.ok({ message: 'Device connected to network' });

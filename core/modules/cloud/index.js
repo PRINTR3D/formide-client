@@ -228,17 +228,33 @@ module.exports = {
 	},
 
 	/**
+	 * Get a list of nearby networks to connect to
+	 */
+	getNetworks: function(cb) {
+		if (this.tools)
+			this.tools.networks(cb);
+		else
+			cb(new Error('element-tools not installed'));
+	},
+
+	/**
 	 * Enable access point to be able to switch networks or redo setup
 	 */
 	setupMode: function(cb) {
-		this.tools.startAp(cb);
+		if (this.tools)
+			this.tools.startAp(cb);
+		else
+			cb(new Error('element-tools not installed'));
 	},
 
 	/**
 	 * Connect device to selected network
 	 */
 	connect: function (essid, password, cb) {
-		this.tools.connect(essid, password, cb);
+		if (this.tools)
+			this.tools.connect(essid, password, cb);
+		else
+			cb(new Error('element-tools not installed'));
 	},
 
 	/**
