@@ -5,23 +5,26 @@
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
-var net 			= require('net');
-var request 		= require('request');
-var socket 			= require('socket.io-client');
-var publicIp 		= require('public-ip');
-var internalIp 		= require('internal-ip');
-var fs				= require('fs');
-var path			= require('path');
-var uuid			= require('node-uuid');
-var getMac			= require('getmac');
+const net		 = require('net');
+const request	 = require('request');
+const socket	 = require('socket.io-client');
+const publicIp	 = require('public-ip');
+const internalIp = require('internal-ip');
+const fs	     = require('fs');
+const path		 = require('path');
+const uuid		 = require('node-uuid');
+const getMac	 = require('getmac');
 
 module.exports = {
+
 	// socket connections
 	cloud: null,
 	local: null,
+
+	// element-tools for WiFi
 	tools: null,
 
-	/*
+	/**
 	 * Init for cloud module
 	 */
 	init: function(config) {
@@ -49,9 +52,9 @@ module.exports = {
 			FormideOS.log.error("Error connecting to cloud: " + err);
 		});
 
-		/*
+		/**
 		 * Connect to the cloud socket server
-		  */
+		 */
 		this.cloud.on('connect', function () {
 
 			// authenticate formideos based on mac address and api token, also sends permissions for faster blocking via cloud
@@ -83,14 +86,14 @@ module.exports = {
 			});
 		});
 
-		/*
+		/**
 		 * See if client is online
 		 */
 		this.cloud.on('ping', data => {
 			self.cloud.emit('pong', data);
 		});
 
-		/*
+		/**
 		 * This event is triggered when a user logs into the cloud and want to access one of his clients
 		 */
 		this.cloud.on('authenticateUser', data => {
@@ -103,7 +106,7 @@ module.exports = {
 			});
 		});
 
-		/*
+		/**
 		 * HTTP proxy request from cloud
 		 */
 		this.cloud.on('http', data => {
@@ -116,7 +119,7 @@ module.exports = {
 			});
 		});
 
-		/*
+		/**
 		 * Send a gcode file to a client to print a cloud sliced printjob
 		 */
 		this.cloud.on('addToQueue', data => {
@@ -128,9 +131,9 @@ module.exports = {
 			});
 		});
 
-		/*
+		/**
 		 * Handle disconnect
-		  */
+		 */
 		this.cloud.on('disconnect', () => {
 			// turn off event forwarding
 			FormideOS.events.offAny(forwardEvents);
@@ -139,7 +142,7 @@ module.exports = {
 		});
 	},
 
-	/*
+	/**
 	 * Handles cloud authentication based on cloudConnectionToken, returns session access_token that cloud uses to perform http calls from then on
 	 */
 	authenticate: function(data, callback) {
@@ -155,7 +158,7 @@ module.exports = {
 		});
 	},
 
-	/*
+	/**
 	 * Handles HTTP proxy function calls from cloud connection, calls own local http api after reconstructing HTTP request
 	 */
 	http: function(data, callback) {
@@ -266,8 +269,8 @@ module.exports = {
 		getMac.getMac(function (err, macAddress) {
 			if (err) return cb(err);
 			self.cloud.emit("register", {
-				mac: macAddress,
-				accessToken: accessToken
+				mac:		 macAddress,
+				accessToken: accessToken // accessToken from setup.formide.com to identify user
 			}, function (response) {
 				if (response.success === false || !response.deviceToken) {
 					FormideOS.log.error(response.message);
