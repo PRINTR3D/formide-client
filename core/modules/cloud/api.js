@@ -36,7 +36,7 @@ module.exports = (routes, module) => {
 	 * Connect to a network
 	 */
 	routes.post('/connect', (req, res) => {
-		module.connect((err, success) => {
+		module.connect(req.body.ssid, req.body.password, (err, success) => {
 			if (err) return res.serverError(err.message);
 			return res.ok({ message: 'Device connected to network' });
 		});
