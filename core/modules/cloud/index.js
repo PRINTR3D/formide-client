@@ -24,6 +24,9 @@ module.exports = {
 	// element-tools for WiFi
 	tools: null,
 
+	// store cloud accessToken
+	cloudToken: '',
+
 	/**
 	 * Init for cloud module
 	 */
@@ -96,15 +99,15 @@ module.exports = {
 		/**
 		 * This event is triggered when a user logs into the cloud and want to access one of his clients
 		 */
-		this.cloud.on('authenticateUser', data => {
-			FormideOS.log("Cloud authenticate user:" + data.id);
-			this.authenticate(data, (err, accessToken) => {
-				FormideOS.log('Cloud user authorized with access_token ' + accessToken.token);
-				self.cloud.emit(
-					'authenticateUser',
-					getCallbackData(data._callbackId, err, accessToken.token));
-			});
-		});
+		// this.cloud.on('authenticateUser', data => {
+		// 	FormideOS.log("Cloud authenticate user:" + data.id);
+		// 	this.authenticate(data, (err, accessToken) => {
+		// 		FormideOS.log('Cloud user authorized with access_token ' + accessToken.token);
+		// 		self.cloud.emit(
+		// 			'authenticateUser',
+		// 			getCallbackData(data._callbackId, err, accessToken.token));
+		// 	});
+		// });
 
 		/**
 		 * HTTP proxy request from cloud
@@ -137,7 +140,6 @@ module.exports = {
 		this.cloud.on('disconnect', () => {
 			// turn off event forwarding
 			FormideOS.events.offAny(forwardEvents);
-
 			FormideOS.log('Cloud disconnected');
 		});
 	},
@@ -146,48 +148,69 @@ module.exports = {
 	 * Handles cloud authentication based on cloudConnectionToken, returns session access_token that cloud uses to perform http calls from then on
 	 */
 	authenticate: function(data, callback) {
-		var permissions = [];
-		if (data.isOwner) permissions.push("owner");
-		if (data.isAdmin) permissions.push("admin");
-		FormideOS.db.AccessToken.create({
-			permissions: permissions,
-			sessionOrigin: "cloud"
-		}, function (err, accessToken) {
-			if (err) return callback(err);
-			return callback(null, accessToken);
-		});
+		var self = this;
+		FormideOS.db.AccessToken
+		.findOne({ token: self.cloudToken })
+		.then(accessToken => {
+			if (!accessToken) {
+				var permissions = [];
+				if (data.isOwner) permissions.push("owner");
+				if (data.isAdmin) permissions.push("admin");
+
+				FormideOS.db.AccessToken
+				.create({
+					permissions:   permissions,
+					sessionOrigin: 'cloud'
+				})
+				.then(accessToken => {
+					self.cloudToken = accessToken.token;
+					return callback(null, accessToken);
+				})
+				.catch(callback);
+			}
+			else {
+				return callback(null, accessToken);
+			}
+		})
+		.catch(callback);
 	},
 
 	/**
 	 * Handles HTTP proxy function calls from cloud connection, calls own local http api after reconstructing HTTP request
 	 */
 	http: function(data, callback) {
-		if (data.method === 'GET') {
-			request({
-				method: 'GET',
-				uri: 'http://127.0.0.1:' + FormideOS.http.server.address().port + '/' + data.url,
-				auth: {
-					bearer: data.token // add cloud api key to authorise to local HTTP api
-				},
-				qs: data.data
-			}, function( error, response, body ) {
-				if (error) return callback(error);
-				return callback(null, body);
-			});
-		}
-		else {
-			request({
-				method: data.method,
-				uri: 'http://127.0.0.1:' + FormideOS.http.server.address().port + '/' + data.url,
-				auth: {
-					bearer: data.token // add cloud api key to authorise to local HTTP api
-				},
-				form: data.data
-			}, function( error, response, body ) {
-				if (error) return callback(error);
-				return callback(null, body);
-			});
-		}
+		this.authenticate({
+			isOwner: true,
+			isAdmin: true
+		}, function(err, accessToken) {
+			if (err) return callback(err);
+			if (data.method === 'GET') {
+				request({
+					method: 'GET',
+					uri: 'http://127.0.0.1:' + FormideOS.http.server.address().port + '/' + data.url,
+					auth: {
+						bearer: accessToken.token // add cloud api key to authorise to local HTTP api
+					},
+					qs: data.data
+				}, function (error, response, body) {
+					if (error) return callback(error);
+					return callback(null, body);
+				});
+			}
+			else {
+				request({
+					method: data.method,
+					uri: 'http://127.0.0.1:' + FormideOS.http.server.address().port + '/' + data.url,
+					auth: {
+						bearer: accessToken.token // add cloud api key to authorise to local HTTP api
+					},
+					form: data.data
+				}, function (error, response, body) {
+					if (error) return callback(error);
+					return callback(null, body);
+				});
+			}
+		});
 	},
 
 	/*
