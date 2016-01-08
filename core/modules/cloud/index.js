@@ -268,7 +268,7 @@ module.exports = {
 	 */
 	setupMode: function(cb) {
 		if (this.tools)
-			this.tools.startAp(cb);
+			this.tools.reset(cb);
 		else
 			cb(new Error('element-tools not installed'));
 	},
