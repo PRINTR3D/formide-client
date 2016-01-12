@@ -15,6 +15,18 @@ const path		 = require('path');
 const uuid		 = require('node-uuid');
 const getMac	 = require('getmac');
 
+function addWifiSetupRoute(app, tools) {
+	app.get('/setup', (req, res) => {
+		const url = FormideOS.config.get('cloud.platformUrl');
+		tools.getWlanSetupPage(url, (err, html) => {
+			if (err)
+				return res.serverError(err.message);
+
+			res.send(html);
+		});
+	});
+}
+
 module.exports = {
 
 	// socket connections
@@ -37,6 +49,8 @@ module.exports = {
 
 		try {
 			self.tools = require('element-tools');
+
+			addWifiSetupRoute(FormideOS.http.app, self.tools);
 		}
 		catch (e) {
 			console.log('element-tools not found, probably not running on The Element');

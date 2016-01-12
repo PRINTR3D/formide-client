@@ -10,6 +10,7 @@
 	},
 	"cloud": {
 		"url": "https://api.formide.com",
+		"platformUrl": "https://platform.formide.com",
 		"permission": false
 	},
 	"log": {
