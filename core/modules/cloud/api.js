@@ -61,10 +61,12 @@ module.exports = (routes, module) => {
 					mac_address:        req.body.macAddress,
 					registration_token: req.body.registrationToken
 				}},
-				err => {
-					if (err)
-						return FormideOS.log(err.message);
-					return FormideOS.log('Device registered');
+				(err, response, body) => {
+					if (err) return FormideOS.log(err.message);
+					if (response.statusCode == 200)
+						return FormideOS.log('Device registered');
+						
+					return FormideOS.log('Device registration failed: ' + body.message);
 				});
 		});
 	});
