@@ -47,7 +47,6 @@
     "getmac": "^1.0.7",
     "gitty": "^3.2.3",
     "ini": "^1.3.4",
-    "install": "~0.1.8",
     "internal-ip": "^1.0.1",
     "jsonstorage": "0.0.12",
     "jsop": "^0.3.1",
