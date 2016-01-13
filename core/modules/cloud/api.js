@@ -64,7 +64,7 @@ module.exports = (routes, module) => {
 				(err, response, body) => {
 					if (err) return FormideOS.log(err.message);
 					if (response.statusCode == 200) return FormideOS.log('Device registered');
-					return FormideOS.log('Device registration failed: ' + body.message);
+					return FormideOS.log('Device registration failed: ' + body);
 				});
 		});
 	});
