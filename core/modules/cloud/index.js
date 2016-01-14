@@ -294,27 +294,6 @@ module.exports = {
 			this.tools.connect(essid, password, cb);
 		else
 			cb(new Error('element-tools not installed'));
-	},
-
-	/**
-	 * Register device in cloud using accessToken
-	 */
-	registerDevice: function (accessToken, cb) {
-		var self = this;
-
-		getMac.getMac(function (err, macAddress) {
-			if (err) return cb(err);
-			self.cloud.emit("register", {
-				mac:		 macAddress,
-				accessToken: accessToken // accessToken from setup.formide.com to identify user
-			}, function (response) {
-				if (response.success === false || !response.deviceToken) {
-					FormideOS.log.error(response.message);
-					return cb(new Error("Error registering device: " + response.reason));
-				}
-				return cb(null, response);
-			});
-		});
 	}
 };
 
