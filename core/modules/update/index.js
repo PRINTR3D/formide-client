@@ -26,7 +26,7 @@ module.exports = {
 			self.tools = require('element-tools');
 		}
 		catch (e) {
-			console.log('element-tools not found, probably not running on The Element');
+			console.log('element-tools not found for update, probably not running on The Element');
 		}
 
         this.channel = config.channel;
