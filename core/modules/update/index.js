@@ -46,7 +46,7 @@ module.exports = {
 
 	checkForUpdate: function (cb) {
 		if (this.tools)
-			this.tools.checkForUpdate(cb);
+			this.tools.checkForUpdate(this.updateCheckURL, cb);
 		else
 			return cb(new Error('element-tools not found'));
 	},
