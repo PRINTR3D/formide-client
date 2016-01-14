@@ -14,52 +14,52 @@ const assert        = require('assert');
 module.exports = {
 
 	tools: null,
-    	channel: null,
-    	updateCheckURL: null,
-    	availableUpdate: null,
+	channel: null,
+	updateCheckURL: null,
+	availableUpdate: null,
 
 	init: function (config) {
-	        try {
+		try {
 			this.tools = require('element-tools');
 		}
 		catch (e) {
 			FormideOS.log.warn('element-tools not found for update, probably not running on The Element');
 			FormideOS.log.warn(e);
 		}
-	
-	        this.channel = config.channel;
-	        this.updateCheckURL = FormideOS.config.get('cloud.url') + '/products/client/latest/' + self.channel;
-	
-	        this.checkForUpdate(function (err, update) {
-	            FormideOS.log.error(err);
-	            FormideOS.log('update:');
-	            FormideOS.log(update);
-	        });
+
+		this.channel = config.channel;
+		this.updateCheckURL = FormideOS.config.get('cloud.url') + '/products/client/latest/' + this.channel;
+
+		this.checkForUpdate(function (err, update) {
+			FormideOS.log.error(err);
+			FormideOS.log('update:');
+			FormideOS.log(update);
+		});
 	},
 
 	getUpdateStatus: function (cb) {
 		if (this.tools)
-	    		this.tools.getUpdateStatus(this.updateCheckURL, cb);
+			this.tools.getUpdateStatus(this.updateCheckURL, cb);
 		else
-	    		return cb(new Error('element-tools not found'));
+			return cb(new Error('element-tools not found'));
 	},
-	
+
 	checkForUpdate: function (cb) {
 		if (this.tools)
-	    		this.tools.checkForUpdate(cb);
+			this.tools.checkForUpdate(cb);
 		else
-	    		return cb(new Error('element-tools not found'));
+			return cb(new Error('element-tools not found'));
 	},
-	
+
 	update: function (cb) {
 		const self = this;
 		if (this.tools)
-	    		this.checkForUpdate(function (err, update) {
-	    			FormideOS.log('doing update:');
-	    			FormideOS.log(update);
-	    			self.tools.update(update.releaseNumber, update.version, downloadRoot + update.url, update.signature, cb);
+			this.checkForUpdate(function (err, update) {
+				FormideOS.log('doing update:');
+				FormideOS.log(update);
+				self.tools.update(update.releaseNumber, update.version, downloadRoot + update.url, update.signature, cb);
 			});
 		else
-	    		return cb(new Error('element-tools not found'));
+			return cb(new Error('element-tools not found'));
 	}
 }
