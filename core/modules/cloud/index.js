@@ -49,11 +49,10 @@ module.exports = {
 
 		try {
 			self.tools = require('element-tools');
-
 			addWifiSetupRoute(FormideOS.http.app, self.tools);
 		}
 		catch (e) {
-			console.log('element-tools not found, probably not running on The Element');
+			console.log('element-tools not found for wifi, probably not running on The Element');
 		}
 
 		function forwardEvents(data) {
