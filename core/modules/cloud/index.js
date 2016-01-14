@@ -52,7 +52,8 @@ module.exports = {
 			addWifiSetupRoute(FormideOS.http.app, self.tools);
 		}
 		catch (e) {
-			console.log('element-tools not found for wifi, probably not running on The Element');
+			FormideOS.log.warn('element-tools not found for wifi, probably not running on The Element');
+			FormideOS.log.warn(e);
 		}
 
 		function forwardEvents(data) {
