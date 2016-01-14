@@ -39,7 +39,7 @@ module.exports = {
 
 	getUpdateStatus: function (cb) {
 		if (this.tools)
-			this.tools.getUpdateStatus(this.updateCheckURL, cb);
+			this.tools.getUpdateStatus(cb);
 		else
 			return cb(new Error('element-tools not found'));
 	},
