@@ -32,6 +32,8 @@ module.exports = {
 	
 	        this.checkForUpdate(function (err, update) {
 	            FormideOS.log.error(err);
+	            FormideOS.log('update:');
+	            FormideOS.log(update);
 	        });
 	},
 
