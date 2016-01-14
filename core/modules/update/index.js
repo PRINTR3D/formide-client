@@ -13,39 +13,40 @@ const assert        = require('assert');
 
 module.exports = {
 
-    channel: null,
-    updateCheckURL: null,
-    availableUpdate: null,
+	tools: null,
+    	channel: null,
+    	updateCheckURL: null,
+    	availableUpdate: null,
 
 	init: function (config) {
-
-        // use self to prevent bind(this) waterfall
-		var self = this;
-
-		try {
-			self.tools = require('element-tools');
+	        try {
+			this.tools = require('element-tools');
 		}
 		catch (e) {
-			console.log('element-tools not found for update, probably not running on The Element');
+			FormideOS.log.warn('element-tools not found for update, probably not running on The Element');
+			FormideOS.log.warn(e);
 		}
-
-        this.channel = config.channel;
-        this.updateCheckURL = FormideOS.config.get('cloud.url') + '/products/client/latest/' + self.channel;
-
-        this.checkForUpdate(function (err, update) {
-            FormideOS.log.error(err);
-        });
+	
+	        this.channel = config.channel;
+	        this.updateCheckURL = FormideOS.config.get('cloud.url') + '/products/client/latest/' + self.channel;
+	
+	        this.checkForUpdate(function (err, update) {
+	            FormideOS.log.error(err);
+	        });
 	},
 
     getUpdateStatus: function (callback) {
+    	if (this.tools === null) return callback(new Error('element-tools not found'));
         this.tools.getUpdateStatus(this.updateCheckURL, callback);
     },
 
     checkForUpdate: function (callback) {
+    	if (this.tools === null) return callback(new Error('element-tools not found'));
         this.tools.checkForUpdate(callback);
     },
 
     update: function (callback) {
+    	if (this.tools === null) return callback(new Error('element-tools not found'));
         const self = this;
         this.checkForUpdate(function (err, update) {
             self.tools.update(update.releaseNumber, update.version, downloadRoot + update.url, update.signature, callback);
