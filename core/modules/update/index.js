@@ -8,7 +8,7 @@ const path          = require('path');
 const request       = require('request');
 const exec          = require('child_process').exec;
 const ini           = require('ini');
-const downloadRoot  = 'http://downloads.formide.com/releases/'
+const downloadRoot  = 'http://downloads.formide.com/releases/';
 const assert        = require('assert');
 
 module.exports = {
@@ -35,21 +35,29 @@ module.exports = {
 	        });
 	},
 
-    getUpdateStatus: function (callback) {
-    	if (this.tools === null) return callback(new Error('element-tools not found'));
-        this.tools.getUpdateStatus(this.updateCheckURL, callback);
-    },
-
-    checkForUpdate: function (callback) {
-    	if (this.tools === null) return callback(new Error('element-tools not found'));
-        this.tools.checkForUpdate(callback);
-    },
-
-    update: function (callback) {
-    	if (this.tools === null) return callback(new Error('element-tools not found'));
-        const self = this;
-        this.checkForUpdate(function (err, update) {
-            self.tools.update(update.releaseNumber, update.version, downloadRoot + update.url, update.signature, callback);
-        });
-    }
+	getUpdateStatus: function (cb) {
+		if (this.tools)
+	    		this.tools.getUpdateStatus(this.updateCheckURL, cb);
+		else
+	    		return cb(new Error('element-tools not found'));
+	},
+	
+	checkForUpdate: function (cb) {
+		if (this.tools)
+	    		this.tools.checkForUpdate(cb);
+		else
+	    		return cb(new Error('element-tools not found'));
+	},
+	
+	update: function (cb) {
+		const self = this;
+		if (this.tools)
+	    		this.checkForUpdate(function (err, update) {
+	    			FormideOS.log('doing update:');
+	    			FormideOS.log(update);
+	    			self.tools.update(update.releaseNumber, update.version, downloadRoot + update.url, update.signature, cb);
+			});
+		else
+	    		return cb(new Error('element-tools not found'));
+	}
 }
