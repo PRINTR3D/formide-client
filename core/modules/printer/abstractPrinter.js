@@ -70,17 +70,25 @@ AbstractPrinter.prototype.getCommands = function() {
 	return this.map;
 }
 
-/*
+/**
  * Send raw data to printer
  */
 AbstractPrinter.prototype.sendRaw = function(rawCommand, callback) {
-	var self = this;
-	self.driver.sendGcode(rawCommand, this.port, function(err, response) {
-		if (callback) return callback(response);
+	this.driver.sendGcode(rawCommand, this.port, function(err, response) {
+		if (callback) return callback(null, response);
 	});
 }
 
-/*
+/**
+ * Send raw tune data to printer
+ */
+AbstractPrinter.prototype.sendRawTune = function (rawCommand, callback) {
+	this.driver.sendTuneGcode(rawCommand, this.port, function(err, response) {
+		if (callback) return callback(null, response);
+	});
+}
+
+/**
  * Send command to printer (parsed with the map array)
  */
 AbstractPrinter.prototype.command = function(command, parameters, callback) {
@@ -99,7 +107,7 @@ AbstractPrinter.prototype.command = function(command, parameters, callback) {
 	return callback(null, 'OK');
 }
 
-/*
+/**
  * Start printing. id is queueItem id and gcode is the filename in the file system.
  * Searches for queue item in database and sends absolute file path to driver
  */
@@ -128,7 +136,7 @@ AbstractPrinter.prototype.startPrint = function(queueItemId, callback) {
 						port:		 self.port,
 						queueItemId: self.queueItemId
 					});
-					return callback();
+					return callback(null, true);
 				});
 			});
 		});
@@ -196,23 +204,32 @@ AbstractPrinter.prototype.printFinished = function(queueItemId) {
 	if (queueItemId !== self.queueItemId) FormideOS.log.warn('Warning: driver queue ID and client queue ID are not the same!', true);
 	FormideOS.db.QueueItem
 	.findOne({ id: self.queueItemId }, function(err, queueItem) {
-		if (err) return callback(err);
-		if (!queueItem) return FormideOS.log.warn('No queue item with that ID found to handle finished printing');
-		queueItem.status = 'finished';
-		queueItem.save();
+
+		self.queueItemId = null;
 		FormideOS.events.emit('printer.finished', {
 			port:		 self.port,
 			queueItemId: self.queueItemId
 		});
-		self.queueItemId = null;
+
+		if (err) return FormideOS.log.err(err);
+		if (!queueItem) return FormideOS.log.warn('No queue item with that ID found to handle finished printing');
+		queueItem.status = 'finished';
+		queueItem.save();
 	});
 }
 
-/*
+/**
  * Send a custom gcode to the printer (raw)
  */
-AbstractPrinter.prototype.gcode = function(command, callback) {
+AbstractPrinter.prototype.gcode = function (command, callback) {
 	this.sendRaw(command, callback);
+}
+
+/**
+ * Send tune command to printer (insert gcode commands while printing)
+ */
+AbstractPrinter.prototype.tune = function (command, callback) {
+	this.sendRawTune(command, callback);
 }
 
 module.exports = AbstractPrinter;

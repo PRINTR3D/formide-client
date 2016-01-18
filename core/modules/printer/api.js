@@ -47,7 +47,7 @@ module.exports = function(routes, module) {
 	/*
 	 * Stop printjob
 	 */
-	routes.get('/:port/stop', function(req, res) {
+	routes.get('/:port/stop', function (req, res) {
 		module.stopPrint(req.params.port, function(err, result) {
 			if (err) return res.serverError(err);
 			if (!result) return res.notFound('No printer on this port');
@@ -58,7 +58,7 @@ module.exports = function(routes, module) {
 	/*
 	 * Pause printjob
 	 */
-	routes.get('/:port/pause', function(req, res) {
+	routes.get('/:port/pause', function (req, res) {
 		module.pausePrint(req.params.port, function(err, result) {
 			if (err) return res.serverError(err);
 			if (!result) return res.notFound('No printer on this port');
@@ -66,10 +66,10 @@ module.exports = function(routes, module) {
 		});
 	});
 
-	/*
+	/**
 	 * Resume printjob
 	 */
-	routes.get('/:port/resume', function(req, res) {
+	routes.get('/:port/resume', function (req, res) {
 		module.resumePrint(req.params.port, function(err, result) {
 			if (err) return res.serverError(err);
 			if (!result) return res.notFound('No printer on this port');
@@ -77,11 +77,33 @@ module.exports = function(routes, module) {
 		});
 	});
 
-	/*
+	/**
+	 * Send command to printer while it's printing (tune)
+	 */
+	routes.post('/:port/gcode', function(req, res) {
+		module.printerTune(req.params.port, { command: req.body.command }, function (err, result) {
+			if (err) return res.serverError(err);
+			if (!result) return res.notFound('No printer on this port');
+			return res.ok({ message: "Tune command executing" });
+		});
+	});
+
+	/**
+	 * Send command to printer while it's printing (tune)
+	 */
+	routes.post('/:port/tune', function(req, res) {
+		module.printerTune(req.params.port, { command: req.body.command }, function (err, result) {
+			if (err) return res.serverError(err);
+			if (!result) return res.notFound('No printer on this port');
+			return res.ok({ message: "Tune command executing" });
+		});
+	});
+
+	/**
 	 * Send command to printer
 	 */
 	routes.get('/:port/:command', function(req, res) {
-		module.printerControl(req.params.port, { command: req.params.command, parameters: req.query }, function(err, result) {
+		module.printerControl(req.params.port, { command: req.params.command, parameters: req.query }, function (err, result) {
 			if (err) return res.serverError(err);
 			if (!result) return res.notFound('No printer on this port');
 			return res.ok({ message: "Command executing" });
