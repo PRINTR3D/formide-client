@@ -81,7 +81,7 @@ module.exports = function(routes, module) {
 	 * Send command to printer while it's printing (tune)
 	 */
 	routes.post('/:port/gcode', function(req, res) {
-		module.gcode(req.params.port, { command: req.body.command }, function (err, result) {
+		module.gcode(req.params.port, req.body.command, function (err, result) {
 			if (err) return res.serverError(err);
 			if (!result) return res.notFound('No printer on this port');
 			return res.ok({ message: "Tune command executing" });
@@ -92,7 +92,7 @@ module.exports = function(routes, module) {
 	 * Send command to printer while it's printing (tune)
 	 */
 	routes.post('/:port/tune', function(req, res) {
-		module.tuneGcode(req.params.port, { command: req.body.command }, function (err, result) {
+		module.tuneGcode(req.params.port, req.body.command, function (err, result) {
 			if (err) return res.serverError(err);
 			if (!result) return res.notFound('No printer on this port');
 			return res.ok({ message: "Tune command executing" });
