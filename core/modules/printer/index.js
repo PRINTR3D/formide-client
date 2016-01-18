@@ -111,14 +111,14 @@ module.exports = {
 		this.printers[port].command(data.command, data.parameters, callback);
 	},
 
-	tuneControl: function (port, tuneCode, callback) {
-		if (this.printers[port] == undefined) return callback(null, false);
-		this.printers[port].tune(tuneCode, callback);
-	},
-
 	gcode: function(port, gcode, callback) {
 		if (this.printers[port] == undefined) return callback(null, false);
 		this.printers[port].gcode(gcode, callback);
+	},
+
+	tuneGcode: function (port, tuneCode, callback) {
+		if (this.printers[port] == undefined) return callback(null, false);
+		this.printers[port].tune(tuneCode, callback);
 	},
 
 	startPrint: function(port, id, callback) {
