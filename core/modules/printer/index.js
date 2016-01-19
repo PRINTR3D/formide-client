@@ -1,5 +1,5 @@
 /*
- *	This code was created for Printr B.V. It is open source under the formideos-client package.
+ *	This code was created for Printr B.V. It is open source under the formide-client package.
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
@@ -17,7 +17,7 @@ module.exports = {
 
 		var self = this;
 		this.config = config;
-		
+
 		// loaded via katana-slicer npm package and node-pre-gyp
 		try {
 			this.driver = require('formide-drivers');
@@ -55,13 +55,19 @@ module.exports = {
 	},
 
 	printerConnected: function(port) {
-		var self = this;
-		FormideOS.log('Printer connected: ' + port);
-		FormideOS.events.emit('printer.connected', { port: port, notification: true, level: "success", title: "Printer connected", message: "A printer was connected" });
-		self.printers[port.split("/")[2]] = new AbstractPrinter(port, self.driver);
+		if (this.numberOfPorts < 4) {
+			var self = this;
+			FormideOS.log('Printer connected: ' + port);
+			FormideOS.events.emit('printer.connected', { port: port, notification: true, level: "success", title: "Printer connected", message: "A printer was connected" });
+			self.printers[port.split("/")[2]] = new AbstractPrinter(port, self.driver);
+		}
+		else {
+			FormideOS.events.emit('printer.maxExceeded', { port: port, notification: true, level: 'warning', title: 'Max exceeded', message: 'Maximum number of printers already connected'})
+		}
 	},
 
 	printerDisconnected: function(port) {
+		this.numberOfPorts--;
 		if (this.printers[port.split("/")[2]] !== undefined) {
 			FormideOS.log('Printer disconnected: ' + port);
 			FormideOS.events.emit('printer.disconnected', { port: port, notification: true, level: "warning", title: "Printer disconnected", message: "A printer was disconnected" });
@@ -71,6 +77,7 @@ module.exports = {
 	},
 
 	printerOnline: function(port) {
+		this.numberOfPorts++;
 		FormideOS.log('Printer online: ' + port);
 		FormideOS.events.emit('printer.online', { port: port });
 	},

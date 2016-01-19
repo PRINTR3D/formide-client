@@ -13,14 +13,14 @@ module.exports = function(routes, module) {
     });
 
     routes.get('/check', function (req, res) {
-        module.checkForUpdate(function (err, response) {
+        module.checkForUpdate(function (err, update) {
             if (err) return res.serverError(err);
-            return res.ok(response);
+            return res.ok(update);
         });
     });
 
     routes.post('/do', function (req, res) {
-        module.doUpdate(function (err) {
+        module.update(function (err) {
             if (err) return res.serverError(err);
             return res.ok({ message: 'Starting update' });
         });

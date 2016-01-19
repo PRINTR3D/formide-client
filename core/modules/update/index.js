@@ -8,104 +8,58 @@ const path          = require('path');
 const request       = require('request');
 const exec          = require('child_process').exec;
 const ini           = require('ini');
-const downloadRoot  = 'http://downloads.formide.com/releases/'
+const downloadRoot  = 'http://downloads.formide.com/releases/';
 const assert        = require('assert');
 
 module.exports = {
 
-    updateScriptLocation: null,
-    newVersionLocation: null,
-    currentVersionLocation: null,
-    updateStatusLocation: null,
-    channel: null,
+	tools: null,
+	channel: null,
+	updateCheckURL: null,
+	availableUpdate: null,
 
-	init: function(config) {
-        this.updateScriptLocation = config.updateScriptLocation;
-        this.newVersionLocation = config.newVersionLocation;
-        this.currentVersionLocation = config.currentVersionLocation;
-        this.updateStatusLocation = config.updateStatusLocation;
-        this.channel = config.channel;
+	init: function (config) {
+		try {
+			this.tools = require('element-tools');
+		}
+		catch (e) {
+			FormideOS.log.warn('element-tools not found for update, probably not running on The Element');
+			FormideOS.log.warn(e);
+		}
 
-        // this.checkForUpdate(function (err, response) {
-        //     if (err)
-        //         FormideOS.log.error('Checking for updates', err);
-        //     else
-        //         FormideOS.log.debug('Checking for updates', response);
-        // });
-        //
-        // this.getUpdateStatus(function (err, response) {
-        //     console.log(e, response);
-        // });
+		this.channel = config.channel;
+		this.updateCheckURL = FormideOS.config.get('cloud.url') + '/products/client/latest/' + this.channel;
+
+		this.checkForUpdate(function (err, update) {
+			FormideOS.log.error(err);
+			FormideOS.log('update:');
+			FormideOS.log(update);
+		});
 	},
 
-    getUpdateStatus: function (callback) {
-        try {
-            var updateStatus = ini.parse(fs.readFileSync(this.updateStatusLocation, 'utf-8'));
+	getUpdateStatus: function (cb) {
+		if (this.tools)
+			this.tools.getUpdateStatus(cb);
+		else
+			return cb(new Error('element-tools not found'));
+	},
 
-            if (updateStatus.UPDATE_STATUS === 'success') {
-                return callback(null, {
-                    success: true,
-                    timestamp: updateStatus.TIME,
-                    message: 'The device was successfully updated'
-                });
-            }
-            else {
-                return callback(null, {
-                    success: false,
-                    timestamp: updateStatus.TIME,
-                    message: updateStatus.UPDATE_ERR
-                });
-            }
-        }
-        catch (e) {
-            return callback(e);
-        }
-    },
+	checkForUpdate: function (cb) {
+		if (this.tools)
+			this.tools.checkForUpdate(this.updateCheckURL, cb);
+		else
+			return cb(new Error('element-tools not found'));
+	},
 
-    checkForUpdate: function(callback) {
-        var self = this;
-        if (!fs.existsSync(self.currentVersionLocation)) return callback(new Error('Current version file not found'));
-        var currentVersion = ini.parse(fs.readFileSync(self.currentVersionLocation, 'utf-8'));
-
-        request(
-            FormideOS.config.get('cloud.url') + '/products/client/latest/' + self.channel,
-            function(err, response, body) {
-                if (err) return callback(err);
-                if (response.statusCode !== 200) return callback(new Error('There was an issue fetching the latest version from the cloud'));
-
-                body = JSON.parse(body);
-                if(typeof body.releaseNumber === 'undefined') return callback(null, { message: 'no releaseNumber found when checking for updates' });
-
-                if (parseInt(body.releaseNumber) > parseInt(currentVersion.RELEASE)) {
-                    assert(body.version);
-                    assert(body.url);
-                    assert(body.signature);
-
-                    var newVersionFile = ini.stringify({
-                        RELEASE:        body.releaseNumber,
-                        VERSION:        body.version,
-                        IMAGE_LOCATION: downloadRoot + body.url,
-                        SIGNATURE:      body.signature
-                    });
-
-                    body.message = 'update found';
-                    body.needsUpdate = true;
-
-                    fs.writeFileSync(self.newVersionLocation, newVersionFile);
-                    return callback(null, body);
-                }
-                else {
-                    return callback(null, { message: 'There is no update available at this moment', needsUpdate: false });
-                }
-            }
-        );
-    },
-
-    doUpdate: function(callback) {
-        // yup, that's all there is to it :P
-        exec(this.updateScriptLocation, function(err, stdout, stderr) {
-            if (err || stderr) return callback(err || stderr);
-            return callback(null);
-        });
-    }
+	update: function (cb) {
+		const self = this;
+		if (this.tools)
+			this.checkForUpdate(function (err, update) {
+				FormideOS.log('doing update:');
+				FormideOS.log(update);
+				self.tools.update(update.releaseNumber, update.version, downloadRoot + update.url, update.signature, cb);
+			});
+		else
+			return cb(new Error('element-tools not found'));
+	}
 }

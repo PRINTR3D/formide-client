@@ -15,6 +15,18 @@ const path		 = require('path');
 const uuid		 = require('node-uuid');
 const getMac	 = require('getmac');
 
+function addWifiSetupRoute(app, tools) {
+	app.get('/setup', (req, res) => {
+		const url = FormideOS.config.get('cloud.platformUrl');
+		tools.getWlanSetupPage(url, (err, html) => {
+			if (err)
+				return res.serverError(err.message);
+
+			res.send(html);
+		});
+	});
+}
+
 module.exports = {
 
 	// socket connections
@@ -37,9 +49,11 @@ module.exports = {
 
 		try {
 			self.tools = require('element-tools');
+			addWifiSetupRoute(FormideOS.http.app, self.tools);
 		}
 		catch (e) {
-			console.log('element-tools not found, probably not running on The Element');
+			FormideOS.log.warn('element-tools not found for wifi, probably not running on The Element');
+			FormideOS.log.warn(e);
 		}
 
 		function forwardEvents(data) {
@@ -268,7 +282,7 @@ module.exports = {
 	 */
 	setupMode: function(cb) {
 		if (this.tools)
-			this.tools.startAp(cb);
+			this.tools.reset(cb);
 		else
 			cb(new Error('element-tools not installed'));
 	},
@@ -281,27 +295,6 @@ module.exports = {
 			this.tools.connect(essid, password, cb);
 		else
 			cb(new Error('element-tools not installed'));
-	},
-
-	/**
-	 * Register device in cloud using accessToken
-	 */
-	registerDevice: function (accessToken, cb) {
-		var self = this;
-
-		getMac.getMac(function (err, macAddress) {
-			if (err) return cb(err);
-			self.cloud.emit("register", {
-				mac:		 macAddress,
-				accessToken: accessToken // accessToken from setup.formide.com to identify user
-			}, function (response) {
-				if (response.success === false || !response.deviceToken) {
-					FormideOS.log.error(response.message);
-					return cb(new Error("Error registering device: " + response.reason));
-				}
-				return cb(null, response);
-			});
-		});
 	}
 };
 
