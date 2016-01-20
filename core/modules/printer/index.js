@@ -97,42 +97,47 @@ module.exports = {
 	},
 
 	getCommands: function(port, callback) {
-		if (this.printers[port] == undefined) return callback();
+		if (this.printers[port] == undefined) return callback(null, false);
 		callback(this.printers[port].getCommands());
 	},
 
 	getStatus: function(port, callback) {
-		if (this.printers[port] == undefined) return callback();
+		if (this.printers[port] == undefined) return callback(null, false);
 		callback(null, this.printers[port].getStatus());
 	},
 
-	printerControl: function(port, data, callback) {
-		if (this.printers[port] == undefined) return callback();
+	printerControl: function (port, data, callback) {
+		if (this.printers[port] == undefined) return callback(null, false);
 		this.printers[port].command(data.command, data.parameters, callback);
 	},
 
 	gcode: function(port, gcode, callback) {
-		if (this.printers[port] == undefined) return callback();
+		if (this.printers[port] == undefined) return callback(null, false);
 		this.printers[port].gcode(gcode, callback);
 	},
 
+	tuneGcode: function (port, tuneCode, callback) {
+		if (this.printers[port] == undefined) return callback(null, false);
+		this.printers[port].tune(tuneCode, callback);
+	},
+
 	startPrint: function(port, id, callback) {
-		if (this.printers[port] == undefined) return callback();
+		if (this.printers[port] == undefined) return callback(null, false);
 		this.printers[port].startPrint(id, callback);
 	},
 
 	stopPrint: function(port, callback) {
-		if (this.printers[port] == undefined) return callback();
+		if (this.printers[port] == undefined) return callback(null, false);
 		this.printers[port].stopPrint(callback);
 	},
 
 	pausePrint: function(port, callback) {
-		if (this.printers[port] == undefined) return callback();
+		if (this.printers[port] == undefined) return callback(null, false);
 		this.printers[port].pausePrint(callback);
 	},
 
 	resumePrint: function(port, callback) {
-		if (this.printers[port] == undefined) return callback();
+		if (this.printers[port] == undefined) return callback(null, false);
 		this.printers[port].resumePrint(callback);
 	}
 }
