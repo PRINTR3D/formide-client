@@ -62,11 +62,30 @@ module.exports = {
 
 		// init cloud with new socket io client to online cloud url
 		this.cloud = socket(config.url);
-		this.local = socket('ws://127.0.0.1:' + FormideOS.http.server.address().port);
+		this.local = socket('ws://127.0.0.1:' + FormideOS.http.server.address().port, {
+			reconnection: true,
+    		reconnectionDelay: 1000,
+    		reconnectionAttempts: 1000,
+			reconnectionDelayMax: 5000,
+			transports: ['websocket'],
+			timeout: 5000
+		});
 
-		// handle cloud connection error
+		// handle cloud connection errors
 		this.cloud.on('error', function (err) {
-			FormideOS.log.error("Error connecting to cloud: " + err);
+			FormideOS.log.error("Error with cloud connection: " + err);
+		});
+
+		this.cloud.on('connect_error', function (err) {
+			FormideOS.log.error("Error when connecting to cloud: " + err);
+		});
+
+		this.cloud.on('connect_timeout', function (err) {
+			FormideOS.log.error("Timeout when connecting to cloud: " + err);
+		});
+
+		this.cloud.on('reconnect_failed', function (err) {
+			FormideOS.log.error("Failed reconnecting to cloud: " + err);
 		});
 
 		/**
@@ -154,7 +173,10 @@ module.exports = {
 		this.cloud.on('disconnect', () => {
 			// turn off event forwarding
 			FormideOS.events.offAny(forwardEvents);
-			FormideOS.log('Cloud disconnected');
+			FormideOS.log('Cloud disconnected, reconnecting...');
+
+			// try reconnecting
+			// this.cloud.reconnect();
 		});
 	},
 
