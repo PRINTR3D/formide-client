@@ -43,7 +43,7 @@
     "fancy-errors": "^0.1.2",
     "formide-client-interface": "^0.3.37",
     "formide-drivers": "git+https://github.com/printr3d/formide-drivers-npm.git",
-    "formide-tools": "git+https://github.com/printr3d/formide-tools.git",
+    "formide-tools": "github:printr3d/formide-tools",
     "getmac": "^1.0.7",
     "gitty": "^3.2.3",
     "ini": "^1.3.4",
