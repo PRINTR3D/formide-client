@@ -39,8 +39,8 @@ module.exports = {
 	// custom functions
 	slice: function(userId, files, sliceProfile, materials, printer, settings, callback) {
 
-		if (this.katana === null) return res.serverError(new Error('slicer not loaded'));
-
+		if (this.katana === null) return callback(new Error('slicer not loaded'));
+		
 		var self = this;
 		var hash = uuid.v4();
 		var responseId = uuid.v4();
