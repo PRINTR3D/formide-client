@@ -22,7 +22,7 @@ module.exports = function(routes, module)
 	 */
 	routes.get('/generaterequest/:printJobId', function(req, res) {
 		module.createSliceRequest(req.params.printJobId, function(err, sliceRequest) {
-			if (err) return res.send(err);
+			if (err) return res.serverError(err);
 			return res.json(sliceRequest);
 		});
 	});
@@ -32,7 +32,7 @@ module.exports = function(routes, module)
 	 */
 	routes.get('/reference', function(req, res) {
 		module.getReferenceFile(function(err, reference) {
-			if (err) return res.send(err);
+			if (err) return res.serverError(err);
 			return res.json(reference);
 		});
 	});

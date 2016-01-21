@@ -21,7 +21,7 @@ module.exports = (routes, module) => {
 	 */
 	routes.get('/networks', (req, res) => {
 		module.getNetworks((err, networks) => {
-			if (err) return res.serverError(err.message);
+			if (err) return res.serverError(err);
 			return res.ok(networks);
 		});
 	});
@@ -31,7 +31,7 @@ module.exports = (routes, module) => {
 	 */
 	routes.post('/setup', (req, res) => {
 		module.setupMode(err => {
-			if (err) return res.serverError(err.message);
+			if (err) return res.serverError(err);
 			return res.ok({ message: 'Started access point' });
 		});
 	});
@@ -47,7 +47,7 @@ module.exports = (routes, module) => {
 
 		module.connect(req.body.ssid, req.body.password, err => {
 			if (err)
-				return res.serverError(err.message);
+				return res.serverError(err);
 
 			res.ok({ message: 'Device connected to network' });
 		});
@@ -68,7 +68,7 @@ module.exports = (routes, module) => {
 
 		module.connect(req.body.ssid, req.body.password, err => {
 			if (err)
-				return res.serverError(err.message);
+				return res.serverError(err);
 
 			res.ok({ message: 'Device connected to network' });
 
