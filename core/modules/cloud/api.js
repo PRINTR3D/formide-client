@@ -37,7 +37,24 @@ module.exports = (routes, module) => {
 	});
 
 	/**
-	 * Connect to a network
+	 * Connect to wifi
+	 */
+	routes.post('/wifi', (req, res) => {
+		if (req.body.ssid == null)
+			return res.badRequest('ssid must be set');
+		if (req.body.password == null)
+			return res.badRequest('password must be set');
+
+		module.connect(req.body.ssid, req.body.password, err => {
+			if (err)
+				return res.serverError(err.message);
+
+			res.ok({ message: 'Device connected to network' });
+		});
+	});
+
+	/**
+	 * Connect to wifi and register to cloud
 	 */
 	routes.post('/connect', (req, res) => {
 		if (req.body.ssid == null)
