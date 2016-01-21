@@ -175,17 +175,7 @@ module.exports = {
 								bucketOut: FormideOS.config.get('app.storageDir') + FormideOS.config.get("paths.gcode"),
 								responseId: printJob.responseId
 							})
-							.generateBaseSettings()
-							.generatePrinterGcodeSettings()
-							.generateRaftSettings()
-							.generateSupportSettings()
-							.generateSkirtSettings()
-							.generateFanSettings()
-							.generateBedSettings()
-							.generateModelSettings()
-							.generateExtruderSettings()
-							.generateOverrideSettings()
-							.getResult();
+							.generateAll();
 
 							return callback(null, sliceRequest);
 						}
