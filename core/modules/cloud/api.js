@@ -55,17 +55,23 @@ module.exports = (routes, module) => {
 
 			res.ok({ message: 'Device connected to network' });
 
-			request.post(
-				`${FormideOS.config.get('cloud.url')}/devices/register`,
-				{ form: {
-					mac_address:        req.body.macAddress,
-					registration_token: req.body.registrationToken
-				}},
-				(err, response, body) => {
-					if (err) return FormideOS.log(err.message);
-					if (response.statusCode == 200) return FormideOS.log('Device registered');
-					return FormideOS.log('Device registration failed: ' + body);
-				});
+			var tryRegister = setInterval(function() {
+				request.post(
+					`${FormideOS.config.get('cloud.url')}/devices/register`,
+					{ form: {
+						mac_address:        req.body.macAddress,
+						registration_token: req.body.registrationToken
+					}},
+					(err, response, body) => {
+						if (err) return FormideOS.log(err.message);
+
+						// clear interval when getting a proper response from the API
+						clearInterval(tryRegister);
+
+						if (response.statusCode == 200) return FormideOS.log('Device registered');
+						return FormideOS.log('Device registration failed: ' + body);
+					});
+			}, 3000);
 		});
 	});
 };
