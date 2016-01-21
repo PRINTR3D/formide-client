@@ -176,7 +176,7 @@ module.exports = {
 			FormideOS.log('Cloud disconnected, reconnecting...');
 
 			// try reconnecting
-			// this.cloud.reconnect();
+			this.cloud.io.reconnect();
 		});
 	},
 
