@@ -48,6 +48,8 @@ module.exports = {
 								}
 							}));
 
+							FormideOS.log('new listener', callbackId);
+
 							self.listeners[callbackId] = function(event, data) {
 								data = data || {};
 								data.device = "LOCAL";
@@ -92,6 +94,8 @@ module.exports = {
 						callback({ success: false, message: "Access token not found. Please provide a valid access token." });
 						return socket.disconnect();
 					}
+
+					FormideOS.log('new listener', socket.id);
 
 					self.listeners[socket.id] = function(event, data) {
 						socket.emit(event, data);
