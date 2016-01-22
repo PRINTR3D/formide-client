@@ -10,7 +10,6 @@
 
 const io   = require('socket.io');
 const ws   = require('nodejs-websocket');
-const uuid = require('node-uuid');
 
 module.exports = {
 
@@ -20,17 +19,17 @@ module.exports = {
 
 		var self = this;
 
-		// call all event listener functions
-		FormideOS.events.onAny(function (data) {
-			for (var i in self.listeners) {
-				self.listeners[i].call(this, this.event, data);
-			}
-		});
-
 		// base websocket server to LCD display notifications and events
 		var server = ws.createServer(function (conn) {
 
-			const callbackId = uuid.v4();
+			function forwardEvents(data) {
+				data = data || {};
+				data.device = "LOCAL";
+				conn.sendText(JSON.stringify({
+					channel: this.event,
+					data:    data
+				}));
+			}
 
 			conn.on("text", function (message) {
 				try {
@@ -48,16 +47,7 @@ module.exports = {
 								}
 							}));
 
-							FormideOS.log('new listener', callbackId);
-
-							self.listeners[callbackId] = function(event, data) {
-								data = data || {};
-								data.device = "LOCAL";
-								conn.sendText(JSON.stringify({
-									channel: event,
-									data:    data
-								}));
-							}
+							FormideOS.events.onAny(forwardEvents);
 						});
 					}
 				}
@@ -67,12 +57,11 @@ module.exports = {
 			});
 
 		    conn.on("close", function (code, reason) {
-				delete self.listeners[callbackId];
+				FormideOS.events.offAny(forwardEvents);
 		        FormideOS.log("Socket disconnected: " + reason);
 		    });
 
 		    conn.on("error", function (err) {
-			    delete self.listeners[callbackId];
 				FormideOS.log.error(err.message);
 		    });
 
@@ -83,6 +72,11 @@ module.exports = {
 
 		// emit all system events
 		socketio.on('connection', function(socket) {
+
+			function forwardSocketEvents(data) {
+				socket.emit(this.event, data);
+			}
+
 			socket.on('authenticate', function(data, callback) {
 				authenticate(data.accessToken, function(err, accessToken) {
 					if (err) {
@@ -95,11 +89,7 @@ module.exports = {
 						return socket.disconnect();
 					}
 
-					FormideOS.log('new listener', socket.id);
-
-					self.listeners[socket.id] = function(event, data) {
-						socket.emit(event, data);
-					};
+					FormideOS.events.onAny(forwardSocketEvents);
 
                     callback({
                         success: true,
@@ -109,12 +99,11 @@ module.exports = {
 			});
 
 			socket.on('error', function (err) {
-				delete self.listeners[socket.id];
 				FormideOS.log.error('Socket err', err.message);
 			});
 
 			socket.on('disconnect', function () {
-				delete self.listeners[socket.id];
+				FormideOS.events.offAny(forwardSocketEvents);
 				FormideOS.log('Socket disconnected');
 			});
 		});
