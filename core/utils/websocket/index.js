@@ -62,7 +62,7 @@ module.exports = {
 		    });
 
 		    conn.on("error", function (err) {
-				FormideOS.log.error(err.message);
+				// FormideOS.log.error(err.message);
 		    });
 
 		}).listen(3001)
