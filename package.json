@@ -14,7 +14,7 @@
   "contributors": "https://github.com/PRINTR3D/formide-client/graphs/contributors",
   "license": "GPL-2.0",
   "scripts": {
-    "start": "NODE_ENV=development node bootstrap",
+    "start": "NODE_ENV=development node app",
     "test": "NODE_ENV=test mocha --harmony test/**/*.test.js"
   },
   "dependencies": {
