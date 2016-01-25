@@ -290,6 +290,16 @@ module.exports = {
 	},
 
 	/**
+	 * Get network connection status
+	 */
+	getStatus: function(cb) {
+		if (this.tools)
+			this.tools.status(cb);
+		else
+			cb(new Error('element-tools not installed'));
+	},
+
+	/**
 	 * Get a list of nearby networks to connect to
 	 */
 	getNetworks: function(cb) {

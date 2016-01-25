@@ -17,6 +17,16 @@ module.exports = (routes, module) => {
 	});
 
 	/**
+	 * Get the current network connection status
+	 */
+	routes.get('/status', (req, res) => {
+		module.getStatus((err, status) => {
+			if (err) return res.serverError(err);
+			return res.ok(status);
+		});
+	});
+
+	/**
 	 * List nearby networks
 	 */
 	routes.get('/networks', (req, res) => {
