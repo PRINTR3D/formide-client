@@ -76,36 +76,6 @@ module.exports = {
 		});
 	},
 
-	/*
-	 * Handle upload from remote url
-	 */
-	// uploadFromUrl: function(url, filename, filetype, userId, callback) {
-	// 	request({
-	// 		method: 'GET',
-	// 		url: url
-	// 	})
-	// 	.on('response', function(response) {
-	// 		var regexp = /filename=\"(.*)\"/gi;
-	// 		var hash = uuid.v4();
-	// 		var newPath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.modelfiles'), hash);
-	// 		var fws = fs.createWriteStream(newPath);
-	// 		response.pipe(fws);
-	// 		response.on( 'end', function() {
-	// 			FormideOS.db.UserFile.create({
-	// 				prettyname: filename,
-	// 				filename: filename,
-	// 				filesize: fws.bytesWritten,
-	// 				filetype: filetype,
-	// 				hash: hash,
-	// 				createdBy: userId
-	// 			}, function(err, userFile) {
-	// 				if (err) return callback(err)
-	// 				return callback(null, userFile);
-	// 			});
-    //     	});
-	// 	});
-	// }
-
 	/**
 	 * Get disk space on user data partition
 	 */
