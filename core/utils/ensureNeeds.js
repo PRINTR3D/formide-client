@@ -4,6 +4,7 @@ const storageDir	= FormideOS.config.get('app.storageDir');
 const logDir		= path.join(FormideOS.config.get('app.storageDir'), 'logs');
 const filesDir		= path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.modelfiles'));
 const gcodeDir		= path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.gcode'));
+const imageDir		= path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.images'));
 
 // create needed folders
 if (!fs.existsSync(storageDir)) {
@@ -24,4 +25,9 @@ if (!fs.existsSync(filesDir)){
 if (!fs.existsSync(gcodeDir)){
 	console.log("Gcode folder not found, creating...");
 	fs.mkdirSync(gcodeDir);
+}
+
+if (!fs.existsSync(imageDir)){
+	console.log("Image folder not found, creating...");
+	fs.mkdirSync(imageDir);
 }
