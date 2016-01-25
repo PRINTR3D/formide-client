@@ -44,6 +44,7 @@
     "formide-client-interface": "^0.3.37",
     "formide-drivers": "git+https://github.com/printr3d/formide-drivers-npm.git",
     "formide-tools": "github:printr3d/formide-tools#v0.0.26",
+    "fs-extra": "^0.26.4",
     "getmac": "^1.0.7",
     "gitty": "^3.2.3",
     "ini": "^1.3.4",

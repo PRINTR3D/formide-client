@@ -15,6 +15,11 @@ module.exports = {
 			required: true
 		},
 
+		name: {
+			type: 'string',
+			required: true
+		},
+
 		files: {
 			collection: 'userfile',
 			via: 'printJobs',
@@ -23,20 +28,17 @@ module.exports = {
 
 		printer: {
 			model: 'printer',
-			via: 'printJobs',
-			required: true
+			via: 'printJobs'
 		},
 
 		sliceProfile: {
 			model: 'sliceprofile',
-			via: 'printJobs',
-			required: true
+			via: 'printJobs'
 		},
 
 		materials: {
 			collection: 'material',
-			via: 'printJobs',
-			required: true
+			via: 'printJobs'
 		},
 
 		gcode: {
@@ -44,8 +46,7 @@ module.exports = {
 		},
 
 		responseId: {
-			type: 'string',
-			required: true
+			type: 'string'
 		},
 
 		sliceSettings: {
