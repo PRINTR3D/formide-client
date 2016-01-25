@@ -53,7 +53,7 @@ module.exports = {
 		}
 		catch (e) {
 			FormideOS.log.warn('element-tools not found for wifi, probably not running on The Element');
-			FormideOS.log.warn(e);
+			// FormideOS.log.warn(e);
 		}
 
 		function forwardEvents(data) {
