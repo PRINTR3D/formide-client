@@ -79,10 +79,23 @@ module.exports = (routes, db) => {
 	 */
 	routes.delete('/printjobs/:id', (req, res) => {
 		db.PrintJob
-		.destroy({ id: req.params.id, createdBy: req.user.id })
-		.then(() => {
-			return res.ok({ message: "Printjob deleted" });
+		.findOne({ id: req.params.id, createdBy: req.user.id })
+		.then(printJob => {
+			// delete file from storage
+			var filePath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.gcode'), printJob.gcode);
+			try {
+				fs.unlinkSync(filePath);
+			}
+			catch (e) {
+				FormideOS.log.warn('file could not be deleted from storage');
+			}
+
+			// delete from database
+			printJob.destroy(function (err) {
+				if (err) return res.serverError(err);
+				return res.ok({ message: "Printjob deleted" });
+			});
 		})
-		.error(res.serverError);
+		.catch(res.serverError);
 	});
 };
