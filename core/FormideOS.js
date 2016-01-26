@@ -13,8 +13,7 @@
 
 const path             = require('path');
 const sailsDiskAdapter = require('sails-disk');
-
-const initDb = require('./utils/db');
+const initDb 		   = require('./utils/db');
 
 // FormideOS global object
 global.FormideOS = {};

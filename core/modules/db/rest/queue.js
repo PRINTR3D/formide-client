@@ -44,8 +44,8 @@ module.exports = (routes, db) => {
 	routes.post('/queue', (req, res) => {
 
 		assert(req.body);
-		assert(req.body.printJob);
-		assert(req.body.port);
+		assert(req.body.printJob, 'printJob is a required parameter');
+		assert(req.body.port, 'port is a required parameter');
 
 		db.PrintJob
 		.findOne({ id: req.body.printJob, createdBy: req.user.id })
@@ -54,22 +54,17 @@ module.exports = (routes, db) => {
 		.populate('sliceProfile')
 		.populate('printer')
 		.then((printJob) => {
-			//db.Printer
-			//.findOne({ id: req.params.printerId })
-			//.then((printer) => {
-				db.QueueItem
-				.create({
-					origin:		'local',
-					gcode:		printJob.gcode,
-					printJob:	printJob.toObject(),
-					port:		req.body.port
-				})
-				.then((queueItem) => {
-					return res.ok({ message: "Printjob added to queue", queueItem });
-				})
-				.error(res.serverError);
-			//})
-			//.error(res.serverError);
+			db.QueueItem
+			.create({
+				origin:		'local',
+				gcode:		printJob.gcode,
+				printJob:	printJob.toObject(),
+				port:		req.body.port
+			})
+			.then((queueItem) => {
+				return res.ok({ message: "Printjob added to queue", queueItem });
+			})
+			.error(res.serverError);
 		})
 		.error(res.serverError);
 	});

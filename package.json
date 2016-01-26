@@ -14,7 +14,7 @@
   "contributors": "https://github.com/PRINTR3D/formide-client/graphs/contributors",
   "license": "GPL-2.0",
   "scripts": {
-    "start": "NODE_ENV=development node bootstrap",
+    "start": "NODE_ENV=development node app",
     "test": "NODE_ENV=test mocha --harmony test/**/*.test.js"
   },
   "dependencies": {
@@ -44,6 +44,7 @@
     "formide-client-interface": "^0.3.37",
     "formide-drivers": "git+https://github.com/printr3d/formide-drivers-npm.git",
     "formide-tools": "github:printr3d/formide-tools#v0.0.26",
+    "fs-extra": "^0.26.4",
     "getmac": "^1.0.7",
     "gitty": "^3.2.3",
     "ini": "^1.3.4",

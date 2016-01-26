@@ -3,6 +3,11 @@
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
+const assert = require('assert');
+const fs	 = require('fs-extra');
+const path   = require('path');
+const uuid   = require('node-uuid');
+
 module.exports = (routes, db) => {
 
 	/**
@@ -40,18 +45,33 @@ module.exports = (routes, db) => {
 	 * Add a printJob from custom gcode
 	 */
 	routes.post('/printjobs', (req, res) => {
-		db.PrintJob
-		.create({
-			sliceMethod:	"custom",
-			sliceFinished:	true,
-			gcode:			req.body.gcodeHash,		// TODO: make better
-			files:			[ req.body.gcodeId ],	// TODO: make better
-			createdBy:		req.user.id
-		})
-		.then((printJob) => {
-			return res.ok({ message: "Printjob created from custom gcode", printJob });
-		})
-		.error(res.serverError);
+		assert(req.body);
+		assert(req.body.gcodeID);
+
+		db.UserFile
+		.findOne({ id: req.body.gcodeID })
+		.then(userFile => {
+
+			// copy gcode file to gcodes folder so original file can be deleted
+			var filename = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.modelfiles'), userFile.hash);
+			var newHash = uuid.v4();
+			var newFilename = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.gcode'), newHash);
+			fs.copySync(filename, newFilename);
+
+			db.PrintJob
+			.create({
+				name:			userFile.filename,
+				sliceMethod:	"custom",
+				sliceFinished:	true,
+				gcode:			newHash,
+				files:			[ userFile.id ], // only 1 gcode per custom printJob is allowed
+				createdBy:		req.user.id
+			})
+			.then(printJob => {
+				return res.ok({ message: "Printjob created from custom gcode", printJob });
+			})
+			.catch(res.serverError);
+		});
 	});
 
 	/**
@@ -59,10 +79,23 @@ module.exports = (routes, db) => {
 	 */
 	routes.delete('/printjobs/:id', (req, res) => {
 		db.PrintJob
-		.destroy({ id: req.params.id, createdBy: req.user.id })
-		.then(() => {
-			return res.ok({ message: "Printjob deleted" });
+		.findOne({ id: req.params.id, createdBy: req.user.id })
+		.then(printJob => {
+			// delete file from storage
+			var filePath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.gcode'), printJob.gcode);
+			try {
+				fs.unlinkSync(filePath);
+			}
+			catch (e) {
+				FormideOS.log.warn('file could not be deleted from storage');
+			}
+
+			// delete from database
+			printJob.destroy(function (err) {
+				if (err) return res.serverError(err);
+				return res.ok({ message: "Printjob deleted" });
+			});
 		})
-		.error(res.serverError);
+		.catch(res.serverError);
 	});
 };

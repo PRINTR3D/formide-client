@@ -53,7 +53,7 @@ module.exports = {
 		}
 		catch (e) {
 			FormideOS.log.warn('element-tools not found for wifi, probably not running on The Element');
-			FormideOS.log.warn(e);
+			// FormideOS.log.warn(e);
 		}
 
 		function forwardEvents(data) {
@@ -287,6 +287,16 @@ module.exports = {
 				});
 			});
 		});
+	},
+
+	/**
+	 * Get network connection status
+	 */
+	getStatus: function(cb) {
+		if (this.tools)
+			this.tools.status(cb);
+		else
+			cb(new Error('element-tools not installed'));
 	},
 
 	/**
