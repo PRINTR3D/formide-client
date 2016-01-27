@@ -206,11 +206,13 @@ AbstractPrinter.prototype.printFinished = function(queueItemId) {
 	FormideOS.db.QueueItem
 	.findOne({ id: self.queueItemId }, function(err, queueItem) {
 
-		self.queueItemId = null;
 		FormideOS.events.emit('printer.finished', {
 			port:		 self.port,
 			queueItemId: self.queueItemId
 		});
+
+		// reset queueItemId of current print
+		self.queueItemId = null;
 
 		// remove gcode from cloud
 		if (queueItem.origin === 'cloud') {
