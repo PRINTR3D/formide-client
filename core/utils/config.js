@@ -18,7 +18,7 @@ function getUserHome() {
 
 module.exports = function() {
 
-	var env = process.env.NODE_ENV || 'production';
+	const env = process.env.NODE_ENV || 'production';
 	var cfg = require('../../config/' + env + '.json');
 
 	// get current home directory for user storage
@@ -51,7 +51,35 @@ module.exports = function() {
 			return this;
 		},
 
-		environment: env
+		environment: env,
+
+        getVersions: function() {
+            const elementToolsVersion, rootfsVersion;
+
+			function* getCurrentVersion() {
+				const elementTools = require('element-tools');
+				return yield elementTools.getCurrentVersion();
+			}
+
+			try {
+				rootfsVersion = getCurrentVersion();
+				elementToolsVersion = require('element-tools/package.json').version;
+			}
+			catch (e) {
+				elementToolsVersion = false;
+				rootFsVersion = false;
+			}
+
+			const versions = {
+				'formide-client': require('../../package.json').version,
+				'formide-tools': require('formide-tools/package.json').version,
+				'formide-client-interface': require('formide-client-interface/package.json').version,
+				'element-tools': elementToolsVersion,
+				'rootfs': rootfsVersion
+			};
+
+            return versions;
+        }
 	};
 
 	return config;

@@ -99,13 +99,14 @@ module.exports = {
 					var pkg = fs.readFileSync(path.join(FormideOS.appRoot, 'package.json'), 'utf8');
 					pkg = JSON.parse(pkg); // no try needed, since package.json needs to be valid for the app to boot at all
 					self.cloud.emit('authenticate', {
-						type: 'client',
-						mac: macAddress,
-						ip: ip,
+						type: 		 'client',
+						mac: 		 macAddress,
+						ip: 		 ip,
 						ip_internal: internalIp(),
-						version: pkg.version,
+						version:     pkg.version,
 						environment: FormideOS.config.environment,
-						port: FormideOS.config.get('app.port')
+						versions:    FormideOS.config.getVersions(),
+						port:        FormideOS.config.get('app.port')
 					}, function(response) {
 						if (response.success) {
 							FormideOS.log('Cloud connected');
