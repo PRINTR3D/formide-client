@@ -13,7 +13,7 @@ const internalIp = require('internal-ip');
 const fs	     = require('fs');
 const path		 = require('path');
 const uuid		 = require('node-uuid');
-const getMac	 = require('getmac');
+// const getMac	 = require('getmac');
 
 function addWifiSetupRoute(app, tools) {
 	app.get('/setup', (req, res) => {

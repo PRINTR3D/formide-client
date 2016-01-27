@@ -78,16 +78,19 @@ module.exports = function() {
 }
 
 function getVersions() {
-    const elementToolsVersion, rootfsVersion;
+    var elementToolsVersion, rootfsVersion;
 
     try {
         Sync(function() {
             const elementTools = require('element-tools');
-            const rootfsVersion = elementTools.getCurrentVersion.sync();
+            rootfsVersion = elementTools.getCurrentVersion.sync();
+        }, function (err) {
+            if (err) console.error(err);
         });
         elementToolsVersion = require('element-tools/package.json').version;
     }
     catch (e) {
+        console.error(e);
         elementToolsVersion = false;
         rootFsVersion = false;
     }
