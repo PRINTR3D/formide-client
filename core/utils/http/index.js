@@ -110,7 +110,31 @@ module.exports = {
 
 		// root url containing device information
 		this.app.get('/', function (req, res) {
-			
+			const elementToolsVersion, rootfsVersion;
+
+			function* getCurrentVersion() {
+				const elementTools = require('element-tools');
+				return yield elementTools.getCurrentVersion();
+			}
+
+			try {
+				rootfsVersion = getCurrentVersion();
+				elementToolsVersion = require('element-tools/package.json').version;
+			}
+			catch (e) {
+				elementToolsVersion = false;
+				rootFsVersion = false;
+			}
+
+			return res.ok({
+				versions: {
+					'formide-client': require('../../../package.json').version,
+					'formide-tools': require('formide-tools/package.json').version,
+					'formide-client-interface': require('formide-client-interface/package.json').version,
+					'element-tools': elementToolsVersion,
+					'rootfs': rootfsVersion
+				}
+			});
 		});
 	},
 
