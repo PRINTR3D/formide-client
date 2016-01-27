@@ -81,12 +81,14 @@ function getVersions() {
     var elementToolsVersion, rootfsVersion;
 
     try {
+        const elementTools = require('element-tools');
+
         Sync(function() {
-            const elementTools = require('element-tools');
             rootfsVersion = elementTools.getCurrentVersion.sync();
         }, function (err) {
             if (err) console.error(err);
         });
+        
         elementToolsVersion = require('element-tools/package.json').version;
 
         return versions = {
