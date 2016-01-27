@@ -95,15 +95,15 @@ module.exports = {
 
 			// authenticate formideos based on mac address and api token, also sends permissions for faster blocking via cloud
 			publicIp(function (err, ip) {
-				getMac.getMac(function(err, macAddress) {
+				//getMac.getMac(function(err, macAddress) {
 					self.cloud.emit('authenticate', {
 						type: 		 'client',
 						ip: 		 ip,
 						ip_internal: internalIp(),
-						version:     FormideOS.config.versions['formide-client'],
+						version:     FormideOS.config.getVersions()['formide-client'],
 						environment: FormideOS.config.environment,
-						mac: 		 macAddress,
-						versions:    FormideOS.config.versions,
+						mac: 		 FormideOS.config.getMacAddress(),
+						versions:    FormideOS.config.getVersions(),
 						port:        FormideOS.config.get('app.port')
 					}, function(response) {
 						if (response.success) {
@@ -117,7 +117,7 @@ module.exports = {
 							FormideOS.log.error('Cloud connection error: ' + response.message);
 						}
 					});
-				});
+				//});
 			});
 		});
 

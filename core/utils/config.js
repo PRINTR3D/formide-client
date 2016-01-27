@@ -9,7 +9,9 @@
  *	3rd party module config files as well.
  */
 
-const path     = require('path');
+const path   = require('path');
+const getMac = require('getmac');
+const Sync   = require('sync');
 
 function getUserHome() {
     if (process.platform === 'win32') return process.env.USERPROFILE;
@@ -22,6 +24,14 @@ module.exports = function() {
 
 	const env = process.env.NODE_ENV || 'production';
 	var cfg = require('../../config/' + env + '.json');
+    var macAddress;
+
+    // get mac address
+    Sync(function() {
+        macAddress = getMac.getMac.sync();
+    }, function (err) {
+        if (err) console.error(err);
+    });
 
 	// get current home directory for user storage
 	cfg.app.storageDir = path.join(getUserHome(), 'formide');
@@ -55,7 +65,13 @@ module.exports = function() {
 
 		environment: env,
 
-        versions: versions
+        getVersions: function() {
+            return versions;
+        },
+
+        getMacAddress: function() {
+            return macAddress
+        }
 	};
 
 	return config;
@@ -64,16 +80,11 @@ module.exports = function() {
 function getVersions() {
     const elementToolsVersion, rootfsVersion;
 
-    function* getCurrentVersion() {
-        const elementTools = require('element-tools');
-        const currentVersion = yield elementTools.getCurrentVersion(function (err, version) {
-            return version;
-        });
-        return currentVersion;
-    }
-
     try {
-        rootfsVersion = getCurrentVersion();
+        Sync(function() {
+            const elementTools = require('element-tools');
+            const rootfsVersion = elementTools.getCurrentVersion.sync();
+        });
         elementToolsVersion = require('element-tools/package.json').version;
     }
     catch (e) {
