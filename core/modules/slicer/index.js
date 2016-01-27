@@ -4,10 +4,10 @@
  */
 
 // dependencies
-var fs 				= require('fs');
-var uuid 			= require('node-uuid');
-var formideTools	= require('formide-tools');
-var assert			= require('assert');
+const fs 			= require('fs');
+const uuid 			= require('node-uuid');
+const formideTools	= require('formide-tools');
+const assert		= require('assert');
 
 module.exports = {
 
@@ -38,95 +38,111 @@ module.exports = {
 
 	// custom functions
 	slice: function(userId, files, sliceProfile, materials, printer, settings, callback) {
-
 		if (this.katana === null) return callback(new Error('slicer not loaded'));
-		
-		var self = this;
-		var hash = uuid.v4();
-		var responseId = uuid.v4();
-		var callback = callback;
 
-		FormideOS.db.PrintJob.create({
-			files: files,
-			printer: printer,
-			sliceProfile: sliceProfile,
-			materials: materials,
-			sliceFinished: false,
-			sliceSettings: settings,
-			sliceMethod: "local",
-			createdBy: userId,
-			responseId: responseId
-		}, function(err, printJob) {
-			if (err) return callback(err);
+		const self = this;
+		const hash = uuid.v4();
+		const responseId = uuid.v4();
 
-			self.createSliceRequest(printJob.id, function(err, sliceRequest) {
-				if (err) return callback(err);
+		assert(userId);
+		assert(files);
+		assert(sliceProfile);
+		assert(materials);
+		assert(printer);
+		assert(settings);
+		assert(callback);
 
-				callback(null, printJob);
+		FormideOS.db.UserFile
+		.find({ id: files })
+		.then(function(userFiles) {
+			const fileNames = [];
+			for (var i in userFiles) {
+				fileNames.push(userFiles[i].filename);
+			}
+			const printJobName = fileNames.join(' + ');
 
-				var sliceData = {
-					type: "slice",
-					data: sliceRequest
-				};
+			FormideOS.db.PrintJob
+			.create({
+				name: 		   printJobName,
+				files: 		   files,
+				printer: 	   printer,
+				sliceProfile:  sliceProfile,
+				materials: 	   materials,
+				sliceFinished: false,
+				sliceSettings: settings,
+				sliceMethod:   'local',
+				createdBy: 	   userId,
+				responseId:    responseId
+			})
+			.then(function(printJob) {
+				self.createSliceRequest(printJob.id, function(err, sliceRequest) {
+					if (err) return callback(err);
 
-				// write slicerequest to local Katana instance
-				FormideOS.events.emit('slicer.started', {
-					title: "Slicer started",
-					message: "Started slicing " + printJob.id,
-					data: sliceRequest
+					// already return response
+					callback(null, printJob);
+
+					var sliceData = {
+						type: 'slice',
+						data: sliceRequest
+					};
+
+					// write slicerequest to local Katana instance
+					FormideOS.events.emit('slicer.started', {
+						title:   'Slicer started',
+						message: 'Started slicing ' + printJob.name,
+						data:    sliceRequest
+					});
+
+					self.katana.slice(JSON.stringify(sliceData), function(response) {
+						try {
+							var response = JSON.parse(response);
+
+							if (response.status == 200 && response.data.responseId != null) {
+								FormideOS.db.PrintJob
+								.update({ responseId: response.data.responseId }, {
+									gcode: 		   response.data.hash,
+									sliceResponse: response.data,
+									sliceFinished: true
+								})
+								.then(function(updated) {
+									return FormideOS.events.emit('slicer.finished', {
+										title:   	  'Slicer finished',
+										message: 	  'Finished slicing ' + updated[0].name,
+										data:         response.data
+									});
+								})
+								.catch(FormideOS.log.error);
+							}
+							else if (response.status === 120) {
+								// note: not implemented  yet
+								FormideOS.events.emit('slicer.progress', response.data);
+							}
+							else {
+								FormideOS.db.PrintJob
+								.update({ responseId: response.data.responseId }, {
+									sliceResponse: response.data,
+									sliceFinished: false
+								})
+								.then(function(updated) {
+									return FormideOS.events.emit('slicer.failed', {
+										title:   'Slicer error',
+										status:  response.status,
+										message: 'Failed slicing ' + updated[0].name,
+										data:    response.data
+									});
+								})
+								.catch(FormideOS.log.error);
+							}
+						}
+						catch(e) {
+							FormideOS.log.error(e);
+						}
+					});
 				});
-
-				self.katana.slice(JSON.stringify(sliceData), function(response) {
-
-					console.log('slicer response', response);
-
-					try {
-						var response = JSON.parse(response);
-
-						if(response.status == 200 && response.data.responseId != null) {
-							FormideOS.db.PrintJob
-							.update({ responseId: response.data.responseId }, {
-								gcode: response.data.hash,
-								sliceResponse: response.data,
-								sliceFinished: true
-							}, function(err, printJob) {
-								if (err) FormideOS.log.error(err.message);
-								FormideOS.events.emit('slicer.finished', {
-									title: "Slicer finished",
-									message: "Finished slicing " + response.data.responseId,
-									data: response.data,
-									notification: true
-								});
-								return;
-							});
-						}
-						else if(response.status === 120) {
-							FormideOS.events.emit('slicer.progress', response.data);
-						}
-						else {
-							FormideOS.db.PrintJob
-							.update({ responseId: response.data.responseId }, {
-								sliceResponse: response.data,
-								sliceFinished: false
-							}, function(err, printJob) {
-								if (err) FormideOS.log.error(err.message);
-								FormideOS.events.emit('slicer.failed', {
-									title: "Slicer error",
-									status: response.status,
-									message: response.data.msg,
-									data: response.data,
-									notification: true
-								});
-								return;
-							});
-						}
-					}
-					catch(e) {
-						FormideOS.log.error(e.message);
-					}
-				});
-			});
-		});
+			})
+			.catch(callback);
+		})
+		.catch(callback);
 	},
 
 	createSliceRequest: function(printJobId, callback) {

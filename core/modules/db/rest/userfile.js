@@ -4,6 +4,8 @@
  */
 
 const async = require('async');
+const path  = require('path');
+const fs    = require('fs');
 
 module.exports = (routes, db) => {
 
@@ -73,10 +75,23 @@ module.exports = (routes, db) => {
 	 */
 	routes.delete('/files/:id', function(req, res) {
 		db.UserFile
-		.destroy({ id: req.params.id, createdBy: req.user.id })
-		.then(() => {
-			return res.ok({ message: "File deleted" });
+		.findOne({ id: req.params.id, createdBy: req.user.id })
+		.then(userFile => {
+			// delete file from storage
+			var filePath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.modelfiles'), userFile.hash);
+			try {
+				fs.unlinkSync(filePath);
+			}
+			catch (e) {
+				FormideOS.log.warn('file could not be deleted from storage');
+			}
+
+			// delete from database
+			userFile.destroy(function (err) {
+				if (err) return res.serverError(err);
+				return res.ok({ message: "File deleted" });
+			});
 		})
-		.error(res.serverError);
+		.catch(res.serverError);
 	});
 };

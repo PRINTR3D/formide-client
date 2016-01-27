@@ -19,7 +19,8 @@
 	"paths": {
 		"temp": "/tmp",
 		"modelfiles": "/modelfiles",
-		"gcode": "/gcode"
+		"gcode": "/gcode",
+		"images": "/images"
 	},
 	"printer": {},
 	"slicer": {

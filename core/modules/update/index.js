@@ -24,7 +24,7 @@ module.exports = {
 		}
 		catch (e) {
 			FormideOS.log.warn('element-tools not found for update, probably not running on The Element');
-			FormideOS.log.warn(e);
+			// FormideOS.log.warn(e);
 		}
 
 		this.channel = config.channel;
@@ -32,7 +32,7 @@ module.exports = {
 
 		this.checkForUpdate(function (err, update) {
 			FormideOS.log.error(err);
-			FormideOS.log('update:');
+			FormideOS.log('update available');
 			FormideOS.log(update);
 		});
 	},

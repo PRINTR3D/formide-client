@@ -13,7 +13,7 @@ const internalIp = require('internal-ip');
 const fs	     = require('fs');
 const path		 = require('path');
 const uuid		 = require('node-uuid');
-const getMac	 = require('getmac');
+// const getMac	 = require('getmac');
 
 function addWifiSetupRoute(app, tools) {
 	app.get('/setup', (req, res) => {
@@ -53,7 +53,7 @@ module.exports = {
 		}
 		catch (e) {
 			FormideOS.log.warn('element-tools not found for wifi, probably not running on The Element');
-			FormideOS.log.warn(e);
+			// FormideOS.log.warn(e);
 		}
 
 		function forwardEvents(data) {
@@ -95,17 +95,16 @@ module.exports = {
 
 			// authenticate formideos based on mac address and api token, also sends permissions for faster blocking via cloud
 			publicIp(function (err, ip) {
-				getMac.getMac(function(err, macAddress) {
-					var pkg = fs.readFileSync(path.join(FormideOS.appRoot, 'package.json'), 'utf8');
-					pkg = JSON.parse(pkg); // no try needed, since package.json needs to be valid for the app to boot at all
+				//getMac.getMac(function(err, macAddress) {
 					self.cloud.emit('authenticate', {
-						type: 'client',
-						mac: macAddress,
-						ip: ip,
+						type: 		 'client',
+						ip: 		 ip,
 						ip_internal: internalIp(),
-						version: pkg.version,
+						version:     FormideOS.config.getVersions()['formide-client'],
 						environment: FormideOS.config.environment,
-						port: FormideOS.config.get('app.port')
+						mac: 		 FormideOS.config.getMacAddress(),
+						versions:    FormideOS.config.getVersions(),
+						port:        FormideOS.config.get('app.port')
 					}, function(response) {
 						if (response.success) {
 							FormideOS.log('Cloud connected');
@@ -118,7 +117,7 @@ module.exports = {
 							FormideOS.log.error('Cloud connection error: ' + response.message);
 						}
 					});
-				});
+				//});
 			});
 		});
 
@@ -287,6 +286,16 @@ module.exports = {
 				});
 			});
 		});
+	},
+
+	/**
+	 * Get network connection status
+	 */
+	getStatus: function(cb) {
+		if (this.tools)
+			this.tools.status(cb);
+		else
+			cb(new Error('element-tools not installed'));
 	},
 
 	/**
