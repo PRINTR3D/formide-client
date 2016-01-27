@@ -84,6 +84,7 @@ function getVersions() {
         Sync(function() {
             const elementTools = require('element-tools');
             rootfsVersion = elementTools.getCurrentVersion.sync();
+            console.log('rootfsVersion', rootfsVersion);
         }, function (err) {
             if (err) console.error(err);
         });
