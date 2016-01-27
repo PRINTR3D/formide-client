@@ -107,6 +107,11 @@ module.exports = {
 			res.unauthorized = require('./responses/unauthorized').bind({ req: req, res: res });
 			next();
 		});
+
+		// root url containing device information
+		this.app.get('/', function (req, res) {
+			
+		});
 	},
 
 	setupPassport: function() {
