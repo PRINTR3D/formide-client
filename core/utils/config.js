@@ -12,6 +12,7 @@
 const path   = require('path');
 const getMac = require('getmac');
 const Sync   = require('sync');
+var macAddress, versions;
 
 function getUserHome() {
     if (process.platform === 'win32') return process.env.USERPROFILE;
@@ -20,11 +21,10 @@ function getUserHome() {
 
 module.exports = function() {
 
-    const versions = getVersions();
+    getVersions();
 
 	const env = process.env.NODE_ENV || 'production';
 	var cfg = require('../../config/' + env + '.json');
-    var macAddress;
 
     // get mac address
     Sync(function() {
@@ -32,6 +32,9 @@ module.exports = function() {
     }, function (err) {
         if (err) console.error(err);
     });
+
+    // get versions
+    getVersions();
 
 	// get current home directory for user storage
 	cfg.app.storageDir = path.join(getUserHome(), 'formide');
@@ -85,16 +88,13 @@ function getVersions() {
 
         Sync(function() {
             rootfsVersion = elementTools.getCurrentVersion.sync();
-            console.log('1', rootfsVersion);
         }, function (err) {
             if (err) console.error(err);
         });
 
         elementToolsVersion = require('element-tools/package.json').version;
 
-        console.log('2', rootfsVersion);
-
-        return versions = {
+        versions = {
             'formide-client': require('../../package.json').version,
             'formide-tools': require('formide-tools/package.json').version,
             'formide-client-interface': require('formide-client-interface/package.json').version,
