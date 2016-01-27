@@ -88,19 +88,17 @@ function getVersions() {
 
         Sync(function() {
             rootfsVersion = elementTools.getCurrentVersion.sync();
+            elementToolsVersion = require('element-tools/package.json').version;
+            versions = {
+                'formide-client': require('../../package.json').version,
+                'formide-tools': require('formide-tools/package.json').version,
+                'formide-client-interface': require('formide-client-interface/package.json').version,
+                'element-tools': elementToolsVersion,
+                'rootfs': rootfsVersion
+            };
         }, function (err) {
             if (err) console.error(err);
         });
-
-        elementToolsVersion = require('element-tools/package.json').version;
-
-        versions = {
-            'formide-client': require('../../package.json').version,
-            'formide-tools': require('formide-tools/package.json').version,
-            'formide-client-interface': require('formide-client-interface/package.json').version,
-            'element-tools': elementToolsVersion,
-            'rootfs': rootfsVersion
-        };
     }
     catch (e) {
         console.error(e);
