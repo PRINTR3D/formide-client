@@ -88,18 +88,18 @@ function getVersions() {
             if (err) console.error(err);
         });
         elementToolsVersion = require('element-tools/package.json').version;
+
+        return versions = {
+            'formide-client': require('../../package.json').version,
+            'formide-tools': require('formide-tools/package.json').version,
+            'formide-client-interface': require('formide-client-interface/package.json').version,
+            'element-tools': elementToolsVersion,
+            'rootfs': rootfsVersion
+        };
     }
     catch (e) {
         console.error(e);
         // elementToolsVersion = false;
         // rootfsVersion = false;
     }
-
-    return versions = {
-        'formide-client': require('../../package.json').version,
-        'formide-tools': require('formide-tools/package.json').version,
-        'formide-client-interface': require('formide-client-interface/package.json').version,
-        'element-tools': elementToolsVersion,
-        'rootfs': rootfsVersion
-    };
 }
