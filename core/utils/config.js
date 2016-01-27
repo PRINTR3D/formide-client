@@ -85,11 +85,14 @@ function getVersions() {
 
         Sync(function() {
             rootfsVersion = elementTools.getCurrentVersion.sync();
+            console.log('1', rootfsVersion);
         }, function (err) {
             if (err) console.error(err);
         });
-        
+
         elementToolsVersion = require('element-tools/package.json').version;
+
+        console.log('2', rootfsVersion);
 
         return versions = {
             'formide-client': require('../../package.json').version,
