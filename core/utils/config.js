@@ -66,7 +66,9 @@ function getVersions() {
 
     function* getCurrentVersion() {
         const elementTools = require('element-tools');
-        return yield elementTools.getCurrentVersion();
+        const currentVersion = yield elementTools.getCurrentVersion();
+        console.log(currentVersion);
+        return currentVersion;
     }
 
     try {
