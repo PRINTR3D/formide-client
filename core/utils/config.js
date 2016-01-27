@@ -9,7 +9,7 @@
  *	3rd party module config files as well.
  */
 
-var path = require('path');
+const path     = require('path');
 
 function getUserHome() {
     if (process.platform === 'win32') return process.env.USERPROFILE;
@@ -17,6 +17,8 @@ function getUserHome() {
 }
 
 module.exports = function() {
+
+    const versions = getVersions();
 
 	const env = process.env.NODE_ENV || 'production';
 	var cfg = require('../../config/' + env + '.json');
@@ -53,34 +55,34 @@ module.exports = function() {
 
 		environment: env,
 
-        getVersions: function() {
-            const elementToolsVersion, rootfsVersion;
-
-			function* getCurrentVersion() {
-				const elementTools = require('element-tools');
-				return yield elementTools.getCurrentVersion();
-			}
-
-			try {
-				rootfsVersion = getCurrentVersion();
-				elementToolsVersion = require('element-tools/package.json').version;
-			}
-			catch (e) {
-				elementToolsVersion = false;
-				rootFsVersion = false;
-			}
-
-			const versions = {
-				'formide-client': require('../../package.json').version,
-				'formide-tools': require('formide-tools/package.json').version,
-				'formide-client-interface': require('formide-client-interface/package.json').version,
-				'element-tools': elementToolsVersion,
-				'rootfs': rootfsVersion
-			};
-
-            return versions;
-        }
+        versions: versions
 	};
 
 	return config;
+}
+
+function getVersions() {
+    const elementToolsVersion, rootfsVersion;
+
+    function* getCurrentVersion() {
+        const elementTools = require('element-tools');
+        return yield elementTools.getCurrentVersion();
+    }
+
+    try {
+        rootfsVersion = getCurrentVersion();
+        elementToolsVersion = require('element-tools/package.json').version;
+    }
+    catch (e) {
+        elementToolsVersion = false;
+        rootFsVersion = false;
+    }
+
+    return versions = {
+        'formide-client': require('../../package.json').version,
+        'formide-tools': require('formide-tools/package.json').version,
+        'formide-client-interface': require('formide-client-interface/package.json').version,
+        'element-tools': elementToolsVersion,
+        'rootfs': rootfsVersion
+    };
 }

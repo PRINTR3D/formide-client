@@ -96,16 +96,14 @@ module.exports = {
 			// authenticate formideos based on mac address and api token, also sends permissions for faster blocking via cloud
 			publicIp(function (err, ip) {
 				getMac.getMac(function(err, macAddress) {
-					var pkg = fs.readFileSync(path.join(FormideOS.appRoot, 'package.json'), 'utf8');
-					pkg = JSON.parse(pkg); // no try needed, since package.json needs to be valid for the app to boot at all
 					self.cloud.emit('authenticate', {
 						type: 		 'client',
-						mac: 		 macAddress,
 						ip: 		 ip,
 						ip_internal: internalIp(),
-						version:     pkg.version,
+						version:     FormideOS.config.versions['formide-client'],
 						environment: FormideOS.config.environment,
-						versions:    FormideOS.config.getVersions(),
+						mac: 		 macAddress,
+						versions:    FormideOS.config.versions,
 						port:        FormideOS.config.get('app.port')
 					}, function(response) {
 						if (response.success) {

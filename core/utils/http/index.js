@@ -111,7 +111,7 @@ module.exports = {
 		// root url containing device information
 		this.app.get('/', function (req, res) {
 			return res.ok({
-				versions: FormideOS.config.getVersions(),
+				versions:    FormideOS.config.versions,
 			 	environment: FormideOS.config.environment
 			});
 		});
