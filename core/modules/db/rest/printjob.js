@@ -46,10 +46,10 @@ module.exports = (routes, db) => {
 	 */
 	routes.post('/printjobs', (req, res) => {
 		assert(req.body);
-		assert(req.body.gcodeID);
+		assert(req.body.file);
 
 		db.UserFile
-		.findOne({ id: req.body.gcodeID })
+		.findOne({ id: req.body.file })
 		.then(userFile => {
 
 			// copy gcode file to gcodes folder so original file can be deleted
