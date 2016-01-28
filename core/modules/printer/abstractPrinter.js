@@ -8,6 +8,7 @@
  */
 
 const path = require('path');
+const fs   = require('fs');
 
 function AbstractPrinter(serialPort, driver) {
 	this.port = serialPort;
@@ -205,11 +206,19 @@ AbstractPrinter.prototype.printFinished = function(queueItemId) {
 	FormideOS.db.QueueItem
 	.findOne({ id: self.queueItemId }, function(err, queueItem) {
 
-		self.queueItemId = null;
 		FormideOS.events.emit('printer.finished', {
 			port:		 self.port,
 			queueItemId: self.queueItemId
 		});
+
+		// reset queueItemId of current print
+		self.queueItemId = null;
+
+		// remove gcode from cloud
+		if (queueItem.origin === 'cloud') {
+			const gcodePath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.gcode'), queueItem.gcode);
+			fs.unlinkSync(gcodePath);
+		}
 
 		if (err) return FormideOS.log.err(err);
 		if (!queueItem) return FormideOS.log.warn('No queue item with that ID found to handle finished printing');
