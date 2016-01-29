@@ -13,7 +13,7 @@ const internalIp = require('internal-ip');
 const fs	     = require('fs');
 const path		 = require('path');
 const uuid		 = require('node-uuid');
-// const getMac	 = require('getmac');
+const getMac	 = require('getmac');
 
 function addWifiSetupRoute(app, tools) {
 	app.get('/setup', (req, res) => {
@@ -66,7 +66,7 @@ module.exports = {
     		reconnectionDelay: 1000,
     		reconnectionAttempts: 1000,
 			reconnectionDelayMax: 5000,
-			transports: ['websocket'],
+			//transports: ['websocket'],
 			timeout: 5000
 		});
 
@@ -108,7 +108,7 @@ module.exports = {
 						type: 		 'client',
 						ip: 		 ip,
 						ip_internal: internalIp(),
-						version:     require('../../package.json').version,
+						version:     require('../../../package.json').version,
 						environment: FormideOS.config.environment,
 						mac: 		 macAddress,
 						port:        FormideOS.config.get('app.port')
