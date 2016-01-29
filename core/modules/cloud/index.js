@@ -63,17 +63,17 @@ module.exports = {
 		// init cloud with new socket io client to online cloud url
 		this.cloud = socket(config.url, {
 			reconnection: true,
-    		reconnectionDelay: 1000,
-    		reconnectionAttempts: 1000,
+			reconnectionDelay: 1000,
+			reconnectionAttempts: 1000,
 			reconnectionDelayMax: 5000,
-			// transports: ['websocket'],
+			transports: ['websocket'],
 			timeout: 5000
 		});
 
 		this.local = socket('ws://127.0.0.1:' + FormideOS.http.server.address().port, {
 			reconnection: true,
-    		reconnectionDelay: 1000,
-    		reconnectionAttempts: 1000,
+			reconnectionDelay: 1000,
+			reconnectionAttempts: 1000,
 			reconnectionDelayMax: 5000,
 			transports: ['websocket', 'polling'],
 			timeout: 5000
