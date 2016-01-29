@@ -109,13 +109,13 @@ module.exports = {
 		});
 
 		// root url containing device information
-		this.app.get('/', function (req, res) {
-			return res.ok({
-				versions:    FormideOS.config.getVersions(),
-			 	environment: FormideOS.config.environment,
-				mac: 		 FormideOS.config.getMacAddress()
-			});
-		});
+		// this.app.get('/', function (req, res) {
+		// 	return res.ok({
+		// 		versions:    FormideOS.config.getVersions(),
+		// 	 	environment: FormideOS.config.environment,
+		// 		mac: 		 FormideOS.config.getMacAddress()
+		// 	});
+		// });
 	},
 
 	setupPassport: function() {

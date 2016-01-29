@@ -61,13 +61,21 @@ module.exports = {
 		}
 
 		// init cloud with new socket io client to online cloud url
-		this.cloud = socket(config.url);
-		this.local = socket('ws://127.0.0.1:' + FormideOS.http.server.address().port, {
+		this.cloud = socket(config.url, {
 			reconnection: true,
     		reconnectionDelay: 1000,
     		reconnectionAttempts: 1000,
 			reconnectionDelayMax: 5000,
 			transports: ['websocket'],
+			timeout: 5000
+		});
+
+		this.local = socket('ws://127.0.0.1:' + FormideOS.http.server.address().port, {
+			reconnection: true,
+    		reconnectionDelay: 1000,
+    		reconnectionAttempts: 1000,
+			reconnectionDelayMax: 5000,
+			transports: ['websocket', 'polling'],
 			timeout: 5000
 		});
 
@@ -95,15 +103,14 @@ module.exports = {
 
 			// authenticate formideos based on mac address and api token, also sends permissions for faster blocking via cloud
 			publicIp(function (err, ip) {
-				//getMac.getMac(function(err, macAddress) {
+				getMac.getMac(function(err, macAddress) {
 					self.cloud.emit('authenticate', {
 						type: 		 'client',
 						ip: 		 ip,
 						ip_internal: internalIp(),
-						version:     FormideOS.config.getVersions()['formide-client'],
+						version:     require('../../package.json').version,
 						environment: FormideOS.config.environment,
-						mac: 		 FormideOS.config.getMacAddress(),
-						versions:    FormideOS.config.getVersions(),
+						mac: 		 macAddress,
 						port:        FormideOS.config.get('app.port')
 					}, function(response) {
 						if (response.success) {
@@ -117,7 +124,7 @@ module.exports = {
 							FormideOS.log.error('Cloud connection error: ' + response.message);
 						}
 					});
-				//});
+				});
 			});
 		});
 
