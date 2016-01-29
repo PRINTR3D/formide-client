@@ -66,7 +66,7 @@ module.exports = {
     		reconnectionDelay: 1000,
     		reconnectionAttempts: 1000,
 			reconnectionDelayMax: 5000,
-			//transports: ['websocket'],
+			// transports: ['websocket'],
 			timeout: 5000
 		});
 
