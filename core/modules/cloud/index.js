@@ -16,7 +16,7 @@ const socket	 = require('socket.io-client');
 const uuid		 = require('node-uuid');
 
 function addWifiSetupRoute(app, tools) {
-	app.get('/setup', (req, res) => {
+	app.get('/', (req, res) => {
 		const url = FormideOS.config.get('cloud.platformUrl');
 		tools.getWlanSetupPage(url, (err, html) => {
 			if (err)
