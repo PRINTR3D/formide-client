@@ -5,15 +5,15 @@
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
+const fs	     = require('fs');
+const getmac	 = require('getmac');
+const internalIp = require('internal-ip');
 const net		 = require('net');
+const path		 = require('path');
+const publicIp	 = require('public-ip');
 const request	 = require('request');
 const socket	 = require('socket.io-client');
-const publicIp	 = require('public-ip');
-const internalIp = require('internal-ip');
-const fs	     = require('fs');
-const path		 = require('path');
 const uuid		 = require('node-uuid');
-const getMac	 = require('getmac');
 
 function addWifiSetupRoute(app, tools) {
 	app.get('/setup', (req, res) => {
@@ -52,8 +52,8 @@ module.exports = {
 			addWifiSetupRoute(FormideOS.http.app, self.tools);
 		}
 		catch (e) {
-			FormideOS.log.warn('element-tools not found for wifi, probably not running on The Element');
-			// FormideOS.log.warn(e);
+			FormideOS.log.warn(
+				'element-tools not found, probably not running on The Element');
 		}
 
 		function forwardEvents(data) {
@@ -99,11 +99,15 @@ module.exports = {
 		/**
 		 * Connect to the cloud socket server
 		 */
-		this.cloud.on('connect', function () {
+		this.cloud.on('connect', () => {
+			let getMac = getmac.getMac;
+			if (self.tools && self.tools.getMac instanceof Function)
+				getMac = self.tools.getMac;
 
-			// authenticate formideos based on mac address and api token, also sends permissions for faster blocking via cloud
-			publicIp(function (err, ip) {
-				getMac.getMac(function(err, macAddress) {
+			// authenticate formideos based on mac address and api token, also
+			// sends permissions for faster blocking via cloud
+			publicIp((err, ip) => {
+				getMac((err, macAddress) => {
 					self.cloud.emit('authenticate', {
 						type: 		 'client',
 						ip: 		 ip,
@@ -112,7 +116,7 @@ module.exports = {
 						environment: FormideOS.config.environment,
 						mac: 		 macAddress,
 						port:        FormideOS.config.get('app.port')
-					}, function(response) {
+					}, response => {
 						if (response.success) {
 							FormideOS.log('Cloud connected');
 
