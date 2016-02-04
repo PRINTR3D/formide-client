@@ -10,9 +10,9 @@
  */
 
 const path   = require('path');
-const getMac = require('getmac');
-const Sync   = require('sync');
-var macAddress, versions;
+// const getMac = require('getmac');
+// const Sync   = require('sync');
+// var macAddress, versions;
 
 function getUserHome() {
     if (process.platform === 'win32') return process.env.USERPROFILE;
@@ -21,20 +21,20 @@ function getUserHome() {
 
 module.exports = function() {
 
-    getVersions();
+    // getVersions();
 
 	const env = process.env.NODE_ENV || 'production';
 	var cfg = require('../../config/' + env + '.json');
 
     // get mac address
-    Sync(function() {
-        macAddress = getMac.getMac.sync();
-    }, function (err) {
-        if (err) console.error(err);
-    });
+    // Sync(function() {
+    //     macAddress = getMac.getMac.sync();
+    // }, function (err) {
+    //     if (err) console.error(err);
+    // });
 
     // get versions
-    getVersions();
+    // getVersions();
 
 	// get current home directory for user storage
 	cfg.app.storageDir = path.join(getUserHome(), 'formide');
@@ -68,41 +68,41 @@ module.exports = function() {
 
 		environment: env,
 
-        getVersions: function() {
-            return versions;
-        },
-
-        getMacAddress: function() {
-            return macAddress
-        }
+        // getVersions: function() {
+        //     return versions;
+        // },
+        //
+        // getMacAddress: function() {
+        //     return macAddress
+        // }
 	};
 
 	return config;
 }
 
-function getVersions() {
-    var elementToolsVersion, rootfsVersion;
-
-    try {
-        const elementTools = require('element-tools');
-
-        Sync(function() {
-            rootfsVersion = elementTools.getCurrentVersion.sync();
-            elementToolsVersion = require('element-tools/package.json').version;
-            versions = {
-                'formide-client': require('../../package.json').version,
-                'formide-tools': require('formide-tools/package.json').version,
-                'formide-client-interface': require('formide-client-interface/package.json').version,
-                'element-tools': elementToolsVersion,
-                'rootfs': rootfsVersion
-            };
-        }, function (err) {
-            if (err) console.error(err);
-        });
-    }
-    catch (e) {
-        console.error(e);
-        // elementToolsVersion = false;
-        // rootfsVersion = false;
-    }
-}
+// function getVersions() {
+//     var elementToolsVersion, rootfsVersion;
+//
+//     try {
+//         const elementTools = require('element-tools');
+//
+//         Sync(function() {
+//             rootfsVersion = elementTools.getCurrentVersion.sync();
+//             elementToolsVersion = require('element-tools/package.json').version;
+//             versions = {
+//                 'formide-client': require('../../package.json').version,
+//                 'formide-tools': require('formide-tools/package.json').version,
+//                 'formide-client-interface': require('formide-client-interface/package.json').version,
+//                 'element-tools': elementToolsVersion,
+//                 'rootfs': rootfsVersion
+//             };
+//         }, function (err) {
+//             if (err) console.error(err);
+//         });
+//     }
+//     catch (e) {
+//         console.error(e);
+//         // elementToolsVersion = false;
+//         // rootfsVersion = false;
+//     }
+// }
