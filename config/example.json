@@ -10,6 +10,7 @@
 	},
 	"cloud": {
 		"url": "https://api.formide.com",
+		"platformUrl": "https://platform.formide.com",
 		"permission": false
 	},
 	"log": {
@@ -18,15 +19,17 @@
 	"paths": {
 		"temp": "/tmp",
 		"modelfiles": "/modelfiles",
-		"gcode": "/gcode"
+		"gcode": "/gcode",
+		"images": "/images"
 	},
-	"printer": {
-		"permission": false
-	},
+	"printer": {},
 	"slicer": {
 		"version": "1.0.6"
 	},
 	"settings": {
 		"path": "/"
+	},
+	"update": {
+		"channel": "release"
 	}
 }

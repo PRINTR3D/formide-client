@@ -51,6 +51,7 @@ describe('Printers', function() {
                 startGcode:    [],
                 endGcode:      [],
                 type:          'fdm',
+                preset:        false,
                 extruders: [{
                     id:         0,
                     name:       'Extruder 1',

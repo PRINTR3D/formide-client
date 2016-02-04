@@ -3,7 +3,7 @@
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
-var bcrypt = require('bcrypt');
+var bcrypt = require('bcryptjs');
 
 module.exports = {
 	identity: 'user',

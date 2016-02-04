@@ -9,6 +9,7 @@ const readFile 				= thenify(fs.readFile);
 const formideTools			= require('formide-tools');
 const multipart 			= require('connect-multiparty');
 const multipartMiddleware	= multipart();
+const parseIni				= require('ini').parse;
 
 module.exports = (routes, db) => {
 
@@ -84,11 +85,21 @@ module.exports = (routes, db) => {
 	routes.post('/sliceprofiles/cura', multipartMiddleware, (req, res) => {
 		if (!req.files || !req.files.file) return res.badRequest('Cura file must be attached');
 
+		const reference = require('katana-slicer/reference.json');
 		const content = fs.readFileSync(req.files.file.path, 'utf-8');
 
-		// TODO: fix filling in missing params in formideTools.createSliceprofileFromCura()
-		formideTools.createSliceprofileFromCura(content, function(err, katanaSettings) {
-			db.SliceProfile.create({
+		var curaProfile = null;
+		try {
+			curaProfile = parseIni(content);
+		}
+		catch (e) {
+			FormideOS.log.error('Failed to parse Cura profile\n', e);
+			return res.badRequest('Failed to parse Cura profile');
+		}
+
+		formideTools.createSliceprofileFromCura(curaProfile, reference, function(err, katanaSettings) {
+			db.SliceProfile
+			.create({
 				createdBy:	req.user.id,
 				name:		req.files.file.name,
 				settings:	katanaSettings

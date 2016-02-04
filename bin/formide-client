@@ -1,5 +1,10 @@
-#!/usr/bin/env node
-process.env.NODE_ENV = "production";
-'use strict';
-process.title = 'formide-client';
-require('../bootstrap.js');
+#!/bin/bash
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd $DIR/..
+
+if [ -z $NODE_MEM_LIMIT ]; then
+    node --nouse-idle-notification app
+else
+    node --max-old-space-size=$NODE_MEM_LIMIT --nouse-idle-notification app
+fi

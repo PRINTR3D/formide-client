@@ -5,22 +5,41 @@
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
-var net 			= require('net');
-var request 		= require('request');
-var socket 			= require('socket.io-client');
-var publicIp 		= require('public-ip');
-var internalIp 		= require('internal-ip');
-var fs				= require('fs');
-var path			= require('path');
-var uuid			= require('node-uuid');
-var getMac			= require('getmac');
+const fs	     = require('fs');
+const getmac	 = require('getmac');
+const internalIp = require('internal-ip');
+const net		 = require('net');
+const path		 = require('path');
+const publicIp	 = require('public-ip');
+const request	 = require('request');
+const socket	 = require('socket.io-client');
+const uuid		 = require('node-uuid');
+
+function addWifiSetupRoute(app, tools) {
+	app.get('/', (req, res) => {
+		const url = FormideOS.config.get('cloud.platformUrl');
+		tools.getWlanSetupPage(url, (err, html) => {
+			if (err)
+				return res.serverError(err.message);
+
+			res.send(html);
+		});
+	});
+}
 
 module.exports = {
+
 	// socket connections
 	cloud: null,
 	local: null,
 
-	/*
+	// element-tools for WiFi
+	tools: null,
+
+	// store cloud accessToken
+	cloudToken: '',
+
+	/**
 	 * Init for cloud module
 	 */
 	init: function(config) {
@@ -28,38 +47,76 @@ module.exports = {
 		// use self to prevent bind(this) waterfall
 		var self = this;
 
+		try {
+			self.tools = require('element-tools');
+			addWifiSetupRoute(FormideOS.http.app, self.tools);
+		}
+		catch (e) {
+			FormideOS.log.warn(
+				'element-tools not found, probably not running on The Element');
+		}
+
 		function forwardEvents(data) {
 			self.cloud.emit(this.event, data);
 		}
 
 		// init cloud with new socket io client to online cloud url
-		this.cloud = socket(config.url);
-		this.local = socket('ws://127.0.0.1:' + FormideOS.http.server.address().port);
-
-		// handle cloud connection error
-		this.cloud.on('error', function (err) {
-			FormideOS.log.error("Error connecting to cloud: " + err);
+		this.cloud = socket(config.url, {
+			reconnection: true,
+			reconnectionDelay: 1000,
+			reconnectionAttempts: 1000,
+			reconnectionDelayMax: 5000,
+			transports: ['websocket'],
+			timeout: 5000
 		});
 
-		/*
-		 * Connect to the cloud socket server
-		  */
-		this.cloud.on('connect', function () {
+		this.local = socket('ws://127.0.0.1:' + FormideOS.http.server.address().port, {
+			reconnection: true,
+			reconnectionDelay: 1000,
+			reconnectionAttempts: 1000,
+			reconnectionDelayMax: 5000,
+			transports: ['websocket', 'polling'],
+			timeout: 5000
+		});
 
-			// authenticate formideos based on mac address and api token, also sends permissions for faster blocking via cloud
-			publicIp(function (err, ip) {
-				getMac.getMac(function(err, macAddress) {
-					var pkg = fs.readFileSync(path.join(FormideOS.appRoot, 'package.json'), 'utf8');
-					pkg = JSON.parse(pkg); // no try needed, since package.json needs to be valid for the app to boot at all
+		// handle cloud connection errors
+		this.cloud.on('error', function (err) {
+			FormideOS.log.error("Error with cloud connection: " + err);
+		});
+
+		this.cloud.on('connect_error', function (err) {
+			FormideOS.log.error("Error when connecting to cloud: " + err);
+		});
+
+		this.cloud.on('connect_timeout', function (err) {
+			FormideOS.log.error("Timeout when connecting to cloud: " + err);
+		});
+
+		this.cloud.on('reconnect_failed', function (err) {
+			FormideOS.log.error("Failed reconnecting to cloud: " + err);
+		});
+
+		/**
+		 * Connect to the cloud socket server
+		 */
+		this.cloud.on('connect', () => {
+			let getMac = getmac.getMac;
+			if (self.tools && self.tools.getMac instanceof Function)
+				getMac = self.tools.getMac;
+
+			// authenticate formideos based on mac address and api token, also
+			// sends permissions for faster blocking via cloud
+			publicIp((err, ip) => {
+				getMac((err, macAddress) => {
 					self.cloud.emit('authenticate', {
-						type: 'client',
-						mac: macAddress,
-						ip: ip,
+						type: 		 'client',
+						ip: 		 ip,
 						ip_internal: internalIp(),
-						version: pkg.version,
+						version:     require('../../../package.json').version,
 						environment: FormideOS.config.environment,
-						port: FormideOS.config.get('app.port')
-					}, function(response) {
+						mac: 		 macAddress,
+						port:        FormideOS.config.get('app.port')
+					}, response => {
 						if (response.success) {
 							FormideOS.log('Cloud connected');
 
@@ -75,27 +132,27 @@ module.exports = {
 			});
 		});
 
-		/*
+		/**
 		 * See if client is online
 		 */
 		this.cloud.on('ping', data => {
 			self.cloud.emit('pong', data);
 		});
 
-		/*
+		/**
 		 * This event is triggered when a user logs into the cloud and want to access one of his clients
 		 */
-		this.cloud.on('authenticateUser', data => {
-			FormideOS.log("Cloud authenticate user:" + data.id);
-			this.authenticate(data, (err, accessToken) => {
-				FormideOS.log('Cloud user authorized with access_token ' + accessToken.token);
-				self.cloud.emit(
-					'authenticateUser',
-					getCallbackData(data._callbackId, err, accessToken.token));
-			});
-		});
+		// this.cloud.on('authenticateUser', data => {
+		// 	FormideOS.log("Cloud authenticate user:" + data.id);
+		// 	this.authenticate(data, (err, accessToken) => {
+		// 		FormideOS.log('Cloud user authorized with access_token ' + accessToken.token);
+		// 		self.cloud.emit(
+		// 			'authenticateUser',
+		// 			getCallbackData(data._callbackId, err, accessToken.token));
+		// 	});
+		// });
 
-		/*
+		/**
 		 * HTTP proxy request from cloud
 		 */
 		this.cloud.on('http', data => {
@@ -108,7 +165,7 @@ module.exports = {
 			});
 		});
 
-		/*
+		/**
 		 * Send a gcode file to a client to print a cloud sliced printjob
 		 */
 		this.cloud.on('addToQueue', data => {
@@ -120,63 +177,86 @@ module.exports = {
 			});
 		});
 
-		/*
+		/**
 		 * Handle disconnect
-		  */
+		 */
 		this.cloud.on('disconnect', () => {
 			// turn off event forwarding
 			FormideOS.events.offAny(forwardEvents);
+			FormideOS.log('Cloud disconnected, reconnecting...');
 
-			FormideOS.log('Cloud disconnected');
+			// try reconnecting
+			this.cloud.io.reconnect();
 		});
 	},
 
-	/*
+	/**
 	 * Handles cloud authentication based on cloudConnectionToken, returns session access_token that cloud uses to perform http calls from then on
 	 */
 	authenticate: function(data, callback) {
-		var permissions = [];
-		if (data.isOwner) permissions.push("owner");
-		if (data.isAdmin) permissions.push("admin");
-		FormideOS.db.AccessToken.create({
-			permissions: permissions,
-			sessionOrigin: "cloud"
-		}, function (err, accessToken) {
-			if (err) return callback(err);
-			return callback(null, accessToken);
-		});
+		var self = this;
+		FormideOS.db.AccessToken
+		.findOne({ token: self.cloudToken })
+		.then(accessToken => {
+			if (!accessToken) {
+				var permissions = [];
+				if (data.isOwner) permissions.push("owner");
+				if (data.isAdmin) permissions.push("admin");
+
+				FormideOS.db.AccessToken
+				.create({
+					permissions:   permissions,
+					sessionOrigin: 'cloud'
+				})
+				.then(accessToken => {
+					self.cloudToken = accessToken.token;
+					return callback(null, accessToken);
+				})
+				.catch(callback);
+			}
+			else {
+				return callback(null, accessToken);
+			}
+		})
+		.catch(callback);
 	},
 
-	/*
+	/**
 	 * Handles HTTP proxy function calls from cloud connection, calls own local http api after reconstructing HTTP request
 	 */
 	http: function(data, callback) {
-		if (data.method === 'GET') {
-			request({
-				method: 'GET',
-				uri: 'http://127.0.0.1:' + FormideOS.http.server.address().port + '/' + data.url,
-				auth: {
-					bearer: data.token // add cloud api key to authorise to local HTTP api
-				},
-				qs: data.data
-			}, function( error, response, body ) {
-				if (error) return callback(error);
-				return callback(null, body);
-			});
-		}
-		else {
-			request({
-				method: data.method,
-				uri: 'http://127.0.0.1:' + FormideOS.http.server.address().port + '/' + data.url,
-				auth: {
-					bearer: data.token // add cloud api key to authorise to local HTTP api
-				},
-				form: data.data
-			}, function( error, response, body ) {
-				if (error) return callback(error);
-				return callback(null, body);
-			});
-		}
+		this.authenticate({
+			isOwner: true,
+			isAdmin: true
+		}, function(err, accessToken) {
+			if (err) return callback(err);
+			if (data.method === 'GET') {
+				request({
+					method: 'GET',
+					uri: 'http://127.0.0.1:' + FormideOS.http.server.address().port + '/' + data.url,
+					auth: {
+						bearer: accessToken.token // add cloud api key to authorise to local HTTP api
+					},
+					qs: data.data
+				}, function (error, response, body) {
+					if (error) return callback(error);
+					return callback(null, body);
+				});
+			}
+			else {
+				request({
+					method: data.method,
+					uri: 'http://127.0.0.1:' + FormideOS.http.server.address().port + '/' + data.url,
+					auth: {
+						bearer: accessToken.token // add cloud api key to authorise to local HTTP api
+					},
+					form: data.data
+				}, function (error, response, body) {
+					if (error) return callback(error);
+					return callback(null, body);
+				});
+			}
+		});
 	},
 
 	/*
@@ -219,56 +299,44 @@ module.exports = {
 		});
 	},
 
-	/*
-	 * Register device in cloud
+	/**
+	 * Get network connection status
 	 */
-	registerDevice: function (owner_email, owner_password, registertoken, cb) {
-		var self = this;
+	getStatus: function(cb) {
+		if (this.tools)
+			this.tools.status(cb);
+		else
+			cb(new Error('element-tools not installed'));
+	},
 
-		FormideOS.db.User.findOne({
-			isOwner: true
-		}, function (err, user) {
-			if (err) return cb(err);
-			if (user) {
-				var msg = "this device already has a local owner, please contact " + user.email + " to request access to this device.";
-				FormideOS.log.warn(msg);
-				return cb(new Error(msg));
-			}
-			// create a new owner/admin user
-			FormideOS.db.User.create({
-				email: owner_email,
-				password: owner_password,
-				isOwner: true,
-				isAdmin: true,
-				cloudConnectionToken: registertoken
-			}, function (err, user) {
-				if (err) return cb(err);
-				getMac.getMac(function (err, macAddress) {
-					if (err) return cb(err);
-					self.cloud.emit("register", {
-						mac: macAddress,
-						registerToken: registertoken
-					}, function (response) {
-						if (response.success === false || !response.deviceToken) {
-							FormideOS.log.error(response.message);
-							FormideOS.db.User.destroy({
-								cloudConnectionToken: registertoken
-							}, function (err) {
-								if (err) return cb(err);
-								return cb(new Error("Error registering device: " + response.reason));
-							});
-						}
-						else {
-							FormideOS.db.User.update({ cloudConnectionToken: registertoken }, { cloudConnectionToken: response.deviceToken }, function (err, updated) {
-								if (err) return cb(err);
-								FormideOS.log('cloud user connected with clientToken ' + response.deviceToken);
-								return cb(null, updated[0]);
-							});
-						}
-					});
-				});
-			});
-		});
+	/**
+	 * Get a list of nearby networks to connect to
+	 */
+	getNetworks: function(cb) {
+		if (this.tools)
+			this.tools.networks(cb);
+		else
+			cb(new Error('element-tools not installed'));
+	},
+
+	/**
+	 * Enable access point to be able to switch networks or redo setup
+	 */
+	setupMode: function(cb) {
+		if (this.tools)
+			this.tools.reset(cb);
+		else
+			cb(new Error('element-tools not installed'));
+	},
+
+	/**
+	 * Connect device to selected network
+	 */
+	connect: function (essid, password, cb) {
+		if (this.tools)
+			this.tools.connect(essid, password, cb);
+		else
+			cb(new Error('element-tools not installed'));
 	}
 };
 

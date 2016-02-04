@@ -1,5 +1,5 @@
 /*
- *	This code was created for Printr B.V. It is open source under the formideos-client package.
+ *	This code was created for Printr B.V. It is open source under the formide-client package.
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
@@ -17,11 +17,6 @@ var path 	= require('path');
 const initFormide = require('./core/FormideOS');
 
 initFormide().then(() => {
-	// Memory watching during development
-	if (process.env.NODE_ENV !== 'production') {
-		var heapdump = require('heapdump');
-		heapdump.writeSnapshot(path.join('logs', Date.now() + '.heapsnapshot'));
-	}
 
 	// Log awesome app starter logo
 	require('./core/utils/logLogo');
@@ -32,14 +27,13 @@ initFormide().then(() => {
 	FormideOS.log.info('==============================================');
 
 	// Load core modules
-	FormideOS.moduleManager.loadModule('/core/modules/db',			'db',           true);
-	// FormideOS.moduleManager.loadModule('/core/modules/settings',	'settings',     true);
-	FormideOS.moduleManager.loadModule('/core/modules/auth',		'auth',         true);
-	// FormideOS.moduleManager.loadModule('core/modules/log', 		'log', 		true); // TODO: log to db
-	FormideOS.moduleManager.loadModule('/core/modules/files', 	    'files',        true);
-	FormideOS.moduleManager.loadModule('/core/modules/printer', 	'printer',      true);
-	FormideOS.moduleManager.loadModule('core/modules/slicer',		'slicer',		true);
-	FormideOS.moduleManager.loadModule('/core/modules/cloud',       'cloud',	    true);
+	FormideOS.moduleManager.loadModule('/core/modules/db',		'db',       true);
+	FormideOS.moduleManager.loadModule('/core/modules/auth',	'auth',     true);
+	FormideOS.moduleManager.loadModule('/core/modules/files', 	'files',    true);
+	FormideOS.moduleManager.loadModule('/core/modules/printer', 'printer',  true);
+	FormideOS.moduleManager.loadModule('/core/modules/slicer',	'slicer',	true);
+	FormideOS.moduleManager.loadModule('/core/modules/update',	'update',	true);
+	FormideOS.moduleManager.loadModule('/core/modules/cloud',   'cloud',	true);
 
 	// Load all via npm installed formide-client modules
 	for(var i in pkg.dependencies) {

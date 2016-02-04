@@ -8,16 +8,29 @@
  *	FormideOS.
  */
 
-var io = require('socket.io');
-//var permissionsMiddleware 		= require('./middleware/permissions');
-var ws = require("nodejs-websocket");
+const io   = require('socket.io');
+const ws   = require('nodejs-websocket');
 
 module.exports = {
 
+	listeners: {},
+
 	init: function() {
+
+		var self = this;
 
 		// base websocket server to LCD display notifications and events
 		var server = ws.createServer(function (conn) {
+
+			function forwardEvents(data) {
+				data = data || {};
+				data.device = "LOCAL";
+				conn.sendText(JSON.stringify({
+					channel: this.event,
+					data:    data
+				}));
+			}
+
 			conn.on("text", function (message) {
 				try {
 					var data = JSON.parse(message);
@@ -34,14 +47,7 @@ module.exports = {
 								}
 							}));
 
-							FormideOS.events.onAny(function(data) {
-								data = data || {};
-								data.device = "LOCAL";
-								conn.sendText(JSON.stringify({
-									channel: this.event,
-									data: data
-								}));
-							});
+							FormideOS.events.onAny(forwardEvents);
 						});
 					}
 				}
@@ -51,22 +57,26 @@ module.exports = {
 			});
 
 		    conn.on("close", function (code, reason) {
+				FormideOS.events.offAny(forwardEvents);
 		        FormideOS.log("Socket disconnected: " + reason);
 		    });
 
 		    conn.on("error", function (err) {
-			    // FormideOS.events.offAny(function (){});
-				FormideOS.log.error(err.message);
+				// FormideOS.log.error(err.message);
 		    });
 
 		}).listen(3001)
-
 
 
 		var socketio = io.listen(FormideOS.http.server);
 
 		// emit all system events
 		socketio.on('connection', function(socket) {
+
+			function forwardSocketEvents(data) {
+				socket.emit(this.event, data);
+			}
+
 			socket.on('authenticate', function(data, callback) {
 				authenticate(data.accessToken, function(err, accessToken) {
 					if (err) {
@@ -79,16 +89,22 @@ module.exports = {
 						return socket.disconnect();
 					}
 
-					FormideOS.events.onAny(function(data) {
-						data = data || {};
-						socket.emit(this.event, data);
-					});
+					FormideOS.events.onAny(forwardSocketEvents);
 
                     callback({
                         success: true,
                         message: 'Authentication successful'
                     });
 				});
+			});
+
+			socket.on('error', function (err) {
+				FormideOS.log.error('Socket err', err.message);
+			});
+
+			socket.on('disconnect', function () {
+				FormideOS.events.offAny(forwardSocketEvents);
+				FormideOS.log('Socket disconnected');
 			});
 		});
 

@@ -13,19 +13,22 @@
 
 const path             = require('path');
 const sailsDiskAdapter = require('sails-disk');
-
-const initDb = require('./utils/db');
+const initDb 		   = require('./utils/db');
 
 // FormideOS global object
 global.FormideOS = {};
 
 module.exports = dbConfig => {
+
 	// Paths
 	FormideOS.coreRoot = path.resolve(__dirname, './');
 	FormideOS.appRoot = path.resolve(__dirname, '../');
 
 	// Config
 	FormideOS.config = require('./utils/config.js')();
+
+	// Ensure needed files and dirs are available
+    require('./utils/ensureNeeds');
 
 	// Events
 	FormideOS.events = require('./utils/events.js');
@@ -54,12 +57,8 @@ module.exports = dbConfig => {
 		moduleName => FormideOS.moduleManager.getModule(moduleName);
 
 	if (!dbConfig) {
-		let storage = null;
-		if (typeof SETUP !== 'undefined')
-			storage = path.join(SETUP.storageDir, 'database_');
-		else
-			storage = path.join(
-				FormideOS.config.get('app.storageDir'), 'database_');
+		let storage = path.join(
+			FormideOS.config.get('app.storageDir'), 'database_');
 
 		dbConfig = {
 			adapters: { disk: sailsDiskAdapter },
@@ -75,6 +74,15 @@ module.exports = dbConfig => {
 
 	return initDb(dbConfig).then(
 		db => {
+
+			db.User.create({
+				email: "admin@local",
+				password: "admin",
+				isAdmin: true
+			}, function (err, users) {
+				// if (err) console.log(err);
+			});
+
 			FormideOS.db = db;
 		},
 		err => {

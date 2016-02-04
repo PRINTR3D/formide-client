@@ -10,6 +10,7 @@
 	},
 	"cloud": {
 		"url": "http://localhost:3000",
+		"platformUrl": "http://localhost:8081",
 		"permission": false
 	},
 	"log": {
@@ -18,15 +19,17 @@
 	"paths": {
 		"temp": "/tmp",
 		"modelfiles": "/modelfiles",
-		"gcode": "/gcode"
+		"gcode": "/gcode",
+		"images": "/images"
 	},
-	"printer": {
-		
-	},
+	"printer": {},
 	"slicer": {
 		"version": "1.0.6"
 	},
 	"settings": {
 		"path": "/"
+	},
+	"update": {
+		"channel": "beta"
 	}
 }

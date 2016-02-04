@@ -23,4 +23,4 @@ EXPOSE 8080
 EXPOSE 3001
 
 # Run app using nodemon
-CMD node scripts/post-install.js && node bootstrap.js
+CMD node bootstrap.js

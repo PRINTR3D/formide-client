@@ -10,6 +10,8 @@ module.exports = function badRequest(error) {
 	var statusCode = 500;
 	var statusName = "Server Error";
 
+	FormideOS.log.error(error);
+	
 	// Set status code
 	res.status(statusCode);
 

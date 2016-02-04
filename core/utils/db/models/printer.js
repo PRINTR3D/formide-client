@@ -97,6 +97,11 @@ module.exports = {
 		printJobs: {
 			collection: 'printjob',
 			via: 'printer'
+		},
+
+		preset: {
+			type: 'boolean',
+			defaultsTo: false
 		}
 	},
 
