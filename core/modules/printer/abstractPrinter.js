@@ -8,6 +8,7 @@
  */
 
 const path = require('path');
+const fs   = require('fs');
 
 function AbstractPrinter(serialPort, driver) {
 	this.port = serialPort;
@@ -50,8 +51,8 @@ AbstractPrinter.prototype.map = {
 	'home_y': 				['G28 Y'],
 	'home_z': 				['G28 Z'],
 	'jog':					['G91', 'G21', 'G1 _axis_ _dist_'],
-	'extrude':				['T_extnr_ ', 'G91', 'G21', 'G1 E _dist_'],
-	'retract':				['T_extnr_ ', 'G91', 'G21', 'G1 E _dist_'],
+	'extrude':				['T_extnr_ ', 'G91', 'G21', 'G1 F300 E _dist_'],
+	'retract':				['T_extnr_ ', 'G91', 'G21', 'G1 F300 E _dist_'],
 	'lcd_message':			['M117                     _msg_'],
 	'temp_bed':				['M140 S_temp_'],
 	'temp_extruder':		['T_extnr_', 'M104 S_temp_'],
@@ -205,11 +206,19 @@ AbstractPrinter.prototype.printFinished = function(queueItemId) {
 	FormideOS.db.QueueItem
 	.findOne({ id: self.queueItemId }, function(err, queueItem) {
 
-		self.queueItemId = null;
 		FormideOS.events.emit('printer.finished', {
 			port:		 self.port,
 			queueItemId: self.queueItemId
 		});
+
+		// reset queueItemId of current print
+		self.queueItemId = null;
+
+		// remove gcode from cloud
+		if (queueItem.origin === 'cloud') {
+			const gcodePath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.gcode'), queueItem.gcode);
+			fs.unlinkSync(gcodePath);
+		}
 
 		if (err) return FormideOS.log.err(err);
 		if (!queueItem) return FormideOS.log.warn('No queue item with that ID found to handle finished printing');
