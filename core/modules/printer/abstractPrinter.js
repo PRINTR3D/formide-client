@@ -120,7 +120,7 @@ AbstractPrinter.prototype.startPrint = function(queueItemId, callback) {
 	.exec(function(err, updated) {
 		if (err) return callback(err);
 		FormideOS.db.QueueItem
-		.findOne({ id: queueItemId })
+		.findOne({ id: queueItemId, status: 'queued' })
 		.exec(function(err, queueItem) {
 			if (err) return callback(err);
 			if (!queueItem) return callback(null, null);
