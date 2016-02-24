@@ -115,56 +115,59 @@ AbstractPrinter.prototype.command = function(command, parameters, callback) {
  * Start printing. id is queueItem id and gcode is the filename in the file system.
  * Searches for queue item in database and sends absolute file path to driver
  */
-AbstractPrinter.prototype.startPrint = function(queueItemId, callback) { co(function* () {
+AbstractPrinter.prototype.startPrint = function(queueItemId, callback) {
 
-	// fix for double printing items in queue
-	yield FormideOS.db.QueueItem.update({ port: this.port }, { status: 'queued' });
+	//co(function* () {
 
-	// get queue item to print
-	const queueItem = FormideOS.db.QueueItem.findOne({ id: queueItemId, status: 'queued' });
-	if (!queueItem) return callback();
+	//// fix for double printing items in queue
+	//yield FormideOS.db.QueueItem.update({ port: this.port }, { status: 'queued' });
+	//
+	//// get queue item to print
+	//const queueItem = FormideOS.db.QueueItem.findOne({ id: queueItemId, status: 'queued' });
+	//if (!queueItem) return callback();
+	//
+	//// start the print via the formide drivers
+	//const filePath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.gcode'), queueItem.gcode);
+	//yield this.driver.printFile(filePath, queueItem.id, this.port);
+	//
+	//// update queueItem
+	//yield formideOS.db.QueueItem.update({ id: queueItem.id }, { status: 'printing' });
+	//this.queueItemId = queueItemId;
+	//
+	//FormideOS.events.emit('printer.started', { port: this.port, queueItemId });
+	//return callback(null, true);
 
-	// start the print via the formide drivers
-	const filePath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.gcode'), queueItem.gcode);
-	yield this.driver.printFile(filePath, queueItem.id, this.port);
-
-	// update queueItem
-	yield formideOS.db.QueueItem.update({ id: queueItem.id }, { status: 'printing' });
-	this.queueItemId = queueItemId;
-
-	FormideOS.events.emit('printer.started', { port: this.port, queueItemId });
-	return callback(null, true);
-
-	//var self = this;
-	//// first we set all current printing db queue items for this port back to queued to prevent multiple 'printing' items
-	//FormideOS.db.QueueItem
-	//.update({ port: self.port }, { status: 'queued' })
-	//.exec(function(err, updated) {
-	//	if (err) return callback(err);
-	//	FormideOS.db.QueueItem
-	//	.findOne({ id: queueItemId, status: 'queued' })
-	//	.exec(function(err, queueItem) {
-	//		if (err) return callback(err);
-	//		if (!queueItem) return callback(null, null);
-	//		var filePath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.gcode'), queueItem.gcode);
-	//		self.driver.printFile(filePath, queueItem.id, self.port, function(err, response) {
-	//			if (err) return callback(err);
-	//			FormideOS.db.QueueItem
-	//			.update({ id: queueItem.id }, {
-	//				status: 'printing'
-	//			}, function(err, updated) {
-	//				if (err) return callback(err);
-	//				self.queueItemId = queueItemId;
-	//				FormideOS.events.emit('printer.started', {
-	//					port:		 self.port,
-	//					queueItemId: self.queueItemId
-	//				});
-	//				return callback(null, true);
-	//			});
-	//		});
-	//	});
-	//});
-}).then(null, err => callback(err)); }
+	var self = this;
+	// first we set all current printing db queue items for this port back to queued to prevent multiple 'printing' items
+	FormideOS.db.QueueItem
+	.update({ port: self.port }, { status: 'queued' })
+	.exec(function(err) {
+		if (err) return callback(err);
+		FormideOS.db.QueueItem
+		.findOne({ id: queueItemId, status: 'queued' })
+		.exec(function(err, queueItem) {
+			if (err) return callback(err);
+			if (!queueItem) return callback(null, null);
+			var filePath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.gcode'), queueItem.gcode);
+			self.driver.printFile(filePath, queueItem.id, self.port, function(err, response) {
+				if (err) return callback(err);
+				FormideOS.db.QueueItem
+				.update({ id: queueItem.id }, {
+					status: 'printing'
+				}, function(err, updated) {
+					if (err) return callback(err);
+					self.queueItemId = queueItemId;
+					FormideOS.events.emit('printer.started', {
+						port:		 self.port,
+						queueItemId: self.queueItemId
+					});
+					return callback(null, true);
+				});
+			});
+		});
+	});
+}
+//).then(null, err => callback(err)); }
 
 /*
  * Pause printing the current file
