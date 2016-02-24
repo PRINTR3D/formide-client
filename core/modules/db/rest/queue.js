@@ -91,12 +91,10 @@ module.exports = (routes, db) => {
 			}
 
 			// delete from database
-			db.QueueItem
-			.destroy({ id: req.params.id })
-			.then(() => {
-				return res.ok({ message: "Queueitem deleted" });
-			})
-			.error(res.serverError);
+			queueItem.destroy(function (err) {
+				if (err) return res.serverError(err);
+				return res.ok({ message: "queueItem deleted" });
+			});
 		})
 		.error(res.serverError);
 	});
