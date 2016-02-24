@@ -294,7 +294,7 @@ module.exports = {
 				var fws = fs.createWriteStream(newPath);
 				response.pipe(fws);
 				response.on('end', function() {
-					FormideOS.log('finished downloading gcode. Recieved ' + fws.bytesWritten + ' bytes');
+					FormideOS.log('finished downloading gcode. Received ' + fws.bytesWritten + ' bytes');
 
 					// set status to queued to indicate it's ready to print
 					queueItem.status = 'queued';
