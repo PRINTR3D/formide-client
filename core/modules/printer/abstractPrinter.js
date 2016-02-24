@@ -115,7 +115,7 @@ AbstractPrinter.prototype.command = function(command, parameters, callback) {
  * Start printing. id is queueItem id and gcode is the filename in the file system.
  * Searches for queue item in database and sends absolute file path to driver
  */
-AbstractPrinter.prototype.startPrint = function(queueItemId, callback) {
+AbstractPrinter.prototype.startPrint = function(queueItemId, callback) { co(function* () {
 
 	// fix for double printing items in queue
 	yield FormideOS.db.QueueItem.update({ port: this.port }, { status: 'queued' });
@@ -164,7 +164,7 @@ AbstractPrinter.prototype.startPrint = function(queueItemId, callback) {
 	//		});
 	//	});
 	//});
-}
+}).then(null, err => callback(err)); }
 
 /*
  * Pause printing the current file
