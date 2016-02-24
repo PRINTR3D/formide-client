@@ -59,7 +59,8 @@ module.exports = (routes, db) => {
 				origin:		'local',
 				gcode:		printJob.gcode,
 				printJob:	printJob.toObject(),
-				port:		req.body.port
+				port:		req.body.port,
+				status:     'queued'
 			})
 			.then((queueItem) => {
 				return res.ok({ message: "Printjob added to queue", queueItem });

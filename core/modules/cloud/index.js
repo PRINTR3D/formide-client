@@ -1,7 +1,7 @@
 'use strict';
 
 /*
- *	This code was created for Printr B.V. It is open source under the formideos-client package.
+ *	This code was created for Printr B.V. It is open source under the formide-client package.
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
@@ -116,7 +116,7 @@ module.exports = {
 						environment: FormideOS.config.environment,
 						mac: 		 macAddress,
 						port:        FormideOS.config.get('app.port')
-					}, response => {
+					}, (response) => {
 						if (response.success) {
 							FormideOS.log('Cloud connected');
 
@@ -197,7 +197,7 @@ module.exports = {
 		var self = this;
 		FormideOS.db.AccessToken
 		.findOne({ token: self.cloudToken })
-		.then(accessToken => {
+		.then((accessToken) => {
 			if (!accessToken) {
 				var permissions = [];
 				if (data.isOwner) permissions.push("owner");
@@ -208,7 +208,7 @@ module.exports = {
 					permissions:   permissions,
 					sessionOrigin: 'cloud'
 				})
-				.then(accessToken => {
+				.then((accessToken) => {
 					self.cloudToken = accessToken.token;
 					return callback(null, accessToken);
 				})
@@ -267,15 +267,16 @@ module.exports = {
 		var hash = uuid.v4();
 
 		FormideOS.db.QueueItem.create({
-			origin: 'cloud',
-			status: 'queued',
-			gcode: hash, // create a new hash for local file storage!
+			origin:   'cloud',
+			status:   'downloading',
+			gcode:    hash, // create a new hash for local file storage!
 			printJob: data.printJob,
-			port: data.port
+			port:     data.port
 		}, function(err, queueItem) {
 			if (err) return callback(err);
+
 			callback(null, {
-				success: true,
+				success:   true,
 				queueItem: queueItem
 			});
 
@@ -292,8 +293,14 @@ module.exports = {
 				var newPath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.gcode'), hash);
 				var fws = fs.createWriteStream(newPath);
 				response.pipe(fws);
-				response.on( 'end', function() {
+				response.on('end', function() {
 					FormideOS.log('finished downloading gcode. Recieved ' + fws.bytesWritten + ' bytes');
+
+					// set status to queued to indicate it's ready to print
+					queueItem.status = 'queued';
+					queueItem.save(() => {
+						FormideOS.events.emit('queueItem.downloaded', { title: `${data.printJob.name} is ready to print`, message: 'The gcode was downloaded and is now ready to be printed' });
+					});
 				});
 			});
 		});
