@@ -198,22 +198,6 @@ module.exports = {
 								},reference, function(err,sliceRequest){
 									return callback(err,sliceRequest);
 						});
-						// try {
-// 							var sliceRequest = formideTools
-// 							.generateSlicerequestFromPrintjob(printJob.toObject(), {
-// 								version: version,
-// 								bucketIn: FormideOS.config.get('app.storageDir') + FormideOS.config.get("paths.modelfiles"),
-// 								bucketOut: FormideOS.config.get('app.storageDir') + FormideOS.config.get("paths.gcode"),
-// 								responseId: printJob.responseId
-// 							})
-// 							.generateAll();
-// 
-// 							return callback(null, sliceRequest);
-// 						}
-// 						catch(e) {
-// 							return callback(e);
-// 						}
-
 					});
 				});
 			});
