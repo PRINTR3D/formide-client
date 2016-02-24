@@ -75,9 +75,28 @@ module.exports = (routes, db) => {
 	 */
 	routes.delete('/queue/:id', (req, res) => {
 		db.QueueItem
-		.destroy({ id: req.params.id })
-		.then(() => {
-			return res.ok({ message: "Queueitem deleted" });
+		.findOne({ id: req.params.id })
+		.then((queueItem) => {
+
+			// delete file from storage when coming from cloud
+			if (queueItem.origin === 'cloud') {
+				const filePath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.gcode'), queueItem.gcode);
+
+				try {
+					fs.unlinkSync(filePath);
+				}
+				catch (e) {
+					FormideOS.log.warn('file could not be deleted from storage');
+				}
+			}
+
+			// delete from database
+			db.QueueItem
+			.destroy({ id: req.params.id })
+			.then(() => {
+				return res.ok({ message: "Queueitem deleted" });
+			})
+			.error(res.serverError);
 		})
 		.error(res.serverError);
 	});
