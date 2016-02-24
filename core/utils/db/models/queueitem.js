@@ -11,9 +11,9 @@ module.exports = {
 	attributes: {
 
 		origin: {
-			type: 'string',
+			type:     'string',
 			required: true,
-			enum: ['cloud', 'local', 'custom']
+			enum:     ['cloud', 'local', 'custom']
 		},
 
 		gcode: {
@@ -21,13 +21,13 @@ module.exports = {
 		},
 
 		status: {
-			type: 'string',
-			enum: ["queued", "printing", "finished"],
-			defaultsTo: "queued"
+			type:     'string',
+			required: true,
+			enum:     ['downloading', 'queued', 'printing', 'finished']
 		},
 
 		printJob: {
-			type: 'object',
+			type:     'object',
 			required: true
 		},
 
