@@ -120,7 +120,7 @@ function waitForRegistrationStart(
 	const registrationEndpoint
 		= `${FormideOS.config.get('cloud.url')}/devices/register`;
 
-	FormideOS.log('Trying to create device registration token');
+	FormideOS.log('Trying to create device registration token...');
 
 	post(registrationEndpoint, { form: {
 		mac_address:        macAddress,
@@ -136,7 +136,6 @@ function waitForRegistrationStart(
 
 		// If MAC not found or device already registered
 		if (response.statusCode == 404 || response.statusCode == 409) {
-			console.log(response.statusCode);
 			let msg;
 			try {
 				msg = JSON.parse(body);
@@ -215,11 +214,12 @@ function waitForRegistrationFinish(
 	const registrationTokenEndpoint
 		= `${registrationEndpoint}/${registrationToken}`;
 
+	FormideOS.log('Checking if device is registered...');
+
 	// Check if if device is still in unregistered state after
 	// some time and go into setup mode
 	get(registrationTokenEndpoint).then(args => {
-		const response = args[0];
-
+		const response        = args[0];
 		const registrationEnd = moment.utc();
 
 		// if registration token is not found, device is registered
@@ -234,6 +234,13 @@ function waitForRegistrationFinish(
 			FormideOS.log('Device registration timed out');
 			return startSetup(cloud);
 		}
+
+		// Else try again
+		setTimeout(waitForRegistrationFinish,
+			REGISTRATION_FINISH_INTERVAL,
+			registrationStart,
+			registrationToken,
+			cloud);
 	}, err => {
 		// If more that X time has passed and registration is still
 		// not done, go into setup mode
