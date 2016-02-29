@@ -59,7 +59,8 @@ module.exports = (routes, db) => {
 				origin:		'local',
 				gcode:		printJob.gcode,
 				printJob:	printJob.toObject(),
-				port:		req.body.port
+				port:		req.body.port,
+				status:     'queued'
 			})
 			.then((queueItem) => {
 				return res.ok({ message: "Printjob added to queue", queueItem });
@@ -74,9 +75,26 @@ module.exports = (routes, db) => {
 	 */
 	routes.delete('/queue/:id', (req, res) => {
 		db.QueueItem
-		.destroy({ id: req.params.id })
-		.then(() => {
-			return res.ok({ message: "Queueitem deleted" });
+		.findOne({ id: req.params.id })
+		.then((queueItem) => {
+
+			// delete file from storage when coming from cloud
+			if (queueItem.origin === 'cloud') {
+				const filePath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.gcode'), queueItem.gcode);
+
+				try {
+					fs.unlinkSync(filePath);
+				}
+				catch (e) {
+					FormideOS.log.warn('file could not be deleted from storage');
+				}
+			}
+
+			// delete from database
+			queueItem.destroy(function (err) {
+				if (err) return res.serverError(err);
+				return res.ok({ message: "queueItem deleted" });
+			});
 		})
 		.error(res.serverError);
 	});

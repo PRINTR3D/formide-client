@@ -85,7 +85,8 @@ module.exports = {
 						type: 'slice',
 						data: sliceRequest
 					};
-
+					sliceData.data.mode = 'gcode'; //THIS IS NOT ADDED ANYWHERE!!
+					
 					// write slicerequest to local Katana instance
 					FormideOS.events.emit('slicer.started', {
 						title:   'Slicer started',
@@ -127,7 +128,7 @@ module.exports = {
 									return FormideOS.events.emit('slicer.failed', {
 										title:   'Slicer error',
 										status:  response.status,
-										message: 'Failed slicing ' + updated[0].name,
+										message: 'Failed slicing ' + updated[0].name + ', ' + response.data.msg,//Added error msg of katana,
 										data:    response.data
 									});
 								})
@@ -167,6 +168,8 @@ module.exports = {
 
 			var reference = require('katana-slicer/reference.json');
 			var version = printJob.sliceProfile.version || reference.version;
+			assert(reference,'no reference found');
+			assert(version,'no version found');
 
 			formideTools.updateSliceprofile(reference, version, printJob.sliceProfile.settings, function(err, fixedSettings, version) {
 				if (err) return callback(err);
@@ -183,22 +186,18 @@ module.exports = {
 					.exec((err, printJob) => {
 						if (err) return callback(err);
 
-						try {
-							var sliceRequest = formideTools
-							.generateSlicerequestFromPrintjob(printJob.toObject(), {
-								version: version,
-								bucketIn: FormideOS.config.get('app.storageDir') + FormideOS.config.get("paths.modelfiles"),
-								bucketOut: FormideOS.config.get('app.storageDir') + FormideOS.config.get("paths.gcode"),
-								responseId: printJob.responseId
-							})
-							.generateAll();
+						//Add updated sliceProfile to printJob
+						var updatedPrintJob = printJob.toObject();
+						updatedPrintJob.sliceProfile.settings = fixedSettings;
 
-							return callback(null, sliceRequest);
-						}
-						catch(e) {
-							return callback(e);
-						}
-
+						formideTools.generateSlicerequestFromPrintjob(updatedPrintJob,{
+									version: version,
+									bucketIn: FormideOS.config.get('app.storageDir') + FormideOS.config.get("paths.modelfiles"),
+									bucketOut: FormideOS.config.get('app.storageDir') + FormideOS.config.get("paths.gcode"),
+									responseId: printJob.responseId
+								},reference, function(err,sliceRequest){
+									return callback(err,sliceRequest);
+						});
 					});
 				});
 			});
