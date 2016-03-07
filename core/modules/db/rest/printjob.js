@@ -93,7 +93,7 @@ module.exports = (routes, db) => {
 			// delete from database
 			printJob.destroy(function (err) {
 				if (err) return res.serverError(err);
-				return res.ok({ message: "Printjob deleted" });
+				return res.ok({ message: "printJob deleted" });
 			});
 		})
 		.catch(res.serverError);

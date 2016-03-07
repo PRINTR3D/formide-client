@@ -1,5 +1,7 @@
+'use strict';
+
 /*
- *	This code was created for Printr B.V. It is open source under the formideos-client package.
+ *	This code was created for Printr B.V. It is open source under the formide-client package.
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
@@ -9,6 +11,7 @@
 
 const path = require('path');
 const fs   = require('fs');
+const co   = require('co');
 
 function AbstractPrinter(serialPort, driver) {
 	this.port = serialPort;
@@ -51,8 +54,8 @@ AbstractPrinter.prototype.map = {
 	'home_y': 				['G28 Y'],
 	'home_z': 				['G28 Z'],
 	'jog':					['G91', 'G21', 'G1 _axis_ _dist_'],
-	'extrude':				['T_extnr_ ', 'G91', 'G21', 'G1 E _dist_'],
-	'retract':				['T_extnr_ ', 'G91', 'G21', 'G1 E _dist_'],
+	'extrude':				['T_extnr_ ', 'G91', 'G21', 'G1 F300 E _dist_'],
+	'retract':				['T_extnr_ ', 'G91', 'G21', 'G1 F300 E _dist_'],
 	'lcd_message':			['M117                     _msg_'],
 	'temp_bed':				['M140 S_temp_'],
 	'temp_extruder':		['T_extnr_', 'M104 S_temp_'],
@@ -94,7 +97,7 @@ AbstractPrinter.prototype.sendRawTune = function (rawCommand, callback) {
  */
 AbstractPrinter.prototype.command = function(command, parameters, callback) {
 	var self = this;
-	var command = Object.create(this.map[command]);
+	command = Object.create(this.map[command]);
 	for(var i in command) {
 		for(var j in parameters) {
 			if (typeof parameters[j] === 'string') {
@@ -113,14 +116,35 @@ AbstractPrinter.prototype.command = function(command, parameters, callback) {
  * Searches for queue item in database and sends absolute file path to driver
  */
 AbstractPrinter.prototype.startPrint = function(queueItemId, callback) {
+
+	//co(function* () {
+
+	//// fix for double printing items in queue
+	//yield FormideOS.db.QueueItem.update({ port: this.port }, { status: 'queued' });
+	//
+	//// get queue item to print
+	//const queueItem = FormideOS.db.QueueItem.findOne({ id: queueItemId, status: 'queued' });
+	//if (!queueItem) return callback();
+	//
+	//// start the print via the formide drivers
+	//const filePath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.gcode'), queueItem.gcode);
+	//yield this.driver.printFile(filePath, queueItem.id, this.port);
+	//
+	//// update queueItem
+	//yield formideOS.db.QueueItem.update({ id: queueItem.id }, { status: 'printing' });
+	//this.queueItemId = queueItemId;
+	//
+	//FormideOS.events.emit('printer.started', { port: this.port, queueItemId });
+	//return callback(null, true);
+
 	var self = this;
 	// first we set all current printing db queue items for this port back to queued to prevent multiple 'printing' items
 	FormideOS.db.QueueItem
 	.update({ port: self.port }, { status: 'queued' })
-	.exec(function(err, updated) {
+	.exec(function(err) {
 		if (err) return callback(err);
 		FormideOS.db.QueueItem
-		.findOne({ id: queueItemId })
+		.findOne({ id: queueItemId, status: 'queued' })
 		.exec(function(err, queueItem) {
 			if (err) return callback(err);
 			if (!queueItem) return callback(null, null);
@@ -143,6 +167,7 @@ AbstractPrinter.prototype.startPrint = function(queueItemId, callback) {
 		});
 	});
 }
+//).then(null, err => callback(err)); }
 
 /*
  * Pause printing the current file
