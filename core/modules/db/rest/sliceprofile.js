@@ -72,7 +72,7 @@ module.exports = (routes, db) => {
 	 */
 	routes.delete('/sliceprofiles/:id', (req, res) => {
 		db.SliceProfile
-		.destroy({ id: req.params.id, createdBy: user.req.id })
+		.destroy({ id: req.params.id, createdBy: req.user.id })
 		.then(() => {
 			return res.ok({ message: "Sliceprofile deleted" });
 		})
