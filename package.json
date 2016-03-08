@@ -55,7 +55,6 @@
     "katana-slicer": "git+https://github.com/PRINTR3D/katana-slicer-npm.git",
     "lodash": "2.4.1",
     "minimist": "~1.1.0",
-    "moment": "^2.10.3",
     "morgan": "1.6.1",
     "multer": "~0.1.8",
     "node-pre-gyp": "*",

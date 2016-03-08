@@ -6,13 +6,13 @@
  */
 
 const assert  = require('assert');
-const moment  = require('moment');
+const os      = require('os');
 const request = require('request');
 const thenify = require('thenify');
 
-// in minutes
-const REGISTRATION_START_TIMEOUT  = 1;
-const REGISTRATION_FINISH_TIMEOUT = 15;
+// in seconds
+const REGISTRATION_START_TIMEOUT  = 60;  // 1m
+const REGISTRATION_FINISH_TIMEOUT = 900; // 15m
 
 // in ms
 const REGISTRATION_START_INTERVAL  = 5000;  // 5s
@@ -83,7 +83,7 @@ module.exports = (routes, cloud) => {
 	 */
 	routes.post('/connect', (req, res) => {
 		if (req.body.ssid == null)
-			return res.badRequest('ssid must be set');
+			return res.badRequest('essid must be set');
 		if (req.body.password == null)
 			return res.badRequest('password must be set');
 		if (req.body.macAddress == null)
@@ -97,7 +97,7 @@ module.exports = (routes, cloud) => {
 
 			res.ok({ message: 'Device connected to network' });
 
-			const registrationStart = moment.utc();
+			const registrationStart = os.uptime();
 			FormideOS.log('Waiting for device registration to start');
 			setTimeout(waitForRegistrationStart,
 				REGISTRATION_START_INTERVAL,
@@ -132,7 +132,7 @@ function waitForRegistrationStart(
 		// If registration token created, wait for registration to finish,
 		// else go into setup mode
 
-		const registrationEnd = moment.utc();
+		const registrationEnd = os.uptime();
 
 		// If MAC not found or device already registered
 		if (response.statusCode == 404 || response.statusCode == 409) {
@@ -154,7 +154,7 @@ function waitForRegistrationStart(
 		}
 
 		// If timed out
-		else if (registrationEnd.diff(registrationStart, 'minutes')
+		else if ((registrationEnd - registrationStart)
 			>= REGISTRATION_START_TIMEOUT) {
 
 			FormideOS.log('Device registration token creation timed out');
@@ -175,13 +175,13 @@ function waitForRegistrationStart(
 		// Else if everything went well
 		setTimeout(waitForRegistrationFinish,
 			REGISTRATION_FINISH_INTERVAL,
-			moment.utc(),
+			os.uptime(),
 			registrationToken,
 			cloud);
 
 	}, err => {
-		const registrationEnd = moment.utc();
-		if (registrationEnd.diff(registrationStart, 'minutes')
+		const registrationEnd = os.uptime();
+		if ((registrationEnd - registrationStart)
 			>= REGISTRATION_START_TIMEOUT) {
 
 			FormideOS.log(
@@ -220,7 +220,7 @@ function waitForRegistrationFinish(
 	// some time and go into setup mode
 	get(registrationTokenEndpoint).then(args => {
 		const response        = args[0];
-		const registrationEnd = moment.utc();
+		const registrationEnd = os.uptime();
 
 		// if registration token is not found, device is registered
 		if (response.statusCode == 404) {
@@ -229,8 +229,9 @@ function waitForRegistrationFinish(
 
 		// If more that X time has passed and registration is still
 		// not done, go into setup mode
-		if (registrationEnd.diff(registrationStart, 'minutes')
+		if ((registrationEnd - registrationStart)
 			>= REGISTRATION_FINISH_TIMEOUT) {
+
 			FormideOS.log('Device registration timed out');
 			return startSetup(cloud);
 		}
@@ -244,8 +245,8 @@ function waitForRegistrationFinish(
 	}, err => {
 		// If more that X time has passed and registration is still
 		// not done, go into setup mode
-		const registrationEnd = moment.utc();
-		if (registrationEnd.diff(registrationStart, 'minutes')
+		const registrationEnd = os.uptime();
+		if ((registrationEnd - registrationStart)
 			>= REGISTRATION_FINISH_TIMEOUT) {
 
 			FormideOS.log(
