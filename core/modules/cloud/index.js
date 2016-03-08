@@ -327,6 +327,17 @@ module.exports = {
 	},
 
 	/**
+	 * Get currently connected network
+	 * @param cb
+	 */
+	getNetwork: function(cb) {
+		if (this.tools)
+			this.tools.network(cb);
+		else
+			cb(new Error('element-tools not installed'));
+	},
+
+	/**
 	 * Enable access point to be able to switch networks or redo setup
 	 */
 	setupMode: function(cb) {

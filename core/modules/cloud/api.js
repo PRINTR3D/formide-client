@@ -51,6 +51,13 @@ module.exports = (routes, cloud) => {
 		});
 	});
 
+	routes.get('/network', (req, res) => {
+		cloud.getNetwork((err, ssid) => {
+			if (err) return res.serverError(err);
+			return res.ok({ ssid })
+		});
+	});
+
 	/**
 	 * Go to setup mode (i.e. enable AP)
 	 */
