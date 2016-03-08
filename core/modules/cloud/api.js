@@ -51,6 +51,9 @@ module.exports = (routes, cloud) => {
 		});
 	});
 
+	/**
+	 * Get currently connected to network
+	 */
 	routes.get('/network', (req, res) => {
 		cloud.getNetwork((err, ssid) => {
 			if (err) return res.serverError(err);
