@@ -30,11 +30,14 @@ module.exports = {
 		this.channel = config.channel;
 		this.updateCheckURL = FormideOS.config.get('cloud.url') + '/products/client/latest/' + this.channel;
 
-		this.checkForUpdate(function (err, update) {
-			FormideOS.log.error(err);
-			FormideOS.log('update available');
-			FormideOS.log(update);
-		});
+		// only check for update when update tools are actually available
+		if (this.tools) {
+			this.checkForUpdate((err, update) => {
+				FormideOS.log.error(err);
+				FormideOS.log('update available');
+				FormideOS.log(update);
+			});
+		}
 	},
 
 	getUpdateStatus: function (cb) {
