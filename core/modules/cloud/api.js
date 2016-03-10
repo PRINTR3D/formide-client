@@ -62,7 +62,7 @@ module.exports = (routes, cloud) => {
 	});
 
 	/**
-	 * Connect to WiFi
+	 * Connect to Wi-Fi
 	 */
 	routes.post('/wifi', (req, res) => {
 		if (req.body.ssid == null)
@@ -79,7 +79,7 @@ module.exports = (routes, cloud) => {
 	});
 
 	/**
-	 * Connect to WiFi and register to cloud
+	 * Connect to Wi-Fi and register to cloud
 	 */
 	routes.post('/connect', (req, res) => {
 		if (req.body.ssid == null)
@@ -99,7 +99,7 @@ module.exports = (routes, cloud) => {
 
 			const registrationStart = os.uptime();
 			FormideOS.log('Waiting for device registration to start');
-			setTimeout(waitForRegistrationStart,
+			return setTimeout(waitForRegistrationStart,
 				REGISTRATION_START_INTERVAL,
 				registrationStart,
 				req.body.macAddress,
@@ -134,8 +134,8 @@ function waitForRegistrationStart(
 
 		const registrationEnd = os.uptime();
 
-		// If MAC not found or device already registered
-		if (response.statusCode == 404 || response.statusCode == 409) {
+		// If MAC not found
+		if (response.statusCode == 404) {
 			let msg;
 			try {
 				msg = JSON.parse(body);
@@ -153,6 +153,11 @@ function waitForRegistrationStart(
 			return startSetup(cloud);
 		}
 
+		// If device already registered
+		else if (response.statusCode == 409)
+			// there's nothing else to do
+			return FormideOS.log('Device already registered');
+
 		// If timed out
 		else if ((registrationEnd - registrationStart)
 			>= REGISTRATION_START_TIMEOUT) {
@@ -164,6 +169,7 @@ function waitForRegistrationStart(
 
 		// If something else not OK
 		else if (response.statusCode != 200)
+			// retry registration
 			return setTimeout(waitForRegistrationStart,
 				REGISTRATION_START_INTERVAL,
 				registrationStart,
@@ -171,8 +177,8 @@ function waitForRegistrationStart(
 				registrationToken,
 				cloud);
 
-		FormideOS.log('Waiting for device registration to finish');
 		// Else if everything went well
+		FormideOS.log('Waiting for device registration to finish');
 		setTimeout(waitForRegistrationFinish,
 			REGISTRATION_FINISH_INTERVAL,
 			os.uptime(),
