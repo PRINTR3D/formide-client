@@ -1,13 +1,9 @@
 /*
- *	This code was created for Printr B.V. It is open source under the formideos-client package.
+ *	This code was created for Printr B.V. It is open source under the formide-client package.
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
-const fs            = require('fs');
-const path          = require('path');
-const request       = require('request');
-const ini           = require('ini');
-const assert        = require('assert');
+const fs = require('fs');
 
 module.exports = {
 
@@ -53,7 +49,7 @@ module.exports = {
 		const self = this;
 		if (this.tools)
 			this.checkForUpdate(function (err, update) {
-				self.tools.update(update.version, update.url, update.signature, cb);
+				self.tools.update(update, cb);
 			});
 		else
 			return cb(new Error('element-tools not found'));
