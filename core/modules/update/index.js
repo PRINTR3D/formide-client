@@ -6,9 +6,7 @@
 const fs            = require('fs');
 const path          = require('path');
 const request       = require('request');
-const exec          = require('child_process').exec;
 const ini           = require('ini');
-const downloadRoot  = 'http://downloads.formide.com/releases/';
 const assert        = require('assert');
 
 module.exports = {
@@ -28,14 +26,11 @@ module.exports = {
 		}
 
 		this.channel = config.channel;
-		this.updateCheckURL = FormideOS.config.get('cloud.url') + '/products/client/latest/' + this.channel;
 
 		// only check for update when update tools are actually available
 		if (this.tools) {
 			this.checkForUpdate((err, update) => {
-				FormideOS.log.error(err);
-				FormideOS.log('update available');
-				FormideOS.log(update);
+				FormideOS.log('update', update);
 			});
 		}
 	},
@@ -49,7 +44,7 @@ module.exports = {
 
 	checkForUpdate: function (cb) {
 		if (this.tools)
-			this.tools.checkForUpdate(this.updateCheckURL, cb);
+			this.tools.checkForUpdate(cb);
 		else
 			return cb(new Error('element-tools not found'));
 	},
@@ -58,9 +53,7 @@ module.exports = {
 		const self = this;
 		if (this.tools)
 			this.checkForUpdate(function (err, update) {
-				FormideOS.log('doing update:');
-				FormideOS.log(update);
-				self.tools.update(update.releaseNumber, update.version, downloadRoot + update.url, update.signature, cb);
+				self.tools.update(update.version, update.url, update.signature, cb);
 			});
 		else
 			return cb(new Error('element-tools not found'));
