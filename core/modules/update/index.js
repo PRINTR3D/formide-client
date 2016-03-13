@@ -46,7 +46,7 @@ module.exports = {
 				
 				delete update.imageURL;
 				return cb(null, update);
-			}));
+			});
 		else
 			return cb(new Error('element-tools not found'));
 	},
