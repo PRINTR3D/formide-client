@@ -40,7 +40,13 @@ module.exports = {
 
 	checkForUpdate: function (cb) {
 		if (this.tools)
-			this.tools.checkForUpdate(cb);
+			this.tools.checkForUpdate((err, update) => {
+				if (err)
+					return cb(err);
+				
+				delete update.imageURL;
+				return cb(null, update);
+			}));
 		else
 			return cb(new Error('element-tools not found'));
 	},
