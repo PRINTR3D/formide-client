@@ -1,15 +1,9 @@
 /*
- *	This code was created for Printr B.V. It is open source under the formideos-client package.
+ *	This code was created for Printr B.V. It is open source under the formide-client package.
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
-const fs            = require('fs');
-const path          = require('path');
-const request       = require('request');
-const exec          = require('child_process').exec;
-const ini           = require('ini');
-const downloadRoot  = 'http://downloads.formide.com/releases/';
-const assert        = require('assert');
+const fs = require('fs');
 
 module.exports = {
 
@@ -28,14 +22,11 @@ module.exports = {
 		}
 
 		this.channel = config.channel;
-		this.updateCheckURL = FormideOS.config.get('cloud.url') + '/products/client/latest/' + this.channel;
 
 		// only check for update when update tools are actually available
 		if (this.tools) {
 			this.checkForUpdate((err, update) => {
-				FormideOS.log.error(err);
-				FormideOS.log('update available');
-				FormideOS.log(update);
+				FormideOS.log('update', update);
 			});
 		}
 	},
@@ -49,19 +40,20 @@ module.exports = {
 
 	checkForUpdate: function (cb) {
 		if (this.tools)
-			this.tools.checkForUpdate(this.updateCheckURL, cb);
+			this.tools.checkForUpdate((err, update) => {
+				if (err)
+					return cb(err);
+				
+				delete update.imageURL;
+				return cb(null, update);
+			});
 		else
 			return cb(new Error('element-tools not found'));
 	},
 
 	update: function (cb) {
-		const self = this;
 		if (this.tools)
-			this.checkForUpdate(function (err, update) {
-				FormideOS.log('doing update:');
-				FormideOS.log(update);
-				self.tools.update(update.releaseNumber, update.version, downloadRoot + update.url, update.signature, cb);
-			});
+			this.tools.update(cb);
 		else
 			return cb(new Error('element-tools not found'));
 	}
