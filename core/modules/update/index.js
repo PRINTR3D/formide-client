@@ -46,11 +46,8 @@ module.exports = {
 	},
 
 	update: function (cb) {
-		const self = this;
 		if (this.tools)
-			this.checkForUpdate(function (err, update) {
-				self.tools.update(update, cb);
-			});
+			this.tools.update(cb);
 		else
 			return cb(new Error('element-tools not found'));
 	}
