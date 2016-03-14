@@ -104,32 +104,39 @@ module.exports = {
 			if (self.tools && self.tools.getMac instanceof Function)
 				getMac = self.tools.getMac;
 
+			let getIp = callback => {
+				setImmediate(() => callback(null, internalIp()));
+			};
+			if (self.tools && self.tools.getIp instanceof Function)
+				getIp = self.tools.getIp;
+
 			// authenticate formideos based on mac address and api token, also
 			// sends permissions for faster blocking via cloud
-			publicIp((err, ip) => {
-				getMac((err, macAddress) => {
-					self.cloud.emit('authenticate', {
-						type: 		 'client',
-						ip: 		 ip,
-						ip_internal: internalIp(),
-						version:     require('../../../package.json').version,
-						environment: FormideOS.config.environment,
-						mac: 		 macAddress,
-						port:        FormideOS.config.get('app.port')
-					}, (response) => {
-						if (response.success) {
-							FormideOS.log('Cloud connected');
+			publicIp((err, publicIpAddress) => {
+			getIp((err, internalIpAddress) => {
+			getMac((err, macAddress) => {
+				self.cloud.emit('authenticate', {
+					type: 		 'client',
+					ip: 		 publicIpAddress,
+					ip_internal: internalIpAddress,
+					version:     require('../../../package.json').version,
+					environment: FormideOS.config.environment,
+					mac: 		 macAddress,
+					port:        FormideOS.config.get('app.port')
+				}, response => {
+					if (response.success) {
+						FormideOS.log('Cloud connected');
 
-							// forward all events to the cloud
-							FormideOS.events.onAny(forwardEvents);
-						}
-						else {
-							// something went wrong when connecting to the cloud
-							FormideOS.log.error('Cloud connection error: ' + response.message);
-						}
-					});
+						// forward all events to the cloud
+						FormideOS.events.onAny(forwardEvents);
+					}
+					else {
+						// something went wrong when connecting to the cloud
+						FormideOS.log.error(
+							'Cloud connection error:', response.message);
+					}
 				});
-			});
+			}); }); });
 		});
 
 		/**
@@ -322,6 +329,17 @@ module.exports = {
 	getNetworks: function(cb) {
 		if (this.tools)
 			this.tools.networks(cb);
+		else
+			cb(new Error('element-tools not installed'));
+	},
+
+	/**
+	 * Get currently connected network
+	 * @param cb
+	 */
+	getNetwork: function(cb) {
+		if (this.tools)
+			this.tools.network(cb);
 		else
 			cb(new Error('element-tools not installed'));
 	},
