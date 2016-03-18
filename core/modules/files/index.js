@@ -1,18 +1,23 @@
+'use strict';
+
 /*
- *	This code was created for Printr B.V. It is open source under the formideos-client package.
+ *	This code was created for Printr B.V. It is open source under the formide-client package.
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
 var fs			= require('fs');
 var path		= require('path');
 var uuid		= require('node-uuid');
-var request		= require('request');
 var diskspace	= require('diskspace');
 
 module.exports = {
 
-	/*
-	 * Handle file upload
+	/**
+	 * Upload a file to embedded storage and DB
+	 * @param file
+	 * @param filetype
+	 * @param userId
+	 * @param callback
 	 */
 	uploadFile: function(file, filetype, userId, callback) {
 		fs.readFile(file.path, function(err, data) {
@@ -46,8 +51,12 @@ module.exports = {
 		});
 	},
 
-	/*
-	 * Handle modelfile download
+	/**
+	 * Download a file from embedded storage
+	 * @param hash
+	 * @param encoding
+	 * @param userId
+	 * @param callback
 	 */
 	downloadFile: function(hash, encoding, userId, callback) {
 		// TODO: check user ID
@@ -77,12 +86,59 @@ module.exports = {
 	},
 
 	/**
-	 * Get disk space on user data partition
+	 * Get embedded storage usage info
+	 * @param callback
 	 */
-	getDiskSpace: function(callback) {
+	getDiskSpace(callback) {
 		diskspace.check('/data', function (err, total, free, status) {
 			if (err) return callback(err);
 			return callback(null, { total, free, status });
 		});
+	},
+
+	/**
+	 * Get a list of all attached storage drives
+	 * @param callback
+	 */
+	getDrives(callback) {
+
+	},
+
+	/**
+	 * Mount an external drive to start using it
+	 * @param drive
+	 * @param callback
+	 */
+	mountDrive(drive, callback) {
+
+	},
+
+	/**
+	 * Unmount an external drive before unplugging it
+	 * @param drive
+	 * @param callback
+	 */
+	unmountDrive(drive, callback) {
+
+	},
+
+	/**
+	 * List files in drive (or subpath)
+	 * @param drive
+	 * @param path
+	 * @param callback
+	 */
+	listFiles(drive, path, callback) {
+
+	},
+
+	/**
+	 * Copy file from drive to embedded storage and DB
+	 * @param drive
+	 * @param path
+	 * @param callback
+	 */
+	copyFile(drive, path, callback) {
+
 	}
-}
+};
