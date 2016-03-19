@@ -31,7 +31,9 @@ module.exports = function(routes, module) {
 		var ext = path.extname(req.files.file.originalFilename).toLowerCase();
 		if (ext === '.stl' || ext === '.gcode') {
 			module.uploadFile(req.files.file, "text/" + ext.replace('.', ''), req.user.id, function(err, uploadedFile) {
-				if(err) return res.serverError(err);
+				if (err)
+					return res.serverError(err);
+
 				return res.ok({
 					message: "Uploaded file",
 					uploadedFile: uploadedFile

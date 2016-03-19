@@ -12,6 +12,18 @@ var diskspace	= require('diskspace');
 
 module.exports = {
 
+	tools: null,
+
+	init() {
+		try {
+			self.tools = require('element-tools').usb;
+		}
+		catch (e) {
+			FormideOS.log.warn(
+				'element-tools not found for files, probably not running on The Element');
+		}
+	},
+
 	/**
 	 * Upload a file to embedded storage and DB
 	 * @param file
@@ -101,7 +113,10 @@ module.exports = {
 	 * @param callback
 	 */
 	getDrives(callback) {
-
+		if (this.tools)
+			this.tools.drives(callback);
+		else
+			callback(new Error('element-tools not installed'));
 	},
 
 	/**
@@ -110,7 +125,10 @@ module.exports = {
 	 * @param callback
 	 */
 	mountDrive(drive, callback) {
-
+		if (this.tools)
+			this.tools.mount(drive, callback);
+		else
+			callback(new Error('element-tools not installed'));
 	},
 
 	/**
@@ -119,7 +137,10 @@ module.exports = {
 	 * @param callback
 	 */
 	unmountDrive(drive, callback) {
-
+		if (this.tools)
+			this.tools.unmount(drive, callback);
+		else
+			callback(new Error('element-tools not installed'));
 	},
 
 	/**
@@ -129,16 +150,49 @@ module.exports = {
 	 * @param callback
 	 */
 	listFiles(drive, path, callback) {
-
+		if (this.tools)
+			this.tools.read(drive, path, callback);
+		else
+			callback(new Error('element-tools not installed'));
 	},
 
 	/**
 	 * Copy file from drive to embedded storage and DB
 	 * @param drive
 	 * @param path
+	 * @param userId
 	 * @param callback
 	 */
-	copyFile(drive, path, callback) {
+	copyFile(drive, path, userId, callback) {
+		if (this.tools) {
+			const hash = uuid.v4();
+			const target = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.modelfiles'), hash);
 
+			this.tools.copy(drive, path, target, hash, (err, success) => {
+				if (err)
+					return callback(err);
+
+				const ext = path.extname(path).toLowerCase();
+
+				if (ext === '.stl' || ext === '.gcode') {
+					FormideOS.db.UserFile.create({
+						prettyname: path,
+						filename:   path,
+						filesize:   '', // TODO
+						filetype:   `text/${ext.replace('.', '')}`,
+						hash:       hash,
+						createdBy:  userId
+					}, function (err, userFile) {
+						if (err) return callback(err)
+						return callback(null, userFile);
+					});
+				}
+				else {
+					return res.badRequest("Invalid filetype. Should be STL or Gcode");
+				}
+			});
+		}
+		else
+			return callback(new Error('element-tools not installed'));
 	}
 };
