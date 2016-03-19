@@ -34,10 +34,7 @@ module.exports = function(routes, module) {
 				if (err)
 					return res.serverError(err);
 
-				return res.ok({
-					message: "Uploaded file",
-					uploadedFile: uploadedFile
-				});
+				return res.ok({ message: "Uploaded file", uploadedFile });
 			});
 		}
         else {
@@ -54,26 +51,36 @@ module.exports = function(routes, module) {
 	
 	routes.get('/drives', (req, res) => {
 		module.getDrives((err, drives) => {
-			if (err)
-				return res.serverError(err);
-
+			if (err) return res.serverError(err);
 			return res.ok(drives);
 		});
 	});
 	
 	routes.post('/mount/:drive', (req, res) => {
-		
+		module.mountDrive(req.params.drive, (err) => {
+			if (err) return res.serverError(err);
+			return res.ok({ message: 'drive mounted' });
+		});
 	});
 	
 	routes.post('/unmount/:drive', (req, res) => {
-		
+		module.unmountDrive(req.params.drive, (err) => {
+			if (err) return res.serverError(err);
+			return res.ok({ message: 'drive unmounted' });
+		});
 	});
 	
 	routes.get('/read/:drive', (req, res) => {
-		
+		module.readDrive(req.params.drive, req.body.path, (err, files) => {
+			if (err) return res.serverError(err);
+			return res.ok(files);
+		});
 	});
 	
 	routes.post('/copy/:drive', (req, res) => {
-
+		module.copy(req.params.drive, req.body.path, (err, uploadedFile) => {
+			if (err) return res.serverError(err);
+			return res.ok({ message: 'file copied', uploadedFile });
+		});
 	});
 };
