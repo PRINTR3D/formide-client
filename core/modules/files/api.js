@@ -45,24 +45,35 @@ module.exports = function(routes, module) {
 		}
 	});
 
-	/*
-	 * Upload a file by remote url. Needs url, filename and filetype as body params
-	 */
-	// routes.post('/upload/url', function(req, res) {
-	// 	// TODO: fix hardcoded text/stl filetype
-	// 	module.uploadFromUrl(req.body.url, req.body.filename, "text/stl", req.user.id, function(err, userFile) {
-	// 		if(err) return res.serverError(err);
-	// 		return res.ok({
-	// 			message: "File uploaded from remote url",
-	// 			file: userFile
-	// 		});
-	// 	});
-	// });
-
 	routes.get('/diskspace', function(req, res) {
 		module.getDiskSpace(function(err, result) {
 			if (err) return res.serverError(err);
 			return res.ok(result);
 		});
+	});
+	
+	routes.get('/drives', (req, res) => {
+		module.getDrives((err, drives) => {
+			if (err)
+				return res.serverError(err);
+
+			return res.ok(drives);
+		});
+	});
+	
+	routes.post('/mount/:drive', (req, res) => {
+		
+	});
+	
+	routes.post('/unmount/:drive', (req, res) => {
+		
+	});
+	
+	routes.get('/read/:drive', (req, res) => {
+		
+	});
+	
+	routes.post('/copy/:drive', (req, res) => {
+
 	});
 };

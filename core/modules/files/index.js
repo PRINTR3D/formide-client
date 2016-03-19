@@ -149,7 +149,7 @@ module.exports = {
 	 * @param path
 	 * @param callback
 	 */
-	listFiles(drive, path, callback) {
+	readDrive(drive, path, callback) {
 		if (this.tools)
 			this.tools.read(drive, path, callback);
 		else
