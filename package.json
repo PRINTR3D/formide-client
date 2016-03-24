@@ -69,7 +69,6 @@
     "password-hash": "^1.2.2",
     "permission": "^0.1.6",
     "polo": "~0.7.1",
-    "prettify-error": "^0.1.1",
     "public-ip": "^1.0.2",
     "request": "~2.40.0",
     "request-progress": "~0.3.1",
