@@ -151,7 +151,7 @@ module.exports = {
 	/**
 	 * List files in drive (or subpath)
 	 * @param drive
-	 * @param path
+	 * @param filePath
 	 * @param callback
 	 */
 	readDrive(drive, filePath, callback) {
@@ -185,7 +185,7 @@ module.exports = {
 	/**
 	 * Copy file from drive to embedded storage and DB
 	 * @param drive
-	 * @param path
+	 * @param filePath
 	 * @param userId
 	 * @param callback
 	 */
