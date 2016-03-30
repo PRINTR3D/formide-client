@@ -192,7 +192,7 @@ module.exports = {
 	copyFile(drive, filePath, userId, callback) {
 		if (this.tools) {
 			const hash = uuid.v4();
-			const target = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.modelfiles'), hash);
+			const target = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.modelfiles'));
 
 			this.tools.copy(drive, filePath, target, hash, (err, success) => {
 				if (err)
