@@ -204,7 +204,7 @@ module.exports = {
 					FormideOS.db.UserFile.create({
 						prettyname: filePath,
 						filename:   filePath,
-						filesize:   '', // TODO
+						filesize:   0, // TODO
 						filetype:   `text/${ext.replace('.', '')}`,
 						hash:       hash,
 						createdBy:  userId
