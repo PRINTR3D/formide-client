@@ -5,10 +5,10 @@
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
-var fs			= require('fs');
-var path		= require('path');
-var uuid		= require('node-uuid');
-var diskspace	= require('diskspace');
+const fs		= require('fs');
+const path		= require('path');
+const uuid		= require('node-uuid');
+const diskspace	= require('diskspace');
 
 module.exports = {
 
@@ -154,9 +154,9 @@ module.exports = {
 	 * @param path
 	 * @param callback
 	 */
-	readDrive(drive, path, callback) {
+	readDrive(drive, filePath, callback) {
 		if (this.tools)
-			this.tools.read(drive, path, (err, files) => {
+			this.tools.read(drive, filePath, (err, files) => {
 				if (err)
 					return callback(err);
 
@@ -189,21 +189,21 @@ module.exports = {
 	 * @param userId
 	 * @param callback
 	 */
-	copyFile(drive, path, userId, callback) {
+	copyFile(drive, filePath, userId, callback) {
 		if (this.tools) {
 			const hash = uuid.v4();
 			const target = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.modelfiles'), hash);
 
-			this.tools.copy(drive, path, target, hash, (err, success) => {
+			this.tools.copy(drive, filePath, target, hash, (err, success) => {
 				if (err)
 					return callback(err);
 
-				const ext = path.extname(path).toLowerCase();
+				const ext = path.extname(filePath).toLowerCase();
 
 				if (ext === '.stl' || ext === '.gcode') {
 					FormideOS.db.UserFile.create({
-						prettyname: path,
-						filename:   path,
+						prettyname: filePath,
+						filename:   filePath,
 						filesize:   '', // TODO
 						filetype:   `text/${ext.replace('.', '')}`,
 						hash:       hash,
