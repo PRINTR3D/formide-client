@@ -114,7 +114,12 @@ module.exports = {
 	 */
 	getDrives(callback) {
 		if (this.tools)
-			this.tools.drives(callback);
+			this.tools.drives((err, drives) => {
+				if (err)
+					return callback(err);
+
+				callback(drives.split('\n'));
+			});
 		else
 			callback(new Error('element-tools not installed'));
 	},
@@ -151,7 +156,7 @@ module.exports = {
 	 */
 	readDrive(drive, path, callback) {
 		if (this.tools)
-			this.tools.read(drive, path, function(err, files) {
+			this.tools.read(drive, path, (err, files) => {
 				if (err)
 					return callback(err);
 
@@ -171,7 +176,7 @@ module.exports = {
 						});
 				}
 
-				return callback(null, output);
+				callback(null, output);
 			});
 		else
 			callback(new Error('element-tools not installed'));
