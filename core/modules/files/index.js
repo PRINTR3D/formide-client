@@ -118,7 +118,7 @@ module.exports = {
 				if (err)
 					return callback(err);
 
-				callback(drives.split('\n'));
+				callback(null, drives.split('\n'));
 			});
 		else
 			callback(new Error('element-tools not installed'));
