@@ -16,7 +16,7 @@ module.exports = {
 
 	init() {
 		try {
-			self.tools = require('element-tools').usb;
+			this.tools = require('element-tools').usb;
 		}
 		catch (e) {
 			FormideOS.log.warn(
