@@ -78,7 +78,7 @@ module.exports = function(routes, module) {
 	});
 	
 	routes.post('/copy/:drive', (req, res) => {
-		module.copy(req.params.drive, req.body.path, req.user.id, (err, uploadedFile) => {
+		module.copyFile(req.params.drive, req.body.path, req.user.id, (err, uploadedFile) => {
 			if (err) return res.serverError(err);
 			return res.ok({ message: 'file copied', uploadedFile });
 		});
