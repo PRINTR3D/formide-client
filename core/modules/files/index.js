@@ -209,8 +209,10 @@ module.exports = {
 						hash:       hash,
 						createdBy:  userId
 					}, function (err, userFile) {
-						if (err) return callback(err)
-						return callback(null, userFile);
+						if (err)
+							return callback(err);
+
+						callback(null, userFile);
 					});
 				}
 				else {
