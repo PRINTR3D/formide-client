@@ -151,7 +151,28 @@ module.exports = {
 	 */
 	readDrive(drive, path, callback) {
 		if (this.tools)
-			this.tools.read(drive, path, callback);
+			this.tools.read(drive, path, function(err, files) {
+				if (err)
+					return callback(err);
+
+				files = files.split('\n');
+				var output = [];
+
+				// get name, size and type from file list
+				for (var i = 0; i < files.length; i++) {
+					var file = files[i];
+					file = file.replace(/ +(?= )/g,'').split(' ');
+
+					if (file.length === 9)
+						output.push({
+							name: file[8],
+							size: file[4],
+							type: (file[8].charAt(file[8].length - 1) === '/') ? 'dir' : 'file' // check if file or dir (with -F)
+						});
+				}
+
+				return callback(null, output);
+			});
 		else
 			callback(new Error('element-tools not installed'));
 	},

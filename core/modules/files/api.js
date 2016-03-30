@@ -71,7 +71,7 @@ module.exports = function(routes, module) {
 	});
 	
 	routes.get('/read/:drive', (req, res) => {
-		module.readDrive(req.params.drive, req.body.path, (err, files) => {
+		module.readDrive(req.params.drive, req.query.path, (err, files) => {
 			if (err) return res.serverError(err);
 			return res.ok(files);
 		});
