@@ -14,7 +14,7 @@ module.exports = {
 
 	init: function (config) {
 		try {
-			this.tools = require('element-tools');
+			this.tools = require('element-tools').update;
 		}
 		catch (e) {
 			FormideOS.log.warn('element-tools not found for update, probably not running on The Element');

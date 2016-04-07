@@ -48,7 +48,7 @@ module.exports = {
 		var self = this;
 
 		try {
-			self.tools = require('element-tools');
+			self.tools = require('element-tools').wifi;
 			addWifiSetupRoute(FormideOS.http.app, self.tools);
 		}
 		catch (e) {
