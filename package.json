@@ -1,6 +1,6 @@
 {
   "name": "formide-client",
-  "version": "1.0.0",
+  "version": "1.0.5",
   "description": "FORMIDE client is a modular 3D printing operating system with the goal of serving all 3D printers.",
   "main": "app.js",
   "author": "Printr B.V. <info@printr.nl>",
@@ -15,7 +15,8 @@
   "license": "GPL-2.0",
   "scripts": {
     "start": "NODE_ENV=development node app",
-    "test": "NODE_ENV=test mocha --harmony test/**/*.test.js"
+    "test": "NODE_ENV=test mocha --harmony test/**/*.test.js",
+    "postversion": "git push && git push --tags"
   },
   "dependencies": {
     "async": "^1.4.2",
@@ -43,8 +44,8 @@
     "express-validator": "^2.9.0",
     "fancy-errors": "^0.1.2",
     "formide-client-interface": "^0.3.54",
-    "formide-drivers": "git+https://github.com/printr3d/formide-drivers-npm.git",
-    "formide-tools": "0.0.28",
+    "formide-drivers": "git+https://github.com/printr3d/formide-drivers-npm.git#v5.3.1",
+    "formide-tools": "^0.0.28",
     "fs-extra": "^0.26.4",
     "getmac": "^1.0.7",
     "gitty": "^3.2.3",
@@ -52,10 +53,9 @@
     "internal-ip": "^1.0.1",
     "jsonstorage": "0.0.12",
     "jsop": "^0.3.1",
-    "katana-slicer": "git+https://github.com/PRINTR3D/katana-slicer-npm.git",
+    "katana-slicer": "git+https://github.com/PRINTR3D/katana-slicer-npm.git#v1.0.8",
     "lodash": "2.4.1",
     "minimist": "~1.1.0",
-    "moment": "^2.10.3",
     "morgan": "1.6.1",
     "multer": "~0.1.8",
     "node-pre-gyp": "*",
@@ -70,7 +70,6 @@
     "password-hash": "^1.2.2",
     "permission": "^0.1.6",
     "polo": "~0.7.1",
-    "prettify-error": "^0.1.1",
     "public-ip": "^1.0.2",
     "request": "~2.40.0",
     "request-progress": "~0.3.1",
