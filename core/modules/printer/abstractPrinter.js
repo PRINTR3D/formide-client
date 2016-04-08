@@ -228,11 +228,10 @@ AbstractPrinter.prototype.stopPrint = function(callback) {
 				FormideOS.log.warn('No queue item with that ID found to stop printing');
 				return callback(null, 'stopped printing');
 			}
-			else {
-				queueItem.status = 'queued';
-				queueItem.save();
-				return callback(null, 'stopped printing');
-			}
+			
+			queueItem.status = 'queued';
+			queueItem.save();
+			return callback(null, 'stopped printing');
 		});
 	});
 }
