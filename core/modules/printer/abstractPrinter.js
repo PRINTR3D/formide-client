@@ -218,6 +218,8 @@ AbstractPrinter.prototype.stopPrint = function(callback) {
 				queueItemId: self.queueItemId
 			});
 
+			self.queueItemId = null;
+
 			if (err)
 				return FormideOS.log.error(err.message);
 
@@ -227,7 +229,6 @@ AbstractPrinter.prototype.stopPrint = function(callback) {
 			queueItem.status = 'queued';
 			queueItem.save();
 
-			self.queueItemId = null;
 			return callback(err, 'stopped printing');
 		});
 	});
