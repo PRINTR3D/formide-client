@@ -245,14 +245,14 @@ AbstractPrinter.prototype.printFinished = function(queueItemId) {
 	if (queueItemId !== self.queueItemId)
 		FormideOS.log.warn('Warning: driver queue ID and client queue ID are not the same!');
 
+	FormideOS.events.emit('printer.finished', {
+		port:		 self.port,
+		queueItemId: self.queueItemId
+	});
+
 	if (self.queueItemId)
 		FormideOS.db.QueueItem
 		.findOne({ id: self.queueItemId }, function(err, queueItem) {
-
-			FormideOS.events.emit('printer.finished', {
-				port:		 self.port,
-				queueItemId: self.queueItemId
-			});
 
 			// reset queueItemId of current print
 			self.queueItemId = null;
