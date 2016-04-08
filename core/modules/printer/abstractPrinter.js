@@ -205,33 +205,35 @@ AbstractPrinter.prototype.resumePrint = function(callback) {
 AbstractPrinter.prototype.stopPrint = function(callback) {
 	var self = this;
 	// TODO: implement custom stop gcode array (2nd param)
-	self.driver.stopPrint(self.port, '', function(err, response) {
 
-		if (err)
-			return FormideOS.log.error(err.message);
-
-		FormideOS.db.QueueItem
-		.findOne({ id: self.queueItemId }, (err, queueItem) => {
-
-			FormideOS.events.emit('printer.stopped', {
-				port:		 self.port,
-				queueItemId: self.queueItemId
-			});
-
-			self.queueItemId = null;
+	if (sef.queueItem)
+		self.driver.stopPrint(self.port, '', function(err, response) {
 
 			if (err)
 				return FormideOS.log.error(err.message);
+	
+			FormideOS.db.QueueItem
+			.findOne({ id: self.queueItemId }, (err, queueItem) => {
 
-			if (!queueItem)
-				return FormideOS.log.warn('No queue item with that ID found to stop printing');
+				FormideOS.events.emit('printer.stopped', {
+					port:		 self.port,
+					queueItemId: self.queueItemId
+				});
 
-			queueItem.status = 'queued';
-			queueItem.save();
+				self.queueItemId = null;
 
-			return callback(err, 'stopped printing');
+				if (err)
+					return FormideOS.log.error(err.message);
+
+				if (!queueItem)
+					return FormideOS.log.warn('No queue item with that ID found to stop printing');
+
+				queueItem.status = 'queued';
+				queueItem.save();
+
+				return callback(err, 'stopped printing');
+			});
 		});
-	});
 }
 
 /*
@@ -243,30 +245,31 @@ AbstractPrinter.prototype.printFinished = function(queueItemId) {
 	if (queueItemId !== self.queueItemId)
 		FormideOS.log.warn('Warning: driver queue ID and client queue ID are not the same!');
 
-	FormideOS.db.QueueItem
-	.findOne({ id: self.queueItemId }, function(err, queueItem) {
+	if (self.queueItemId)
+		FormideOS.db.QueueItem
+		.findOne({ id: self.queueItemId }, function(err, queueItem) {
 
-		FormideOS.events.emit('printer.finished', {
-			port:		 self.port,
-			queueItemId: self.queueItemId
+			FormideOS.events.emit('printer.finished', {
+				port:		 self.port,
+				queueItemId: self.queueItemId
+			});
+
+			// reset queueItemId of current print
+			self.queueItemId = null;
+
+			if (err)
+				return FormideOS.log.err(err.message);
+
+			if (!queueItem)
+				return FormideOS.log.warn('No queue item with that ID found to handle finished printing');
+
+			// remove gcode from cloud
+			if (queueItem.origin === 'cloud')
+				fs.unlinkSync(path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.gcode'), queueItem.gcode));
+
+			queueItem.status = 'finished';
+			queueItem.save();
 		});
-
-		// reset queueItemId of current print
-		self.queueItemId = null;
-
-		if (err)
-			return FormideOS.log.err(err.message);
-
-		if (!queueItem)
-			return FormideOS.log.warn('No queue item with that ID found to handle finished printing');
-
-		// remove gcode from cloud
-		if (queueItem.origin === 'cloud')
-			fs.unlinkSync(path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.gcode'), queueItem.gcode));
-
-		queueItem.status = 'finished';
-		queueItem.save();
-	});
 }
 
 /**
