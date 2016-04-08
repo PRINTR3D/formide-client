@@ -227,7 +227,10 @@ AbstractPrinter.prototype.stopPrint = function(callback) {
  */
 AbstractPrinter.prototype.printFinished = function(queueItemId) {
 	var self = this;
-	if (queueItemId !== self.queueItemId) FormideOS.log.warn('Warning: driver queue ID and client queue ID are not the same!');
+
+	if (queueItemId !== self.queueItemId)
+		FormideOS.log.warn('Warning: driver queue ID and client queue ID are not the same!');
+
 	FormideOS.db.QueueItem
 	.findOne({ id: self.queueItemId }, function(err, queueItem) {
 

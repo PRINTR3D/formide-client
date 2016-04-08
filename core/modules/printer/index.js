@@ -48,7 +48,7 @@ module.exports = {
 					self.printerOnline(event.port);
 				}
 				else if (event.type === 'printFinished') {
-					self.printFinished(event.port, event.queueItemId);
+					self.printFinished(event.port, event.printjobID);
 				}
 			}
 		});
