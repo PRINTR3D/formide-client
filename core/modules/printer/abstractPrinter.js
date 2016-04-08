@@ -206,39 +206,35 @@ AbstractPrinter.prototype.stopPrint = function(callback) {
 	var self = this;
 	// TODO: implement custom stop gcode array (2nd param)
 
-	if (self.queueItem)
-		self.driver.stopPrint(self.port, '', function(err, response) {
+	self.driver.stopPrint(self.port, '', function(err, response) {
+
+		if (err)
+			return FormideOS.log.error(err.message);
+
+		FormideOS.db.QueueItem
+		.findOne({ id: self.queueItemId }, (err, queueItem) => {
+
+			FormideOS.events.emit('printer.stopped', {
+				port:		 self.port,
+				queueItemId: self.queueItemId
+			});
+
+			self.queueItemId = null;
 
 			if (err)
-				return FormideOS.log.error(err.message);
+				return callback(err);
 
-			FormideOS.db.QueueItem
-			.findOne({ id: self.queueItemId }, (err, queueItem) => {
-
-				FormideOS.events.emit('printer.stopped', {
-					port:		 self.port,
-					queueItemId: self.queueItemId
-				});
-
-				self.queueItemId = null;
-
-				if (err)
-					return callback(err);
-
-				if (!queueItem) {
-					FormideOS.log.warn('No queue item with that ID found to stop printing');
-					return callback(null, 'stopped printing');
-				}
-				else {
-					queueItem.status = 'queued';
-					queueItem.save();
-					return callback(null, 'stopped printing');
-				}
-			});
+			if (!queueItem) {
+				FormideOS.log.warn('No queue item with that ID found to stop printing');
+				return callback(null, 'stopped printing');
+			}
+			else {
+				queueItem.status = 'queued';
+				queueItem.save();
+				return callback(null, 'stopped printing');
+			}
 		});
-
-	else
-		return callback(null, 'stopped printing');
+	});
 }
 
 /*
