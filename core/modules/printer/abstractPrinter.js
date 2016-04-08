@@ -228,7 +228,7 @@ AbstractPrinter.prototype.stopPrint = function(callback) {
 				FormideOS.log.warn('No queue item with that ID found to stop printing');
 				return callback(null, 'stopped printing');
 			}
-			
+
 			queueItem.status = 'queued';
 			queueItem.save();
 			return callback(null, 'stopped printing');
@@ -270,7 +270,7 @@ AbstractPrinter.prototype.printFinished = function(queueItemId) {
 			queueItem.status = 'finished';
 			queueItem.save();
 		});
-}
+};
 
 /**
  * Send a custom gcode to the printer (raw)
