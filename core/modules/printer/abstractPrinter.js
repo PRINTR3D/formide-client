@@ -232,7 +232,7 @@ AbstractPrinter.prototype.stopPrint = function(callback) {
 				else {
 					queueItem.status = 'queued';
 					queueItem.save();
-					return callback(err, 'stopped printing');
+					return callback(null, 'stopped printing');
 				}
 			});
 		});
