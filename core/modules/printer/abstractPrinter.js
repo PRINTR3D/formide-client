@@ -206,16 +206,27 @@ AbstractPrinter.prototype.stopPrint = function(callback) {
 	var self = this;
 	// TODO: implement custom stop gcode array (2nd param)
 	self.driver.stopPrint(self.port, '', function(err, response) {
-		if (err) return FormideOS.log.error(err.message);
-		FormideOS.db.QueueItem.findOne({ id: self.queueItemId }, function(err, queueItem) {
-			if (err) return FormideOS.log.error(err.message);
-			if (!queueItem) return FormideOS.log.warn('No queue item with that ID found to stop printing');
-			queueItem.status = 'queued';
-			queueItem.save();
+
+		if (err)
+			return FormideOS.log.error(err.message);
+
+		FormideOS.db.QueueItem
+		.findOne({ id: self.queueItemId }, (err, queueItem) => {
+
 			FormideOS.events.emit('printer.stopped', {
-				port: self.port,
+				port:		 self.port,
 				queueItemId: self.queueItemId
 			});
+
+			if (err)
+				return FormideOS.log.error(err.message);
+
+			if (!queueItem)
+				return FormideOS.log.warn('No queue item with that ID found to stop printing');
+
+			queueItem.status = 'queued';
+			queueItem.save();
+
 			self.queueItemId = null;
 			return callback(err, 'stopped printing');
 		});
@@ -243,7 +254,7 @@ AbstractPrinter.prototype.printFinished = function(queueItemId) {
 		self.queueItemId = null;
 
 		if (err)
-			return FormideOS.log.err(err);
+			return FormideOS.log.err(err.message);
 
 		if (!queueItem)
 			return FormideOS.log.warn('No queue item with that ID found to handle finished printing');
