@@ -206,12 +206,12 @@ AbstractPrinter.prototype.stopPrint = function(callback) {
 	var self = this;
 	// TODO: implement custom stop gcode array (2nd param)
 
-	if (sef.queueItem)
+	if (self.queueItem)
 		self.driver.stopPrint(self.port, '', function(err, response) {
 
 			if (err)
 				return FormideOS.log.error(err.message);
-	
+
 			FormideOS.db.QueueItem
 			.findOne({ id: self.queueItemId }, (err, queueItem) => {
 
