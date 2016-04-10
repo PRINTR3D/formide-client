@@ -287,27 +287,25 @@ module.exports = {
 				queueItem: queueItem
 			});
 
-			// TODO: better way of fetching gcode files from cloud
-			request({
-				method: 'GET',
-				url: FormideOS.config.get('cloud.url') + '/files/download/gcode',
-				qs: {
-					hash: data.gcode
-				},
+			const newPath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.gcode'), hash);
+			const fws = fs.createWriteStream(newPath);
+
+			request
+			.get(`${FormideOS.config.get('cloud.url')}/files/download/gcode?hash=${data.gcode}`, {
 				strictSSL: false
 			})
-			.on('response', function(response) {
-				var newPath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.gcode'), hash);
-				var fws = fs.createWriteStream(newPath);
-				response.pipe(fws);
-				response.on('end', function() {
-					FormideOS.log('finished downloading gcode. Received ' + fws.bytesWritten + ' bytes');
+			.on('error', (err) => {
+				FormideOS.log.error('error downloading gcode:', err.message);
 
-					// set status to queued to indicate it's ready to print
-					queueItem.status = 'queued';
-					queueItem.save(() => {
-						FormideOS.events.emit('queueItem.downloaded', { title: `${data.printJob.name} is ready to print`, message: 'The gcode was downloaded and is now ready to be printed' });
-					});
+			})
+			.pipe(fws)
+			.on('finish', () => {
+				FormideOS.log('finished downloading gcode. Received ' + fws.bytesWritten + ' bytes');
+
+				// set status to queued to indicate it's ready to print
+				queueItem.status = 'queued';
+				queueItem.save(() => {
+					FormideOS.events.emit('queueItem.downloaded', { title: `${data.printJob.name} is ready to print`, message: 'The gcode was downloaded and is now ready to be printed' });
 				});
 			});
 		});
