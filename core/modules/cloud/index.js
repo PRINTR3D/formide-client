@@ -296,7 +296,7 @@ module.exports = {
 			})
 			.on('error', (err) => {
 				FormideOS.log.error('error downloading gcode:', err.message);
-
+				FormideOS.events.emit('queueItem.downloadError', { title: `${data.printJob.name} has failed to download`, message: err.message });
 			})
 			.pipe(fws)
 			.on('finish', () => {
