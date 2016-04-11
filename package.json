@@ -85,6 +85,7 @@
     "sudo": "~1.0.3",
     "sync": "^0.2.5",
     "thenify": "^3.1.1",
+    "throttle": "^1.0.3",
     "underscore": "^1.8.2",
     "utils-debug": "^0.5.22",
     "waterline": "^0.10.26",

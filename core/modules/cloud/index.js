@@ -14,6 +14,7 @@ const publicIp	 = require('public-ip');
 const request	 = require('request');
 const socket	 = require('socket.io-client');
 const uuid		 = require('node-uuid');
+const Throttle   = require('throttle');
 
 function addWifiSetupRoute(app, tools) {
 	app.get('/', (req, res) => {
@@ -290,6 +291,9 @@ module.exports = {
 			const newPath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.gcode'), hash);
 			const fws = fs.createWriteStream(newPath);
 
+			// create a throttle of 10Mbps for downloading gcode
+			const throttle   = new Throttle(10000000);
+			
 			request
 			.get(`${FormideOS.config.get('cloud.url')}/files/download/gcode?hash=${data.gcode}`, {
 				strictSSL: false
@@ -298,6 +302,7 @@ module.exports = {
 				FormideOS.log.error('error downloading gcode:', err.message);
 				FormideOS.events.emit('queueItem.downloadError', { title: `${data.printJob.name} has failed to download`, message: err.message });
 			})
+			.pipe(throttle)
 			.pipe(fws)
 			.on('finish', () => {
 				FormideOS.log('finished downloading gcode. Received ' + fws.bytesWritten + ' bytes');
