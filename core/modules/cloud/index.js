@@ -271,7 +271,6 @@ module.exports = {
 	 * Handles addToQueue from cloud
 	 */
 	addToQueue: function(data, callback) {
-		var self = this;
 		var hash = uuid.v4();
 
 		FormideOS.db.QueueItem.create({
@@ -293,7 +292,7 @@ module.exports = {
 
 			// create a throttle of 10Mbps for downloading gcode
 			const throttle   = new Throttle(10000000);
-			
+
 			request
 			.get(`${FormideOS.config.get('cloud.url')}/files/download/gcode?hash=${data.gcode}`, {
 				strictSSL: false
