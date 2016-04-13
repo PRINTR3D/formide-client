@@ -291,7 +291,7 @@ module.exports = {
 			const fws = fs.createWriteStream(newPath);
 
 			// create a throttle of 10Mbps for downloading gcode
-			const throttle   = new Throttle(10000000);
+			const throttle = new Throttle(10000000);
 
 			request
 			.get(`${FormideOS.config.get('cloud.url')}/files/download/gcode?hash=${data.gcode}`, {
