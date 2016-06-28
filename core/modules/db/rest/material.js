@@ -10,8 +10,8 @@ module.exports = (routes, db) => {
 	 */
 	routes.get('/materials', (req, res) => {
 		db.Material
-		.find({ createdBy: req.user.id }, { select: ((req.query.fields) ? req.query.fields.split(',') : "") })
-		.populate('createdBy')
+		.find({ or: [ { createdBy: req.user.id }, { preset: true } ] }, { select: ((req.query.fields) ? req.query.fields.split(',') : "") })
+		.sort('presetOrder ASC')
 		.then(res.ok)
 		.error(res.serverError);
 	});
@@ -21,8 +21,7 @@ module.exports = (routes, db) => {
 	 */
 	routes.get('/materials/:id', (req, res) => {
 		db.Material
-		.findOne({ createdBy: req.user.id, id: req.params.id })
-		.populate('createdBy')
+		.findOne({ or: [ { createdBy: req.user.id }, { preset: true } ], id: req.params.id })
 		.then((material) => {
 			if (!material) return res.notFound();
 			return res.ok(material);
@@ -56,7 +55,7 @@ module.exports = (routes, db) => {
 	 */
 	routes.put('/materials/:id', (req, res) => {
 		db.Material
-		.update({ id: req.params.id, createdBy: req.user.id }, {
+		.update({ id: req.params.id, or: [ { createdBy: req.user.id }, { preset: true } ] }, {
 			name:						req.body.name,
 			type:						req.body.type,
 			temperature:				req.body.temperature,
@@ -76,7 +75,7 @@ module.exports = (routes, db) => {
 	 */
 	routes.delete('/materials/:id', (req, res) => {
 		db.Material
-		.destroy({ createdBy: req.user.id, id: req.params.id })
+		.destroy({ createdBy: req.user.id, id: req.params.id, preset: false })
 		.then(() => {
 			return res.ok({ message: "Material deleted" });
 		})

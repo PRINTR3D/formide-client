@@ -3,8 +3,6 @@
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
-var uuid = require('node-uuid');
-
 module.exports = {
 	identity: 'material',
 
@@ -48,13 +46,22 @@ module.exports = {
 		},
 
 		createdBy: {
-			model: 'user',
-			required: true
+			model: 'user'
 		},
 
 		printJobs: {
 			collection: 'printjob',
 			via: 'materials'
+		},
+
+		preset: {
+			type: 'boolean',
+			defaultsTo: false
+		},
+
+		presetOrder: {
+			type: 'integer',
+			defaultsTo: 9999
 		}
 	}
 };

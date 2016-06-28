@@ -72,8 +72,7 @@ module.exports = {
 
 		// user that created printer entry
 		createdBy: {
-			model: 'user',
-			required: true
+			model: 'user'
 		},
 
 		// user that updated printer liast
@@ -107,6 +106,11 @@ module.exports = {
 		preset: {
 			type: 'boolean',
 			defaultsTo: false
+		},
+
+		presetOrder: {
+			type: 'integer',
+			defaultsTo: 9999
 		}
 	},
 

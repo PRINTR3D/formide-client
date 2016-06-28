@@ -17,14 +17,12 @@ module.exports ={
 		},
 
 		createdBy: {
-			model: 'User',
-			required: true
+			model: 'User'
 		},
 
 		settings: {
 			type: 'object',
-			required: true,
-			//is_valid_sliceprofile: true
+			required: true
 		},
 
 		// we keep track of sliceprofiles versions to deal with slicer updates
@@ -35,32 +33,16 @@ module.exports ={
 		printJobs: {
 			collection: 'printjob',
 			via: 'sliceProfile'
+		},
+
+		preset: {
+			type: 'boolean',
+			defaultsTo: false
+		},
+
+		presetOrder: {
+			type: 'integer',
+			defaultsTo: 9999
 		}
-	},
-
-	types: {
-
-		// custom validator to check if all parameters are in the sliceprofile
-		// is_valid_sliceprofile: function (val) {
-		//
-		// 	var reference = require(FormideOS.appRoot + "bin/reference-" + self.config.version + ".json");
-		//
-		// 	FormideOS.log.debug(" ");
-		// 	FormideOS.log.debug("Checking sliceprofile...");
-		// 	for (var i in reference.sliceProfile) {
-		// 		FormideOS.log.debug(i);
-		// 		if (typeof val[i] === "undefined") return false;
-		// 		for (var j in reference.sliceProfile[i]) {
-		// 			if (typeof val[i][j] === "undefined" && reference.sliceProfile[i][j].mandatory === true) {
-		// 				FormideOS.log.error('✗ ' + j);
-		// 				return false;
-		// 			}
-		// 			FormideOS.log.debug('✓ ' + j);
-		// 		}
-		// 	}
-		// 	FormideOS.log.debug("Finished checking sliceprofile");
-		// 	FormideOS.log.debug(" ");
-		// 	return true;
-		// }
 	}
 };

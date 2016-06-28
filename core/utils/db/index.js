@@ -9,8 +9,7 @@ const fs        = require('fs');
 const thenify   = require('thenify');
 const Waterline = require('waterline');
 const path		= require('path');
-
-const readdir = thenify(fs.readdir);
+const readdir   = thenify(fs.readdir);
 
 function initializeDb(config) {
 	const waterline = new Waterline();
@@ -26,17 +25,17 @@ function initializeDb(config) {
 			waterline.loadCollection(Waterline.Collection.extend(model));
 		});
 	})
-	.then(() => thenify(cb => waterline.initialize(config, cb))())
-	.then(models => ({
-		AccessToken:  models.collections.accesstoken,
-		Log:          models.collections.log,
-		Material:     models.collections.material,
-		Printer:      models.collections.printer,
-		PrintJob:     models.collections.printjob,
-		QueueItem:    models.collections.queueitem,
-		SliceProfile: models.collections.sliceprofile,
-		User:         models.collections.user,
-		UserFile:     models.collections.userfile
+	.then(() => thenify((cb) => waterline.initialize(config, cb))())
+	.then((models) => ({
+		AccessToken:        models.collections.accesstoken,
+		Log:                models.collections.log,
+		Material:           models.collections.material,
+		Printer:            models.collections.printer,
+		PrintJob:           models.collections.printjob,
+		QueueItem:          models.collections.queueitem,
+		SliceProfile:       models.collections.sliceprofile,
+		User:               models.collections.user,
+		UserFile:           models.collections.userfile
 	}));
 }
 
