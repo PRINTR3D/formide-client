@@ -103,6 +103,12 @@ module.exports = {
 			via: 'printer'
 		},
 
+		// abilities for post-processing in Katana
+		abilities: {
+			type:       'array',
+			defaultsTo: []
+		},
+
 		preset: {
 			type: 'boolean',
 			defaultsTo: false
