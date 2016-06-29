@@ -79,36 +79,4 @@ module.exports = (routes, db) => {
 		})
 		.error(res.serverError);
 	});
-
-	/**
-	 * Import slice settings from Cura
-	 */
-	routes.post('/sliceprofiles/cura', multipartMiddleware, (req, res) => {
-		if (!req.files || !req.files.file) return res.badRequest('Cura file must be attached');
-
-		const reference = require('katana-slicer/reference.json');
-		const content = fs.readFileSync(req.files.file.path, 'utf-8');
-
-		var curaProfile = null;
-		try {
-			curaProfile = parseIni(content);
-		}
-		catch (e) {
-			FormideOS.log.error('Failed to parse Cura profile\n', e);
-			return res.badRequest('Failed to parse Cura profile');
-		}
-
-		formideTools.createSliceprofileFromCura(curaProfile, reference, function(err, katanaSettings) {
-			db.SliceProfile
-			.create({
-				createdBy:	req.user.id,
-				name:		req.files.file.name,
-				settings:	katanaSettings
-			})
-			.then((sliceProfile) => {
-				return res.ok({ message: 'SliceProfile imported from Cura', sliceProfile: sliceProfile });
-			})
-			.error(res.serverError);
-		});
-	});
 };
