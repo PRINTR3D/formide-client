@@ -9,7 +9,7 @@ module.exports = (routes, db) => {
      * Get a list of preset sliceprofiles
      */
     routes.get('/sliceprofiles', (req, res) => {
-        db.Sliceprofile
+        db.SliceProfile
             .find({ preset: true }, { select: ((req.query.fields) ? req.query.fields.split(',') : "") })
             .sort('presetOrder ASC')
             .then(res.ok)
@@ -32,7 +32,7 @@ module.exports = (routes, db) => {
             });
         }
 
-        db.Sliceprofile
+        db.SliceProfile
             .find(searchObject, { select: ((req.query.fields) ? req.query.fields.split(',') : '') })
             .then(res.ok)
             .catch(res.serverError);
@@ -42,7 +42,7 @@ module.exports = (routes, db) => {
      * Get a single preset sliceprofile
      */
     routes.get('/sliceprofiles/:id', (req, res) => {
-        db.Sliceprofile
+        db.SliceProfile
             .findOne({ id: req.params.id, preset: true })
             .then((sliceprofile) => {
                 if (!sliceprofile) return res.notFound();
