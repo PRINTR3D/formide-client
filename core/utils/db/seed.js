@@ -38,8 +38,8 @@ module.exports = (db, presetStorage) => { co(function*() {
             if (file.match(/\.json$/) == null) return;
             const preset = require(path.join(presetStorage, './sliceprofiles', file));
             preset.preset = true;
-            yield db.Sliceprofile.destroy({ preset: true });
-            yield db.Sliceprofile.create(preset);
+            yield db.SliceProfile.destroy({ preset: true });
+            yield db.SliceProfile.create(preset);
         }).then(null, console.error); });
     });
 
