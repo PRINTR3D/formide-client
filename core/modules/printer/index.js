@@ -27,37 +27,38 @@ module.exports = {
 		}
 
 		// start drivers
-		this.driver.start(function(err, started, event) {
-			if (err) {
-				FormideOS.log.error('formide-drivers err: ' + err.message);
-			}
-			else if (started) {
-				FormideOS.log('formide-drivers started successfully');
-			}
+		if (this.driver !== null)
+			this.driver.start(function(err, started, event) {
+				if (err) {
+					FormideOS.log.error('formide-drivers err: ' + err.message);
+				}
+				else if (started) {
+					FormideOS.log('formide-drivers started successfully');
+				}
 
-			else if (event) {
-				// an event came back which we can use to do sometehing with!
+				else if (event) {
+					// an event came back which we can use to do sometehing with!
 
-				if (event.type === 'printerConnected') {
-					self.printerConnected(event.port);
+					if (event.type === 'printerConnected') {
+						self.printerConnected(event.port);
+					}
+					else if (event.type === 'printerDisconnected') {
+						self.printerDisconnected(event.port);
+					}
+					else if (event.type === 'printerOnline') {
+						self.printerOnline(event.port);
+					}
+					else if (event.type === 'printFinished') {
+						self.printFinished(event.port, event.printjobID);
+					}
+					else if (event.type === 'printerWarning') {
+						self.printerEvent('warning', event);
+					}
+					else if (event.type === 'printerError') {
+						self.printerEvent('error', event);
+					}
 				}
-				else if (event.type === 'printerDisconnected') {
-					self.printerDisconnected(event.port);
-				}
-				else if (event.type === 'printerOnline') {
-					self.printerOnline(event.port);
-				}
-				else if (event.type === 'printFinished') {
-					self.printFinished(event.port, event.printjobID);
-				}
-				else if (event.type === 'printerWarning') {
-					self.printerEvent('warning', event);
-				}
-				else if (event.type === 'printerError') {
-					self.printerEvent('error', event);
-				}
-			}
-		});
+			});
 	},
 
 	printerConnected: function(port) {
