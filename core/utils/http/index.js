@@ -1,5 +1,7 @@
+'use strict';
+
 /*
- *	This code was created for Printr B.V. It is open source under the formideos-client package.
+ *	This code was created for Printr B.V. It is open source under the formide-client package.
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
@@ -9,25 +11,22 @@
  */
 
 // dependencies
-var express 				= require('express');
-var expressSession			= require('express-session');
-cookieParser 				= require('cookie-parser');
-var MemoryStore 			= expressSession.MemoryStore;
-sessionStore 				= new MemoryStore();
-sessionMiddleware			= expressSession({ store: sessionStore, secret: 'secret', key: 'formide.sid', saveUninitialized: false, resave: false });
-var expressValidator 		= require('express-validator');
-var cors 					= require('cors');
-var passport 				= require('passport');
-var LocalStrategy 			= require('passport-local').Strategy;
-var bodyParser 				= require('body-parser');
-//var permissionsMiddleware	= require('./middleware/permissions');
-var isUserMiddleware		= require('./middleware/isUser');
-var isAdminMiddleware		= require('./middleware/isAdmin');
-var passwordHash 			= require('password-hash');
-var bearerToken 			= require('express-bearer-token');
-var bcrypt					= require('bcryptjs');
-
-var morgan = require('morgan');
+const express 				= require('express');
+const expressSession		= require('express-session');
+const cookieParser 			= require('cookie-parser');
+const MemoryStore 			= expressSession.MemoryStore;
+const sessionStore 			= new MemoryStore();
+const sessionMiddleware		= expressSession({ store: sessionStore, secret: 'secret', key: 'formide.sid', saveUninitialized: false, resave: false });
+const expressValidator 		= require('express-validator');
+const cors 					= require('cors');
+const passport 				= require('passport');
+const LocalStrategy 		= require('passport-local').Strategy;
+const bodyParser 			= require('body-parser');
+const isUserMiddleware		= require('./middleware/isUser');
+const isAdminMiddleware		= require('./middleware/isAdmin');
+const bearerToken 			= require('express-bearer-token');
+const bcrypt				= require('bcryptjs');
+const morgan 				= require('morgan');
 
 module.exports = {
 

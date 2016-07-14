@@ -19,7 +19,7 @@
     "clean": "rm -rf ./node_modules"
   },
   "dependencies": {
-    "async": "^1.4.2",
+    "async": "^1.5.2",
     "bcryptjs": "^2.3.0",
     "binstring": "^0.2.1",
     "body-parser": "~1.12.0",
