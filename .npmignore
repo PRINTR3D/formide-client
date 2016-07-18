@@ -8,7 +8,4 @@ node_modules
 KatanaLog.txt
 RequestsLog.txt
 logs
-
-release
-
 .ssh

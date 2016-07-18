@@ -72,8 +72,7 @@ module.exports = {
 
 		// user that created printer entry
 		createdBy: {
-			model: 'user',
-			required: true
+			model: 'user'
 		},
 
 		// user that updated printer liast
@@ -104,9 +103,30 @@ module.exports = {
 			via: 'printer'
 		},
 
+		// abilities for post-processing in Katana
+		abilities: {
+			type:       'array',
+			defaultsTo: []
+		},
+
 		preset: {
 			type: 'boolean',
 			defaultsTo: false
+		},
+
+		presetOrder: {
+			type: 'integer',
+			defaultsTo: 9999
+		},
+
+		maxTemperature: {
+			type: 'integer',
+			defaultsTo: 250
+		},
+
+		maxBedTemperature: {
+			type: 'integer',
+			defaultsTo: 60
 		}
 	},
 
