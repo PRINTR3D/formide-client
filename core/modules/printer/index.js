@@ -155,5 +155,10 @@ module.exports = {
 	resumePrint: function(port, callback) {
 		if (this.printers[port] == undefined) return callback(null, false);
 		this.printers[port].resumePrint(callback);
+	},
+
+	printFile: function(port, file, callback) {
+		if (this.printers[port] == undefined) return callback(null, false);
+		this.printers[port].printFile(file, callback)
 	}
 };

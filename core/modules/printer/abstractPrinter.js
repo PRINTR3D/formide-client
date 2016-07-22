@@ -282,13 +282,25 @@ AbstractPrinter.prototype.printFinished = function(queueItemId) {
  */
 AbstractPrinter.prototype.gcode = function (command, callback) {
 	this.sendRaw(command, callback);
-}
+};
 
 /**
  * Send tune command to printer (insert gcode commands while printing)
  */
 AbstractPrinter.prototype.tune = function (command, callback) {
 	this.sendRawTune(command, callback);
-}
+};
+
+/**
+ * Print any file from disk
+ * @param filePath
+ * @param callback
+ */
+AbstractPrinter.prototype.printFile = function (filePath, callback) {
+	this.driver.printFile(filePath, 0, this.port, function(err, response) {
+		if (err) return callback(err);
+		return callback(null, response);
+	});
+};
 
 module.exports = AbstractPrinter;

@@ -78,7 +78,7 @@ module.exports = function(routes, module) {
 	});
 
 	/**
-	 * Send command to printer while it's printing (tune)
+	 * Send command to printer
 	 */
 	routes.post('/:port/gcode', function(req, res) {
 		module.gcode(req.params.port, req.body.command, function (err, result) {
@@ -100,6 +100,17 @@ module.exports = function(routes, module) {
 	});
 
 	/**
+	 * Start printing a file from disk
+     */
+	routes.get('/:port/print', function (req, res) {
+		module.printFile(req,params.port, req.body.file, function (err, result) {
+			if (err) return res.serverError(err);
+			if (!result) return res.notFound('No printer on this port');
+			return res.ok({ message: "Started printing file" });
+		});
+	});
+
+	/**
 	 * Send command to printer
 	 */
 	routes.get('/:port/:command', function(req, res) {
@@ -109,4 +120,4 @@ module.exports = function(routes, module) {
 			return res.ok({ message: "Command executing" });
 		});
 	});
-}
+};
