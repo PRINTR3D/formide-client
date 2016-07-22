@@ -297,8 +297,15 @@ AbstractPrinter.prototype.tune = function (command, callback) {
  * @param callback
  */
 AbstractPrinter.prototype.printFile = function (filePath, callback) {
-	this.driver.printFile(filePath, 0, this.port, function(err, response) {
+	var self = this;
+	self.driver.printFile(filePath, 0, self.port, function(err, response) {
 		if (err) return callback(err);
+		self.queueItemId = 0;
+		FormideOS.events.emit('printer.started', {
+			port:		 self.port,
+			queueItemId: self.queueItemId,
+			message:     'print started from custom file'
+		});
 		return callback(null, response);
 	});
 };
