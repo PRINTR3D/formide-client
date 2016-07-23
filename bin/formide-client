@@ -4,7 +4,9 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd $DIR/..
 
 if [ -z $NODE_MEM_LIMIT ]; then
+    echo "running formide-client without memory limit"
     node --nouse-idle-notification app
 else
+    echo "running formide-client with memory limit $NODE_MEM_LIMIT"
     node --max-old-space-size=$NODE_MEM_LIMIT --nouse-idle-notification app
 fi
