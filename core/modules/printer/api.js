@@ -101,9 +101,9 @@ module.exports = function(routes, module) {
 
 	/**
 	 * Start printing a file from disk
-     */
+        */
 	routes.get('/:port/print', function (req, res) {
-		module.printFile(req.params.port, req.body.file, function (err, result) {
+		module.printFile(req.params.port, req.query.file, function (err, result) {
 			if (err) return res.serverError(err);
 			if (!result) return res.notFound('No printer on this port');
 			return res.ok({ message: "Started printing file" });
