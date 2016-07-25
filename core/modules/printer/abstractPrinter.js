@@ -236,10 +236,10 @@ AbstractPrinter.prototype.stopPrint = function(callback) {
 	});
 }
 
-/*
+/**
  * Handle print finished event. Set queue item to finished and emit event to dashboards
  */
-AbstractPrinter.prototype.printFinished = function(queueItemId) {
+AbstractPrinter.prototype.printFinished = function (queueItemId) {
 	var self = this;
 
 	if (queueItemId !== self.queueItemId)
@@ -252,7 +252,7 @@ AbstractPrinter.prototype.printFinished = function(queueItemId) {
 
 	if (self.queueItemId)
 		FormideOS.db.QueueItem
-		.findOne({ id: self.queueItemId }, function(err, queueItem) {
+		.findOne({ id: self.queueItemId }, function (err, queueItem) {
 
 			// reset queueItemId of current print
 			self.queueItemId = null;
@@ -282,13 +282,32 @@ AbstractPrinter.prototype.printFinished = function(queueItemId) {
  */
 AbstractPrinter.prototype.gcode = function (command, callback) {
 	this.sendRaw(command, callback);
-}
+};
 
 /**
  * Send tune command to printer (insert gcode commands while printing)
  */
 AbstractPrinter.prototype.tune = function (command, callback) {
 	this.sendRawTune(command, callback);
-}
+};
+
+/**
+ * Print any file from disk
+ * @param filePath
+ * @param callback
+ */
+AbstractPrinter.prototype.printFile = function (filePath, callback) {
+	var self = this;
+	self.driver.printFile   (filePath, 0, self.port, function(err, response) {
+		if (err) return callback(err);
+		self.queueItemId = 0;
+		FormideOS.events.emit('printer.started', {
+			port:		 self.port,
+			queueItemId: self.queueItemId,
+			message:     'print started from custom file'
+		});
+		return callback(null, response);
+	});
+};
 
 module.exports = AbstractPrinter;
