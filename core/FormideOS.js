@@ -55,7 +55,7 @@ module.exports = dbConfig => {
 		FormideOS.ci = require(ciLocation);
 	}
 	catch (e) {
-		FormideOS.log.warn('No native client implementation found');
+		FormideOS.log.warn('No native client implementation found', e);
 	}
 
 	// Array to keep track of installed modules
