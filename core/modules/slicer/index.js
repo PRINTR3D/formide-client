@@ -22,7 +22,7 @@ module.exports = {
 			this.katana = require('katana-slicer');
 		}
 		catch (e) {
-			FormideOS.log.error('error loading katana-slicer bin', e);
+			FormideOS.log.warn('Cannot load katana binary, try re-installing katana-slicer');
 		}
 	},
 
@@ -86,7 +86,7 @@ module.exports = {
 						data: sliceRequest
 					};
 					sliceData.data.mode = 'gcode'; //THIS IS NOT ADDED ANYWHERE!!
-					
+
 					// write slicerequest to local Katana instance
 					FormideOS.events.emit('slicer.started', {
 						title:   'Slicer started',
