@@ -49,6 +49,15 @@ module.exports = dbConfig => {
 	// Module manager
 	FormideOS.moduleManager = require('./utils/moduleManager.js')();
 
+	// Client implementation
+	try {
+		const ciLocation = process.env.FORMIDE_CLIENT_IMPLEMENTATION || 'element-tools';
+		FormideOS.ci = require(ciLocation);
+	}
+	catch (e) {
+		FormideOS.log.warn('No native client implementation found');
+	}
+
 	// Array to keep track of installed modules
 	FormideOS.modules = [];
 

@@ -3,8 +3,6 @@
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
-const fs = require('fs');
-
 module.exports = {
 
 	tools: null,
@@ -12,12 +10,9 @@ module.exports = {
 	availableUpdate: null,
 
 	init: function() {
-		try {
-			this.tools = require('element-tools').update;
-		}
-		catch (e) {
-			FormideOS.log.warn('element-tools not found for update, probably not running on The Element');
-		}
+
+		if (FormideOS.ci)
+			this.tools = FormideOS.ci.update;
 
 		// only check for update when update tools are actually available
 		if (this.tools) {
@@ -31,7 +26,7 @@ module.exports = {
 		if (this.tools)
 			this.tools.getUpdateStatus(cb);
 		else
-			return cb(new Error('element-tools not found'));
+			return cb(new Error('client implementation not found'));
 	},
 
 	checkForUpdate: function (cb) {
@@ -39,18 +34,18 @@ module.exports = {
 			this.tools.checkForUpdate((err, update) => {
 				if (err)
 					return cb(err);
-				
+
 				delete update.imageURL;
 				return cb(null, update);
 			});
 		else
-			return cb(new Error('element-tools not found'));
+			return cb(new Error('client implementation not found'));
 	},
 
 	update: function (cb) {
 		if (this.tools)
 			this.tools.update(cb);
 		else
-			return cb(new Error('element-tools not found'));
+			return cb(new Error('client implementation not found'));
 	}
 };

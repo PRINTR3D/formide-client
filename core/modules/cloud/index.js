@@ -48,13 +48,9 @@ module.exports = {
 		// use self to prevent bind(this) waterfall
 		var self = this;
 
-		try {
-			self.tools = require('element-tools').wifi;
+		if (FormideOS.ci) {
+			self.tools = FormideOS.ci;
 			addWifiSetupRoute(FormideOS.http.app, self.tools);
-		}
-		catch (e) {
-			FormideOS.log.warn(
-				'element-tools not found, probably not running on The Element');
 		}
 
 		function forwardEvents(data) {

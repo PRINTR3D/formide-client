@@ -23,7 +23,7 @@ module.exports = {
 			this.driver = require('formide-drivers');
 		}
 		catch (e) {
-			FormideOS.log.error('error loading formide-drivers bin', e);
+			FormideOS.log.warn('Cannot load drivers binary, try re-installing formide-drivers');
 		}
 
 		// start drivers

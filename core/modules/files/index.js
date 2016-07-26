@@ -15,13 +15,8 @@ module.exports = {
 	tools: null,
 
 	init() {
-		try {
-			this.tools = require('element-tools').usb;
-		}
-		catch (e) {
-			FormideOS.log.warn(
-				'element-tools not found for files, probably not running on The Element');
-		}
+		if (FormideOS.ci)
+			this.tools = FormideOS.ci.usb;
 	},
 
 	/**
