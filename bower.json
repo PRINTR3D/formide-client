@@ -35,6 +35,6 @@
   ],
   "dependencies": {},
   "devDependencies": {
-    "formide-platform": "PRINTR3D/formide-platform#local"
+    "formide-platform": "git@github.com:PRINTR3D/formide-platform.git#local"
   }
 }
