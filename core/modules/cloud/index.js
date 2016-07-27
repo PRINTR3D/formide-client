@@ -49,7 +49,7 @@ module.exports = {
 		var self = this;
 
 		if (FormideOS.ci) {
-			self.tools = FormideOS.ci;
+			self.tools = FormideOS.ci.wifi;
 			addWifiSetupRoute(FormideOS.http.app, self.tools);
 		}
 
