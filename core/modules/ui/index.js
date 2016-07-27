@@ -12,7 +12,6 @@ module.exports = {
     port: 8080,
 
     init: function() {
-        // this.startInterface()
         this.port = FormideOS.settings.get('ui', 'port');
         if(FormideOS.settings.get('ui', 'auto') == true) {
             this.startInterface()
@@ -22,25 +21,6 @@ module.exports = {
     dispose: function() {
         // stop server before disposing module
         this.server.close();
-    },
-
-    exposeSettings: function() {
-        return [
-            {
-                name: "auto",
-                type: "checkbox",
-                label: "Start interface automatically",
-                required: true,
-                default: true
-            },
-            {
-                name: "port",
-                type: "text",
-                label: "Port",
-                required: true,
-                default: 8080
-            }
-        ];
     },
 
     startInterface: function() {
