@@ -18,6 +18,3 @@ npm-debug.log
 .ssh
 .grunt
 .lock-wscript
-.sass-cache
-.sass-cache/*
-*.scssc
