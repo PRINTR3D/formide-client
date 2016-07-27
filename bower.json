@@ -1,0 +1,43 @@
+{
+  "name": "formide-client-interface",
+  "version": "1.2.9",
+  "homepage": "https://github.com/PRINTR3D/formide-interface/tree/master/example",
+  "authors": [
+    "Bouke Regnerus <bouke@printr.nl>"
+  ],
+  "license": "GNU General Public License (http://www.gnu.org/licenses)",
+  "description": "",
+  "keywords": [
+    "PRINTR",
+    "FORMIDE",
+    "FORMIDEOS",
+    "Interface",
+    "3D Printing",
+    "NodeJS",
+    "AngularJS",
+    "JS",
+    "SASS",
+    "CSS",
+    "Bower",
+    "Grunt"
+  ],
+  "moduleType": [
+    "es6"
+  ],
+  "main": "./index.js",
+  "ignore": [
+    "**/.*",
+    "./app",
+    "./public",
+    "./source",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "compass-*/*.rb"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "formide-platform": "PRINTR3D/formide-platform#local"
+  }
+}

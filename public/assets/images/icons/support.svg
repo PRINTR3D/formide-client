@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.3.3 (12081) - http://www.bohemiancoding.com/sketch -->
+    <title>Support Small</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path id="path-1" d="M11.8285714,5.14285714 L11.8285714,11.8285714 L0,11.8285714 L0,5.14285714 L11.8285714,5.14285714 Z"></path>
+        <path id="path-2" d="M11.8285714,11.8285714 L11.8285714,5.14285714 L18,0 L18,6.68571429 L11.8285714,11.8285714 Z"></path>
+        <path id="path-3" d="M11.8285714,5.14285714 L9.13554946e-16,5.14285714 L6.17142857,0 L18,0 L11.8285714,5.14285714 Z"></path>
+    </defs>
+    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="Support-Small" sketch:type="MSArtboardGroup">
+            <g id="Group" sketch:type="MSLayerGroup" transform="translate(3.000000, 3.514286)">
+                <g id="Path-18-+-Path-15-+-Path-17-Copy" transform="translate(0.000000, 5.142857)">
+                    <g id="Path-18">
+                        <use stroke="#46B1E6" stroke-width="1" stroke-linejoin="round" fill="#46B1E6" sketch:type="MSShapeGroup" xlink:href="#path-1"></use>
+                        <use stroke="none" fill-opacity="0.6" fill="#FFFFFF" xlink:href="#path-1"></use>
+                    </g>
+                    <g id="Path-15">
+                        <use stroke="#46B1E6" stroke-width="1" stroke-linejoin="round" fill="#46B1E6" sketch:type="MSShapeGroup" xlink:href="#path-2"></use>
+                        <use stroke="none" fill-opacity="0.6" fill="#FFFFFF" xlink:href="#path-2"></use>
+                    </g>
+                    <g id="Path-17">
+                        <use stroke="#46B1E6" stroke-width="1" stroke-linejoin="round" fill="#46B1E6" sketch:type="MSShapeGroup" xlink:href="#path-3"></use>
+                        <use stroke="none" fill-opacity="0.6" fill="#FFFFFF" xlink:href="#path-3"></use>
+                    </g>
+                </g>
+                <path d="M11.8285714,10.2857143 L11.8285714,5.14285714 L18,5.32907052e-15 L18,5.14285714 L11.8285714,10.2857143 Z" id="Path-15" stroke="#878896" stroke-linejoin="round" fill="#DCDCDE" sketch:type="MSShapeGroup"></path>
+                <path d="M11.8285714,10.2857143 L11.8285714,5.14285714 L18,5.32907052e-15 L18,5.14285714 L11.8285714,10.2857143 Z" id="Path-15-Copy" stroke="#878896" stroke-linejoin="round" fill="#DCDCDE" sketch:type="MSShapeGroup"></path>
+                <path d="M6.17142857,10.2857143 L11.8285714,10.2857143 L11.8285714,5.14285714 L3.08571429,5.14285714 L0,5.14285714 L0,16.9714286 L6.17142857,16.9714286 L6.17142857,10.2857143 Z" id="Path-18" stroke="#878896" stroke-linejoin="round" fill="#DCDCDE" sketch:type="MSShapeGroup"></path>
+                <path d="M11.8285714,5.14285714 L9.13554946e-16,5.14285714 L6.17142857,5.32907052e-15 L18,5.32907052e-15 L11.8285714,5.14285714 Z" id="Path-17" stroke="#878896" stroke-linejoin="round" fill="#DCDCDE" sketch:type="MSShapeGroup"></path>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,11 +1,10 @@
-# Dependencies
 node_modules
-
-# OSX
+bower_components
+sass
+tmp
 .DS_Store
-
-# katana binary log files
 KatanaLog.txt
 RequestsLog.txt
 logs
 .ssh
+Gruntfile.js

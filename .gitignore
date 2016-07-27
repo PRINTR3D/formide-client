@@ -3,9 +3,10 @@
 
 # Dependencies
 node_modules
+bower_components
 
-# OSX
-.DS_Store
+# Environment
+.env
 
 # Log files
 KatanaLog.txt
@@ -13,7 +14,10 @@ RequestsLog.txt
 logs
 npm-debug.log
 
-# Tools
-release
-
+# Caching
 .ssh
+.grunt
+.lock-wscript
+.sass-cache
+.sass-cache/*
+*.scssc

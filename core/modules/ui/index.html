@@ -1,0 +1,78 @@
+<!--
+ *	This code was created for Printr B.V. It is open source under the formideos-interface package.
+ *	Copyright (c) 2015, All rights reserved, http://printr.nl
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>The Element</title>
+
+	<script src="./public/assets/javascripts/application.min.js"></script>
+	<link rel="stylesheet" href="./public/assets/stylesheets/application_local.min.css">
+
+	<!--<link rel="shortcut icon" sizes="16x16 24x24 32x32 48x48 64x64" href="./public/assets/images/favicon.ico">-->
+
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+</head>
+<body
+	ng-controller="AppController as app"
+	ng-class="{'sidebar-invisible': app.sidebarInvisible, 'sidebar-invisible logged-out': !app.loggedin(), 'ng-dialog-open--away': app.dialogAway, 'loaded': app.loaded }"
+	ngf-drop
+	class="theme--{{app.theme}}"
+	ng-model="app.droppedFiles"
+	ngf-drag-over-class="'dragover'">
+
+	<loading-screen>
+		<div class="loading-spinner"></div>
+    </loading-screen>
+
+	<div class="wrap">
+	    <main id="main" class="group" role="main">
+			<header
+				role="banner"
+				core-header
+				id="main__header"
+				class="header">
+				<nav
+					core-nav
+					route-config="app.routeConfig"
+					role="primary navigation"
+					rel="nav"
+					class="nav">
+				</nav>
+			</header>
+
+	        <article class="main-page-content" id="main__content">
+				<div ng-viewport="mainView"></div>
+
+	            <!-- <footer role="contentinfo">
+	                This footer scrolls with the page.
+	            </footer> -->
+	        </article>
+	    </main>
+
+		<aside
+			core-aside
+			id="sidebar"
+			rel="sidebar"
+			class="aside"
+			template="sidebar/componentTemplate.html"
+			ng-if="$root.sidebar">
+		</aside>
+	</div>
+
+	<ul class="alert-list list-bare">
+		<li alert-box
+			ng-repeat="alert in app.notifications"
+			popup="{{alert.popup}}"
+			alert-id="alert.id"
+			type="{{alert.type}}"
+			title="alert.title"
+			message="alert.message"
+			actions="alert.actions">
+		</li>
+	</ul>
+</body>
+</html>
