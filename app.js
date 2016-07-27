@@ -37,12 +37,12 @@ initFormide().then(() => {
 	FormideOS.moduleManager.loadModule('/core/modules/cloud',   'cloud',	true);
 
 	// Load all via npm installed formide-client modules
-	for(var i in pkg.dependencies) {
-		if (i.indexOf("formide-client-") > -1) {
-			FormideOS.modules.push(i);
-			FormideOS.moduleManager.loadModule("/node_modules/" + i, i);
-		}
-	}
+	// for(var i in pkg.dependencies) {
+	// 	if (i.indexOf("formide-client-") > -1) {
+	// 		FormideOS.modules.push(i);
+	// 		FormideOS.moduleManager.loadModule("/node_modules/" + i, i);
+	// 	}
+	// }
 
 	// Activate all loaded modules
 	FormideOS.moduleManager.activateLoadedModules();
