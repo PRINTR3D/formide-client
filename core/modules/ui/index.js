@@ -12,9 +12,6 @@ module.exports = {
     port: 8080,
 
     init: function() {
-        this.port = FormideOS.settings.get('ui', 'port');
-        if (FormideOS.settings.get('ui', 'auto') !== true)
-            return;
         this.startInterface();
     },
 
