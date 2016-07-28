@@ -13,9 +13,9 @@ module.exports = {
 
     init: function() {
         this.port = FormideOS.settings.get('ui', 'port');
-        if(FormideOS.settings.get('ui', 'auto') == true) {
-            this.startInterface()
-        }
+        if (FormideOS.settings.get('ui', 'auto') !== true)
+            return;
+        this.startInterface();
     },
 
     dispose: function() {
