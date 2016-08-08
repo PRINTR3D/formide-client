@@ -213,7 +213,7 @@ module.exports = {
 					});
 				}
 				else {
-					return res.badRequest("Invalid filetype. Should be STL or Gcode");
+					return callback(new Error('Invalid filetype. Should be STL or Gcode'));
 				}
 			});
 		}
