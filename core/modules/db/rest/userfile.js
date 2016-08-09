@@ -96,6 +96,8 @@ module.exports = (routes, db) => {
 					FormideOS.log.warn('file could not be deleted from storage');
 				}
 
+				// TODO: remove attached images as well
+
 				// delete from database
 				userFile.destroy(function (err) {
 					if (err) return res.serverError(err);
