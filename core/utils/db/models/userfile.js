@@ -40,11 +40,9 @@ module.exports = {
 			required: true
 		},
 
-/*
 		images: {
-			collection: 'Image'
+			type: 'array'
 		},
-*/
 
 		tags: {
 			type: 'array'

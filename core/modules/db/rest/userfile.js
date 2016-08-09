@@ -3,9 +3,20 @@
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
-const async = require('async');
-const path  = require('path');
-const fs    = require('fs');
+'use strict';
+
+const async  = require('async');
+const path   = require('path');
+const fs     = require('fs');
+const co     = require('co');
+const stream = require('stream');
+const uuid   = require('node-uuid');
+const base64 = require('base64-stream');
+const assert = require('assert');
+
+// image upload middleware
+const multipart           = require('connect-multiparty');
+const multipartMiddleware = multipart();
 
 module.exports = (routes, db) => {
 
@@ -58,7 +69,7 @@ module.exports = (routes, db) => {
 	/**
 	 * Update a userFile
 	 */
-	routes.post('/files/:id', function(req, res) {
+	routes.put('/files/:id', function(req, res) {
 		db.UserFile
 			.update({ id: req.params.id, createdBy: req.user.id }, {
 				prettyname:	req.body.prettyname
@@ -92,5 +103,97 @@ module.exports = (routes, db) => {
 				});
 			})
 			.catch(res.serverError);
+	});
+
+	/**
+	 * Add image to file as base 64 string
+	 */
+	routes.post('/files/:id/images/base64', function(req, res) { co(function*() {
+
+		if (!req.body.file)
+			return res.badRequest('file not found');
+
+		if (!req.body.filename)
+			return res.badRequest('filename not found');
+
+		const userFile = yield db.UserFile.findOne({ id: req.params.id, createdBy: req.user.id });
+
+		if (!userFile)
+			return res.notFound('UserFile not found');
+
+		// create a new read stream
+		const readStream = new stream.PassThrough();
+
+		// strip data:image meta data before converting to buffer
+		const base64Data = req.body.file.replace(/^data:image\/png;base64,/, '');
+
+		// store incoming data in read stream
+		readStream.end(new Buffer(base64Data, 'base64'));
+
+		// get the path to store the file and create a write stream to it
+		const hash = uuid.v4();
+		const imagePath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.images'), hash);
+		const writeStream = fs.createWriteStream(imagePath);
+
+		// store image on file system
+		readStream.pipe(writeStream);
+
+		// add hash to file images array
+		if (!(userFile.images instanceof Array))
+			userFile.images = [];
+		userFile.images.push(hash);
+
+		// save the file
+		const saved = yield userFile.save();
+
+		return res.ok({
+			message: 'Added image from file',
+			file:    saved
+		});
+	}).then(null, err => { res.serverError(err); }) });
+
+	/**
+	 * Download and image from disk to display
+	 */
+	routes.get('/files/:id/images/:imageId', function(req, res) {
+		// get image from disk
+		const imagePath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.images'), hash);
+		const readStream = fs.createReadStream(imagePath);
+		const imageStats = fs.statSync(imagePath)
+
+		// setup response headers
+		res.set('Content-disposition', `attachment; filename=${hash}`);
+		res.set('Content-type', 'image/png');
+		res.set('Content-length', imageStats.size);
+
+		// respond with file stream
+		if (req.query.encoding === 'base64') return readStream.pipe(base64.encode()).pipe(res);
+		return readStream.pipe(res);
+	});
+
+	/**
+	 * Remove image from file
+	 */
+	routes.delete('/files/:id/images/:imageId', function(req, res) {
+		db.UserFile
+			.findOne({ id: req.params.id, createdBy: req.user.id })
+			.exec((err, userFile) => {
+				if (err) return res.serverError(err);
+
+				userFile.images.splice(req.params.imageId);
+				userFile.save((dbErr, savedUserFile) => {
+					if (dbErr) return res.serverError(dbErr);
+
+					const imagePath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.images'), hash);
+					try {
+						fs.unlinkSync(imagePath);
+					}
+					catch (e) {
+						FormideOS.log.warn('image could not be deleted from storage');
+					}
+
+					return res.ok({ message: 'Removed image from file', file: savedUserFile });
+				});
+			});
 	});
 };
