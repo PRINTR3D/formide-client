@@ -157,14 +157,14 @@ module.exports = (routes, db) => {
 	/**
 	 * Download and image from disk to display
 	 */
-	routes.get('/files/:id/images/:imageId', function(req, res) {
+	routes.get('/files/:id/images/:hash', function(req, res) {
 		// get image from disk
-		const imagePath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.images'), req.params.imageId);
+		const imagePath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.images'), req.params.hash);
 		const readStream = fs.createReadStream(imagePath);
 		const imageStats = fs.statSync(imagePath)
 
 		// setup response headers
-		res.set('Content-disposition', `attachment; filename=${req.params.imageId}`);
+		res.set('Content-disposition', `attachment; filename=${req.params.hash}`);
 		res.set('Content-type', 'image/png');
 		res.set('Content-length', imageStats.size);
 
