@@ -161,7 +161,7 @@ module.exports = (routes, db) => {
 		// get image from disk
 		const imagePath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.images'), req.params.hash);
 		const readStream = fs.createReadStream(imagePath);
-		const imageStats = fs.statSync(imagePath)
+		const imageStats = fs.statSync(imagePath);
 
 		// setup response headers
 		res.set('Content-disposition', `attachment; filename=${req.params.hash}`);
