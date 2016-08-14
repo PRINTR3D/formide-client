@@ -9,9 +9,6 @@
  *	all loaded modules are activated via the moduleManager.activateLoadedModules function.
  */
 
-// Use module caching
-require('cache-require-paths');
-
 // Dependencies
 var pkg 	= require('./package.json');
 var path 	= require('path');
