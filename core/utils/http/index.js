@@ -68,10 +68,10 @@ module.exports = {
 			this.app.use(morgan('dev'));
 
 		// use json body parser for json post requests
-		this.app.use(bodyParser.json());
+		this.app.use(bodyParser.json({ limit: '500mb' }));
 
-		// use json body parser for url encoded post requets
-		this.app.use(bodyParser.urlencoded({ extended: true }));
+		// use json body parser for url encoded post requests
+		this.app.use(bodyParser.urlencoded({ extended: true, limit: '500mb' }));
 
 		// use cookie parser middleware
 		this.app.use(cookieParser());
