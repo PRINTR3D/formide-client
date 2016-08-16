@@ -37,9 +37,6 @@ module.exports = dbConfig => {
 	// Debug
 	FormideOS.log = require('./utils/log.js');
 
-	// Global user settings
-	FormideOS.settings = require('./utils/settings.js')();
-
 	// HTTP server
 	FormideOS.http = require('./utils/http').init();
 

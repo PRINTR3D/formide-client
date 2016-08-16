@@ -22,9 +22,6 @@
 		"gcode": "/gcode",
 		"images": "/images"
 	},
-	"settings": {
-		"path": "/"
-	},
 	"preset": {
 		"permission": false
 	}

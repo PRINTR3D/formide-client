@@ -21,8 +21,5 @@
 		"modelfiles": "/modelfiles",
 		"gcode": "/gcode",
 		"images": "/images"
-	},
-	"settings": {
-		"path": "/"
 	}
 }

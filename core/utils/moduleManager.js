@@ -50,11 +50,6 @@ module.exports = function() {
 		delete require.cache[require.resolve(moduleRoot + '/index.js')];
 		var instance = require(moduleRoot + '/index.js')
 
-		if (typeof instance.exposeSettings === 'function') {
-			moduleInfo.exposeSettings = instance.exposeSettings();
-			FormideOS.settings.addModuleSettings(moduleName, moduleInfo.exposeSettings);
-		}
-
 		if (typeof instance.setup === 'function') {
 			instance.setup();
 		}
