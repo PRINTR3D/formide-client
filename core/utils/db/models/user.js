@@ -43,11 +43,11 @@ module.exports = {
 		if (user.password) {
 			bcrypt.genSalt(10, function(err, salt) {
 				bcrypt.hash(user.password, salt, function(err, hash) {
-					if (err) next(err);
+					if (err) return next(err);
 					user.password = hash;
 					next();
-				})
-			})
+				});
+			});
 		}
 		else {
 			next();
@@ -59,11 +59,11 @@ module.exports = {
 		if (user.password) {
 			bcrypt.genSalt(10, function(err, salt) {
 				bcrypt.hash(user.password, salt, function(err, hash) {
-					if (err) next(err);
+					if (err) return next(err);
 					user.password = hash;
 					next();
-				})
-			})
+				});
+			});
 		}
 		else {
 			next();

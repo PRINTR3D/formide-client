@@ -18,15 +18,15 @@ module.exports = function(routes, module) {
 		if (req.user.isOwner) permissions.push("owner");
 		if (req.user.isAdmin) permissions.push("admin");
 		FormideOS.db.AccessToken
-		.create({
-			createdBy:		req.user.id,
-			sessionOrigin:	"local",
-			permissions:	permissions
-		})
-		.then((accessToken) => {
-			return res.ok({ access_token: accessToken.token });
-		})
-		.error(res.serverError);
+			.create({
+				createdBy:		req.user.id,
+				sessionOrigin:	"local",
+				permissions:	permissions
+			})
+			.then((accessToken) => {
+				return res.ok({ access_token: accessToken.token });
+			})
+			.error(res.serverError);
 	});
 
 	/*
@@ -110,8 +110,9 @@ module.exports = function(routes, module) {
 	routes.post('/users', FormideOS.http.permissions.isAdmin, (req, res) => {
 		FormideOS.db.User
 		.create({
-			email:	 req.body.email,
-			isAdmin: req.body.isAdmin
+			email:	  req.body.email,
+			password: req.body.password,
+			isAdmin:  req.body.isAdmin
 		})
 		.then((user) => {
 			return res.ok({ message: "User created", user });

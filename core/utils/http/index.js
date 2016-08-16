@@ -135,7 +135,7 @@ module.exports = {
 
 			FormideOS.log("Attempt login for " + email);
 
-			FormideOS.db.User.findOne({ email: email}, function (err, user) {
+			FormideOS.db.User.findOne({ email: email }, function (err, user) {
 				if (err) return next(err);
 				if (!user) return next(null, false, { message: "Incorrect credentials" });
 
