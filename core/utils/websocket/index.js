@@ -1,11 +1,11 @@
 /*
- *	This code was created for Printr B.V. It is open source under the formideos-client package.
+ *	This code was created for Printr B.V. It is open source under the formide-client package.
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
 /*
  *	Websocket server. All modules can add namespaced to it. Permissions handled automatically by
- *	FormideOS.
+ *	FormideClient.
  */
 
 const io   = require('socket.io');
@@ -47,28 +47,28 @@ module.exports = {
 								}
 							}));
 
-							FormideOS.events.onAny(forwardEvents);
+							FormideClient.events.onAny(forwardEvents);
 						});
 					}
 				}
 				catch (e) {
-					FormideOS.log.error(e.message);
+					FormideClient.log.error(e.message);
 				}
 			});
 
 		    conn.on("close", function (code, reason) {
-				FormideOS.events.offAny(forwardEvents);
-		        FormideOS.log("Socket disconnected: " + reason);
+				FormideClient.events.offAny(forwardEvents);
+		        FormideClient.log("Socket disconnected: " + reason);
 		    });
 
 		    conn.on("error", function (err) {
-				// FormideOS.log.error(err.message);
+				// FormideClient.log.error(err.message);
 		    });
 
 		}).listen(3001)
 
 
-		var socketio = io.listen(FormideOS.http.server);
+		var socketio = io.listen(FormideClient.http.server);
 
 		// emit all system events
 		socketio.on('connection', function(socket) {
@@ -89,7 +89,7 @@ module.exports = {
 						return socket.disconnect();
 					}
 
-					FormideOS.events.onAny(forwardSocketEvents);
+					FormideClient.events.onAny(forwardSocketEvents);
 
                     callback({
                         success: true,
@@ -99,17 +99,17 @@ module.exports = {
 			});
 
 			socket.on('error', function (err) {
-				FormideOS.log.error('Socket err', err.message);
+				FormideClient.log.error('Socket err', err.message);
 			});
 
 			socket.on('disconnect', function () {
-				FormideOS.events.offAny(forwardSocketEvents);
-				FormideOS.log('Socket disconnected');
+				FormideClient.events.offAny(forwardSocketEvents);
+				FormideClient.log('Socket disconnected');
 			});
 		});
 
 		function authenticate(token, callback) {
-			FormideOS.db.AccessToken.findOne({ token: token }).exec(function(err, accessToken) {
+			FormideClient.db.AccessToken.findOne({ token: token }).exec(function(err, accessToken) {
 				return callback(err, accessToken);
 			});
 		}

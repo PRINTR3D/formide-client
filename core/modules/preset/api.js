@@ -6,7 +6,7 @@
 module.exports = (routes, module) => {
 
     // require submodules for individual rest resources
-    require('./rest/material.js')(routes, FormideOS.db);
-    require('./rest/sliceprofile.js')(routes, FormideOS.db);
-    require('./rest/printer.js')(routes, FormideOS.db);
+    require('./rest/material.js')(routes, FormideClient.db);
+    require('./rest/sliceprofile.js')(routes, FormideClient.db);
+    require('./rest/printer.js')(routes, FormideClient.db);
 };

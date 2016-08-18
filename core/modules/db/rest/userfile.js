@@ -1,5 +1,5 @@
 /*
- *	This code was created for Printr B.V. It is open source under the formideos-client package.
+ *	This code was created for Printr B.V. It is open source under the formide-client package.
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
@@ -88,12 +88,12 @@ module.exports = (routes, db) => {
 			.findOne({ id: req.params.id, createdBy: req.user.id })
 			.then(userFile => {
 				// delete file from storage
-				var filePath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.modelfiles'), userFile.hash);
+				var filePath = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.modelfiles'), userFile.hash);
 				try {
 					fs.unlinkSync(filePath);
 				}
 				catch (e) {
-					FormideOS.log.warn('file could not be deleted from storage');
+					FormideClient.log.warn('file could not be deleted from storage');
 				}
 
 				// TODO: remove attached images as well
@@ -134,7 +134,7 @@ module.exports = (routes, db) => {
 
 		// get the path to store the file and create a write stream to it
 		const hash = uuid.v4();
-		const imagePath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.images'), hash);
+		const imagePath = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.images'), hash);
 		const writeStream = fs.createWriteStream(imagePath);
 
 		// store image on file system
@@ -159,7 +159,7 @@ module.exports = (routes, db) => {
 	 */
 	routes.get('/files/:id/images/:hash', function(req, res) {
 		// get image from disk
-		const imagePath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.images'), req.params.hash);
+		const imagePath = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.images'), req.params.hash);
 		const readStream = fs.createReadStream(imagePath);
 		const imageStats = fs.statSync(imagePath);
 
@@ -186,12 +186,12 @@ module.exports = (routes, db) => {
 				userFile.save((dbErr, savedUserFile) => {
 					if (dbErr) return res.serverError(dbErr);
 
-					const imagePath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.images'), hash);
+					const imagePath = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.images'), hash);
 					try {
 						fs.unlinkSync(imagePath);
 					}
 					catch (e) {
-						FormideOS.log.warn('image could not be deleted from storage');
+						FormideClient.log.warn('image could not be deleted from storage');
 					}
 
 					return res.ok({ message: 'Removed image from file', file: savedUserFile });

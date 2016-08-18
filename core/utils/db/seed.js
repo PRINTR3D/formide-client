@@ -75,7 +75,7 @@ module.exports = (db, presetStorage) => { co(function*() {
     //         });
     //
     //         // copy the file (or overwrite when already in DB)
-    //         const newPath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.modelfiles'), userFile.hash);
+    //         const newPath = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.modelfiles'), userFile.hash);
     //         fs.createReadStream(filePath).pipe(fs.createWriteStream(newPath));
     //
     //     }).then(null, console.error); });

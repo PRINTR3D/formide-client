@@ -11,13 +11,13 @@ module.exports = {
 
 	init: function() {
 
-		if (FormideOS.ci)
-			this.tools = FormideOS.ci.update;
+		if (FormideClient.ci)
+			this.tools = FormideClient.ci.update;
 
 		// only check for update when update tools are actually available
 		if (this.tools) {
 			this.checkForUpdate((err, update) => {
-				FormideOS.log('update', update);
+				FormideClient.log('update', update);
 			});
 		}
 	},

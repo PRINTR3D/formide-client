@@ -1,10 +1,10 @@
 const path			= require('path');
 const fs			= require('fs');
-const storageDir	= FormideOS.config.get('app.storageDir');
-const logDir		= path.join(FormideOS.config.get('app.storageDir'), 'logs');
-const filesDir		= path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.modelfiles'));
-const gcodeDir		= path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.gcode'));
-const imageDir		= path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.images'));
+const storageDir	= FormideClient.config.get('app.storageDir');
+const logDir		= path.join(FormideClient.config.get('app.storageDir'), 'logs');
+const filesDir		= path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.modelfiles'));
+const gcodeDir		= path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.gcode'));
+const imageDir		= path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.images'));
 
 // create needed folders
 if (!fs.existsSync(storageDir)) {

@@ -4,17 +4,25 @@
  */
 
 /*
- *	This is the bootstrapper of formide-client. It basically kicks off the formide-client core
+ *	This is the bootstrap of formide-client. It kicks off the formide-client core
  *	and loads the core modules. After that, all user installed modules are loaded. Finally,
  *	all loaded modules are activated via the moduleManager.activateLoadedModules function.
  */
 
 // Dependencies
-var pkg 	= require('./package.json');
-var path 	= require('path');
+const pkg 	       = require('./package.json');
+var moduleConfig   = null;
+
+try {
+	moduleConfig = require('./modules.json');
+}
+catch(e) {
+	console.error('Could not load modules.json', e);
+	process.exit(1);
+}
 
 // Load formide-client core file
-const initFormide = require('./core/FormideOS');
+const initFormide = require('./core/FormideClient');
 
 initFormide().then(() => {
 
@@ -22,21 +30,15 @@ initFormide().then(() => {
 	require('./core/utils/logLogo');
 
 	// Log app header
-	FormideOS.log.info('==============================================');
-	FormideOS.log.info('Starting formide-client v' + pkg.version + ' as ' + process.env.NODE_ENV);
-	FormideOS.log.info('==============================================');
+	FormideClient.log.info('==============================================');
+	FormideClient.log.info('Starting formide-client v' + pkg.version + ' as ' + process.env.NODE_ENV);
+	FormideClient.log.info('==============================================');
 
-	// Load core modules
-	FormideOS.moduleManager.loadModule('/core/modules/db',		'db',       true);
-	FormideOS.moduleManager.loadModule('/core/modules/preset',  'preset',   true);
-	FormideOS.moduleManager.loadModule('/core/modules/auth',	'auth',     true);
-	FormideOS.moduleManager.loadModule('/core/modules/files', 	'files',    true);
-	FormideOS.moduleManager.loadModule('/core/modules/printer', 'printer',  true);
-	FormideOS.moduleManager.loadModule('/core/modules/slicer',	'slicer',	true);
-	FormideOS.moduleManager.loadModule('/core/modules/update',	'update',	true);
-	FormideOS.moduleManager.loadModule('/core/modules/cloud',   'cloud',	true);
-	FormideOS.moduleManager.loadModule('/core/modules/ui',      'ui',       true);
+	// Load modules
+	for (var module in moduleConfig.modules) {
+		FormideClient.moduleManager.loadModule(moduleConfig.modules[module].path, module);
+	}
 
 	// Activate all loaded modules
-	FormideOS.moduleManager.activateLoadedModules();
+	FormideClient.moduleManager.activateLoadedModules();
 });

@@ -1,5 +1,5 @@
 /*
- *	This code was created for Printr B.V. It is open source under the formideos-client package.
+ *	This code was created for Printr B.V. It is open source under the formide-client package.
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
@@ -10,14 +10,14 @@ module.exports = function(routes, module) {
 	/*
 	 * Login. Post an email address and password as body, get a AccessToken object back
 	 */
-	routes.post('/login', FormideOS.http.auth.authenticate('local-login'), (req, res) => {
+	routes.post('/login', FormideClient.http.auth.authenticate('local-login'), (req, res) => {
 		if (req.user.id === null) {
 			return res.notFound();
 		}
 		var permissions = [];
 		if (req.user.isOwner) permissions.push("owner");
 		if (req.user.isAdmin) permissions.push("admin");
-		FormideOS.db.AccessToken
+		FormideClient.db.AccessToken
 			.create({
 				createdBy:		req.user.id,
 				sessionOrigin:	"local",
@@ -32,8 +32,8 @@ module.exports = function(routes, module) {
 	/*
 	 * Get current session. Used permissions.isUser to check AccessToken (req.token), returns success and AccessToken object
 	 */
-	routes.get('/session', FormideOS.http.permissions.isUser, (req, res) => {
-		FormideOS.db.AccessToken
+	routes.get('/session', FormideClient.http.permissions.isUser, (req, res) => {
+		FormideClient.db.AccessToken
 		.findOne({ token: req.token })
 		.populate('createdBy')
 		.exec(function (err, accessToken) {
@@ -45,8 +45,8 @@ module.exports = function(routes, module) {
 	/*
 	 * Get all AccessToken objects from the database
 	 */
-	routes.get('/tokens', FormideOS.http.permissions.isAdmin, (req, res) => {
-		FormideOS.db.AccessToken
+	routes.get('/tokens', FormideClient.http.permissions.isAdmin, (req, res) => {
+		FormideClient.db.AccessToken
 		.find()
 		.populate('createdBy')
 		.then(res.ok)
@@ -56,8 +56,8 @@ module.exports = function(routes, module) {
 	/*
 	 * Generate an AccessToken manually with the given permissions (only permission available right now is 'admin')
 	 */
-	routes.post('/tokens', FormideOS.http.permissions.isUser, FormideOS.http.permissions.isAdmin, (req, res) => {
-		FormideOS.db.AccessToken
+	routes.post('/tokens', FormideClient.http.permissions.isUser, FormideClient.http.permissions.isAdmin, (req, res) => {
+		FormideClient.db.AccessToken
 		.create({
 			permissions:	req.body.permissions,
 			createdBy:		req.user.id,
@@ -72,8 +72,8 @@ module.exports = function(routes, module) {
 	/*
 	 * Delete AccessToken from database. Basically forces user to login again
 	 */
-	routes.delete('/tokens/:token', FormideOS.http.permissions.isAdmin, (req, res) => {
-		FormideOS.db.AccessToken
+	routes.delete('/tokens/:token', FormideClient.http.permissions.isAdmin, (req, res) => {
+		FormideClient.db.AccessToken
 		.destroy({ token: req.params.token })
 		.then(() => {
 			return res.ok({ message: 'Access token deleted' })
@@ -84,8 +84,8 @@ module.exports = function(routes, module) {
 	/*
 	 * Get list of all users
 	 */
-	routes.get('/users', FormideOS.http.permissions.isAdmin, (req, res) => {
-		FormideOS.db.User
+	routes.get('/users', FormideClient.http.permissions.isAdmin, (req, res) => {
+		FormideClient.db.User
 		.find()
 		.then(res.ok)
 		.error(res.serverError);
@@ -94,8 +94,8 @@ module.exports = function(routes, module) {
 	/*
 	 * Get a single user object
 	 */
-	routes.get('/users/:id', FormideOS.http.permissions.isAdmin, (req, res) => {
-		FormideOS.db.User
+	routes.get('/users/:id', FormideClient.http.permissions.isAdmin, (req, res) => {
+		FormideClient.db.User
 		.findOne({ id: req.params.id })
 		.then((user) => {
 			if (!user) return res.notFound();
@@ -107,8 +107,8 @@ module.exports = function(routes, module) {
 	/**
 	 * Create a user
 	 */
-	routes.post('/users', FormideOS.http.permissions.isAdmin, (req, res) => {
-		FormideOS.db.User
+	routes.post('/users', FormideClient.http.permissions.isAdmin, (req, res) => {
+		FormideClient.db.User
 		.create({
 			email:	  req.body.email,
 			password: req.body.password,
@@ -123,8 +123,8 @@ module.exports = function(routes, module) {
 	/**
 	 * Update a user
 	 */
-	routes.put('/users/:id', FormideOS.http.permissions.isAdmin, (req, res) => {
-		FormideOS.db.User
+	routes.put('/users/:id', FormideClient.http.permissions.isAdmin, (req, res) => {
+		FormideClient.db.User
 		.update({ id: req.params.id }, {
 			email:	 req.body.email,
 			isAdmin: req.body.isAdmin
@@ -138,8 +138,8 @@ module.exports = function(routes, module) {
 	/*
 	 * Delete a user
 	 */
-	routes.delete('/users/:id', FormideOS.http.permissions.isAdmin, (req, res) => {
-		FormideOS.db.User
+	routes.delete('/users/:id', FormideClient.http.permissions.isAdmin, (req, res) => {
+		FormideClient.db.User
 		.destroy({ id: req.params.id })
 		.then(() => {
 			return res.ok({ message: "User deleted" });

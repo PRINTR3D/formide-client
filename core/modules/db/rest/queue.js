@@ -81,13 +81,13 @@ module.exports = (routes, db) => {
 
 			// delete file from storage when coming from cloud
 			if (queueItem.origin === 'cloud') {
-				const filePath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.gcode'), queueItem.gcode);
+				const filePath = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.gcode'), queueItem.gcode);
 
 				try {
 					fs.unlinkSync(filePath);
 				}
 				catch (e) {
-					FormideOS.log.warn('file could not be deleted from storage');
+					FormideClient.log.warn('file could not be deleted from storage');
 				}
 			}
 

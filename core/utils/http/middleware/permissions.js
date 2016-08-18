@@ -1,5 +1,5 @@
 /*
- *	This code was created for Printr B.V. It is open source under the formideos-client package.
+ *	This code was created for Printr B.V. It is open source under the formide-client package.
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
  
@@ -18,14 +18,14 @@ module.exports = {
 			}
 			
 			if(req.token) {
-				FormideOS.db.AccessToken.findOne({ token: req.token}).exec(function(err, accessToken) {
+				FormideClient.db.AccessToken.findOne({ token: req.token}).exec(function(err, accessToken) {
 					if (accessToken) {
-						if (FormideOS.permissions.check(accessToken.permissions, permission)) {
-							FormideOS.log('Permissions correct');
+						if (FormideClient.permissions.check(accessToken.permissions, permission)) {
+							FormideClient.log('Permissions correct');
 							return next();
 						}
 						else {
-							FormideOS.log.warn('Permissions incorrect');
+							FormideClient.log.warn('Permissions incorrect');
 							return res.json({
 								status: 401,
 								errors: 'No permission'
@@ -33,7 +33,7 @@ module.exports = {
 						}
 					}
 					else {
-						FormideOS.log.warn('No access token found in db');
+						FormideClient.log.warn('No access token found in db');
 						return res.json({
 							status: 401,
 							errors: 'No permission'
@@ -42,7 +42,7 @@ module.exports = {
 				});
 			}
 			else {
-				FormideOS.log.error('No token found in request');
+				FormideClient.log.error('No token found in request');
 				return res.json({
 					status: 401,
 					errors: 'No permission'

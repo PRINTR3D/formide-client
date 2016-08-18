@@ -1,7 +1,7 @@
 'use strict';
 
 /*
- *	This code was created for Printr B.V. It is open source under the formideos-client package.
+ *	This code was created for Printr B.V. It is open source under the formide-client package.
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
@@ -111,7 +111,7 @@ module.exports = (routes, cloud) => {
 			res.ok({ message: 'Device connected to network' });
 
 			const registrationStart = os.uptime();
-			FormideOS.log('Waiting for device registration to start');
+			FormideClient.log('Waiting for device registration to start');
 			return setTimeout(waitForRegistrationStart,
 				REGISTRATION_START_INTERVAL,
 				registrationStart,
@@ -131,9 +131,9 @@ function waitForRegistrationStart(
 	assert(cloud);
 
 	const registrationEndpoint
-		= `${FormideOS.config.get('cloud.url')}/devices/register`;
+		= `${FormideClient.config.get('cloud.url')}/devices/register`;
 
-	FormideOS.log('Trying to create device registration token...');
+	FormideClient.log('Trying to create device registration token...');
 
 	post(registrationEndpoint, { form: {
 		mac_address:        macAddress,
@@ -162,20 +162,20 @@ function waitForRegistrationStart(
 				msg = '';
 			}
 
-			FormideOS.log(`Failed to create device registration token${msg}`);
+			FormideClient.log(`Failed to create device registration token${msg}`);
 			return startSetup(cloud);
 		}
 
 		// If device already registered
 		else if (response.statusCode == 409)
 			// there's nothing else to do
-			return FormideOS.log('Device already registered');
+			return FormideClient.log('Device already registered');
 
 		// If timed out
 		else if ((registrationEnd - registrationStart)
 			>= REGISTRATION_START_TIMEOUT) {
 
-			FormideOS.log('Device registration token creation timed out');
+			FormideClient.log('Device registration token creation timed out');
 
 			return startSetup(cloud);
 		}
@@ -191,7 +191,7 @@ function waitForRegistrationStart(
 				cloud);
 
 		// Else if everything went well
-		FormideOS.log('Waiting for device registration to finish');
+		FormideClient.log('Waiting for device registration to finish');
 		setTimeout(waitForRegistrationFinish,
 			REGISTRATION_FINISH_INTERVAL,
 			os.uptime(),
@@ -203,7 +203,7 @@ function waitForRegistrationStart(
 		if ((registrationEnd - registrationStart)
 			>= REGISTRATION_START_TIMEOUT) {
 
-			FormideOS.log(
+			FormideClient.log(
 				'Device registration token creation timed out:',
 				err.message);
 
@@ -217,7 +217,7 @@ function waitForRegistrationStart(
 			registrationToken,
 			cloud);
 
-		return FormideOS.log(err.message);
+		return FormideClient.log(err.message);
 	});
 }
 
@@ -229,11 +229,11 @@ function waitForRegistrationFinish(
 	assert(cloud);
 
 	const registrationEndpoint
-		= `${FormideOS.config.get('cloud.url')}/devices/register`;
+		= `${FormideClient.config.get('cloud.url')}/devices/register`;
 	const registrationTokenEndpoint
 		= `${registrationEndpoint}/${registrationToken}`;
 
-	FormideOS.log('Checking if device is registered...');
+	FormideClient.log('Checking if device is registered...');
 
 	// Check if if device is still in unregistered state after
 	// some time and go into setup mode
@@ -243,7 +243,7 @@ function waitForRegistrationFinish(
 
 		// if registration token is not found, device is registered
 		if (response.statusCode == 404) {
-			return FormideOS.log('Device registered');
+			return FormideClient.log('Device registered');
 		}
 
 		// If more that X time has passed and registration is still
@@ -251,7 +251,7 @@ function waitForRegistrationFinish(
 		if ((registrationEnd - registrationStart)
 			>= REGISTRATION_FINISH_TIMEOUT) {
 
-			FormideOS.log('Device registration timed out');
+			FormideClient.log('Device registration timed out');
 			return startSetup(cloud);
 		}
 
@@ -268,7 +268,7 @@ function waitForRegistrationFinish(
 		if ((registrationEnd - registrationStart)
 			>= REGISTRATION_FINISH_TIMEOUT) {
 
-			FormideOS.log(
+			FormideClient.log(
 				'Device registration timed out:',
 				err.message);
 
@@ -281,14 +281,14 @@ function waitForRegistrationFinish(
 			registrationToken,
 			cloud);
 
-		return FormideOS.log(err.message);
+		return FormideClient.log(err.message);
 	});
 }
 
 function startSetup(cloud) {
 	cloud.setupMode(err => {
 		if (err)
-			return FormideOS.log(err.message);
-		return FormideOS.log('Switched device into setup mode');
+			return FormideClient.log(err.message);
+		return FormideClient.log('Switched device into setup mode');
 	});
 }

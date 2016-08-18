@@ -6,7 +6,7 @@
  */
 
 /*
- *	HTTP server for FormideOS. All modules can add a sub-app to this express webserver. Permissions
+ *	HTTP server for FormideClient. All modules can add a sub-app to this express webserver. Permissions
  *	are added automatically by module namespace. We use passport for authentication with local login.
  */
 
@@ -60,8 +60,8 @@ module.exports = {
 		this.httpServer = require('http').Server(this.app);
 
 		// listen to port stated in app.port config (usually port 1337)
-		this.httpServer.listen(FormideOS.config.get('app.port'), function() {
-			FormideOS.log.info('server running on port ' + this.httpServer.address().port);
+		this.httpServer.listen(FormideClient.config.get('app.port'), function() {
+			FormideClient.log.info('server running on port ' + this.httpServer.address().port);
 		}.bind(this));
 
 		if (this.app.get('env') !== 'production')
@@ -110,9 +110,9 @@ module.exports = {
 		// root url containing device information
 		// this.app.get('/', function (req, res) {
 		// 	return res.ok({
-		// 		versions:    FormideOS.config.getVersions(),
-		// 	 	environment: FormideOS.config.environment,
-		// 		mac: 		 FormideOS.config.getMacAddress()
+		// 		versions:    FormideClient.config.getVersions(),
+		// 	 	environment: FormideClient.config.environment,
+		// 		mac: 		 FormideClient.config.getMacAddress()
 		// 	});
 		// });
 	},
@@ -123,7 +123,7 @@ module.exports = {
 		});
 
 		passport.deserializeUser(function(id, done) {
-			  FormideOS.db.User.findOne({ id: id }).exec(function(err, user) {
+			  FormideClient.db.User.findOne({ id: id }).exec(function(err, user) {
 				  if (err) return done('user not found', false);
 				if (user) {
 					return done(null, user);
@@ -133,9 +133,9 @@ module.exports = {
 
 		passport.use('local-login', new LocalStrategy({ usernameField: 'email' }, function(email, password, next) {
 
-			FormideOS.log("Attempt login for " + email);
+			FormideClient.log("Attempt login for " + email);
 
-			FormideOS.db.User.findOne({ email: email }, function (err, user) {
+			FormideClient.db.User.findOne({ email: email }, function (err, user) {
 				if (err) return next(err);
 				if (!user) return next(null, false, { message: "Incorrect credentials" });
 

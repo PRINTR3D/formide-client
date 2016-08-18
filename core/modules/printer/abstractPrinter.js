@@ -31,7 +31,7 @@ function AbstractPrinter(serialPort, driver) {
 AbstractPrinter.prototype.askStatus = function() {
 	var self = this;
 	this.driver.getPrinterInfo(this.port, function(err, status) {
-		FormideOS.events.emit('printer.status', status);
+		FormideClient.events.emit('printer.status', status);
 		self.status = status;
 	});
 }
@@ -120,44 +120,44 @@ AbstractPrinter.prototype.startPrint = function(queueItemId, callback) {
 	//co(function* () {
 
 	//// fix for double printing items in queue
-	//yield FormideOS.db.QueueItem.update({ port: this.port }, { status: 'queued' });
+	//yield FormideClient.db.QueueItem.update({ port: this.port }, { status: 'queued' });
 	//
 	//// get queue item to print
-	//const queueItem = FormideOS.db.QueueItem.findOne({ id: queueItemId, status: 'queued' });
+	//const queueItem = FormideClient.db.QueueItem.findOne({ id: queueItemId, status: 'queued' });
 	//if (!queueItem) return callback();
 	//
 	//// start the print via the formide drivers
-	//const filePath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.gcode'), queueItem.gcode);
+	//const filePath = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.gcode'), queueItem.gcode);
 	//yield this.driver.printFile(filePath, queueItem.id, this.port);
 	//
 	//// update queueItem
 	//yield formideOS.db.QueueItem.update({ id: queueItem.id }, { status: 'printing' });
 	//this.queueItemId = queueItemId;
 	//
-	//FormideOS.events.emit('printer.started', { port: this.port, queueItemId });
+	//FormideClient.events.emit('printer.started', { port: this.port, queueItemId });
 	//return callback(null, true);
 
 	var self = this;
 	// first we set all current printing db queue items for this port back to queued to prevent multiple 'printing' items
-	FormideOS.db.QueueItem
+	FormideClient.db.QueueItem
 	.update({ port: self.port, status: 'printing' }, { status: 'queued' })
 	.exec(function(err) {
 		if (err) return callback(err);
-		FormideOS.db.QueueItem
+		FormideClient.db.QueueItem
 		.findOne({ id: queueItemId, status: 'queued' })
 		.exec(function(err, queueItem) {
 			if (err) return callback(err);
 			if (!queueItem) return callback(null, null);
-			var filePath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.gcode'), queueItem.gcode);
+			var filePath = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.gcode'), queueItem.gcode);
 			self.driver.printFile(filePath, queueItem.id, self.port, function(err, response) {
 				if (err) return callback(err);
-				FormideOS.db.QueueItem
+				FormideClient.db.QueueItem
 				.update({ id: queueItem.id }, {
 					status: 'printing'
 				}, function(err, updated) {
 					if (err) return callback(err);
 					self.queueItemId = queueItemId;
-					FormideOS.events.emit('printer.started', {
+					FormideClient.events.emit('printer.started', {
 						port:		 self.port,
 						queueItemId: self.queueItemId
 					});
@@ -176,7 +176,7 @@ AbstractPrinter.prototype.pausePrint = function(callback) {
 	var self = this;
 	self.driver.pausePrint(self.port, function(err, response) {
 		if (err) return callback(err);
-		FormideOS.events.emit('printer.paused', {
+		FormideClient.events.emit('printer.paused', {
 			port:		 self.port,
 			queueItemId: self.queueItemId
 		});
@@ -191,7 +191,7 @@ AbstractPrinter.prototype.resumePrint = function(callback) {
 	var self = this;
 	self.driver.resumePrint(self.port, function(err, response) {
 		if (err) return callback(err);
-		FormideOS.events.emit('printer.resumed', {
+		FormideClient.events.emit('printer.resumed', {
 			port:		 self.port,
 			queueItemId: self.queueItemId
 		});
@@ -209,12 +209,12 @@ AbstractPrinter.prototype.stopPrint = function(callback) {
 	self.driver.stopPrint(self.port, '', function(err, response) {
 
 		if (err)
-			return FormideOS.log.error(err.message);
+			return FormideClient.log.error(err.message);
 
-		FormideOS.db.QueueItem
+		FormideClient.db.QueueItem
 		.findOne({ id: self.queueItemId }, (err, queueItem) => {
 
-			FormideOS.events.emit('printer.stopped', {
+			FormideClient.events.emit('printer.stopped', {
 				port:		 self.port,
 				queueItemId: self.queueItemId
 			});
@@ -225,7 +225,7 @@ AbstractPrinter.prototype.stopPrint = function(callback) {
 				return callback(err);
 
 			if (!queueItem) {
-				FormideOS.log.warn('No queue item with that ID found to stop printing');
+				FormideClient.log.warn('No queue item with that ID found to stop printing');
 				return callback(null, 'stopped printing');
 			}
 
@@ -243,33 +243,33 @@ AbstractPrinter.prototype.printFinished = function (queueItemId) {
 	var self = this;
 
 	if (parseInt(queueItemId) !== parseInt(self.queueItemId))
-		FormideOS.log.warn('Warning: driver queue ID and client queue ID are not the same!');
+		FormideClient.log.warn('Warning: driver queue ID and client queue ID are not the same!');
 
-	FormideOS.events.emit('printer.finished', {
+	FormideClient.events.emit('printer.finished', {
 		port:		 self.port,
 		queueItemId: self.queueItemId
 	});
 
 	if (self.queueItemId)
-		FormideOS.db.QueueItem
+		FormideClient.db.QueueItem
 		.findOne({ id: parseInt(self.queueItemId) }, function (err, queueItem) {
 
 			// reset queueItemId of current print
 			self.queueItemId = null;
 
 			if (err)
-				return FormideOS.log.err(err.message);
+				return FormideClient.log.err(err.message);
 
 			if (!queueItem)
-				return FormideOS.log.warn('No queue item with that ID found to handle finished printing');
+				return FormideClient.log.warn('No queue item with that ID found to handle finished printing');
 
 			// remove gcode from cloud
 			if (queueItem.origin === 'cloud')
 				try {
-					fs.unlinkSync(path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.gcode'), queueItem.gcode));
+					fs.unlinkSync(path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.gcode'), queueItem.gcode));
 				}
 				catch (e) {
-					FormideOS.log.warn('File not found for deletion after print finished:', queueItem.gcode);
+					FormideClient.log.warn('File not found for deletion after print finished:', queueItem.gcode);
 				}
 
 			queueItem.status = 'finished';
@@ -301,7 +301,7 @@ AbstractPrinter.prototype.printFile = function (filePath, callback) {
 	self.driver.printFile   (filePath, 0, self.port, function(err, response) {
 		if (err) return callback(err);
 		self.queueItemId = 0;
-		FormideOS.events.emit('printer.started', {
+		FormideClient.events.emit('printer.started', {
 			port:		 self.port,
 			queueItemId: self.queueItemId,
 			message:     'print started from custom file'

@@ -23,17 +23,17 @@ module.exports = {
 			this.driver = require('formide-drivers');
 		}
 		catch (e) {
-			FormideOS.log.warn('Cannot load drivers binary, try re-installing formide-drivers');
+			FormideClient.log.warn('Cannot load drivers binary, try re-installing formide-drivers');
 		}
 
 		// start drivers
 		if (this.driver !== null)
 			this.driver.start(function(err, started, event) {
 				if (err) {
-					FormideOS.log.error('formide-drivers err: ' + err.message);
+					FormideClient.log.error('formide-drivers err: ' + err.message);
 				}
 				else if (started) {
-					FormideOS.log('formide-drivers started successfully');
+					FormideClient.log('formide-drivers started successfully');
 				}
 
 				else if (event) {
@@ -64,20 +64,20 @@ module.exports = {
 	printerConnected: function(port) {
 		if (this.numberOfPorts < 4) {
 			var self = this;
-			FormideOS.log('Printer connected: ' + port);
-			FormideOS.events.emit('printer.connected', { port: port, notification: true, level: "success", title: "Printer connected", message: "A printer was connected" });
+			FormideClient.log('Printer connected: ' + port);
+			FormideClient.events.emit('printer.connected', { port: port, notification: true, level: "success", title: "Printer connected", message: "A printer was connected" });
 			self.printers[port.split("/")[2]] = new AbstractPrinter(port, self.driver);
 		}
 		else {
-			FormideOS.events.emit('printer.maxExceeded', { port: port, notification: true, level: 'warning', title: 'Max exceeded', message: 'Maximum number of printers already connected'})
+			FormideClient.events.emit('printer.maxExceeded', { port: port, notification: true, level: 'warning', title: 'Max exceeded', message: 'Maximum number of printers already connected'})
 		}
 	},
 
 	printerDisconnected: function(port) {
 		this.numberOfPorts--;
 		if (this.printers[port.split("/")[2]] !== undefined) {
-			FormideOS.log('Printer disconnected: ' + port);
-			FormideOS.events.emit('printer.disconnected', { port: port, notification: true, level: "warning", title: "Printer disconnected", message: "A printer was disconnected" });
+			FormideClient.log('Printer disconnected: ' + port);
+			FormideClient.events.emit('printer.disconnected', { port: port, notification: true, level: "warning", title: "Printer disconnected", message: "A printer was disconnected" });
 			clearInterval(this.printers[port.split("/")[2]].statusInterval);
 			delete this.printers[port.split("/")[2]];
 		}
@@ -85,8 +85,8 @@ module.exports = {
 
 	printerOnline: function(port) {
 		this.numberOfPorts++;
-		FormideOS.log('Printer online: ' + port);
-		FormideOS.events.emit('printer.online', { port: port });
+		FormideClient.log('Printer online: ' + port);
+		FormideClient.events.emit('printer.online', { port: port });
 	},
 
 	printFinished: function(port, printjobId) {
@@ -101,7 +101,7 @@ module.exports = {
 	 * @param event
      */
 	printerEvent: function(level, event) {
-		FormideOS.events.emit('printer.' + level, event);
+		FormideClient.events.emit('printer.' + level, event);
 	},
 
 	getPrinters: function() {

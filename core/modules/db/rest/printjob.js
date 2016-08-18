@@ -1,5 +1,5 @@
 /*
- *	This code was created for Printr B.V. It is open source under the formideos-client package.
+ *	This code was created for Printr B.V. It is open source under the formide-client package.
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
@@ -53,9 +53,9 @@ module.exports = (routes, db) => {
 		.then(userFile => {
 
 			// copy gcode file to gcodes folder so original file can be deleted
-			var filename = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.modelfiles'), userFile.hash);
+			var filename = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.modelfiles'), userFile.hash);
 			var newHash = uuid.v4();
-			var newFilename = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.gcode'), newHash);
+			var newFilename = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.gcode'), newHash);
 			fs.copySync(filename, newFilename);
 
 			db.PrintJob
@@ -82,12 +82,12 @@ module.exports = (routes, db) => {
 		.findOne({ id: req.params.id, createdBy: req.user.id })
 		.then(printJob => {
 			// delete file from storage
-			var filePath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.gcode'), printJob.gcode);
+			var filePath = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.gcode'), printJob.gcode);
 			try {
 				fs.unlinkSync(filePath);
 			}
 			catch (e) {
-				FormideOS.log.warn('file could not be deleted from storage');
+				FormideClient.log.warn('file could not be deleted from storage');
 			}
 
 			// delete from database

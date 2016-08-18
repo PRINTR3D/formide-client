@@ -1,5 +1,5 @@
 /*
- *	This code was created for Printr B.V. It is open source under the formideos-client package.
+ *	This code was created for Printr B.V. It is open source under the formide-client package.
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
@@ -15,7 +15,7 @@ module.exports =
 		
 		permissions = JSON.parse(permissions);
 		
-		FormideOS.db.AccessToken.create({
+		FormideClient.db.AccessToken.create({
 			token: token,
 			permissions: permissions
 		}, function(err, accesstoken) {
@@ -27,7 +27,7 @@ module.exports =
 	 * Get access token from database
 	 */
 	getAccessTokens: function(callback) {
-		FormideOS.db.AccessToken.find().exec( function(err, tokens) {
+		FormideClient.db.AccessToken.find().exec( function(err, tokens) {
 			return callback(tokens);
 		});
 	},
@@ -36,7 +36,7 @@ module.exports =
 	 * Delete access token from database
 	 */
 	deleteAccessToken: function( token, callback ) {
-		FormideOS.db.AccessToken.remove({ token: token }, function(err) {
+		FormideClient.db.AccessToken.remove({ token: token }, function(err) {
 			if (err) return callback(err);
 			return callback();
 		});

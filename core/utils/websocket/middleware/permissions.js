@@ -1,5 +1,5 @@
 /*
- *	This code was created for Printr B.V. It is open source under the formideos-client package.
+ *	This code was created for Printr B.V. It is open source under the formide-client package.
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
@@ -22,39 +22,39 @@ var permissionsMiddleware = function (socket, next) {
 					else {
 						if (nsp.name != '/') {
 							if (s.request.session.permissions) {
-								if (FormideOS.permissions.check(s.request.session.permissions, nsp.permissions ) === false) {
-									FormideOS.log.warn('Socket permissions incorrect');
+								if (FormideClient.permissions.check(s.request.session.permissions, nsp.permissions ) === false) {
+									FormideClient.log.warn('Socket permissions incorrect');
 									s.disconnect();
 								}
 								else {
-									FormideOS.log('Socket permissions correct');
+									FormideClient.log('Socket permissions correct');
 								}
 							}
 							else {
 								if (s.request._query.access_token) {
-									FormideOS.db.AccessToken.findOne({ token: s.request._query.access_token }).exec(function(err, accessToken) {
+									FormideClient.db.AccessToken.findOne({ token: s.request._query.access_token }).exec(function(err, accessToken) {
 										if (err) {
-											FormideOS.log(err);
+											FormideClient.log(err);
 											s.disconnect();
 										}
 										if (accessToken == null) {
-											FormideOS.log.warn('No access token found');
+											FormideClient.log.warn('No access token found');
 											s.disconnect();
 										}
 										else {
 											s.request.session.permissions = accessToken.permissions;
-											if (FormideOS.permissions.check(s.request.session.permissions, nsp.permissions ) === false) {
-												FormideOS.log.warn('Socket permissions incorrect');
+											if (FormideClient.permissions.check(s.request.session.permissions, nsp.permissions ) === false) {
+												FormideClient.log.warn('Socket permissions incorrect');
 												s.disconnect();
 											}
 											else {
-												FormideOS.log('Socket permissions correct');
+												FormideClient.log('Socket permissions correct');
 											}
 										}
 									});
 								}
 								else {
-									FormideOS.log.error('No access token found in session or request');
+									FormideClient.log.error('No access token found in session or request');
 									s.disconnect();
 								}
 							}

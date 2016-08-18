@@ -18,7 +18,7 @@ module.exports = function sendPaginate (data, options) {
 	options = options || {};
 	options.count = options.count || 0;
 
-	FormideOS.log.silly('res.paginate() :: Sending 200 (paginate) response');
+	FormideClient.log.silly('res.paginate() :: Sending 200 (paginate) response');
 
 	// Set status code
 	res.status(200);

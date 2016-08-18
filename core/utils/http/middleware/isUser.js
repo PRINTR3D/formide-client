@@ -1,5 +1,5 @@
 /*
- *	This code was created for Printr B.V. It is open source under the formideos-client package.
+ *	This code was created for Printr B.V. It is open source under the formide-client package.
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
@@ -9,20 +9,20 @@
 
 module.exports = function(req, res, next) {
 	if (req.token) {
-		FormideOS.db.AccessToken.findOne({ token: req.token }).exec(function(err, accessToken) {
+		FormideClient.db.AccessToken.findOne({ token: req.token }).exec(function(err, accessToken) {
 			if (err) return res.serverError(err);
 			if (accessToken) {
-				FormideOS.log('Access token found in db');
+				FormideClient.log('Access token found in db');
 				if (accessToken.sessionOrigin === 'local') {
-					FormideOS.db.User.findOne({ id: accessToken.createdBy }).exec(function (err, user) {
+					FormideClient.db.User.findOne({ id: accessToken.createdBy }).exec(function (err, user) {
 						if (err) return res.serverError(err);
 						if (user) {
-							FormideOS.log('User found in db');
+							FormideClient.log('User found in db');
 							req.user = user;
 							return next();
 						}
 						else {
-							FormideOS.log.warn('User not found in db');
+							FormideClient.log.warn('User not found in db');
 							return res.unauthorized();
 						}
 					});
@@ -34,13 +34,13 @@ module.exports = function(req, res, next) {
 				}
 			}
 			else {
-				FormideOS.log.warn('Access token not found in db');
+				FormideClient.log.warn('Access token not found in db');
 				return res.unauthorized();
 			}
 		});
 	}
 	else {
-		FormideOS.log.error('No access token found in request');
+		FormideClient.log.error('No access token found in request');
 		return res.unauthorized();
 	}
 }

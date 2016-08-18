@@ -18,7 +18,7 @@ const Throttle   = require('throttle');
 
 function addWifiSetupRoute(app, tools) {
 	app.get('/', (req, res) => {
-		const url = FormideOS.config.get('cloud.platformUrl');
+		const url = FormideClient.config.get('cloud.platformUrl');
 		tools.getWlanSetupPage(url, (err, html) => {
 			if (err)
 				return res.serverError(err.message);
@@ -48,9 +48,9 @@ module.exports = {
 		// use self to prevent bind(this) waterfall
 		var self = this;
 
-		if (FormideOS.ci) {
-			self.tools = FormideOS.ci.wifi;
-			addWifiSetupRoute(FormideOS.http.app, self.tools);
+		if (FormideClient.ci) {
+			self.tools = FormideClient.ci.wifi;
+			addWifiSetupRoute(FormideClient.http.app, self.tools);
 		}
 
 		function forwardEvents(data) {
@@ -67,7 +67,7 @@ module.exports = {
 			timeout: 5000
 		});
 
-		this.local = socket('ws://127.0.0.1:' + FormideOS.http.server.address().port, {
+		this.local = socket('ws://127.0.0.1:' + FormideClient.http.server.address().port, {
 			reconnection: true,
 			reconnectionDelay: 1000,
 			reconnectionAttempts: 1000,
@@ -78,19 +78,19 @@ module.exports = {
 
 		// handle cloud connection errors
 		this.cloud.on('error', function (err) {
-			FormideOS.log.error("Error with cloud connection: " + err);
+			FormideClient.log.error("Error with cloud connection: " + err);
 		});
 
 		this.cloud.on('connect_error', function (err) {
-			FormideOS.log.warn("Connecting to cloud: " + err);
+			FormideClient.log.warn("Connecting to cloud: " + err);
 		});
 
 		this.cloud.on('connect_timeout', function (err) {
-			FormideOS.log.error("Timeout when connecting to cloud: " + err);
+			FormideClient.log.error("Timeout when connecting to cloud: " + err);
 		});
 
 		this.cloud.on('reconnect_failed', function (err) {
-			FormideOS.log.error("Failed reconnecting to cloud: " + err);
+			FormideClient.log.error("Failed reconnecting to cloud: " + err);
 		});
 
 		/**
@@ -117,19 +117,19 @@ module.exports = {
 							ip: 		 publicIpAddress,
 							ip_internal: internalIpAddress,
 							version:     require('../../../package.json').version,
-							environment: FormideOS.config.environment,
+							environment: FormideClient.config.environment,
 							mac: 		 macAddress,
-							port:        FormideOS.config.get('app.port')
+							port:        FormideClient.config.get('app.port')
 						}, response => {
 							if (response.success) {
-								FormideOS.log('Cloud connected');
+								FormideClient.log('Cloud connected');
 
 								// forward all events to the cloud
-								FormideOS.events.onAny(forwardEvents);
+								FormideClient.events.onAny(forwardEvents);
 							}
 							else {
 								// something went wrong when connecting to the cloud
-								FormideOS.log.error(
+								FormideClient.log.error(
 									'Cloud connection error:', response.message);
 							}
 						});
@@ -149,7 +149,7 @@ module.exports = {
 		 * HTTP proxy request from cloud
 		 */
 		this.cloud.on('http', data => {
-			FormideOS.log('Cloud http call: ' + data.url);
+			FormideClient.log('Cloud http call: ' + data.url);
 			// call http function
 			this.http(data, (err, response) => {
 				self.cloud.emit(
@@ -162,7 +162,7 @@ module.exports = {
 		 * Send a gcode file to a client to print a cloud sliced printjob
 		 */
 		this.cloud.on('addToQueue', data => {
-			FormideOS.log('Cloud addToQueue: ' + data.gcode);
+			FormideClient.log('Cloud addToQueue: ' + data.gcode);
 			self.addToQueue(data, (err, response) => {
 				self.cloud.emit(
 					'addToQueue',
@@ -175,8 +175,8 @@ module.exports = {
 		 */
 		this.cloud.on('disconnect', () => {
 			// turn off event forwarding
-			FormideOS.events.offAny(forwardEvents);
-			FormideOS.log('Cloud disconnected, reconnecting...');
+			FormideClient.events.offAny(forwardEvents);
+			FormideClient.log('Cloud disconnected, reconnecting...');
 
 			// try reconnecting
 			this.cloud.io.reconnect();
@@ -188,7 +188,7 @@ module.exports = {
 	 */
 	authenticate: function(data, callback) {
 		var self = this;
-		FormideOS.db.AccessToken
+		FormideClient.db.AccessToken
 		.findOne({ token: self.cloudToken })
 		.then((accessToken) => {
 			if (!accessToken) {
@@ -196,7 +196,7 @@ module.exports = {
 				if (data.isOwner) permissions.push("owner");
 				if (data.isAdmin) permissions.push("admin");
 
-				FormideOS.db.AccessToken
+				FormideClient.db.AccessToken
 				.create({
 					permissions:   permissions,
 					sessionOrigin: 'cloud'
@@ -226,7 +226,7 @@ module.exports = {
 			if (data.method === 'GET') {
 				request({
 					method: 'GET',
-					uri: 'http://127.0.0.1:' + FormideOS.http.server.address().port + '/' + data.url,
+					uri: 'http://127.0.0.1:' + FormideClient.http.server.address().port + '/' + data.url,
 					auth: {
 						bearer: accessToken.token // add cloud api key to authorise to local HTTP api
 					},
@@ -235,13 +235,13 @@ module.exports = {
 					if (error) return callback(error);
 					return callback(null, body);
 				}).on('error', (err) => {
-					FormideOS.log.error('http GET proxy error:', err);
+					FormideClient.log.error('http GET proxy error:', err);
 				});
 			}
 			else {
 				request({
 					method: data.method,
-					uri: 'http://127.0.0.1:' + FormideOS.http.server.address().port + '/' + data.url,
+					uri: 'http://127.0.0.1:' + FormideClient.http.server.address().port + '/' + data.url,
 					auth: {
 						bearer: accessToken.token // add cloud api key to authorise to local HTTP api
 					},
@@ -250,7 +250,7 @@ module.exports = {
 					if (error) return callback(error);
 					return callback(null, body);
 				}).on('error', (err) => {
-					FormideOS.log.error(`http ${data.method} proxy error:`, err);
+					FormideClient.log.error(`http ${data.method} proxy error:`, err);
 				});
 			}
 		});
@@ -262,7 +262,7 @@ module.exports = {
 	addToQueue: function(data, callback) {
 		var hash = uuid.v4();
 
-		FormideOS.db.QueueItem.create({
+		FormideClient.db.QueueItem.create({
 			origin:   'cloud',
 			status:   'downloading',
 			gcode:    hash, // create a new hash for local file storage!
@@ -276,29 +276,29 @@ module.exports = {
 				queueItem: queueItem
 			});
 
-			const newPath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.gcode'), hash);
+			const newPath = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.gcode'), hash);
 			const fws = fs.createWriteStream(newPath);
 
 			// create a throttle of 10Mbps for downloading gcode
 			const throttle = new Throttle(10000000);
 
 			request
-			.get(`${FormideOS.config.get('cloud.url')}/files/download/gcode?hash=${data.gcode}`, {
+			.get(`${FormideClient.config.get('cloud.url')}/files/download/gcode?hash=${data.gcode}`, {
 				strictSSL: false
 			})
 			.on('error', (err) => {
-				FormideOS.log.error('error downloading gcode:', err.message);
-				FormideOS.events.emit('queueItem.downloadError', { title: `${data.printJob.name} has failed to download`, message: err.message });
+				FormideClient.log.error('error downloading gcode:', err.message);
+				FormideClient.events.emit('queueItem.downloadError', { title: `${data.printJob.name} has failed to download`, message: err.message });
 			})
 			.pipe(throttle)
 			.pipe(fws)
 			.on('finish', () => {
-				FormideOS.log('finished downloading gcode. Received ' + fws.bytesWritten + ' bytes');
+				FormideClient.log('finished downloading gcode. Received ' + fws.bytesWritten + ' bytes');
 
 				// set status to queued to indicate it's ready to print
 				queueItem.status = 'queued';
 				queueItem.save(() => {
-					FormideOS.events.emit('queueItem.downloaded', { title: `${data.printJob.name} is ready to print`, message: 'The gcode was downloaded and is now ready to be printed' });
+					FormideClient.events.emit('queueItem.downloaded', { title: `${data.printJob.name} is ready to print`, message: 'The gcode was downloaded and is now ready to be printed' });
 				});
 			});
 		});

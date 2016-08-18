@@ -1,0 +1,31 @@
+{
+  "modules": {
+    "db": {
+      "path": "./core/modules/db"
+    },
+    "preset": {
+      "path": "./core/modules/preset"
+    },
+    "auth": {
+      "path": "./core/modules/auth"
+    },
+    "files": {
+      "path": "./core/modules/files"
+    },
+    "printer": {
+      "path": "./core/modules/printer"
+    },
+    "slicer": {
+      "path": "./core/modules/slicer"
+    },
+    "update": {
+      "path": "./core/modules/update"
+    },
+    "cloud": {
+      "path": "./core/modules/cloud"
+    },
+    "ui": {
+      "path": "./core/modules/ui"
+    }
+  }
+}

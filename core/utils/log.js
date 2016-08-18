@@ -1,5 +1,5 @@
 /*
- *	This code was created for Printr B.V. It is open source under the formideos-client package.
+ *	This code was created for Printr B.V. It is open source under the formide-client package.
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
@@ -20,7 +20,7 @@ util.inherits(EventTransport, Transport);
 EventTransport.prototype.name = 'event';
 
 EventTransport.prototype.log = function (level, msg, meta, callback) {
-	FormideOS.events.emit('log.' + level, { message: msg });
+	FormideClient.events.emit('log.' + level, { message: msg });
 	this.emit('logged');
 	callback(null, true);
 }

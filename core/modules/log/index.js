@@ -1,5 +1,5 @@
 /*
- *	This code was created for Printr B.V. It is open source under the formideos-client package.
+ *	This code was created for Printr B.V. It is open source under the formide-client package.
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
@@ -15,15 +15,15 @@ module.exports =
 			transports:
 		    [
 				new (winston.transports.File)({
-					filename: path.join(FormideOS.config.get('app.storageDir'), config.path, 'FormideOS.log'),
+					filename: path.join(FormideClient.config.get('app.storageDir'), config.path, 'FormideClient.log'),
 					level: 'debug'
 				})
 		    ]
 		});
 
-		FormideOS.events.on('log.debug', this.logDebug.bind(this));
-		FormideOS.events.on('log.error', this.logError.bind(this));
-		FormideOS.events.on('log.info', this.logInfo.bind(this));
+		FormideClient.events.on('log.debug', this.logDebug.bind(this));
+		FormideClient.events.on('log.error', this.logError.bind(this));
+		FormideClient.events.on('log.info', this.logInfo.bind(this));
 	},
 
 	get: function(options, callback) {

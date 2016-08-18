@@ -1,5 +1,5 @@
 /*
- *	This code was created for Printr B.V. It is open source under the formideos-client package.
+ *	This code was created for Printr B.V. It is open source under the formide-client package.
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
@@ -22,7 +22,7 @@ module.exports = {
 			this.katana = require('katana-slicer');
 		}
 		catch (e) {
-			FormideOS.log.warn('Cannot load katana binary, try re-installing katana-slicer');
+			FormideClient.log.warn('Cannot load katana binary, try re-installing katana-slicer');
 		}
 	},
 
@@ -52,7 +52,7 @@ module.exports = {
 		assert(settings);
 		assert(callback);
 
-		FormideOS.db.UserFile
+		FormideClient.db.UserFile
 		.find({ id: files })
 		.then(function(userFiles) {
 			const fileNames = [];
@@ -61,7 +61,7 @@ module.exports = {
 			}
 			const printJobName = fileNames.join(' + ');
 
-			FormideOS.db.PrintJob
+			FormideClient.db.PrintJob
 			.create({
 				name: 		   printJobName,
 				files: 		   files,
@@ -88,7 +88,7 @@ module.exports = {
 					sliceData.data.mode = 'gcode'; //THIS IS NOT ADDED ANYWHERE!!
 
 					// write slicerequest to local Katana instance
-					FormideOS.events.emit('slicer.started', {
+					FormideClient.events.emit('slicer.started', {
 						title:   'Slicer started',
 						message: 'Started slicing ' + printJob.name,
 						data:    sliceRequest
@@ -102,44 +102,44 @@ module.exports = {
 							var response = JSON.parse(response);
 
 							if (response.status == 200 && response.data.responseId != null) {
-								FormideOS.db.PrintJob
+								FormideClient.db.PrintJob
 								.update({ responseId: response.data.responseId }, {
 									gcode: 		   response.data.hash,
 									sliceResponse: response.data,
 									sliceFinished: true
 								})
 								.then(function(updated) {
-									return FormideOS.events.emit('slicer.finished', {
+									return FormideClient.events.emit('slicer.finished', {
 										title:   	  'Slicer finished',
 										message: 	  'Finished slicing ' + updated[0].name,
 										data:         response.data
 									});
 								})
-								.catch(FormideOS.log.error);
+								.catch(FormideClient.log.error);
 							}
 							else if (response.status === 120) {
 								// note: not implemented  yet
-								FormideOS.events.emit('slicer.progress', response.data);
+								FormideClient.events.emit('slicer.progress', response.data);
 							}
 							else {
-								FormideOS.db.PrintJob
+								FormideClient.db.PrintJob
 								.update({ responseId: response.data.responseId }, {
 									sliceResponse: response.data,
 									sliceFinished: false
 								})
 								.then(function(updated) {
-									return FormideOS.events.emit('slicer.failed', {
+									return FormideClient.events.emit('slicer.failed', {
 										title:   'Slicer error',
 										status:  response.status,
 										message: 'Failed slicing ' + updated[0].name + ', ' + response.data.msg,//Added error msg of katana,
 										data:    response.data
 									});
 								})
-								.catch(FormideOS.log.error);
+								.catch(FormideClient.log.error);
 							}
 						}
 						catch(e) {
-							FormideOS.log.error(e);
+							FormideClient.log.error(e);
 						}
 					});
 				});
@@ -154,7 +154,7 @@ module.exports = {
 		var self = this;
 
 		// creates a slice request from a PrintJob database entry
-		FormideOS.db.PrintJob
+		FormideClient.db.PrintJob
 		.findOne({ id: printJobId })
 		.populate('files')
 		.populate('materials')
@@ -177,10 +177,10 @@ module.exports = {
 			formideTools.updateSliceprofile(reference, version, printJob.sliceProfile.settings, function(err, fixedSettings, version) {
 				if (err) return callback(err);
 
-				FormideOS.db.SliceProfile.update({ id: printJob.sliceProfile.id }, { settings: fixedSettings, version: version }, function(err, update) {
+				FormideClient.db.SliceProfile.update({ id: printJob.sliceProfile.id }, { settings: fixedSettings, version: version }, function(err, update) {
 					if (err) return callback(err);
 
-					FormideOS.db.PrintJob
+					FormideClient.db.PrintJob
 					.findOne({ id: printJobId })
 					.populate('files')
 					.populate('materials')
@@ -195,8 +195,8 @@ module.exports = {
 
 						formideTools.generateSlicerequestFromPrintjob(updatedPrintJob,{
 									version: version,
-									bucketIn: FormideOS.config.get('app.storageDir') + FormideOS.config.get("paths.modelfiles"),
-									bucketOut: FormideOS.config.get('app.storageDir') + FormideOS.config.get("paths.gcode"),
+									bucketIn: FormideClient.config.get('app.storageDir') + FormideClient.config.get("paths.modelfiles"),
+									bucketOut: FormideClient.config.get('app.storageDir') + FormideClient.config.get("paths.gcode"),
 									responseId: printJob.responseId
 								},reference, function(err,sliceRequest){
 									return callback(err,sliceRequest);

@@ -15,8 +15,8 @@ module.exports = {
 	tools: null,
 
 	init() {
-		if (FormideOS.ci)
-			this.tools = FormideOS.ci.usb;
+		if (FormideClient.ci)
+			this.tools = FormideClient.ci.usb;
 	},
 
 	/**
@@ -29,20 +29,20 @@ module.exports = {
 	uploadFile: function(file, filetype, userId, callback) {
 		fs.readFile(file.path, function(err, data) {
 			if (err) {
-				FormideOS.log.error(err.message);
+				FormideClient.log.error(err.message);
 				return callback(err);
 			}
 
 			var hash = uuid.v4();
-			var newPath = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.modelfiles'), hash);
+			var newPath = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.modelfiles'), hash);
 
 			fs.writeFile(newPath, data, function(err) {
 				if (err) {
-					FormideOS.log.error(err.message);
+					FormideClient.log.error(err.message);
 					return callback(err);
 				}
 				else {
-					FormideOS.db.UserFile.create({
+					FormideClient.db.UserFile.create({
 						prettyname: file.name,
 						filename: file.name,
 						filesize: file.size,
@@ -67,12 +67,12 @@ module.exports = {
 	 */
 	downloadFile: function(hash, encoding, userId, callback) {
 		// TODO: check user ID
-		var filename = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.modelfiles'), hash);
+		var filename = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.modelfiles'), hash);
 		fs.exists(filename, function(exists) {
 			if(exists) {
 				fs.readFile(filename, function(err, data) {
 					if (err) {
-						FormideOS.log.error(err.message);
+						FormideClient.log.error(err.message);
 						return callback(err);
 					}
 					else {
@@ -187,7 +187,7 @@ module.exports = {
 	copyFile(drive, filePath, userId, callback) {
 		if (this.tools) {
 			const hash = uuid.v4();
-			const target = path.join(FormideOS.config.get('app.storageDir'), FormideOS.config.get('paths.modelfiles'));
+			const target = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.modelfiles'));
 			const filePathArray = filePath.split('/');
 			const fileName = filePathArray[filePathArray.length - 1];
 
@@ -198,7 +198,7 @@ module.exports = {
 				const ext = path.extname(filePath).toLowerCase();
 
 				if (ext === '.stl' || ext === '.gcode') {
-					FormideOS.db.UserFile.create({
+					FormideClient.db.UserFile.create({
 						prettyname: fileName,
 						filename:   fileName,
 						filesize:   0, // TODO

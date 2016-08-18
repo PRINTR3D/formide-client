@@ -11,11 +11,11 @@ describe('PrintJobs', function() {
 
     let $ = null;
 
-    before(done => seed(FormideOS.db).then(_$ => {
+    before(done => seed(FormideClient.db).then(_$ => {
         $ = _$;
     }).then(() => done(), done));
 
-    after(done => unseed(FormideOS.db).then(() => done()));
+    after(done => unseed(FormideClient.db).then(() => done()));
 
     // describe(`GET ${ENDPOINT}`, () => {
     //     it('should return printJobs', () => GET `${ENDPOINT}`

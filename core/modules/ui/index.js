@@ -24,7 +24,7 @@ module.exports = {
 
         this.server = require('http').Server(app);
         this.server.listen(this.port);
-        FormideOS.log.debug('Interface started on port ' + this.port);
+        FormideClient.log.debug('Interface started on port ' + this.port);
 
         // app (component views)
         app.get('/app/*', function(req, res) {
@@ -35,7 +35,7 @@ module.exports = {
         app.get('/api/env', function(req, res) {
             var pkg = require("../../../package.json");
             return res.json({
-                environment: FormideOS.config.environment,
+                environment: FormideClient.config.environment,
                 name: pkg.name,
                 version: pkg.version,
                 location: "local"
@@ -44,7 +44,7 @@ module.exports = {
 
         // public assets
         app.get('/public/*', function(req, res) {
-            return res.sendfile(req.params[0], { root: FormideOS.appRoot + '/public' });
+            return res.sendfile(req.params[0], { root: FormideClient.appRoot + '/public' });
         });
 
         // angular app

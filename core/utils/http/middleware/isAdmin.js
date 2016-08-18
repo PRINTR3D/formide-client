@@ -1,5 +1,5 @@
 /*
- *	This code was created for Printr B.V. It is open source under the formideos-client package.
+ *	This code was created for Printr B.V. It is open source under the formide-client package.
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
  
@@ -11,14 +11,14 @@ module.exports = function(req, res, next) {
 	
 	// check if user has admin permission
 	if(req.token) {
-		FormideOS.db.AccessToken.findOne({ token: req.token}).exec(function(err, accessToken) {
+		FormideClient.db.AccessToken.findOne({ token: req.token}).exec(function(err, accessToken) {
 			if (accessToken) {
 				if (accessToken.permissions.indexOf('admin') > -1) {
-					FormideOS.log('Permissions correct');
+					FormideClient.log('Permissions correct');
 					return next();
 				}
 				else {
-					FormideOS.log.warn('Permissions incorrect');
+					FormideClient.log.warn('Permissions incorrect');
 					return res.json({
 						status: 401,
 						errors: 'No admin permission'
@@ -26,7 +26,7 @@ module.exports = function(req, res, next) {
 				}
 			}
 			else {
-				FormideOS.log.warn('No access token found in db');
+				FormideClient.log.warn('No access token found in db');
 				return res.json({
 					status: 401,
 					errors: 'No admin permission'
@@ -35,7 +35,7 @@ module.exports = function(req, res, next) {
 		});
 	}
 	else {
-		FormideOS.log.error('No token found in request');
+		FormideClient.log.error('No token found in request');
 		return res.json({
 			status: 401,
 			errors: 'No admin permission'
