@@ -9,6 +9,8 @@
  *	all loaded modules are activated via the moduleManager.activateLoadedModules function.
  */
 
+console.time('boot time');
+
 // Dependencies
 const pkg 	       = require('./package.json');
 var moduleConfig   = null;
@@ -45,4 +47,6 @@ initFormide().then(() => {
 
 	// Activate all loaded modules
 	FormideClient.moduleManager.activateLoadedModules();
+
+	console.timeEnd('boot time');
 });
