@@ -3,6 +3,8 @@
 const program = require('commander');
 const pkg     = require('../package.json');
 const exec    = require('child_process').exec;
+const chalk   = require('chalk');
+const prompt  = require('prompt');
 
 const ctl = program.version(pkg.version);
 
@@ -20,11 +22,11 @@ ctl
         });
 
         client.stderr.on('data', (data) => {
-          process.stdout.write(`${data}`);
+          process.stdout.write(chalk.red(`${data}`));
         });
 
         client.on('close', (code) => {
-          process.stdout.write(`formide-client process exited with code ${code}`);
+          process.stdout.write(chalk.yellow(`formide-client process exited with code ${code}`));
         });
     });
 
@@ -32,8 +34,26 @@ ctl
     .command('init')
     .action(function(args) {
         console.info('Configuring formide-client...');
-        console.log(args);
-        // TODO
+
+        // override default prompt message with empty string
+        prompt.message = '';
+
+        const promptSchema = {
+            properties: {
+                // TODO: questions to setup up client-implementation source,
+            }
+        };
+
+        // run init questions
+        prompt.get(promptSchema, function (err, result) {
+            console.log('result', result);
+        });
+    });
+
+ctl
+    .command('clean')
+    .action(function(args) {
+        // TODO: clear user settings so you can start over, ask for confirmation
     });
 
 ctl.parse(process.argv);
