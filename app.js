@@ -21,6 +21,10 @@ catch(e) {
 	process.exit(1);
 }
 
+// set default env
+if (!process.env.NODE_ENV)
+	process.env.NODE_ENV = 'development';
+
 // Load formide-client core file
 const initFormide = require('./core/FormideClient');
 

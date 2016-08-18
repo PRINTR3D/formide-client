@@ -176,7 +176,7 @@ module.exports = function() {
 	 * @returns {*|Object}
 	 */
 	function getModule(moduleName) {
-		return getModule(moduleName).instance;
+		return modules[moduleName];
 	};
 
 	/**
@@ -185,7 +185,7 @@ module.exports = function() {
 	 * @returns {*}
 	 */
 	function getModuleInfo(moduleName) {
-		return getModule(moduleName).info;
+		return modules[moduleName].info;
 	}
 
 	return {
