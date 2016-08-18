@@ -1,0 +1,24 @@
+#!/usr/bin/env node
+
+const program = require('commander');
+const pkg     = require('../package.json');
+
+const ctl = program
+    .version(pkg.version)
+    .option('-v, --version', 'Show the formide-client version', function() {
+        console.log(ctl.version);
+    })
+
+ctl
+    .command('run')
+    .action(function() {
+
+    });
+
+ctl
+    .command('init')
+    .action(function() {
+
+    });
+
+ctl.parse(process.argv);
