@@ -7,18 +7,20 @@ const ctl = program
     .version(pkg.version)
     .option('-v, --version', 'Show the formide-client version', function() {
         console.log(ctl.version);
-    })
+    });
 
 ctl
-    .command('run')
+    .command('up')
     .action(function() {
-
+        console.info('Starting formide-client...');
+        // TODO
     });
 
 ctl
     .command('init')
     .action(function() {
-
+        console.info('Configuring formide-client...');
+        // TODO
     });
 
 ctl.parse(process.argv);
