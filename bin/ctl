@@ -2,24 +2,37 @@
 
 const program = require('commander');
 const pkg     = require('../package.json');
+const exec    = require('child_process').exec;
 
-const ctl = program
-    .version(pkg.version)
-    .option('-v, --version', 'Show the formide-client version', function() {
-        console.log(ctl.version);
-    });
+const ctl = program.version(pkg.version);
 
 ctl
     .command('up')
-    .action(function() {
-        console.info('Starting formide-client...');
-        // TODO
+    .option('-M, --memory-limit <MB>', 'Limit memory usage in MBs')
+    .option('-E, --environment <ENV>', 'Select environment to run client in')
+    .action(function(args) {
+        args.environment = args.environment || 'production'; // default to production
+        args.memoryLimit = args.memoryLimit || '1500';       // default to 1.5GB of memory
+        const client = exec(`NODE_ENV=${args.environment} NODE_MEM_LIMIT=${args.memoryLimit} ./bin/formide-client`);
+
+        client.stdout.on('data', (data) => {
+          process.stdout.write(`${data}`);
+        });
+
+        client.stderr.on('data', (data) => {
+          process.stdout.write(`${data}`);
+        });
+
+        client.on('close', (code) => {
+          process.stdout.write(`formide-client process exited with code ${code}`);
+        });
     });
 
 ctl
     .command('init')
-    .action(function() {
+    .action(function(args) {
         console.info('Configuring formide-client...');
+        console.log(args);
         // TODO
     });
 
