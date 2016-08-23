@@ -26,6 +26,13 @@ module.exports = {
 			FormideClient.log.warn('Cannot load drivers binary, try re-installing formide-drivers');
 		}
 
+		// check if any items were printing when a hard reboot was done (e.g. power loss) and set those back to queued
+		FormideClient.db.QueueItem
+			.update({ status: 'printing' }, { status: 'queued' })
+			.exec(function(err) {
+				if (err) FormideClient.log.warn(err);
+			});
+
 		// start drivers
 		if (this.driver !== null)
 			this.driver.start(function(err, started, event) {
