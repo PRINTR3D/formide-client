@@ -83,10 +83,16 @@ module.exports = {
 	printerDisconnected: function(port) {
 		this.numberOfPorts--;
 		if (this.printers[port.split("/")[2]] !== undefined) {
-			FormideClient.log('Printer disconnected: ' + port);
-			FormideClient.events.emit('printer.disconnected', { port: port, notification: true, level: "warning", title: "Printer disconnected", message: "A printer was disconnected" });
-			clearInterval(this.printers[port.split("/")[2]].statusInterval);
-			delete this.printers[port.split("/")[2]];
+			// any items that were 'printing' for this printer should be set back to 'queued'
+			FormideClient.db.QueueItem
+				.update({ port: port, status: 'printing' }, { status: 'queued' })
+				.exec(function(err) {
+					if (err) FormideClient.log.warn(err);
+					FormideClient.log('Printer disconnected: ' + port);
+					FormideClient.events.emit('printer.disconnected', { port: port, notification: true, level: "warning", title: "Printer disconnected", message: "A printer was disconnected" });
+					clearInterval(this.printers[port.split("/")[2]].statusInterval);
+					delete this.printers[port.split("/")[2]];
+				});
 		}
 	},
 

@@ -142,7 +142,7 @@ AbstractPrinter.prototype.startPrint = function(queueItemId, callback) {
 	FormideClient.db.QueueItem
 	.update({ port: self.port, status: 'printing' }, { status: 'queued' })
 	.exec(function(err) {
-		if (err) return callback(err);
+		if (err) FormideClient.log.warn(err);
 		FormideClient.db.QueueItem
 		.findOne({ id: queueItemId, status: 'queued' })
 		.exec(function(err, queueItem) {
