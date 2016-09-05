@@ -4,8 +4,8 @@
  */
 
 /*
- *	This is the bootstrap of formide-client. It kicks off the formide-client core
- *	and loads the core modules. After that, all user installed modules are loaded. Finally,
+ *	This is the bootstrap of formide-client. It kicks off the formide-client src
+ *	and loads the src modules. After that, all user installed modules are loaded. Finally,
  *	all loaded modules are activated via the moduleManager.activateLoadedModules function.
  */
 
@@ -27,13 +27,13 @@ catch(e) {
 if (!process.env.NODE_ENV)
 	process.env.NODE_ENV = 'development';
 
-// Load formide-client core file
-const initFormide = require('./core/FormideClient');
+// Load formide-client src file
+const initFormide = require('./src/FormideClient');
 
 initFormide().then(() => {
 
 	// Log awesome app starter logo
-	require('./core/utils/logLogo');
+	require('./src/utils/logLogo');
 
 	// Log app header
 	FormideClient.log.info('==============================================');
