@@ -126,8 +126,9 @@ module.exports = function(routes, module) {
 	routes.put('/users/:id', FormideClient.http.permissions.isAdmin, (req, res) => {
 		FormideClient.db.User
 		.update({ id: req.params.id }, {
-			email:	 req.body.email,
-			isAdmin: req.body.isAdmin
+			email:	  req.body.email,
+			password: req.body.password,
+			isAdmin:  req.body.isAdmin
 		})
 		.then((updated) => {
 			return res.ok({ message: "User updated", user: updated[0] });
