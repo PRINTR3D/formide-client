@@ -24,14 +24,20 @@ const post = thenify(request.post);
 module.exports = (routes, cloud) => {
 
 	/**
-	 * Check if device is found for setup.formide.com
+	 * @api {GET} /api/cloud/alive Alive
+	 * @apiGroup Cloud
+	 * @apiDescription Get alive ping
+	 * @apiVersion 1.0.0
 	 */
 	routes.get('/alive', (req, res) => {
 		return res.ok('OK');
 	});
 
 	/**
-	 * Get the current network connection status
+	 * @api {GET} /api/cloud/status Network status
+	 * @apiGroup Cloud
+	 * @apiDescription Get the current network connection status
+	 * @apiVersion 1.0.0
 	 */
 	routes.get('/status', (req, res) => {
 		cloud.getStatus((err, connected) => {
@@ -45,7 +51,10 @@ module.exports = (routes, cloud) => {
 	});
 
 	/**
-	 * List nearby networks
+	 * @api {GET} /api/cloud/networks Network list
+	 * @apiGroup Cloud
+	 * @apiDescription Get a list of nearby Wi-Fi networks
+	 * @apiVersion 1.0.0
 	 */
 	routes.get('/networks', (req, res) => {
 		cloud.getNetworks((err, networks) => {
@@ -55,7 +64,10 @@ module.exports = (routes, cloud) => {
 	});
 
 	/**
-	 * Get currently connected to network
+	 * @api {GET} /api/cloud/network Current network
+	 * @apiGroup Cloud
+	 * @apiDescription Get network currently connected to
+	 * @apiVersion 1.0.0
 	 */
 	routes.get('/network', (req, res) => {
 		cloud.getNetwork((err, ssid) => {
@@ -65,7 +77,10 @@ module.exports = (routes, cloud) => {
 	});
 
 	/**
-	 * Go to setup mode (i.e. enable AP)
+	 * @api {POST} /api/cloud/setup Setup mode
+	 * @apiGroup Cloud
+	 * @apiDescription Switch to setup mode, enabling The Element's access point
+	 * @apiVersion 1.0.0
 	 */
 	routes.post('/setup', (req, res) => {
 		cloud.setupMode(err => {
@@ -75,7 +90,10 @@ module.exports = (routes, cloud) => {
 	});
 
 	/**
-	 * Connect to Wi-Fi
+	 * @api {POST} /api/cloud/wifi Connect Wi-Fi
+	 * @apiGroup Cloud
+	 * @apiDescription Connect to a Wi-Fi network using SSID and optional password
+	 * @apiVersion 1.0.0
 	 */
 	routes.post('/wifi', (req, res) => {
 		if (req.body.ssid == null)
@@ -92,7 +110,10 @@ module.exports = (routes, cloud) => {
 	});
 
 	/**
-	 * Connect to Wi-Fi and register to cloud
+	 * @api {POST} /api/cloud/connect Connect and register
+	 * @apiGroup Cloud
+	 * @apiDescription Connect to Wi-Fi and register to Formide cloud using the setup flow
+	 * @apiVersion 1.0.0
 	 */
 	routes.post('/connect', (req, res) => {
 		if (req.body.ssid == null)
