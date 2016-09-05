@@ -18,7 +18,7 @@
     "postversion": "git push && git push --tags",
     "clean": "rm -rf ./node_modules",
     "build-dist": "bower update && grunt",
-    "build-docs": "./node_modules/.bin/apidoc -i ./core"
+    "build-docs": "./node_modules/.bin/apidoc -i ./src"
   },
   "dependencies": {
     "async": "^1.5.2",
