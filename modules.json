@@ -1,31 +1,31 @@
 {
   "modules": {
     "db": {
-      "path": "./core/modules/db"
+      "path": "./src/modules/db"
     },
     "preset": {
-      "path": "./core/modules/preset"
+      "path": "./src/modules/preset"
     },
     "auth": {
-      "path": "./core/modules/auth"
+      "path": "./src/modules/auth"
     },
     "files": {
-      "path": "./core/modules/files"
+      "path": "./src/modules/files"
     },
     "printer": {
-      "path": "./core/modules/printer"
+      "path": "./src/modules/printer"
     },
     "slicer": {
-      "path": "./core/modules/slicer"
+      "path": "./src/modules/slicer"
     },
     "update": {
-      "path": "./core/modules/update"
+      "path": "./src/modules/update"
     },
     "cloud": {
-      "path": "./core/modules/cloud"
+      "path": "./src/modules/cloud"
     },
     "ui": {
-      "path": "./core/modules/ui"
+      "path": "./src/modules/ui"
     }
   }
 }

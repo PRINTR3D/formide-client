@@ -7,8 +7,11 @@ var request = require('request');
 
 module.exports = function(routes, module) {
 
-	/*
-	 * Login. Post an email address and password as body, get a AccessToken object back
+	/**
+	 * @api {POST} /api/auth/login Local login
+	 * @apiGroup Auth
+	 * @apiDescription Local user login with email and password
+	 * @apiVersion 1.0.0
 	 */
 	routes.post('/login', FormideClient.http.auth.authenticate('local-login'), (req, res) => {
 		if (req.user.id === null) {
@@ -29,8 +32,11 @@ module.exports = function(routes, module) {
 			.error(res.serverError);
 	});
 
-	/*
-	 * Get current session. Used permissions.isUser to check AccessToken (req.token), returns success and AccessToken object
+	/**
+	 * @api {GET} /api/auth/session Get current session
+	 * @apiGroup Auth
+	 * @apiDescription Get current session from access token
+	 * @apiVersion 1.0.0
 	 */
 	routes.get('/session', FormideClient.http.permissions.isUser, (req, res) => {
 		FormideClient.db.AccessToken
@@ -42,8 +48,11 @@ module.exports = function(routes, module) {
 		});
 	});
 
-	/*
-	 * Get all AccessToken objects from the database
+	/**
+	 * @api {GET} /api/auth/tokens Get tokens
+	 * @apiGroup Auth
+	 * @apiDescription Get all access tokens from the database
+	 * @apiVersion 1.0.0
 	 */
 	routes.get('/tokens', FormideClient.http.permissions.isAdmin, (req, res) => {
 		FormideClient.db.AccessToken
@@ -53,8 +62,11 @@ module.exports = function(routes, module) {
 		.error(res.serverError);
 	});
 
-	/*
-	 * Generate an AccessToken manually with the given permissions (only permission available right now is 'admin')
+	/**
+	 * @api {POST} /api/auth/tokens Create token
+	 * @apiGroup Auth
+	 * @apiDescription Generate an access token manually with the asked permissions. Useful for development purposes.
+	 * @apiVersion 1.0.0
 	 */
 	routes.post('/tokens', FormideClient.http.permissions.isUser, FormideClient.http.permissions.isAdmin, (req, res) => {
 		FormideClient.db.AccessToken
@@ -69,8 +81,11 @@ module.exports = function(routes, module) {
 		.error(res.serverError);
 	});
 
-	/*
-	 * Delete AccessToken from database. Basically forces user to login again
+	/**
+	 * @api {DELETE} /api/auth/tokens/:token Delete token
+	 * @apiGroup Auth
+	 * @apiDescription Delete access token, forcing a user to login again
+	 * @apiVersion 1.0.0
 	 */
 	routes.delete('/tokens/:token', FormideClient.http.permissions.isAdmin, (req, res) => {
 		FormideClient.db.AccessToken
@@ -81,8 +96,11 @@ module.exports = function(routes, module) {
 		.error(res.serverError);
 	});
 
-	/*
-	 * Get list of all users
+	/**
+	 * @api {GET} /api/auth/users Get users
+	 * @apiGroup Auth
+	 * @apiDescription Get a list of users
+	 * @apiVersion 1.0.0
 	 */
 	routes.get('/users', FormideClient.http.permissions.isAdmin, (req, res) => {
 		FormideClient.db.User
@@ -91,8 +109,11 @@ module.exports = function(routes, module) {
 		.error(res.serverError);
 	});
 
-	/*
-	 * Get a single user object
+	/**
+	 * @api {GET} /api/auth/users/:id Get single user
+	 * @apiGroup Auth
+	 * @apiDescription Get a single user by ID
+	 * @apiVersion 1.0.0
 	 */
 	routes.get('/users/:id', FormideClient.http.permissions.isAdmin, (req, res) => {
 		FormideClient.db.User
@@ -105,7 +126,10 @@ module.exports = function(routes, module) {
 	});
 
 	/**
-	 * Create a user
+	 * @api {POST} /api/auth/users Create user
+	 * @apiGroup Auth
+	 * @apiDescription Create a new user
+	 * @apiVersion 1.0.0
 	 */
 	routes.post('/users', FormideClient.http.permissions.isAdmin, (req, res) => {
 		FormideClient.db.User
@@ -121,13 +145,17 @@ module.exports = function(routes, module) {
 	});
 
 	/**
-	 * Update a user
+	 * @api {PUT} /api/auth/users/:id Update user
+	 * @apiGroup Auth
+	 * @apiDescription Update user settings
+	 * @apiVersion 1.0.0
 	 */
 	routes.put('/users/:id', FormideClient.http.permissions.isAdmin, (req, res) => {
 		FormideClient.db.User
 		.update({ id: req.params.id }, {
-			email:	 req.body.email,
-			isAdmin: req.body.isAdmin
+			email:	  req.body.email,
+			password: req.body.password,
+			isAdmin:  req.body.isAdmin
 		})
 		.then((updated) => {
 			return res.ok({ message: "User updated", user: updated[0] });
@@ -135,8 +163,11 @@ module.exports = function(routes, module) {
 		.error(res.serverError);
 	});
 
-	/*
-	 * Delete a user
+	/**
+	 * @api {DELETE} /api/auth/users/:id Delete user
+	 * @apiGroup Auth
+	 * @apiDescription Delete a user from the database
+	 * @apiVersion 1.0.0
 	 */
 	routes.delete('/users/:id', FormideClient.http.permissions.isAdmin, (req, res) => {
 		FormideClient.db.User
