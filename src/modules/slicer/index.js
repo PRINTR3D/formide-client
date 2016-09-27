@@ -37,7 +37,7 @@ module.exports = {
 	},
 
 	// custom functions
-	slice: function(userId, files, sliceProfile, materials, printer, settings, callback) {
+	slice: function(userId, name, files, sliceProfile, materials, printer, settings, callback) {
 		if (this.katana === null) return callback(new Error('slicer not loaded'));
 
 		const self = this;
@@ -59,7 +59,7 @@ module.exports = {
 			for (var i in userFiles) {
 				fileNames.push(userFiles[i].filename);
 			}
-			const printJobName = fileNames.join(' + ');
+			const printJobName = name || fileNames.join(' + ');
 
 			FormideClient.db.PrintJob
 			.create({

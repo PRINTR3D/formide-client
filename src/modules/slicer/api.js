@@ -11,7 +11,7 @@ module.exports = function(routes, module)
 	 *	Start a new slice request and creates a new printjob in the database. Uses modelfiles, sliprofile, materials, printer and optional settings as input.
 	 */
 	routes.post('/slice', function(req, res) {
-		module.slice(req.user.id, req.body.files, req.body.sliceProfile, req.body.materials, req.body.printer, req.body.settings, function(err, printJob) {
+		module.slice(req.user.id, req.body.name, req.body.files, req.body.sliceProfile, req.body.materials, req.body.printer, req.body.settings, function(err, printJob) {
 			if (err) return res.serverError(err);
 			return res.ok({ printJob: printJob });
 		});
