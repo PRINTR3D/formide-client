@@ -11,7 +11,7 @@
             <mask id="mask-2" sketch:name="Mask" fill="white">
                 <use xlink:href="#path-1"></use>
             </mask>
-            <use id="Mask" stroke="#979797" stroke-width="4" fill="#DCDCDE" sketch:type="MSShapeGroup" xlink:href="#path-1"></use>
+            <use id="Mask" stroke="#979797" stroke-width="4" fill="#e4e4e4" sketch:type="MSShapeGroup" xlink:href="#path-1"></use>
         </g>
     </g>
 </svg>

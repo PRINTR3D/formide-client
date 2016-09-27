@@ -25,10 +25,10 @@
                         <use stroke="none" fill-opacity="0.6" fill="#FFFFFF" xlink:href="#path-3"></use>
                     </g>
                 </g>
-                <path d="M11.8285714,10.2857143 L11.8285714,5.14285714 L18,5.32907052e-15 L18,5.14285714 L11.8285714,10.2857143 Z" id="Path-15" stroke="#878896" stroke-linejoin="round" fill="#DCDCDE" sketch:type="MSShapeGroup"></path>
-                <path d="M11.8285714,10.2857143 L11.8285714,5.14285714 L18,5.32907052e-15 L18,5.14285714 L11.8285714,10.2857143 Z" id="Path-15-Copy" stroke="#878896" stroke-linejoin="round" fill="#DCDCDE" sketch:type="MSShapeGroup"></path>
-                <path d="M6.17142857,10.2857143 L11.8285714,10.2857143 L11.8285714,5.14285714 L3.08571429,5.14285714 L0,5.14285714 L0,16.9714286 L6.17142857,16.9714286 L6.17142857,10.2857143 Z" id="Path-18" stroke="#878896" stroke-linejoin="round" fill="#DCDCDE" sketch:type="MSShapeGroup"></path>
-                <path d="M11.8285714,5.14285714 L9.13554946e-16,5.14285714 L6.17142857,5.32907052e-15 L18,5.32907052e-15 L11.8285714,5.14285714 Z" id="Path-17" stroke="#878896" stroke-linejoin="round" fill="#DCDCDE" sketch:type="MSShapeGroup"></path>
+                <path d="M11.8285714,10.2857143 L11.8285714,5.14285714 L18,5.32907052e-15 L18,5.14285714 L11.8285714,10.2857143 Z" id="Path-15" stroke="#878896" stroke-linejoin="round" fill="#e4e4e4" sketch:type="MSShapeGroup"></path>
+                <path d="M11.8285714,10.2857143 L11.8285714,5.14285714 L18,5.32907052e-15 L18,5.14285714 L11.8285714,10.2857143 Z" id="Path-15-Copy" stroke="#878896" stroke-linejoin="round" fill="#e4e4e4" sketch:type="MSShapeGroup"></path>
+                <path d="M6.17142857,10.2857143 L11.8285714,10.2857143 L11.8285714,5.14285714 L3.08571429,5.14285714 L0,5.14285714 L0,16.9714286 L6.17142857,16.9714286 L6.17142857,10.2857143 Z" id="Path-18" stroke="#878896" stroke-linejoin="round" fill="#e4e4e4" sketch:type="MSShapeGroup"></path>
+                <path d="M11.8285714,5.14285714 L9.13554946e-16,5.14285714 L6.17142857,5.32907052e-15 L18,5.32907052e-15 L11.8285714,5.14285714 Z" id="Path-17" stroke="#878896" stroke-linejoin="round" fill="#e4e4e4" sketch:type="MSShapeGroup"></path>
             </g>
         </g>
     </g>
