@@ -15,7 +15,7 @@
                         <use stroke="none" xlink:href="#path-1"></use>
                     </g>
                 </g>
-                <g id="Path-18-+-Path-15-+-Path-17" transform="translate(3.000000, 0.000000)" stroke="#878896" fill="#DCDCDE" sketch:type="MSShapeGroup" stroke-linejoin="round">
+                <g id="Path-18-+-Path-15-+-Path-17" transform="translate(3.000000, 0.000000)" stroke="#878896" fill="#e4e4e4" sketch:type="MSShapeGroup" stroke-linejoin="round">
                     <path d="M12,5 L12,16.5 L0.5,16.5 L0.5,5 L12,5 Z" id="Path-18"></path>
                     <path d="M12,16.5 L12,5 L18,0 L18,11.5 L12,16.5 Z" id="Path-15"></path>
                     <path d="M12,5 L0.5,5 L6.5,0 L18,0 L12,5 Z" id="Path-17"></path>
