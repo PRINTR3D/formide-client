@@ -81,13 +81,14 @@ module.exports = (routes, db) => {
 		db.PrintJob
 		.findOne({ id: req.params.id, createdBy: req.user.id })
 		.then(printJob => {
-			// delete file from storage
-			var filePath = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.gcode'), printJob.gcode);
+
+			// delete file from storage if exists
 			try {
+				const filePath = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.gcode'), printJob.gcode);
 				fs.unlinkSync(filePath);
 			}
 			catch (e) {
-				FormideClient.log.warn('file could not be deleted from storage');
+				FormideClient.log.warn('Gcode file not found for this printjob');
 			}
 
 			// delete from database
