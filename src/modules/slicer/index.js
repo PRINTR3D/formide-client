@@ -109,6 +109,10 @@ module.exports = {
 									sliceFinished: true
 								})
 								.then(function(updated) {
+
+									// add printJob to data so front-end can show add to queue button
+									response.data.printJob = printJob.id;
+
 									return FormideClient.events.emit('slicer.finished', {
 										title:   	  'Slicer finished',
 										message: 	  'Finished slicing ' + updated[0].name,
