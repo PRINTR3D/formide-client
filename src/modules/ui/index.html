@@ -6,30 +6,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta charset="UTF-8">
 	<title>The Element</title>
 
 	<script src="./public/assets/javascripts/application.min.js"></script>
 	<link rel="stylesheet" href="./public/assets/stylesheets/application_local.min.css">
 
-	<!--<link rel="shortcut icon" sizes="16x16 24x24 32x32 48x48 64x64" href="./public/assets/images/favicon.ico">-->
+	<link rel="shortcut icon" sizes="16x16 24x24 32x32 48x48 64x64" href="./public/assets/images/favicon.png">
 
 	<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
 </head>
 <body
 	ng-controller="AppController as app"
-	ng-class="{'sidebar-invisible': app.sidebarInvisible, 'sidebar-invisible logged-out': !app.loggedin(), 'ng-dialog-open--away': app.dialogAway, 'loaded': app.loaded }"
+	ng-class="{'sidebar-invisible': app.sidebarInvisible, 'ng-dialog-open--away': app.dialogAway, 'loaded': app.loaded }"
 	ngf-drop
-	class="theme--{{app.theme}}"
 	ng-model="app.droppedFiles"
-	ngf-drag-over-class="'dragover'">
+	file-droppable>
 
 	<loading-screen>
 		<div class="loading-spinner"></div>
     </loading-screen>
 
-	<div class="wrap">
-	    <main id="main" class="group" role="main">
+	<div class="layout layout--withoutGutter" ng-click="app.documentClick()">
+
+		<main id="main" class="layout__item u-fill" ng-class="{'noScroll': $root.bodyNoScroll || app.sidebarInvisible}">
+
 			<header
 				role="banner"
 				core-header
@@ -44,26 +46,25 @@
 				</nav>
 			</header>
 
-	        <article class="main-page-content" id="main__content">
+			<article class="main-page-content" id="main__content">
 				<div ng-viewport="mainView"></div>
-
-	            <!-- <footer role="contentinfo">
-	                This footer scrolls with the page.
-	            </footer> -->
 	        </article>
-	    </main>
+
+		</main>
 
 		<aside
 			core-aside
 			id="sidebar"
 			rel="sidebar"
-			class="aside"
+			class="layout__item u-fit aside"
+			ng-class="{'noScroll': ($root.bodyNoScroll && !app.sidebarInvisible) || !app.sidebarInvisible}"
 			template="sidebar/componentTemplate.html"
 			ng-if="$root.sidebar">
 		</aside>
+
 	</div>
 
-	<ul class="alert-list list-bare">
+	<ul class="alert-list list-bare hidden" ng-class="{'visible': app.notifications}">
 		<li alert-box
 			ng-repeat="alert in app.notifications"
 			popup="{{alert.popup}}"
@@ -71,7 +72,8 @@
 			type="{{alert.type}}"
 			title="alert.title"
 			message="alert.message"
-			actions="alert.actions">
+			actions="alert.actions"
+			link="alert.link">
 		</li>
 	</ul>
 </body>
