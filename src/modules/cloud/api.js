@@ -141,6 +141,16 @@ module.exports = (routes, cloud) => {
 				cloud);
 		});
 	});
+
+	/**
+	 * @api {GET} /api/cloud/code Get a setup code
+	 * @apiGroup Cloud
+	 * @apiDescription Generate a setup code to manually enter on formide.com
+	 * @apiVersion 1.4.0
+	 */
+	routes.get('/code', (req, res) => {
+
+	});
 };
 
 function waitForRegistrationStart(
