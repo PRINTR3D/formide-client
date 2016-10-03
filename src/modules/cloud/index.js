@@ -391,9 +391,7 @@ module.exports = {
 
 					try {
 						body = JSON.parse(body);
-						return cb(null, {
-							code: body.code
-						});
+						return cb(null, code);
 					}
 					catch (e) {
 						return cb(e);

@@ -149,7 +149,13 @@ module.exports = (routes, cloud) => {
 	 * @apiVersion 1.4.0
 	 */
 	routes.get('/code', (req, res) => {
-
+		cloud.generateCode(function (err, code) {
+			if (err) return res.notFound(err);
+			return res.ok({
+				code: code,
+				message: 'New registration code generated'
+			});
+		});
 	});
 };
 
