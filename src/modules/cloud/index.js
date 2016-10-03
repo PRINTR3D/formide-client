@@ -377,8 +377,8 @@ module.exports = {
 	 */
 	generateCode: function(cb) {
 		let getMac = getmac.getMac;
-		if (self.tools && self.tools.getMac instanceof Function)
-			getMac = self.tools.getMac;
+		if (this.tools && this.tools.getMac instanceof Function)
+			getMac = this.tools.getMac;
 
 		// get MAC address, then ask API for setup code
 		getMac((err, macAddress) => {
