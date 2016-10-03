@@ -150,7 +150,7 @@ module.exports = (routes, cloud) => {
 	 */
 	routes.get('/code', (req, res) => {
 		cloud.generateCode(function (err, code) {
-			if (err) return res.notFound(err);
+			if (err) return res.notFound(err.message);
 			return res.ok({
 				code: code,
 				message: 'New registration code generated'

@@ -383,15 +383,15 @@ module.exports = {
 		// get MAC address, then ask API for setup code
 		getMac((err, macAddress) => {
 			request
-				.get(`${FormideClient.config.get('cloud.url')}/devices/register/code?mac=${macAddress}`, {
+				.get(`${FormideClient.config.get('cloud.url')}/devices/register/code?mac_address=${macAddress}`, {
 					strictSSL: false
 				}, function (err, response, body) {
 					if (err) return cb(err);
-					if (response.statusCode !== 200) return cb(new Error(`Could not get code: ${body}`));
 
 					try {
 						body = JSON.parse(body);
-						return cb(null, code);
+						if (response.statusCode !== 200) return cb(new Error(`Could not get code: ${body.message}`));
+						return cb(null, body.code);
 					}
 					catch (e) {
 						return cb(e);
