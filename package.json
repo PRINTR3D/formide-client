@@ -113,7 +113,7 @@
     "node": "4.*"
   },
   "bin": {
-    "formide-client": "bin/formide-client"
+    "formide-client": "bin/formide-pi"
   },
   "preferGlobal": true
 }
