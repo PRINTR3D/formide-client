@@ -76,7 +76,7 @@
     "request": "~2.40.0",
     "request-progress": "~0.3.1",
     "require-reload": "^0.2.2",
-    "sails-disk": "^0.10.8",
+    "sails-disk": "^0.10.10",
     "semver": "~4.3.1",
     "sha1-stream": "~0.1.0",
     "socket.io": "1.4.5",

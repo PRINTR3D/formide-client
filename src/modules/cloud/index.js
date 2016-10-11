@@ -370,6 +370,34 @@ module.exports = {
 			this.tools.connect(essid, password, cb);
 		else
 			cb(new Error('element-tools not installed'));
+	},
+
+	/**
+	 * Generate a setup code for the cloud
+	 */
+	generateCode: function(cb) {
+		let getMac = getmac.getMac;
+		if (this.tools && this.tools.getMac instanceof Function)
+			getMac = this.tools.getMac;
+
+		// get MAC address, then ask API for setup code
+		getMac((err, macAddress) => {
+			request
+				.get(`${FormideClient.config.get('cloud.url')}/devices/register/code?mac_address=${macAddress}`, {
+					strictSSL: false
+				}, function (err, response, body) {
+					if (err) return cb(err);
+
+					try {
+						body = JSON.parse(body);
+						if (response.statusCode !== 200) return cb(new Error(`Could not get code: ${body.message}`));
+						return cb(null, body.code);
+					}
+					catch (e) {
+						return cb(e);
+					}
+				});
+		});
 	}
 };
 
