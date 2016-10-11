@@ -24,5 +24,8 @@
 	},
 	"preset": {
 		"permission": false
+	},
+	"update": {
+		"permission": false
 	}
 }
