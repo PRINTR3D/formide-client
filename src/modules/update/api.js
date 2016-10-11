@@ -12,6 +12,13 @@ module.exports = function(routes, module) {
         });
     });
 
+    routes.get('/current', function (req, res) {
+        const version = require('../../../package.json').version;
+        return res.ok({
+            version: version
+        });
+    });
+
     routes.get('/check', function (req, res) {
         module.checkForUpdate(function (err, update) {
             if (err) return res.serverError(err);
