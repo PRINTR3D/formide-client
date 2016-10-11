@@ -37,7 +37,7 @@ module.exports = {
 	},
 
 	// custom functions
-	slice: function(userId, files, sliceProfile, materials, printer, settings, callback) {
+	slice: function(userId, name, files, sliceProfile, materials, printer, settings, callback) {
 		if (this.katana === null) return callback(new Error('slicer not loaded'));
 
 		const self = this;
@@ -59,7 +59,7 @@ module.exports = {
 			for (var i in userFiles) {
 				fileNames.push(userFiles[i].filename);
 			}
-			const printJobName = fileNames.join(' + ');
+			const printJobName = name || fileNames.join(' + ');
 
 			FormideClient.db.PrintJob
 			.create({
@@ -96,8 +96,7 @@ module.exports = {
 
 					const reference = require('katana-slicer/reference.json');
 
-					// self.katana.slice(JSON.stringify(sliceData), JSON.stringify(reference), function(response) {
-					self.katana.slice(JSON.stringify(sliceData), function(response) {
+					self.katana.slice(JSON.stringify(sliceData), JSON.stringify(reference), function(response) {
 						try {
 							var response = JSON.parse(response);
 
@@ -109,6 +108,10 @@ module.exports = {
 									sliceFinished: true
 								})
 								.then(function(updated) {
+
+									// add printJob to data so front-end can show add to queue button
+									response.data.printJob = printJob.id;
+
 									return FormideClient.events.emit('slicer.finished', {
 										title:   	  'Slicer finished',
 										message: 	  'Finished slicing ' + updated[0].name,
