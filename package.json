@@ -5,8 +5,8 @@
   "main": "app.js",
   "author": "Chris ter Beke <chris@printr.com>",
   "repository": {
-    "type": "git",
-    "url": "https://github.com/PRINTR3D/formide-client.git"
+    "url": "https://github.com/PRINTR3D/formide-client.git",
+    "type": "git"
   },
   "bugs": {
     "url": "https://github.com/PRINTR3D/formide-client.git/issues"
