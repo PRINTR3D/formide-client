@@ -4,6 +4,7 @@
 # Dependencies
 node_modules
 bower_components
+yarn.lock
 
 # Environment
 .env
