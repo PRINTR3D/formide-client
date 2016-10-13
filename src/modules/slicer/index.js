@@ -6,7 +6,7 @@
 // dependencies
 const fs 			= require('fs');
 const uuid 			= require('node-uuid');
-const formideTools	= require('formide-tools');
+const formideTools	= require('katana-tools');
 const assert		= require('assert');
 
 module.exports = {

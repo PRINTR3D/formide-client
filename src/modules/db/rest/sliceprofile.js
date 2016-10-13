@@ -37,7 +37,7 @@ module.exports = (routes, db) => {
 			.create({
 				createdBy:	req.user.id,
 				name:		req.body.name,
-				settings:	req.body.settings // TODO: check with formide-tools
+				settings:	req.body.settings // TODO: check with katana-tools
 			})
 			.then((sliceProfile) => {
 				return res.ok({ message: 'Sliceprofile created', sliceProfile });
