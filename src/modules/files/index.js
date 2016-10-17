@@ -5,10 +5,12 @@
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
-const fs		= require('fs');
-const path		= require('path');
-const uuid		= require('node-uuid');
-const diskspace	= require('diskspace');
+const fs		   = require('fs');
+const path		   = require('path');
+const uuid		   = require('node-uuid');
+const diskspace	   = require('diskspace');
+const SPACE_BUFFER = 1000000; // 1MB
+const MAX_STL_SIZE = 20000000; // 20MB, to prevent slicer crashing
 
 module.exports = {
 
@@ -33,27 +35,38 @@ module.exports = {
 				return callback(err);
 			}
 
-			var hash = uuid.v4();
-			var newPath = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.modelfiles'), hash);
-
-			fs.writeFile(newPath, data, function(err) {
-				if (err) {
-					FormideClient.log.error(err.message);
+			diskspace.check('/data', function (err, total, free, status) {
+				if (err)
 					return callback(err);
-				}
-				else {
-					FormideClient.db.UserFile.create({
-						prettyname: file.name,
-						filename: file.name,
-						filesize: file.size,
-						filetype: filetype,
-						hash: hash,
-						createdBy: userId
-					}, function(err, userFile) {
-						if (err) return callback(err)
-						return callback(null, userFile);
-					});
-				}
+
+				if (((free - SPACE_BUFFER) < file.size) && (filetype === 'text/stl'))
+					return callback(null, { message: 'There is not enough free space left on this device', reason: 'DISK_FULL' });
+
+				if ((file.size > MAX_STL_SIZE) && (filetype === 'text/stl'))
+					return callback(null, { message: 'This STL file is too large to be sliced, so uploading is not allowed', reason: 'FILE_TOO_LARGE' });
+
+				var hash = uuid.v4();
+				var newPath = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.modelfiles'), hash);
+
+				fs.writeFile(newPath, data, function(err) {
+					if (err) {
+						FormideClient.log.error(err.message);
+						return callback(err);
+					}
+					else {
+						FormideClient.db.UserFile.create({
+							prettyname: file.name,
+							filename: file.name,
+							filesize: file.size,
+							filetype: filetype,
+							hash: hash,
+							createdBy: userId
+						}, function(err, userFile) {
+							if (err) return callback(err)
+							return callback(null, { data: userFile });
+						});
+					}
+				});
 			});
 		});
 	},
