@@ -27,16 +27,6 @@ module.exports = {
 	},
 
 	// custom functions
-	slicerError: function(error) {
-		if (error.code == 'ECONNREFUSED' || error == false) {
-			this.open = false;
-			this.slicer.setTimeout(2000, function() {
-				this.connect();
-			}.bind(this));
-		}
-	},
-
-	// custom functions
 	slice: function(userId, name, files, sliceProfile, materials, printer, settings, callback) {
 		if (this.katana === null) return callback(new Error('slicer not loaded'));
 
