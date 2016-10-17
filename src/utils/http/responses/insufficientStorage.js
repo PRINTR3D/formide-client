@@ -9,7 +9,7 @@ module.exports = function insufficientStorage(message, error) {
     var req = this.req;
     var res = this.res;
     var statusCode = 507;
-    var statusName = "Insufficient Stroage";
+    var statusName = "Insufficient Storage";
 
     // Set status code
     res.status(statusCode);

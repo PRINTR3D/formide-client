@@ -4,10 +4,12 @@
  */
 
 // dependencies
-const fs 			= require('fs');
-const uuid 			= require('node-uuid');
-const formideTools	= require('katana-tools');
-const assert		= require('assert');
+const fs 		   = require('fs');
+const uuid 		   = require('node-uuid');
+const formideTools = require('katana-tools');
+const diskspace	   = require('diskspace');
+const assert	   = require('assert');
+const SPACE_BUFFER = 40000000; // 40MB should be free for slice to store resulting G-code
 
 module.exports = {
 
@@ -27,129 +29,129 @@ module.exports = {
 	},
 
 	// custom functions
-	slicerError: function(error) {
-		if (error.code == 'ECONNREFUSED' || error == false) {
-			this.open = false;
-			this.slicer.setTimeout(2000, function() {
-				this.connect();
-			}.bind(this));
-		}
-	},
-
-	// custom functions
 	slice: function(userId, name, files, sliceProfile, materials, printer, settings, callback) {
 		if (this.katana === null) return callback(new Error('slicer not loaded'));
 
 		const self = this;
-		const hash = uuid.v4();
-		const responseId = uuid.v4();
 
-		assert(userId);
-		assert(files);
-		assert(sliceProfile);
-		assert(materials);
-		assert(printer);
-		assert(settings);
-		assert(callback);
+		diskspace.check('/data', function (err, total, free) {
+			if (err) return callback(err);
 
-		FormideClient.db.UserFile
-		.find({ id: files })
-		.then(function(userFiles) {
-			const fileNames = [];
-			for (var i in userFiles) {
-				fileNames.push(userFiles[i].filename);
-			}
-			const printJobName = name || fileNames.join(' + ');
-
-			FormideClient.db.PrintJob
-			.create({
-				name: 		   printJobName,
-				files: 		   files,
-				printer: 	   printer,
-				sliceProfile:  sliceProfile,
-				materials: 	   materials,
-				sliceFinished: false,
-				sliceSettings: settings,
-				sliceMethod:   'local',
-				createdBy: 	   userId,
-				responseId:    responseId
-			})
-			.then(function(printJob) {
-				self.createSliceRequest(printJob.id, function(err, sliceRequest) {
-					if (err) return callback(err);
-
-					// already return response
-					callback(null, printJob);
-
-					var sliceData = {
-						type: 'slice',
-						data: sliceRequest
-					};
-					sliceData.data.mode = 'gcode'; //THIS IS NOT ADDED ANYWHERE!!
-
-					// write slicerequest to local Katana instance
-					FormideClient.events.emit('slicer.started', {
-						title:   'Slicer started',
-						message: 'Started slicing ' + printJob.name,
-						data:    sliceRequest
-					});
-
-					const reference = require('katana-slicer/reference.json');
-
-					self.katana.slice(JSON.stringify(sliceData), JSON.stringify(reference), function(response) {
-						try {
-							var response = JSON.parse(response);
-
-							if (response.status == 200 && response.data.responseId != null) {
-								FormideClient.db.PrintJob
-								.update({ responseId: response.data.responseId }, {
-									gcode: 		   response.data.hash,
-									sliceResponse: response.data,
-									sliceFinished: true
-								})
-								.then(function(updated) {
-
-									// add printJob to data so front-end can show add to queue button
-									response.data.printJob = printJob.id;
-
-									return FormideClient.events.emit('slicer.finished', {
-										title:   	  'Slicer finished',
-										message: 	  'Finished slicing ' + updated[0].name,
-										data:         response.data
-									});
-								})
-								.catch(FormideClient.log.error);
-							}
-							else if (response.status === 120) {
-								// note: not implemented  yet
-								FormideClient.events.emit('slicer.progress', response.data);
-							}
-							else {
-								FormideClient.db.PrintJob
-								.update({ responseId: response.data.responseId }, {
-									sliceResponse: response.data,
-									sliceFinished: false
-								})
-								.then(function(updated) {
-									return FormideClient.events.emit('slicer.failed', {
-										title:   'Slicer error',
-										status:  response.status,
-										message: 'Failed slicing ' + updated[0].name + ', ' + response.data.msg,//Added error msg of katana,
-										data:    response.data
-									});
-								})
-								.catch(FormideClient.log.error);
-							}
-						}
-						catch(e) {
-							FormideClient.log.error(e);
-						}
-					});
+			if (free < SPACE_BUFFER)
+				return callback(null, {
+					message: 'There is no space enough left on the device to store G-code from slicing',
+					reason: 'DISK_FULL'
 				});
-			})
-			.catch(callback);
-		})
-		.catch(callback);
+
+			assert(userId);
+			assert(files);
+			assert(sliceProfile);
+			assert(materials);
+			assert(printer);
+			assert(settings);
+			assert(callback);
+
+			FormideClient.db.UserFile
+				.find({id: files})
+				.then(function (userFiles) {
+
+					const fileNames = [];
+					for (var i in userFiles) {
+						fileNames.push(userFiles[i].filename);
+					}
+					const printJobName = name || fileNames.join(' + ');
+					const responseId = uuid.v4();
+
+					FormideClient.db.PrintJob
+						.create({
+							name: printJobName,
+							files: files,
+							printer: printer,
+							sliceProfile: sliceProfile,
+							materials: materials,
+							sliceFinished: false,
+							sliceSettings: settings,
+							sliceMethod: 'local',
+							createdBy: userId,
+							responseId: responseId
+						})
+						.then(function (printJob) {
+							self.createSliceRequest(printJob.id, function (err, sliceRequest) {
+								if (err) return callback(err);
+
+								// already return response
+								callback(null, {data: printJob});
+
+								var sliceData = {
+									type: 'slice',
+									data: sliceRequest
+								};
+								sliceData.data.mode = 'gcode'; //THIS IS NOT ADDED ANYWHERE!!
+
+								// write slicerequest to local Katana instance
+								FormideClient.events.emit('slicer.started', {
+									title: 'Slicer started',
+									message: 'Started slicing ' + printJob.name,
+									data: sliceRequest
+								});
+
+								const reference = require('katana-slicer/reference.json');
+
+								self.katana.slice(JSON.stringify(sliceData), JSON.stringify(reference), function (response) {
+									try {
+										var response = JSON.parse(response);
+
+										if (response.status == 200 && response.data.responseId != null) {
+											FormideClient.db.PrintJob
+												.update({responseId: response.data.responseId}, {
+													gcode: response.data.hash,
+													sliceResponse: response.data,
+													sliceFinished: true
+												})
+												.then(function (updated) {
+
+													// add printJob to data so front-end can show add to queue button
+													response.data.printJob = printJob.id;
+
+													return FormideClient.events.emit('slicer.finished', {
+														title: 'Slicer finished',
+														message: 'Finished slicing ' + updated[0].name,
+														data: response.data
+													});
+												})
+												.catch(FormideClient.log.error);
+										}
+										else if (response.status === 120) {
+											// note: not implemented  yet
+											FormideClient.events.emit('slicer.progress', response.data);
+										}
+										else {
+											FormideClient.db.PrintJob
+												.update({responseId: response.data.responseId}, {
+													sliceResponse: response.data,
+													sliceFinished: false
+												})
+												.then(function (updated) {
+													return FormideClient.events.emit('slicer.failed', {
+														title: 'Slicer error',
+														status: response.status,
+														message: 'Failed slicing ' + updated[0].name + ', ' + response.data.msg,//Added error msg of katana,
+														data: response.data
+													});
+												})
+												.catch(FormideClient.log.error);
+										}
+									}
+									catch (e) {
+										FormideClient.log.error(e);
+									}
+								});
+							});
+						})
+						.catch(callback);
+				})
+				.catch(callback);
+		});
 	},
 
 	createSliceRequest: function(printJobId, callback) {

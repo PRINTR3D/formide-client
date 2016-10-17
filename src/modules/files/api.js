@@ -34,12 +34,11 @@ module.exports = function(routes, module) {
 				if (err)
 					return res.serverError(err);
 
-				// when file is too large or filesystem is full, we respond with a bad request
 				if (!uploadedFile.data && uploadedFile.reason === 'DISK_FULL')
-					return res.insufficientStorage(uploadedFile);
+					return res.insufficientStorage(uploadedFile.message);
 
 				if (!uploadedFile.data && uploadedFile.reason === 'FILE_TOO_LARGE')
-					return res.badRequest(uploadedFile);
+					return res.badRequest(uploadedFile.message);
 
 				return res.ok({ message: "Uploaded file", uploadedFile: uploadedFile.data });
 			});
@@ -87,7 +86,14 @@ module.exports = function(routes, module) {
 	routes.post('/copy/:drive', (req, res) => {
 		module.copyFile(req.params.drive, req.body.path, req.user.id, (err, uploadedFile) => {
 			if (err) return res.serverError(err);
-			return res.ok({ message: 'file copied', uploadedFile });
+
+			if (!uploadedFile.data && uploadedFile.reason === 'DISK_FULL')
+				return res.insufficientStorage(uploadedFile.message);
+
+			if (!uploadedFile.data && uploadedFile.reason === 'FILE_TOO_LARGE')
+				return res.badRequest(uploadedFile.message);
+
+			return res.ok({ message: 'file copied', uploadedFile: uploadedFile.data });
 		});
 	});
 };
