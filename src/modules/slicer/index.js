@@ -9,7 +9,7 @@ const uuid 		   = require('node-uuid');
 const formideTools = require('katana-tools');
 const diskspace	   = require('diskspace');
 const assert	   = require('assert');
-const SPACE_BUFFER = 400000000000; // 40MB should be free for slice to store resulting G-code
+const SPACE_BUFFER = 40000000; // 40MB should be free for slice to store resulting G-code
 
 module.exports = {
 
