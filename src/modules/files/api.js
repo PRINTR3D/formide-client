@@ -34,7 +34,14 @@ module.exports = function(routes, module) {
 				if (err)
 					return res.serverError(err);
 
-				return res.ok({ message: "Uploaded file", uploadedFile });
+				// when file is too large or filesystem is full, we respond with a bad request
+				if (!uploadedFile.data && uploadedFile.reason === 'DISK_FULL')
+					return res.insufficientStorage(uploadedFile);
+
+				if (!uploadedFile.data && uploadedFile.reason === 'FILE_TOO_LARGE')
+					return res.badRequest(uploadedFile);
+
+				return res.ok({ message: "Uploaded file", uploadedFile: uploadedFile.data });
 			});
 		}
         else {
