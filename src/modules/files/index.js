@@ -40,16 +40,22 @@ module.exports = {
 
 				// check if file will fit on filesystem
 				if (((free - SPACE_BUFFER) < file.size))
-					return callback(null, { message: 'There is not enough free space left on this device', reason: 'DISK_FULL' });
+					return callback(null, {
+						message: 'There is not enough free space left on this device',
+						reason: 'DISK_FULL'
+					});
 
 				// check if file can be sliced when STL
 				if ((file.size > MAX_STL_SIZE) && (filetype === 'text/stl'))
-					return callback(null, { message: 'This STL file is too large to be sliced, so uploading is not allowed', reason: 'FILE_TOO_LARGE' });
+					return callback(null, {
+						message: 'This STL file is too large to be sliced, so uploading is not allowed',
+						reason: 'FILE_TOO_LARGE'
+					});
 
 				const hash = uuid.v4();
 				const newPath = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.modelfiles'), hash);
 
-				fs.writeFile(newPath, data, function(err) {
+				fs.writeFile(newPath, data, function (err) {
 					if (err) {
 						FormideClient.log.error(err.message);
 						return callback(err);
@@ -62,9 +68,9 @@ module.exports = {
 							filetype: filetype,
 							hash: hash,
 							createdBy: userId
-						}, function(err, userFile) {
+						}, function (err, userFile) {
 							if (err) return callback(err)
-							return callback(null, { data: userFile });
+							return callback(null, {data: userFile});
 						});
 					}
 				});
