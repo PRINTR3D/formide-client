@@ -13,7 +13,14 @@ module.exports = function(routes, module)
 	routes.post('/slice', function(req, res) {
 		module.slice(req.user.id, req.body.name, req.body.files, req.body.sliceProfile, req.body.materials, req.body.printer, req.body.settings, function(err, printJob) {
 			if (err) return res.serverError(err);
-			return res.ok({ printJob: printJob });
+
+			if (!printJob.data && printJob.reason === 'DISK_FULL')
+				return res.insufficientStorage(printJob);
+
+			if (!printJob.data && printJob.reason === 'FILE_TOO_LARGE')
+				return res.badRequest(printJob);
+
+			return res.ok({ printJob: printJob.data });
 		});
 	});
 
