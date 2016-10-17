@@ -35,10 +35,10 @@ module.exports = function(routes, module) {
 					return res.serverError(err);
 
 				if (!uploadedFile.data && uploadedFile.reason === 'DISK_FULL')
-					return res.insufficientStorage(uploadedFile);
+					return res.insufficientStorage(uploadedFile.message);
 
 				if (!uploadedFile.data && uploadedFile.reason === 'FILE_TOO_LARGE')
-					return res.badRequest(uploadedFile);
+					return res.badRequest(uploadedFile.message);
 
 				return res.ok({ message: "Uploaded file", uploadedFile: uploadedFile.data });
 			});
@@ -88,10 +88,10 @@ module.exports = function(routes, module) {
 			if (err) return res.serverError(err);
 
 			if (!uploadedFile.data && uploadedFile.reason === 'DISK_FULL')
-				return res.insufficientStorage(uploadedFile);
+				return res.insufficientStorage(uploadedFile.message);
 
 			if (!uploadedFile.data && uploadedFile.reason === 'FILE_TOO_LARGE')
-				return res.badRequest(uploadedFile);
+				return res.badRequest(uploadedFile.message);
 
 			return res.ok({ message: 'file copied', uploadedFile: uploadedFile.data });
 		});

@@ -15,10 +15,10 @@ module.exports = function(routes, module)
 			if (err) return res.serverError(err);
 
 			if (!printJob.data && printJob.reason === 'DISK_FULL')
-				return res.insufficientStorage(printJob);
+				return res.insufficientStorage(printJob.message);
 
 			if (!printJob.data && printJob.reason === 'FILE_TOO_LARGE')
-				return res.badRequest(printJob);
+				return res.badRequest(printJob.message);
 
 			return res.ok({ printJob: printJob.data });
 		});
