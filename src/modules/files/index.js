@@ -247,7 +247,7 @@ module.exports = {
 							if (err)
 								return callback(err);
 
-							callback(null, userFile);
+							return callback(null, { data: userFile });
 						});
 					}
 					else {
