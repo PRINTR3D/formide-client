@@ -109,7 +109,7 @@ module.exports = {
 
 			// authenticate formideos based on mac address and api token, also
 			// sends permissions for faster blocking via cloud
-			publicIp((err, publicIpAddress) => {
+			publicIp.v4().then((publicIpAddress) => {
 				getIp((err, internalIpAddress) => {
 					getMac((err, macAddress) => {
 						self.cloud.emit('authenticate', {
