@@ -53,8 +53,8 @@ module.exports = {
 			addWifiSetupRoute(FormideClient.http.app, self.tools);
 		}
 
-		function forwardEvents(data) {
-			self.cloud.emit(this.event, data);
+		function forwardEvents(event, data) {;
+			self.cloud.emit(event, data);
 		}
 
 		// init cloud with new socket io client to online cloud url

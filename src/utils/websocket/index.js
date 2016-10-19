@@ -22,11 +22,11 @@ module.exports = {
 		// base websocket server to LCD display notifications and events
 		var server = ws.createServer(function (conn) {
 
-			function forwardEvents(data) {
+			function forwardEvents(event, data) {
 				data = data || {};
 				data.device = "LOCAL";
 				conn.sendText(JSON.stringify({
-					channel: this.event,
+					channel: event,
 					data:    data
 				}));
 			}
@@ -73,8 +73,8 @@ module.exports = {
 		// emit all system events
 		socketio.on('connection', function(socket) {
 
-			function forwardSocketEvents(data) {
-				socket.emit(this.event, data);
+			function forwardSocketEvents(event, data) {
+				socket.emit(event, data);
 			}
 
 			socket.on('authenticate', function(data, callback) {
