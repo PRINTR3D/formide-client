@@ -53,8 +53,8 @@ module.exports = {
 			addWifiSetupRoute(FormideClient.http.app, self.tools);
 		}
 
-		function forwardEvents(data) {
-			self.cloud.emit(this.event, data);
+		function forwardEvents(event, data) {;
+			self.cloud.emit(event, data);
 		}
 
 		// init cloud with new socket io client to online cloud url
@@ -109,7 +109,7 @@ module.exports = {
 
 			// authenticate formideos based on mac address and api token, also
 			// sends permissions for faster blocking via cloud
-			publicIp((err, publicIpAddress) => {
+			publicIp.v4().then((publicIpAddress) => {
 				getIp((err, internalIpAddress) => {
 					getMac((err, macAddress) => {
 						self.cloud.emit('authenticate', {
