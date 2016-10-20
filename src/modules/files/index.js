@@ -210,7 +210,7 @@ module.exports = {
 			const target = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.modelfiles'));
 			const filePathArray = filePath.split('/');
 			const fileName = filePathArray[filePathArray.length - 1];
-			const fileStats = fs.statSync(path.join(drive, filePath));
+			const fileStats = fs.statSync(path.join('/run/media', drive, filePath));
 
 			diskspace.check('/data', function (err, total, free) {
 				if (err) return callback(err);
