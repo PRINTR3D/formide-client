@@ -93,6 +93,9 @@ module.exports = function(routes, module) {
 			if (!uploadedFile.data && uploadedFile.reason === 'FILE_TOO_LARGE')
 				return res.badRequest(uploadedFile.message);
 
+			if (!uploadedFile.data && uploadedFile.reason === 'INVALID_FILETYPE')
+				return res.badRequest(uploadedFile.message);
+
 			return res.ok({ message: 'file copied', uploadedFile: uploadedFile.data });
 		});
 	});

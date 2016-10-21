@@ -225,7 +225,10 @@ module.exports = {
 				const ext = path.extname(filePath).toLowerCase();
 
 				if (ext !== '.stl' && ext !== '.gcode')
-					return callback(new Error('Invalid filetype. Should be STL or Gcode'));
+					return callback(null, {
+						message: 'This is not a valid filetype, you can only copy .gcode and .stl files',
+						reason: 'INVALID_FILETYPE'
+					});
 
 				// check if file can be sliced when STL
 				if ((fileStats.size > MAX_STL_SIZE) && (ext === '.stl'))
