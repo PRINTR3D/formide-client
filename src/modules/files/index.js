@@ -205,6 +205,8 @@ module.exports = {
 	 * @param callback
 	 */
 	copyFile(drive, filePath, userId, callback) {
+		const self = this;
+
 		if (this.tools) {
 			const hash = uuid.v4();
 			const target = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.modelfiles'));
@@ -237,7 +239,7 @@ module.exports = {
 						reason: 'FILE_TOO_LARGE'
 					});
 
-				this.tools.copy(drive, filePath, target, hash, (err, success) => {
+				self.tools.copy(drive, filePath, target, hash, (err, success) => {
 					if (err) return callback(err);
 
 					FormideClient.db.UserFile.create({
