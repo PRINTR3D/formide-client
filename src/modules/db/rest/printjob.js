@@ -49,28 +49,29 @@ module.exports = (routes, db) => {
 		assert(req.body.file);
 
 		db.UserFile
-		.findOne({ id: req.body.file })
-		.then(userFile => {
-			// copy gcode file to gcodes folder so original file can be deleted
-			var filename = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.modelfiles'), userFile.hash);
-			var newHash = uuid.v4();
-			var newFilename = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.gcode'), newHash);
-			fs.copySync(filename, newFilename);
+			.findOne({ id: req.body.file })
+			.then((userFile) => {
 
-			db.PrintJob
-			.create({
-				name:			userFile.filename,
-				sliceMethod:	"custom",
-				sliceFinished:	true,
-				gcode:			newHash,
-				files:			[ userFile.id ], // only 1 gcode per custom printJob is allowed
-				createdBy:		req.user.id
-			})
-			.then(printJob => {
-				return res.ok({ message: "Printjob created from custom gcode", printJob });
-			})
-			.catch(res.serverError);
-		});
+				// copy gcode file to gcodes folder so original file can be deleted
+				var filename = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.modelfiles'), userFile.hash);
+				var newHash = uuid.v4();
+				var newFilename = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.gcode'), newHash);
+				fs.copySync(filename, newFilename);
+
+				db.PrintJob
+					.create({
+						name:			userFile.filename,
+						sliceMethod:	"custom",
+						sliceFinished:	true,
+						gcode:			newHash,
+						files:			[ userFile.id ], // only 1 gcode per custom printJob is allowed
+						createdBy:		req.user.id
+					})
+					.then(printJob => {
+						return res.ok({ message: "Printjob created from custom gcode", printJob });
+					})
+					.catch(res.serverError);
+			});
 	});
 
 	/**
