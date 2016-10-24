@@ -5,6 +5,7 @@
 
 const assert = require('assert');
 const path   = require('path');
+const fs     = require('fs');
 
 module.exports = (routes, db) => {
 
@@ -36,7 +37,7 @@ module.exports = (routes, db) => {
 			if (!queueItem) return res.notFound();
 			return res.ok(queueItem);
 		})
-		.error(res.serverError);
+		.catch(res.serverError);
 	});
 
 	/**
@@ -48,6 +49,8 @@ module.exports = (routes, db) => {
 		assert(req.body.printJob, 'printJob is a required parameter');
 		assert(req.body.port, 'port is a required parameter');
 
+		console.log('queue', req.body.printJob);
+
 		db.PrintJob
 		.findOne({ id: req.body.printJob, createdBy: req.user.id })
 		.populate('files')
@@ -55,6 +58,10 @@ module.exports = (routes, db) => {
 		.populate('sliceProfile')
 		.populate('printer')
 		.then((printJob) => {
+
+			if (!printJob)
+				return res.notFound('Printjob not found');
+
 			db.QueueItem
 			.create({
 				origin:		'local',
@@ -66,9 +73,9 @@ module.exports = (routes, db) => {
 			.then((queueItem) => {
 				return res.ok({ message: "Printjob added to queue", queueItem });
 			})
-			.error(res.serverError);
+			.catch(res.serverError);
 		})
-		.error(res.serverError);
+		.catch(res.serverError);
 	});
 
 	/**
@@ -80,7 +87,7 @@ module.exports = (routes, db) => {
 		.then((queueItem) => {
 
 			// delete file from storage when coming from cloud
-			if (queueItem.origin === 'cloud') {
+			if (queueItem.origin === 'cloud' || queueItem.printJob.sliceMethod === 'custom') {
 				const filePath = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.gcode'), queueItem.gcode);
 
 				try {
@@ -94,9 +101,16 @@ module.exports = (routes, db) => {
 			// delete from database
 			queueItem.destroy(function (err) {
 				if (err) return res.serverError(err);
+
+				if (queueItem.origin === 'local' && queueItem.printJob.sliceMethod === 'custom')
+					db.PrintJob.destroy({ id: queueItem.printJob.id }, function (err) {
+						if (err) return res.serverError(err);
+						return res.ok({ message: "queueItem and printJob deleted" });
+					});
+
 				return res.ok({ message: "queueItem deleted" });
 			});
 		})
-		.error(res.serverError);
+		.catch(res.serverError);
 	});
 };

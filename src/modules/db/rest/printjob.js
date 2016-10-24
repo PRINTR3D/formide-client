@@ -15,13 +15,13 @@ module.exports = (routes, db) => {
 	 */
 	routes.get('/printjobs', (req, res) => {
 		db.PrintJob
-		.find({ createdBy: req.user.id }, { select: ((req.query.fields) ? req.query.fields.split(',') : "") })
-		.populate('printer')
-		.populate('sliceProfile')
-		.populate('materials')
-		.populate('files')
-		.then(res.ok)
-		.error(res.serverError);
+			.find({ createdBy: req.user.id }, { select: ((req.query.fields) ? req.query.fields.split(',') : "") })
+			.populate('printer')
+			.populate('sliceProfile')
+			.populate('materials')
+			.populate('files')
+			.then(res.ok)
+			.catch(res.serverError);
 	});
 
 	/**
@@ -29,16 +29,16 @@ module.exports = (routes, db) => {
 	 */
 	routes.get('/printjobs/:id', (req, res) => {
 		db.PrintJob
-		.find({  id: req.params.id, createdBy: req.user.id })
-		.populate('printer')
-		.populate('sliceProfile')
-		.populate('materials')
-		.populate('files')
-		.then((printJob) => {
-			if (!printJob) return res.notFound();
-			return res.ok(printJob);
-		})
-		.error(res.serverError);
+			.find({  id: req.params.id, createdBy: req.user.id })
+			.populate('printer')
+			.populate('sliceProfile')
+			.populate('materials')
+			.populate('files')
+			.then((printJob) => {
+				if (!printJob) return res.notFound();
+				return res.ok(printJob);
+			})
+			.catch(res.serverError);
 	});
 
 	/**
@@ -48,15 +48,21 @@ module.exports = (routes, db) => {
 		assert(req.body);
 		assert(req.body.file);
 
+		console.log('printjobs', req.body);
+
 		db.UserFile
 		.findOne({ id: req.body.file })
 		.then(userFile => {
+
+			console.log('userFile', userFile);
 
 			// copy gcode file to gcodes folder so original file can be deleted
 			var filename = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.modelfiles'), userFile.hash);
 			var newHash = uuid.v4();
 			var newFilename = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.gcode'), newHash);
 			fs.copySync(filename, newFilename);
+
+			console.log('copy', filename, newFilename);
 
 			db.PrintJob
 			.create({
