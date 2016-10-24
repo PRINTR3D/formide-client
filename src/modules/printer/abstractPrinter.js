@@ -263,8 +263,8 @@ AbstractPrinter.prototype.printFinished = function (queueItemId) {
 			if (!queueItem)
 				return FormideClient.log.warn('No queue item with that ID found to handle finished printing');
 
-			// delete file from storage when coming from cloud
-			if (queueItem.origin === 'cloud') {
+			// delete file from storage when coming from cloud or when custom printJob
+			if (queueItem.origin === 'cloud' || queueItem.printJob.sliceMethod === 'custom') {
 				const filePath = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.gcode'), queueItem.gcode);
 
 				try {
@@ -277,6 +277,10 @@ AbstractPrinter.prototype.printFinished = function (queueItemId) {
 
 			queueItem.status = 'finished';
 			queueItem.save();
+
+			// When queueItem was custom printjob and uploaded locally, remove it from printjobs as well
+			if (queueItem.origin === 'local' && queueItem.printJob.sliceMethod === 'custom')
+				db.PrintJob.destroy({ id: queueItem.printJob.id });
 		});
 };
 

@@ -48,21 +48,14 @@ module.exports = (routes, db) => {
 		assert(req.body);
 		assert(req.body.file);
 
-		console.log('printjobs', req.body);
-
 		db.UserFile
 		.findOne({ id: req.body.file })
 		.then(userFile => {
-
-			console.log('userFile', userFile);
-
 			// copy gcode file to gcodes folder so original file can be deleted
 			var filename = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.modelfiles'), userFile.hash);
 			var newHash = uuid.v4();
 			var newFilename = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.gcode'), newHash);
 			fs.copySync(filename, newFilename);
-
-			console.log('copy', filename, newFilename);
 
 			db.PrintJob
 			.create({
