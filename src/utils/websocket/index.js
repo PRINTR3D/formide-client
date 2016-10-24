@@ -57,7 +57,7 @@ module.exports = {
 			});
 
 		    conn.on("close", function (code, reason) {
-				FormideClient.events.offAny(forwardSocketEvents);
+				if (FormideClient.events.listenersAny().length > 0)
 					FormideClient.events.offAny(forwardEvents);
 		        FormideClient.log("Socket disconnected: " + reason);
 		    });

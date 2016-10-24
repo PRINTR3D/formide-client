@@ -175,7 +175,8 @@ module.exports = {
 		 */
 		this.cloud.on('disconnect', () => {
 			// turn off event forwarding
-			FormideClient.events.offAny(forwardEvents);
+			if (FormideClient.events.listenersAny().length > 0)
+				FormideClient.events.offAny(forwardEvents);
 			FormideClient.log('Cloud disconnected, reconnecting...');
 
 			// try reconnecting
