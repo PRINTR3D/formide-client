@@ -52,7 +52,7 @@ module.exports = (routes, db) => {
 			.then((printer) => {
 				return res.ok({ message: "Printer created", printer });
 			})
-			.error(res.serverError);
+			.catch(res.serverError);
 	});
 
 	/**
@@ -77,7 +77,7 @@ module.exports = (routes, db) => {
 			.then((updated) => {
 				return res.ok({ message: "Printer updated", printer: updated[0] });
 			})
-			.error(res.serverError);
+			.catch(res.serverError);
 	});
 
 	/**
@@ -89,6 +89,6 @@ module.exports = (routes, db) => {
 			.then(() => {
 				return res.ok({ message: "Printer deleted" });
 			})
-			.error(res.serverError);
+			.catch(res.serverError);
 	});
 };
