@@ -107,8 +107,8 @@ module.exports = (routes, db) => {
 						if (err) return res.serverError(err);
 						return res.ok({ message: "queueItem and printJob deleted" });
 					});
-
-				return res.ok({ message: "queueItem deleted" });
+				else
+					return res.ok({ message: "queueItem deleted" });
 			});
 		})
 		.catch(res.serverError);
