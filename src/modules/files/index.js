@@ -205,6 +205,8 @@ module.exports = {
 	 * @param callback
 	 */
 	copyFile(drive, filePath, userId, callback) {
+		const self = this;
+
 		if (this.tools) {
 			const hash = uuid.v4();
 			const target = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.modelfiles'));
@@ -222,37 +224,37 @@ module.exports = {
 						reason: 'DISK_FULL'
 					});
 
+				const ext = path.extname(filePath).toLowerCase();
+
+				if (ext !== '.stl' && ext !== '.gcode')
+					return callback(null, {
+						message: 'This is not a valid filetype, you can only copy .gcode and .stl files',
+						reason: 'INVALID_FILETYPE'
+					});
+
 				// check if file can be sliced when STL
-				if ((fileStats.size > MAX_STL_SIZE) && (filetype === 'text/stl'))
+				if ((fileStats.size > MAX_STL_SIZE) && (ext === '.stl'))
 					return callback(null, {
 						message: 'This STL file is too large to be sliced, so uploading is not allowed',
 						reason: 'FILE_TOO_LARGE'
 					});
 
-				this.tools.copy(drive, filePath, target, hash, (err, success) => {
-					if (err)
-						return callback(err);
+				self.tools.copy(drive, filePath, target, hash, (err, success) => {
+					if (err) return callback(err);
 
-					const ext = path.extname(filePath).toLowerCase();
+					FormideClient.db.UserFile.create({
+						prettyname: fileName,
+						filename: fileName,
+						filesize: fileStats.size,
+						filetype: `text/${ext.replace('.', '')}`,
+						hash: hash,
+						createdBy: userId
+					}, function (err, userFile) {
+						if (err)
+							return callback(err);
 
-					if (ext === '.stl' || ext === '.gcode') {
-						FormideClient.db.UserFile.create({
-							prettyname: fileName,
-							filename: fileName,
-							filesize: fileStats.size,
-							filetype: `text/${ext.replace('.', '')}`,
-							hash: hash,
-							createdBy: userId
-						}, function (err, userFile) {
-							if (err)
-								return callback(err);
-
-							return callback(null, { data: userFile });
-						});
-					}
-					else {
-						return callback(new Error('Invalid filetype. Should be STL or Gcode'));
-					}
+						return callback(null, { data: userFile });
+					});
 				});
 			});
 		}

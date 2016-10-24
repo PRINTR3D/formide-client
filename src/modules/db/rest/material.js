@@ -13,7 +13,7 @@ module.exports = (routes, db) => {
 			.find({ or: [ { createdBy: req.user.id }, { preset: true } ] }, { select: ((req.query.fields) ? req.query.fields.split(',') : "") })
 			.sort('presetOrder ASC')
 			.then(res.ok)
-			.error(res.serverError);
+			.catch(res.serverError);
 	});
 
 	/**
@@ -26,7 +26,7 @@ module.exports = (routes, db) => {
 				if (!material) return res.notFound();
 				return res.ok(material);
 			})
-			.error(res.serverError);
+			.catch(res.serverError);
 	});
 
 	/**
@@ -47,7 +47,7 @@ module.exports = (routes, db) => {
 			.then((material) => {
 				return res.ok({ message: "Material created", material });
 			})
-			.error(res.serverError);
+			.catch(res.serverError);
 	});
 
 	/**
@@ -67,7 +67,7 @@ module.exports = (routes, db) => {
 			.then((updated) => {
 				return res.ok({ message: "Material updated", material: updated[0] });
 			})
-			.error(res.serverError);
+			.catch(res.serverError);
 	});
 
 	/**
@@ -75,10 +75,10 @@ module.exports = (routes, db) => {
 	 */
 	routes.delete('/materials/:id', (req, res) => {
 		db.Material
-			.destroy({ createdBy: req.user.id, id: req.params.id, preset: false })
+			.destroy({ id: req.params.id })
 			.then(() => {
 				return res.ok({ message: "Material deleted" });
 			})
-			.error(res.serverError);
+			.catch(res.serverError);
 	});
 };
