@@ -97,7 +97,7 @@ module.exports = (routes, db) => {
 			printJob.destroy(function (err) {
 				if (err) return res.serverError(err);
 				db.QueueItem.destroy({
-					'printJob.id': printJob.id
+					gcode: printJob.gcode
 				}, function (err) {
 					if (err) return res.serverError(err);
 					return res.ok({ message: "printJob deleted" });

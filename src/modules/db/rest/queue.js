@@ -52,28 +52,28 @@ module.exports = (routes, db) => {
 		console.log('queue', req.body.printJob);
 
 		db.PrintJob
-		.findOne({ id: req.body.printJob, createdBy: req.user.id })
-		.populate('files')
-		.populate('materials')
-		.populate('sliceProfile')
-		.populate('printer')
-		.then((printJob) => {
+			.findOne({ id: req.body.printJob, createdBy: req.user.id })
+			.populate('files')
+			.populate('materials')
+			.populate('sliceProfile')
+			.populate('printer')
+			.then((printJob) => {
 
-			if (!printJob)
-				return res.notFound('Printjob not found');
+				if (!printJob)
+					return res.notFound('Printjob not found');
 
-			db.QueueItem
-			.create({
-				origin:		'local',
-				gcode:		printJob.gcode,
-				printJob:	printJob.toObject(),
-				port:		req.body.port,
-				status:     'queued'
-			})
-			.then((queueItem) => {
-				return res.ok({ message: "Printjob added to queue", queueItem });
-			})
-			.catch(res.serverError);
+				db.QueueItem
+					.create({
+						origin:		'local',
+						gcode:		printJob.gcode,
+						printJob:	printJob.toObject(),
+						port:		req.body.port,
+						status:     'queued'
+					})
+					.then((queueItem) => {
+						return res.ok({ message: "Printjob added to queue", queueItem });
+					})
+					.catch(res.serverError);
 		})
 		.catch(res.serverError);
 	});
@@ -83,34 +83,34 @@ module.exports = (routes, db) => {
 	 */
 	routes.delete('/queue/:id', (req, res) => {
 		db.QueueItem
-		.findOne({ id: req.params.id })
-		.then((queueItem) => {
+			.findOne({ id: req.params.id })
+			.then((queueItem) => {
 
-			// delete file from storage when coming from cloud
-			if (queueItem.origin === 'cloud' || queueItem.printJob.sliceMethod === 'custom') {
-				const filePath = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.gcode'), queueItem.gcode);
+				// delete file from storage when coming from cloud
+				if (queueItem.origin === 'cloud' || queueItem.printJob.sliceMethod === 'custom') {
+					const filePath = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.gcode'), queueItem.gcode);
 
-				try {
-					fs.unlinkSync(filePath);
+					try {
+						fs.unlinkSync(filePath);
+					}
+					catch (e) {
+						FormideClient.log.warn('file could not be deleted from storage');
+					}
 				}
-				catch (e) {
-					FormideClient.log.warn('file could not be deleted from storage');
-				}
-			}
 
-			// delete from database
-			queueItem.destroy(function (err) {
-				if (err) return res.serverError(err);
+				// delete from database
+				queueItem.destroy(function (err) {
+					if (err) return res.serverError(err);
 
-				// When queueItem was custom printjob and uploaded locally, remove it from printjobs as well
-				if (queueItem.origin === 'local' && queueItem.printJob.sliceMethod === 'custom')
-					db.PrintJob.destroy({ id: queueItem.printJob.id }, function (err) {
-						if (err) return res.serverError(err);
-						return res.ok({ message: "queueItem and printJob deleted" });
-					});
-				else
-					return res.ok({ message: "queueItem deleted" });
-			});
+					// When queueItem was custom printjob and uploaded locally, remove it from printjobs as well
+					if (queueItem.origin === 'local' && queueItem.printJob.sliceMethod === 'custom')
+						db.PrintJob.destroy({ id: queueItem.printJob.id }, function (err) {
+							if (err) return res.serverError(err);
+							return res.ok({ message: "queueItem and printJob deleted" });
+						});
+					else
+						return res.ok({ message: "queueItem deleted" });
+				});
 		})
 		.catch(res.serverError);
 	});
