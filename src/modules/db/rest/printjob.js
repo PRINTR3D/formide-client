@@ -1,3 +1,5 @@
+'use strict';
+
 /*
  *	This code was created for Printr B.V. It is open source under the formide-client package.
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
@@ -94,7 +96,12 @@ module.exports = (routes, db) => {
 			// delete from database
 			printJob.destroy(function (err) {
 				if (err) return res.serverError(err);
-				return res.ok({ message: "printJob deleted" });
+				db.QueueItem.destroy({
+					'printJob.id': printJob.id
+				}, function (err) {
+					if (err) return res.serverError(err);
+					return res.ok({ message: "printJob deleted" });
+				});
 			});
 		})
 		.catch(res.serverError);
