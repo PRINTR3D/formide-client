@@ -13,7 +13,7 @@ module.exports = (routes, db) => {
 			.find({}, { select: ((req.query.fields) ? req.query.fields.split(',') : "") })
 			.sort('presetOrder ASC')
 			.then(res.ok)
-			.error(res.serverError);
+			.catch(res.serverError);
 	});
 
 	/**
@@ -26,7 +26,7 @@ module.exports = (routes, db) => {
 				if (!printer) return res.notFound();
 				return res.ok(printer);
 			})
-			.error(res.serverError);
+			.catch(res.serverError);
 	});
 
 	/**
