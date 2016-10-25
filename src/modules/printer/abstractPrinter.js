@@ -263,17 +263,24 @@ AbstractPrinter.prototype.printFinished = function (queueItemId) {
 			if (!queueItem)
 				return FormideClient.log.warn('No queue item with that ID found to handle finished printing');
 
-			// remove gcode from cloud
-			if (queueItem.origin === 'cloud')
+			// delete file from storage when coming from cloud or when custom printJob
+			if (queueItem.origin === 'cloud' || queueItem.printJob.sliceMethod === 'custom') {
+				const filePath = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.gcode'), queueItem.gcode);
+
 				try {
-					fs.unlinkSync(path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.gcode'), queueItem.gcode));
+					fs.unlinkSync(filePath);
 				}
 				catch (e) {
-					FormideClient.log.warn('File not found for deletion after print finished:', queueItem.gcode);
+					FormideClient.log.warn('file could not be deleted from storage');
 				}
+			}
 
 			queueItem.status = 'finished';
 			queueItem.save();
+
+			// When queueItem was custom printjob and uploaded locally, remove it from printjobs as well
+			if (queueItem.origin === 'local' && queueItem.printJob.sliceMethod === 'custom')
+				db.PrintJob.destroy({ id: queueItem.printJob.id });
 		});
 };
 

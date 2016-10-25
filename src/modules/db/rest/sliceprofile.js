@@ -13,7 +13,7 @@ module.exports = (routes, db) => {
 			.find({ or: [ { createdBy: req.user.id }, { preset: true } ] }, { select: ((req.query.fields) ? req.query.fields.split(',') : "") })
 			.sort('presetOrder ASC')
 			.then(res.ok)
-			.error(res.serverError);
+			.catch(res.serverError);
 	});
 
 	/**
@@ -26,7 +26,7 @@ module.exports = (routes, db) => {
 				if (!sliceProfile) return res.notFound();
 				return res.ok(sliceProfile);
 			})
-			.error(res.serverError);
+			.catch(res.serverError);
 	});
 
 	/**
@@ -37,12 +37,12 @@ module.exports = (routes, db) => {
 			.create({
 				createdBy:	req.user.id,
 				name:		req.body.name,
-				settings:	req.body.settings // TODO: check with formide-tools
+				settings:	req.body.settings // TODO: check with katana-tools
 			})
 			.then((sliceProfile) => {
 				return res.ok({ message: 'Sliceprofile created', sliceProfile });
 			})
-			.error(res.serverError);
+			.catch(res.serverError);
 	});
 
 	/**
@@ -58,7 +58,7 @@ module.exports = (routes, db) => {
 			.then((updated) => {
 				return res.ok({ message: "Sliceprofile updated", sliceProfile: updated[0] });
 			})
-			.error(res.serverError);
+			.catch(res.serverError);
 	});
 
 	/**
@@ -66,10 +66,10 @@ module.exports = (routes, db) => {
 	 */
 	routes.delete('/sliceprofiles/:id', (req, res) => {
 		db.SliceProfile
-			.destroy({ id: req.params.id, createdBy: req.user.id, preset: false })
+			.destroy({ id: req.params.id, createdBy: req.user.id })
 			.then(() => {
 				return res.ok({ message: "Sliceprofile deleted" });
 			})
-			.error(res.serverError);
+			.catch(res.serverError);
 	});
 };

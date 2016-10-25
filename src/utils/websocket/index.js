@@ -22,11 +22,11 @@ module.exports = {
 		// base websocket server to LCD display notifications and events
 		var server = ws.createServer(function (conn) {
 
-			function forwardEvents(data) {
+			function forwardEvents(event, data) {
 				data = data || {};
 				data.device = "LOCAL";
 				conn.sendText(JSON.stringify({
-					channel: this.event,
+					channel: event,
 					data:    data
 				}));
 			}
@@ -57,7 +57,8 @@ module.exports = {
 			});
 
 		    conn.on("close", function (code, reason) {
-				FormideClient.events.offAny(forwardEvents);
+				if (FormideClient.events.listenersAny().length > 0)
+					FormideClient.events.offAny(forwardEvents);
 		        FormideClient.log("Socket disconnected: " + reason);
 		    });
 
@@ -73,8 +74,8 @@ module.exports = {
 		// emit all system events
 		socketio.on('connection', function(socket) {
 
-			function forwardSocketEvents(data) {
-				socket.emit(this.event, data);
+			function forwardSocketEvents(event, data) {
+				socket.emit(event, data);
 			}
 
 			socket.on('authenticate', function(data, callback) {
@@ -103,7 +104,8 @@ module.exports = {
 			});
 
 			socket.on('disconnect', function () {
-				FormideClient.events.offAny(forwardSocketEvents);
+				if (FormideClient.events.listenersAny().length > 0)
+					FormideClient.events.offAny(forwardSocketEvents);
 				FormideClient.log('Socket disconnected');
 			});
 		});

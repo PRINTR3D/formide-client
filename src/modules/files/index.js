@@ -5,10 +5,12 @@
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
-const fs		= require('fs');
-const path		= require('path');
-const uuid		= require('node-uuid');
-const diskspace	= require('diskspace');
+const fs		   = require('fs');
+const path		   = require('path');
+const uuid		   = require('node-uuid');
+const diskspace	   = require('diskspace');
+const SPACE_BUFFER = 1000000; // 1MB
+const MAX_STL_SIZE = 20000000; // 20MB, to prevent slicer crashing
 
 module.exports = {
 
@@ -33,27 +35,45 @@ module.exports = {
 				return callback(err);
 			}
 
-			var hash = uuid.v4();
-			var newPath = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.modelfiles'), hash);
+			diskspace.check('/data', function (err, total, free) {
+				if (err) return callback(err);
 
-			fs.writeFile(newPath, data, function(err) {
-				if (err) {
-					FormideClient.log.error(err.message);
-					return callback(err);
-				}
-				else {
-					FormideClient.db.UserFile.create({
-						prettyname: file.name,
-						filename: file.name,
-						filesize: file.size,
-						filetype: filetype,
-						hash: hash,
-						createdBy: userId
-					}, function(err, userFile) {
-						if (err) return callback(err)
-						return callback(null, userFile);
+				// check if file will fit on filesystem
+				if (((free - SPACE_BUFFER) < file.size))
+					return callback(null, {
+						message: 'There is not enough free space left on this device',
+						reason: 'DISK_FULL'
 					});
-				}
+
+				// check if file can be sliced when STL
+				if ((file.size > MAX_STL_SIZE) && (filetype === 'text/stl'))
+					return callback(null, {
+						message: 'This STL file is too large to be sliced, so uploading is not allowed',
+						reason: 'FILE_TOO_LARGE'
+					});
+
+				const hash = uuid.v4();
+				const newPath = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.modelfiles'), hash);
+
+				fs.writeFile(newPath, data, function (err) {
+					if (err) {
+						FormideClient.log.error(err.message);
+						return callback(err);
+					}
+					else {
+						FormideClient.db.UserFile.create({
+							prettyname: file.name,
+							filename: file.name,
+							filesize: file.size,
+							filetype: filetype,
+							hash: hash,
+							createdBy: userId
+						}, function (err, userFile) {
+							if (err) return callback(err)
+							return callback(null, {data: userFile});
+						});
+					}
+				});
 			});
 		});
 	},
@@ -185,36 +205,57 @@ module.exports = {
 	 * @param callback
 	 */
 	copyFile(drive, filePath, userId, callback) {
+		const self = this;
+
 		if (this.tools) {
 			const hash = uuid.v4();
 			const target = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.modelfiles'));
 			const filePathArray = filePath.split('/');
 			const fileName = filePathArray[filePathArray.length - 1];
+			const fileStats = fs.statSync(path.join('/run/media', drive, filePath));
 
-			this.tools.copy(drive, filePath, target, hash, (err, success) => {
-				if (err)
-					return callback(err);
+			diskspace.check('/data', function (err, total, free) {
+				if (err) return callback(err);
+
+				// check if file will fit on filesystem
+				if (((free - SPACE_BUFFER) < fileStats.size))
+					return callback(null, {
+						message: 'There is not enough free space left on this device',
+						reason: 'DISK_FULL'
+					});
 
 				const ext = path.extname(filePath).toLowerCase();
 
-				if (ext === '.stl' || ext === '.gcode') {
+				if (ext !== '.stl' && ext !== '.gcode')
+					return callback(null, {
+						message: 'This is not a valid filetype, you can only copy .gcode and .stl files',
+						reason: 'INVALID_FILETYPE'
+					});
+
+				// check if file can be sliced when STL
+				if ((fileStats.size > MAX_STL_SIZE) && (ext === '.stl'))
+					return callback(null, {
+						message: 'This STL file is too large to be sliced, so uploading is not allowed',
+						reason: 'FILE_TOO_LARGE'
+					});
+
+				self.tools.copy(drive, filePath, target, hash, (err, success) => {
+					if (err) return callback(err);
+
 					FormideClient.db.UserFile.create({
 						prettyname: fileName,
-						filename:   fileName,
-						filesize:   0, // TODO
-						filetype:   `text/${ext.replace('.', '')}`,
-						hash:       hash,
-						createdBy:  userId
+						filename: fileName,
+						filesize: fileStats.size,
+						filetype: `text/${ext.replace('.', '')}`,
+						hash: hash,
+						createdBy: userId
 					}, function (err, userFile) {
 						if (err)
 							return callback(err);
 
-						callback(null, userFile);
+						return callback(null, { data: userFile });
 					});
-				}
-				else {
-					return callback(new Error('Invalid filetype. Should be STL or Gcode'));
-				}
+				});
 			});
 		}
 		else

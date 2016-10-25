@@ -104,6 +104,7 @@ module.exports = {
 			res.paginate = require('./responses/paginate').bind({ req: req, res: res });
 			res.serverError = require('./responses/serverError').bind({ req: req, res: res });
 			res.unauthorized = require('./responses/unauthorized').bind({ req: req, res: res });
+			res.insufficientStorage = require('./responses/insufficientStorage').bind({ req: req, res: res });
 			next();
 		});
 

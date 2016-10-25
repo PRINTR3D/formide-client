@@ -5,6 +5,7 @@
 
 const assert = require('assert');
 const path   = require('path');
+const fs     = require('fs');
 
 module.exports = (routes, db) => {
 
@@ -36,7 +37,7 @@ module.exports = (routes, db) => {
 			if (!queueItem) return res.notFound();
 			return res.ok(queueItem);
 		})
-		.error(res.serverError);
+		.catch(res.serverError);
 	});
 
 	/**
@@ -48,27 +49,33 @@ module.exports = (routes, db) => {
 		assert(req.body.printJob, 'printJob is a required parameter');
 		assert(req.body.port, 'port is a required parameter');
 
+		console.log('queue', req.body.printJob);
+
 		db.PrintJob
-		.findOne({ id: req.body.printJob, createdBy: req.user.id })
-		.populate('files')
-		.populate('materials')
-		.populate('sliceProfile')
-		.populate('printer')
-		.then((printJob) => {
-			db.QueueItem
-			.create({
-				origin:		'local',
-				gcode:		printJob.gcode,
-				printJob:	printJob.toObject(),
-				port:		req.body.port,
-				status:     'queued'
-			})
-			.then((queueItem) => {
-				return res.ok({ message: "Printjob added to queue", queueItem });
-			})
-			.error(res.serverError);
+			.findOne({ id: req.body.printJob, createdBy: req.user.id })
+			.populate('files')
+			.populate('materials')
+			.populate('sliceProfile')
+			.populate('printer')
+			.then((printJob) => {
+
+				if (!printJob)
+					return res.notFound('Printjob not found');
+
+				db.QueueItem
+					.create({
+						origin:		'local',
+						gcode:		printJob.gcode,
+						printJob:	printJob.toObject(),
+						port:		req.body.port,
+						status:     'queued'
+					})
+					.then((queueItem) => {
+						return res.ok({ message: "Printjob added to queue", queueItem });
+					})
+					.catch(res.serverError);
 		})
-		.error(res.serverError);
+		.catch(res.serverError);
 	});
 
 	/**
@@ -76,27 +83,35 @@ module.exports = (routes, db) => {
 	 */
 	routes.delete('/queue/:id', (req, res) => {
 		db.QueueItem
-		.findOne({ id: req.params.id })
-		.then((queueItem) => {
+			.findOne({ id: req.params.id })
+			.then((queueItem) => {
 
-			// delete file from storage when coming from cloud
-			if (queueItem.origin === 'cloud') {
-				const filePath = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.gcode'), queueItem.gcode);
+				// delete file from storage when coming from cloud
+				if (queueItem.origin === 'cloud' || queueItem.printJob.sliceMethod === 'custom') {
+					const filePath = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.gcode'), queueItem.gcode);
 
-				try {
-					fs.unlinkSync(filePath);
+					try {
+						fs.unlinkSync(filePath);
+					}
+					catch (e) {
+						FormideClient.log.warn('file could not be deleted from storage');
+					}
 				}
-				catch (e) {
-					FormideClient.log.warn('file could not be deleted from storage');
-				}
-			}
 
-			// delete from database
-			queueItem.destroy(function (err) {
-				if (err) return res.serverError(err);
-				return res.ok({ message: "queueItem deleted" });
-			});
+				// delete from database
+				queueItem.destroy(function (err) {
+					if (err) return res.serverError(err);
+
+					// When queueItem was custom printjob and uploaded locally, remove it from printjobs as well
+					if (queueItem.origin === 'local' && queueItem.printJob.sliceMethod === 'custom')
+						db.PrintJob.destroy({ id: queueItem.printJob.id }, function (err) {
+							if (err) return res.serverError(err);
+							return res.ok({ message: "queueItem and printJob deleted" });
+						});
+					else
+						return res.ok({ message: "queueItem deleted" });
+				});
 		})
-		.error(res.serverError);
+		.catch(res.serverError);
 	});
 };

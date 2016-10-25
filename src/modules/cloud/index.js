@@ -53,8 +53,8 @@ module.exports = {
 			addWifiSetupRoute(FormideClient.http.app, self.tools);
 		}
 
-		function forwardEvents(data) {
-			self.cloud.emit(this.event, data);
+		function forwardEvents(event, data) {;
+			self.cloud.emit(event, data);
 		}
 
 		// init cloud with new socket io client to online cloud url
@@ -109,7 +109,7 @@ module.exports = {
 
 			// authenticate formideos based on mac address and api token, also
 			// sends permissions for faster blocking via cloud
-			publicIp((err, publicIpAddress) => {
+			publicIp.v4().then((publicIpAddress) => {
 				getIp((err, internalIpAddress) => {
 					getMac((err, macAddress) => {
 						self.cloud.emit('authenticate', {
@@ -175,7 +175,8 @@ module.exports = {
 		 */
 		this.cloud.on('disconnect', () => {
 			// turn off event forwarding
-			FormideClient.events.offAny(forwardEvents);
+			if (FormideClient.events.listenersAny().length > 0)
+				FormideClient.events.offAny(forwardEvents);
 			FormideClient.log('Cloud disconnected, reconnecting...');
 
 			// try reconnecting
@@ -370,6 +371,34 @@ module.exports = {
 			this.tools.connect(essid, password, cb);
 		else
 			cb(new Error('element-tools not installed'));
+	},
+
+	/**
+	 * Generate a setup code for the cloud
+	 */
+	generateCode: function(cb) {
+		let getMac = getmac.getMac;
+		if (this.tools && this.tools.getMac instanceof Function)
+			getMac = this.tools.getMac;
+
+		// get MAC address, then ask API for setup code
+		getMac((err, macAddress) => {
+			request
+				.get(`${FormideClient.config.get('cloud.url')}/devices/register/code?mac_address=${macAddress}`, {
+					strictSSL: false
+				}, function (err, response, body) {
+					if (err) return cb(err);
+
+					try {
+						body = JSON.parse(body);
+						if (response.statusCode !== 200) return cb(new Error(`Could not get code: ${body.message}`));
+						return cb(null, body.code);
+					}
+					catch (e) {
+						return cb(e);
+					}
+				});
+		});
 	}
 };
 
