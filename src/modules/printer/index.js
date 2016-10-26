@@ -191,36 +191,82 @@ module.exports = {
 		this.printers[port].command(data.command, data.parameters, callback);
 	},
 
+	/**
+	 * Send custom G-code to a printer by port
+	 * @param port
+	 * @param gcode
+	 * @param callback
+	 * @returns {*}
+	 */
 	gcode: function(port, gcode, callback) {
 		if (this.printers[port] == undefined) return callback(null, false);
 		this.printers[port].gcode(gcode, callback);
 	},
 
+	/**
+	 * Send tune command to a printer by port
+	 * @param port
+	 * @param tuneCode
+	 * @param callback
+	 * @returns {*}
+	 */
 	tuneGcode: function (port, tuneCode, callback) {
 		if (this.printers[port] == undefined) return callback(null, false);
 		this.printers[port].tune(tuneCode, callback);
 	},
 
+	/**
+	 * Start a printer by queueItemId and port
+	 * @param port
+	 * @param id
+	 * @param callback
+	 * @returns {*}
+	 */
 	startPrint: function(port, id, callback) {
 		if (this.printers[port] == undefined) return callback(null, false);
 		this.printers[port].startPrint(id, callback);
 	},
 
+	/**
+	 * Stop a printer by port
+	 * @param port
+	 * @param callback
+	 * @returns {*}
+	 */
 	stopPrint: function(port, callback) {
 		if (this.printers[port] == undefined) return callback(null, false);
 		this.printers[port].stopPrint(callback);
 	},
 
+	/**
+	 * Pause a printer by port
+	 * @param port
+	 * @param callback
+	 * @returns {*}
+	 */
 	pausePrint: function(port, callback) {
 		if (this.printers[port] == undefined) return callback(null, false);
 		this.printers[port].pausePrint(callback);
 	},
 
+	/**
+	 * Resume a printer by port
+	 * @param port
+	 * @param callback
+	 * @returns {*}
+	 */
 	resumePrint: function(port, callback) {
 		if (this.printers[port] == undefined) return callback(null, false);
 		this.printers[port].resumePrint(callback);
 	},
 
+	/**
+	 * Print a file by absolute file path and port
+	 * @param port
+	 * @param file
+	 * @param callback
+	 * @returns {*}
+	 */
 	printFile: function(port, file, callback) {
 		if (this.printers[port] == undefined) return callback(null, false);
 		this.printers[port].printFile(file, callback)
