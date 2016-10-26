@@ -1,3 +1,5 @@
+'use strict';
+
 /*
  *	This code was created for Printr B.V. It is open source under the formide-client package.
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
@@ -8,11 +10,16 @@ const AbstractPrinter = require('./abstractPrinter');
 
 module.exports = {
 
+	// global params
 	numberOfPorts: 0,
 	driver: null,
 	printers: {},
 	config: {},
 
+	/**
+	 * Initialize printer module
+	 * @param config
+	 */
 	init: function(config) {
 
 		var self = this;
@@ -44,7 +51,7 @@ module.exports = {
 				}
 
 				else if (event) {
-					// an event came back which we can use to do sometehing with!
+					// an event came back which we can use to do something with!
 
 					if (event.type === 'printerConnected') {
 						self.printerConnected(event.port);
@@ -55,8 +62,11 @@ module.exports = {
 					else if (event.type === 'printerOnline') {
 						self.printerOnline(event.port);
 					}
-					else if (event.type === 'printFinished') {
+					else if (event.type === 'printFinished' || event.type === 'printerFinished') {
 						self.printFinished(event.port, event.printjobID);
+					}
+					else if (event.type === 'printerInfo') {
+						self.printerEvent('info', event);
 					}
 					else if (event.type === 'printerWarning') {
 						self.printerEvent('warning', event);
@@ -68,6 +78,10 @@ module.exports = {
 			});
 	},
 
+	/**
+	 * Event handling for printer connected
+	 * @param port
+	 */
 	printerConnected: function(port) {
 		if (this.numberOfPorts < 4) {
 			var self = this;
@@ -80,6 +94,10 @@ module.exports = {
 		}
 	},
 
+	/**
+	 * Event handling for printer disconnected
+	 * @param port
+	 */
 	printerDisconnected: function(port) {
 		const self = this;
 		this.numberOfPorts--;
@@ -97,12 +115,21 @@ module.exports = {
 		}
 	},
 
+	/**
+	 * Event handling for printer online
+	 * @param port
+	 */
 	printerOnline: function(port) {
 		this.numberOfPorts++;
 		FormideClient.log('Printer online: ' + port);
 		FormideClient.events.emit('printer.online', { port: port });
 	},
 
+	/**
+	 * Event handling for printer finished
+	 * @param port
+	 * @param printjobId
+	 */
 	printFinished: function(port, printjobId) {
 		if (this.printers[port.split("/")[2]] !== undefined) {
 			this.printers[port.split("/")[2]].printFinished(printjobId);
@@ -118,6 +145,10 @@ module.exports = {
 		FormideClient.events.emit('printer.' + level, event);
 	},
 
+	/**
+	 * Get a list of all connected printers and their status
+	 * @returns {{}}
+	 */
 	getPrinters: function() {
 		var result = {};
 		for(var i in this.printers) {
@@ -126,16 +157,35 @@ module.exports = {
 		return result;
 	},
 
+	/**
+	 * Get available commands for a printer by port
+	 * @param port
+	 * @param callback
+	 * @returns {*}
+	 */
 	getCommands: function(port, callback) {
 		if (this.printers[port] == undefined) return callback(null, false);
 		callback(this.printers[port].getCommands());
 	},
 
+	/**
+	 * Get status for a printer by port
+	 * @param port
+	 * @param callback
+	 * @returns {*}
+	 */
 	getStatus: function(port, callback) {
 		if (this.printers[port] == undefined) return callback(null, false);
 		callback(null, this.printers[port].getStatus());
 	},
 
+	/**
+	 * Control a printer by port
+	 * @param port
+	 * @param data
+	 * @param callback
+	 * @returns {*}
+	 */
 	printerControl: function (port, data, callback) {
 		if (this.printers[port] == undefined) return callback(null, false);
 		this.printers[port].command(data.command, data.parameters, callback);
