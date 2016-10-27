@@ -280,7 +280,7 @@ AbstractPrinter.prototype.printFinished = function (queueItemId) {
 
 			// When queueItem was custom printjob and uploaded locally, remove it from printjobs as well
 			if (queueItem.origin === 'local' && queueItem.printJob.sliceMethod === 'custom')
-				db.PrintJob.destroy({ id: queueItem.printJob.id });
+				FormideClient.db.PrintJob.destroy({ id: queueItem.printJob.id });
 		});
 };
 
