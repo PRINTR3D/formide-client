@@ -5,6 +5,7 @@
  * between The Element and external USB host.
  */
 
+const service     = 'sudo fgpio'; // custom service that's available on The Element
 const GPIO_STATUS = '';
 const GPIO_SWITCH = '';
 
