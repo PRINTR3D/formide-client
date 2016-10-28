@@ -15,6 +15,7 @@ module.exports = {
 	driver: null,
 	printers: {},
 	config: {},
+	gpio: null,
 
 	/**
 	 * Initialize printer module
@@ -25,13 +26,17 @@ module.exports = {
 		var self = this;
 		this.config = config;
 
-		// loaded via katana-slicer npm package and node-pre-gyp
+		// loaded via formide-drivers npm package and node-pre-gyp
 		try {
 			this.driver = require('formide-drivers');
 		}
 		catch (e) {
 			FormideClient.log.warn('Cannot load drivers binary, try re-installing formide-drivers');
 		}
+
+		// load native gpio module if found
+		if (FormideClient.ci && FormideClient.ci.gpio)
+			this.gpio = FormideClient.ci.gpio;
 
 		// check if any items were printing when a hard reboot was done (e.g. power loss) and set those back to queued
 		FormideClient.db.QueueItem
@@ -270,5 +275,28 @@ module.exports = {
 	printFile: function(port, file, callback) {
 		if (this.printers[port] == undefined) return callback(null, false);
 		this.printers[port].printFile(file, callback)
+	},
+
+	/**
+	 * Get the current control mode for integrated printers
+	 * @param callback
+	 */
+	getControlMode: function(callback) {
+		if (this.gpio)
+			this.gpio.getControlMode(callback);
+		else
+			return callback(new Error('gpio implementation not found'));
+	},
+
+	/**
+	 * Change the control mode for integrated printers
+	 * @param mode
+	 * @param callback
+	 */
+	setControlMode: function(mode, callback) {
+		if (this.gpio)
+			this.gpio.switchControlMode(mode, callback);
+		else
+			return callback(new Error('gpio implementation not found'));
 	}
 };

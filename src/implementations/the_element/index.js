@@ -10,6 +10,7 @@ Handlebars.registerHelper('list',
 const wifi   = require('./lib/wifi');
 const update = require('./lib/update');
 const usb    = require('./lib/usb');
+const gpio   = require('./lib/gpio');
 
 const wifiApi = {
 	networks(callback) {
@@ -132,8 +133,11 @@ const usbApi = {
 	}
 };
 
+const gpioApi = gpio;
+
 module.exports = {
 	wifi:   wifiApi,
 	update: updateApi,
-	usb:    usbApi
+	usb:    usbApi,
+	gpio:   gpioApi
 };
