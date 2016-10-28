@@ -1,0 +1,312 @@
+<!--
+ *    This code was created for Printr B.V. It is open source under the formideos-interface package.
+ *    Copyright (c) 2015, All rights reserved, http://printr.nl
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>The Element WiFi Setup</title>
+
+	<style media="screen">
+		html {
+			box-sizing: border-box;
+			min-height: 100%;
+			z-index: 0;
+			overflow: auto;
+		}
+		*,
+		:before,
+		:after {
+			box-sizing: inherit;
+		}
+		body {
+			font: normal normal normal 16px / 24px normal;
+			font-family: 'Open Sans', sans-serif;
+			color: #161720;
+			margin: 0;
+		}
+		main {
+			background-position: 50% 100%;
+			left: 0;
+			max-width: 100%;
+			min-height: 100%;
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			right: 0;
+			z-index: 10;
+			background-image: linear-gradient(rgba(245,245,245,.8) 20%,rgba(70,177,230,.5) 250%),  url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwNSIgdmlld0JveD0iMCAwIDQwMCAyMDUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPiAgPGRlZnM+ICAgIDxwYXRoIGlkPSJhIiBkPSJNMCAwaDQwMHYyMzMuNUgweiIvPiAgICA8bGluZWFyR3JhZGllbnQgeDE9IjUwJSIgeTE9Ijk4LjYlIiB4Mj0iNTAlIiB5Mj0iLTMlIiBpZD0iYiI+ICAgICAgPHN0b3Agc3RvcC1jb2xvcj0iIzI1OTFDRiIgb2Zmc2V0PSIwJSIvPiAgICAgIDxzdG9wIHN0b3AtY29sb3I9IiM2M0M0RjAiIG9mZnNldD0iMTAwJSIvPiAgICA8L2xpbmVhckdyYWRpZW50PiAgPC9kZWZzPiAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAtMjkpIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPiAgICA8bWFzayBpZD0iYyIgZmlsbD0iI2ZmZiI+ICAgICAgPHVzZSB4bGluazpocmVmPSIjYSIvPiAgICA8L21hc2s+ICAgIDxwYXRoIGQ9Ik0tNiAxNTcuNkgtN0wtMzEuNCAxNDVjLS4zIDAtLjUtLjQtLjctLjZMLTQ4LjMgMTE2Yy0uMi0uMy0uMy0uNy0uMi0xbDQtMjguNmMwLS4zLjItLjYuNC0xbDIwLjMtMjQuM2MuMiAwIC4zLS4yLjMtLjJsLjYtLjNoLjJsMjguNS00YzAtLjIuNCAwIC42IDBsMjQuNSA4Yy40LjIuOC41IDEgLjhMNDguMyA5NGMuMi4yLjIuNi4yIDFsLTQgMzIuNmMwIC4zLS4yLjUtLjMuN3YuMkwyMy42IDE1M2MtLjMuMy0uNi41LTEgLjVsLTI4LjYgNHptMS42LTMzLjJWMTU0bDI2LTMuNyAxOC44LTIyLjdMMjIuMiAxMTNsLTI2LjYgMTEuNHptLTI1IDE4bDIxLjYgMTFWMTI0bC0yMi44LTE5LTE0IDEwLjYgMTUuMiAyN3pNMjQgMTEwLjJsMTcuNSAxNC4yIDMuNi0yOS0xNS0yNi44LTEzLjggN0wyNCAxMTB6bS01Mi41LTcuNWwyMi43IDE5TDIwLjUgMTEwIDEzIDc2LTEzLjQgNzJsLTE1LjIgMzAuNXptLTEyLjctMTUuMmwtMy40IDI0TC0zMiAxMDJsMTUuNy0zMS4yLTYtNi0xOSAyMi43em0yNy43LTE4LjZsMjcuNSA0IDEyLjItNi4yTDYgNTkuN2wtMjUgMy42IDUuNSA1LjR6TTM5NCAxNTcuNmgtLjhMMzY4LjYgMTQ1Yy0uMyAwLS41LS40LS43LS42TDM1MS43IDExNmMtLjItLjMtLjMtLjctLjItMWw0LTI4LjZjMC0uMy4yLS42LjQtMWwyMC4zLTI0LjNjLjIgMCAuMy0uMi4zLS4ybC42LS4zaC4ybDI4LjUtNGMwLS4yLjQgMCAuNiAwbDI0LjUgOGMuNC4yLjguNSAxIC44TDQ0OC4zIDk0Yy4yLjIuMi42LjIgMWwtNCAzMi42YzAgLjMtLjIuNS0uMy43di4yTDQyMy42IDE1M2MtLjMuMy0uNi41LTEgLjVsLTI4LjYgNHptMS42LTMzLjJWMTU0bDI2LTMuNyAxOC44LTIyLjctMTguMi0xNC42LTI2LjYgMTEuNHptLTI1IDE4bDIxLjYgMTFWMTI0bC0yMi44LTE5LTE0IDEwLjYgMTUuMiAyN3ptNTMuMy0zMi4zbDE3LjUgMTQuMiAzLjYtMjktMTUtMjYuOC0xMy44IDdMNDI0IDExMHptLTUyLjUtNy41bDIyLjcgMTkgMjYuMy0xMS40TDQxMyA3NiAzODYuNiA3MmwtMTUuMiAzMC41em0tMTIuNy0xNS4ybC0zLjQgMjRMMzY4IDEwMmwxNS43LTMxLjItNi02LTE5IDIyLjd6bTI3LjctMTguNmwyNy41IDQgMTIuMi02LjItMjAuMi02LjgtMjUgMy42IDUuNSA1LjR6TTE1NS40IDIyMy4zbC0yNi42LTY0LjZjLS40LS44LTEuMy0xLjMtMi0xTDc3IDE3M2MtLjIgMC0uNC4yLS41LjNsLTE3LjIgMTMuNGMtLjguNC0xIDEuMi0xIDJ2LjJMODYgMjU0LjRjLjIuNC42LjcgMSAxSDg4bDUxLjctMTYgMS0uNSAxNC4zLTEzLjhjLjUtLjQuNy0xLjIuNC0yem0tODkuMy0zM0w4MyAyMTlsMiAyNC43LTIyLTUzLjMgMyAuMnpNODYuNyAyMjBsMjkgLjJjLjIuMi40LjQuNy40bDE5LjUgMTYuNkw4OSAyNTEuNWwtMi40LTMxLjd6bTI4LjYtMy4ybC0yOS42LS4zLTE1LjgtMjYuNSA1NS0yNy4yLTkuNiA1NHptLTM2LjYtNDAuNGwyOS05LTQwLjIgMjBzMC0uMi0uMi0uMkg2NUw3OC41IDE3NnptNjAuNyA1OS4ybC0yMC44LTE3LjYgOS40LTUyLjIgMjMuOCA1OC0xMi41IDExLjh6TTE3My40IDExNi43bDE3LTQyLjd2LS40LS40LS40YzAtLjIgMC0uMy0uMi0uNGwtMjkuOC00Mi44di43Yy0uNS0xLTEuMi0xLjItMi0xVjI5bC00Ni44IDEzdi0uMmgtLjR2LjJoLS4zYzAgLjIgMCAuMi0uMi4ydi4yaC0uMnYuM2gtLjJsLTE3IDQyLjhzLjIgMCAuMi4ydjEuN2wzMCAzOC40di4yaC40YzAgLjIuMi4yLjMuM2guOGw0Ny04LjVoLjV2LS4yYy4yIDAgLjQtLjIuNS0uMyAwLS4yLjItLjMuMy0uNXptLTMtMy42bC0yOS43LTE4LjQgMzMuMy0yNi0zLjcgNDQuNXptLTMxLjgtMjEuM2wtMTEuMi00MS4zIDQ1IDE1LTMzLjggMjYuM3ptMzktMjMuOGw5IDYtMTIgMzAuNiAzLTM2Ljd6bTQuNS0xLjJsLTQuNi0zLjJMMTcxIDUxbDExIDE1Ljh6bS05LjQtNWwtNDMuMi0xNC40TDE1OC4yIDMzbDE0LjQgMjguOHptLTQ4LTE2bC02LjYtMi4yIDI0LjUtNi43LTE3LjggOC44em0tMTEuNi0uMmw5IDMtMjAuOCAyNi44TDExMyA0NS42em0xMSA2bDExLjIgNDEtMzctNy42IDI2LTMzLjV6TTEzNS4zIDk2bC0xMC44IDI1LjItMjUuMi0zMi40IDM2IDcuMnptMy4yIDEuM2wyOC42IDE4LTM5LjMgNyAxMC43LTI1ek00MTggMjcyLjVsMTctNDIuN3YtLjQtLjItLjItLjItLjJjMC0uMy0uMi0uNC0uMi0uNWwtMzAtNDIuNnYuNmMtLjQtMS0xLTEtMS43LTFsLTQ3IDEyLjZoLS4ybC0uMi4yYy0uMiAwLS4yIDAtLjMuMiAwIC4yLS4yLjItLjIuM3YuMmwtMTcgNDIuOHYxYzAgLjIgMCAuNC4yLjV2LjJsMjkuOCAzOC40di4yaC4yYzAgLjIgMCAuMi4yLjJsLjQuMkgzNjkuOGw0Ny04LjVoLjJ2LS4yYy4zIDAgLjQgMCAuNS0uMy4yIDAgLjMtLjMuMy0uNHptLTMuMi0zLjdsLTI5LjYtMTguNSAzMy4zLTI2LTMuNyA0NC41ek0zODMgMjQ3LjVsLTExLTQxLjMgNDUgMTUtMzQgMjYuM3ptMzktMjRsOS4yIDYuMy0xMi4yIDMwLjYgMy0zNi44em00LjYtMWwtNC43LTMtNi40LTEyLjcgMTEgMTUuN3ptLTkuNS01bC00My0xNC40IDI4LjctMTQuMyAxNC40IDI5em0tNDcuOC0xNmwtNi42LTIgMjQuNC02LjgtMTcuOCA5em0tMTEuNiAwbDkgMi44LTIxIDI2LjggMTItMjkuNnptMTEgNS44bDExIDQxLTM3LTcuNSAyNi0zMy41em0xMSA0NC40TDM2OSAyNzdsLTI1LjMtMzIuNSAzNiA3LjJ6bTMuMyAxLjNsMjguNSAxOC0zOS4zIDcgMTAuNy0yNXpNMTcuOCAyNzIuNWwxNy00Mi43LjItLjR2LS4yLS4yLS4yLS4yYzAtLjMtLjItLjQtLjMtLjVMNSAxODUuNWgtLjJ2LjZjLS40LTEtMS0xLTEuOC0xbC00NyAxMi42aC0uM3YuMmgtLjN2LjJoLS4zdi41bC0xNyA0Mi44djEuN2wzMCAzOC40di4yaC4ydi4yaC4ybC4zLjJoLjhsNDctOC41aC40di0uMmMuMiAwIC4zIDAgLjUtLjNsLjMtLjR6bS0zLTMuN0wtMTUgMjUwLjNsMzMuNC0yNi0zLjcgNDQuNXpNLTE3IDI0Ny41TC0yOCAyMDYuMmw0NSAxNS0zMy43IDI2LjN6bTM5LTI0bDkgNi4zLTEyIDMwLjYgMy0zNi44em00LjYtMWwtNC44LTMtNi4zLTEyLjcgMTEgMTUuN3ptLTkuNS01TC0yNiAyMDMuMmwyOC44LTE0LjMgMTQuNSAyOXptLTQ3LjgtMTZsLTYuNy0yIDI0LjQtNi44LTE3LjggOXptLTExLjcgMGw5IDIuOC0yMSAyNi44IDEyLTI5LjZ6bTExIDUuOGwxMS4yIDQxLTM3LjItNy41IDI2LTMzLjV6bTExLjIgNDQuNEwtMzEgMjc3bC0yNS4zLTMyLjUgMzYgNy4yem0zLjIgMS4zbDI4LjUgMTgtMzkuMyA3IDEwLjctMjV6TTI5MS4yIDIwOGMwLS4yIDAtLjUtLjItLjggMCAwIDAtLjMtLjItLjQtLjItLjMtLjUtLjYtMS0uN2gtLjVzMC0uMi0uMi0uMmwtODctOWgtLjZjLS41IDAtMS40IDItMS40IDIuNGw1LjcgOTYuNXYuNWMwIC4zLjIuNS4zLjdsMSAuN2guNGwuMy4yIDg2LjggOWguMmwuNS0uMmgxLjN2LS41Yy40LS40LjYtMSAuNS0xLjZsLTUuOC05Ni43em0tOS40IDEuN2wtNjAgMzYtMTYuMy00NCA3Ni4zIDh6bS03Ni42IDQuNGwxMyAzNS05IDMyLjctNC02Ny42em01LjYgNzkuNmwxMS4yLTQwLjggNjQuOCA0OC44LTc2LTh6bTE0LTQ0LjRsNjItMzcuMiA1LjQgODgtNjcuNC01MC44ek0zMTIgMTUzVjkxdi0uN2MwLS4yLS4yLS4yLS4yLS4yIDAtLjItLjMtLjQtLjUtLjdoLS4ybC0uNi0uNHMwLS4yLS4yLS4ybC02Ni44LTEwLjNjLS43IDAtMS41LjItMiAuOCAwIDAtMjYgMzEuNC0yNiAzMS43bC0uNCA2MS41YzAgMSAuMyAyIDEuMyAybDY5LjUgMTAuMyAyNS43LTMwLjh2LS4zYy4yIDAgLjMtLjIuNC0uM3YtLjR6bS02OC03MGw2MiA5LjQtMjIuNyAyNy02Mi05LjRMMjQ0IDgzem0tMjQuNSAzMWw2Mi44IDkuNlYxODFsLTYyLjgtOS41VjExNHptNjcuMiA4LjZsMjEtMjZWMTUybC0yMSAyNS44di01NS4yeiIgZmlsbD0idXJsKCNiKSIgbWFzaz0idXJsKCNjKSIvPiAgPC9nPjwvc3ZnPg==);
+			background-repeat: repeat-x;
+			background-position: bottom;
+			overflow: auto;
+		}
+		section#main {
+			left: 0;
+			max-width: 448px;
+			right: 0;
+			border: 0 none #161720;
+			margin: 56px auto 0;
+			padding: 32px;
+		}
+		.block {
+			box-shadow: rgba(175, 176, 185, 0.0980392) 0 2px 4px 0;
+			background: #fff;
+			border: 0 none #161720;
+			border-radius: 3px;
+			margin: 0 0 30px;
+			padding: 16px;
+		}
+		form {
+			border: 0 none #161720;
+			margin: 0;
+		}
+		p {
+			margin: 0 0 24px;
+		}
+		.notice{
+			font-size: 0.9rem;
+			margin: 15px 0 0 0;
+		}
+		.text-input,
+		textarea {
+			font-size: .875rem;
+			line-height: 1;
+			width: 100%;
+			border-radius: 3px;
+			box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+			border-color: #dcdcde;
+			border-style: solid;
+			border-width: 1px;
+			padding: 6px 12px;
+			outline: none;
+		}
+		.form-fields {
+			list-style: none outside none;
+			margin: 0;
+			padding: 0;
+		}
+		.form-fields li {
+			list-style: none outside none;
+			margin: 0 0 24px;
+		}
+		.form-fields li:last-child {
+			margin: 0;
+		}
+		.faqs{
+			margin: 0;
+			padding: 0;
+			list-style: none outside none;
+		}
+		.faqs li{
+			margin: 5px 0;
+			cursor: pointer;
+		}
+		.faqTitle{
+			background: #f3f3f3;
+    		padding: 10px 20px;
+		}
+		.faqBody{
+    		padding: 10px 20px;
+		}
+		.btn {
+			box-shadow: rgba(22, 23, 32, 0.0980392) 0 1px 2px 0;
+			color: #1b8cc5;
+			cursor: pointer;
+			letter-spacing: .28px;
+			vertical-align: middle;
+			width: 100%;
+			background: rgba(0, 0, 0, 0) linear-gradient(rgba(92, 186, 233, 0.0470588), rgba(61, 173, 229, 0.0470588)) repeat scroll 0 0;
+			border: 1px solid #30a8e3;
+			border-radius: 3px;
+			font-size: 1rem;
+			outline: none;
+			padding: 8px 16px;
+			display: inline-block;
+		    text-align: center;
+		    line-height: 1rem;
+		}
+		.btn--loading {}
+		.hidden {
+			display: none;
+		}
+	</style>
+
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+</head>
+<body>
+	<main class="wrap">
+		<section id="main" rel="main" class="content content--small">
+			<div class="block">
+				<form class="form" id="form" name="networks" onsubmit="event.preventDefault(); onSubmit()">
+					<center>
+						<p>Select the network you would like your <br />Element to be connected to:</p>
+					</center>
+
+					<input type="hidden" name="macAddress" value="{{macAddress}}">
+					<input type="hidden" name="registrationToken" value="{{registrationToken}}">
+
+					<ul ng-if="wifi.step === 'wifi'" class="form-fields form-fields--group">
+						<li>
+							<select name="ssid" class="text-input">
+							{{#list networks}}
+								<option value="{{ssid}}">{{ssid}}</option>
+							{{/list}}
+							</select>
+						</li>
+						<li>
+							<input type="password" name="password" class="text-input" placeholder="password" maxlength="63"><br>
+						</li>
+						<li>
+							<p id="error-msg" class="hidden"></p>
+						</li>
+						<li>
+							<button class="btn" id="submit" type="submit">Connect</button>
+					  	</li>
+					</ul>
+					<center><p class="notice">Please note this may take up to a minute to complete</p></center>
+				</form>
+				<a id="redirectBtn" class="btn hidden" href="{{redirectUrl}}">Return to Formide</a>
+			</div>
+			<div class="block">
+				<center>
+					<p>Frequently Asked Questions</p>
+				</center>
+				<ul class="faqs">
+					<li onclick="toggleFAQ(this)">
+						<div class="faqTitle">
+							What should I do if my network is not listed?
+						</div>
+						<div class="faqBody hidden">
+							Make sure the router or access point is turned on, and that it is within range of the element. If it is, check that your network type is supported.
+						</div>
+					</li>
+					<li onclick="toggleFAQ(this)">
+						<div class="faqTitle">
+							What type of networks are supported?
+						</div>
+						<div class="faqBody hidden">
+							The Wi-Fi network you select has to be a WPA-2 secured network (a common router security standard for homes and offices) or an open network.
+							Enterprise networks that require a certificate or older networks with WEP security are not supported.
+						</div>
+					</li>
+					<li onclick="toggleFAQ(this)">
+						<div class="faqTitle">
+							Connecting is taking more than a minute, what should I do?
+						</div>
+						<div class="faqBody hidden">
+							Please check the above questions. If you are still have problems, connect back to your network and contact us at support.formide.com.
+						</div>
+					</li>
+					<li onclick="toggleFAQ(this)">
+						<div class="faqTitle">
+							I get "Failed to connect to ...", what should I do?
+						</div>
+						<div class="faqBody hidden">
+							This usually means you've entered a wrong password or connecting to the router took longer than expected. You can just try again.
+						</div>
+					</li>
+				</ul>
+			</div>
+		</section>
+	</main>
+
+	<script>
+
+		function toggleFAQ (el){
+
+			var className = 'hidden';
+			el = el.childNodes[3];
+
+			var classes = el.className.split(' ');
+			var existingIndex = classes.indexOf(className);
+
+			if (existingIndex >= 0){
+				classes.splice(existingIndex, 1);
+			}else{
+				classes.push(className);
+			}
+			el.className = classes.join(' ');
+		}
+
+		function callUrl(method, url, data, callback) {
+			var oXHR = new XMLHttpRequest();
+			oXHR.open(method, url, true);
+
+			oXHR.onreadystatechange = function (oEvent) {
+				if (oXHR.readyState === 4) {
+					if (oXHR.status === 200) {
+						callback(false, oXHR.responseText);
+					}
+					else {
+						try {
+							var response = JSON.parse(oXHR.responseText);
+							callback(new Error(response.message));
+						} catch (e) {
+							callback(new Error(oXHR.statusText));
+						}
+					}
+				}
+			};
+
+			if (method === 'POST')
+				oXHR.setRequestHeader("Content-Type", "application/json");
+			oXHR.send(data);
+		}
+
+		var redirectUrl="{{{redirectUrl}}}";
+
+		function onSubmit() {
+			var submitButton = document.getElementById("submit");
+			submitButton.className += " btn--loading ";
+			submitButton.disabled = true;
+
+			var errorMsg = document.getElementById("error-msg");
+			errorMsg.style.display = 'none';
+
+			var redirectBtn = document.getElementById("redirectBtn");
+			redirectBtn.style.display = 'none';
+
+			i = 0;
+			var processingInterval =  setInterval(function() {
+				i = ++i % 4;
+				submitButton.innerHTML = "Connecting" + Array(i+1).join(".");
+			}, 400);
+
+			callUrl('POST', '/api/cloud/connect', JSON.stringify({
+				ssid:              document.networks['ssid'].value,
+				password:          document.networks['password'].value,
+				macAddress:        document.networks['macAddress'].value,
+				registrationToken: document.networks['registrationToken'].value
+			}), function(err, response) {
+				if (err) {
+					console.log('Error Connecting Cloud API', err);
+					clearInterval(processingInterval);
+
+					errorMsg.style.display = 'block';
+					errorMsg.innerHTML     = err.message;
+					submitButton.innerHTML = 'Connect';
+					submitButton.disabled = false;
+				}
+				else {
+					setInterval(function() {
+						callUrl('GET', 'https://api.formide.com', null, function(err, response) {
+							if(err) {
+								console.info('Error Connecting API, Retrying...', err);
+								// clearInterval(processingInterval);
+								// submitButton.innerHTML = "Connection Failed!";
+							}
+							else {
+								window.location = redirectUrl;
+								document.getElementById("form").style.display = 'none';
+								redirectBtn.style.display = 'block';
+							}
+						});
+					}, 1000);
+				}
+			});
+		};
+	</script>
+</body>
+</html>
