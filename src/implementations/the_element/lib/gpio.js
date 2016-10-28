@@ -5,9 +5,14 @@
  * between The Element and external USB host.
  */
 
+// constants
 const service     = 'sudo fgpio'; // custom service that's available on The Element
-const GPIO_STATUS = '';
-const GPIO_SWITCH = '';
+const GPIO_STATUS = 'gpio91';
+const GPIO_SWITCH = 'gpio90';
+
+// modules
+const exec   = require('child_process').exec;
+const assert = require('assert');
 
 module.exports = {
 
@@ -16,6 +21,21 @@ module.exports = {
     },
 
     switchControlMode(mode, callback) {
-        // TODO: call GPIO lib to change control mode
+        assert(mode, 'mode is a required parameter for switching control mode');
+
+        var value = 0;
+
+        if (mode === 'USB')
+            value = 1;
+        else if (mode === 'ELEMENT')
+            value = 0;
+
+        // set GPIO 90 to the correct value
+        exec(`${service} set ${GPIO_SWITCH} ${value}`, function (err, stdout, stderr) {
+            if (err || stderr)
+                return callback(err || stderr);
+
+
+        });
     }
 }
