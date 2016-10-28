@@ -37,7 +37,7 @@ module.exports = dbConfig => {
 		FormideClient.ci = require(`./implementations/${useImplementation}`);
 	}
 	catch (e) {
-		console.warn('No native client implementation found, continuing without one...');
+		console.warn(`No native client implementation found at implementations/${useImplementation}, continuing without...`);
 	}
 
 	// Events
