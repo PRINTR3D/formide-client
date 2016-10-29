@@ -115,10 +115,14 @@ module.exports = {
      * Connect to a network by essid/password combo
      * @param essid
      * @param password
+     * @param customConfig
      * @param callback
      * @returns {*}
      */
-    connect(essid, password, callback) {
+    connect(essid, password, customConfig, callback) {
+        if (customConfig)
+            return this.connectEnterprise(customConfig, callback);
+
         if (essid == null || essid.length === 0 || essid.length > 32)
             return callback(new Error('essid must be 1..32 characters'));
 
@@ -148,13 +152,12 @@ module.exports = {
      * @param wpaConfigFile
      * @param callback
      */
-    connectEnterprise(wpaConfigFile, callback) {
+    connectEnterprise(wpaConfig, callback) {
         const configFilePath = '/data/wpa_supplicant.conf';
-        const readStream = fs.createReadStream(wpaConfigFile.path);
-        const writeStream = fs.createWriteStream(configFilePath);
 
-        // copy config to correct path
-        readStream.pipe(writeStream);
+        console.log(wpaConfig);
+
+        fs.writeFileSync(configFilePath, wpaConfig);
 
         // execute reconnect of fiw service
         exec(`${service} wlan0 reconnect`, (err, stdout) => {
@@ -193,31 +196,30 @@ module.exports = {
 
             const template = Handlebars.compile(data);
 
-            wifi.mac((macErr, macAddress) => {
-                if (macErr)
-                    return callback(macErr);
-
-                wifi.list((wifiErr, ssids) => {
-                    if (wifiErr)
-                        return callback(wifiErr);
-
+            // wifi.mac((macErr, macAddress) => {
+            //     if (macErr)
+            //         return callback(macErr);
+            //
+            //     wifi.list((wifiErr, ssids) => {
+            //         if (wifiErr)
+            //             return callback(wifiErr);
+            //
                     const networks = [];
-                    for (const ssid in ssids)
-                        networks.push({ ssid });
+            //         for (const ssid in ssids)
+            //             networks.push({ ssid });
 
                     const registrationToken = uuid.v4();
-                    const redirectUrl
-                        = `${platformUrl}/#/manage/devices/setup?registration_token=${registrationToken}`
+                    const redirectUrl = `${platformUrl}/#/manage/devices/setup?registration_token=${registrationToken}`
 
                     const html = template({
                         networks,
-                        macAddress,
+                        // macAddress,
                         registrationToken,
                         redirectUrl
                     });
                     return callback(null, html);
-                });
-            });
+            //     });
+            // });
         });
     }
 };

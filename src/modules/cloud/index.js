@@ -16,18 +16,6 @@ const socket	 = require('socket.io-client');
 const uuid		 = require('node-uuid');
 const Throttle   = require('throttle');
 
-function addWifiSetupRoute(app, tools) {
-	app.get('/', (req, res) => {
-		const url = FormideClient.config.get('cloud.platformUrl');
-		tools.getWlanSetupPage(url, (err, html) => {
-			if (err)
-				return res.serverError(err.message);
-
-			res.send(html);
-		});
-	});
-}
-
 module.exports = {
 
 	// socket connections
@@ -50,7 +38,6 @@ module.exports = {
 
 		if (FormideClient.ci) {
 			self.tools = FormideClient.ci.wifi;
-			addWifiSetupRoute(FormideClient.http.app, self.tools);
 		}
 
 		function forwardEvents(event, data) {;
@@ -366,9 +353,9 @@ module.exports = {
 	/**
 	 * Connect device to selected network
 	 */
-	connect: function (essid, password, cb) {
+	connect: function (essid, password, customConfig, cb) {
 		if (this.tools)
-			this.tools.connect(essid, password, cb);
+			this.tools.connect(essid, password, customConfig, cb);
 		else
 			cb(new Error('element-tools not installed'));
 	},
