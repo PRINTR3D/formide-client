@@ -1,12 +1,16 @@
 'use strict';
 
 const exec       = require('child_process').exec;
+const fs         = require('fs');
+const uuid       = require('uuid');
+const Handlebars = require('handlebars');
 const bashEscape = require('./../bashutils').escape;
-const service    = 'sudo fiw';
+const service    = 'sudo fiw'; // NB: all sudo actions have to be permitted in sudoers.d/formide
 
-// NB: all sudo actions have to be permitted in sudoers.d/formide
+Handlebars.registerHelper('list', (ctx, opt) => ctx.reduce((prev, curr) => prev + opt.fn(curr), ''));
 
 module.exports = {
+
     list(callback) {
         function getSsids(stdout) {
             const essids = stdout.split('\n').filter(a => a);
@@ -80,7 +84,7 @@ module.exports = {
         });
     },
 
-    connectToNetwork(essid, password, callback) {
+    connect(essid, password, callback) {
         if (essid == null || essid.length === 0 || essid.length > 32)
             return callback(new Error('essid must be 1..32 characters'));
 
@@ -114,6 +118,41 @@ module.exports = {
                 return callback(err);
 
             return callback(null, { message: "Successfully reset wlan0" });
+        });
+    },
+
+    getWlanSetupPage(platformUrl, callback) {
+        fs.readFile(__dirname + "/networks.html", 'utf8', (err, data) => {
+            if (err)
+                return callback(err);
+
+            const template = Handlebars.compile(data);
+
+            wifi.mac((macErr, macAddress) => {
+                if (macErr)
+                    return callback(macErr);
+
+                wifi.list((wifiErr, ssids) => {
+                    if (wifiErr)
+                        return callback(wifiErr);
+
+                    const networks = [];
+                    for (const ssid in ssids)
+                        networks.push({ ssid });
+
+                    const registrationToken = uuid.v4();
+                    const redirectUrl
+                        = `${platformUrl}/#/manage/devices/setup?registration_token=${registrationToken}`
+
+                    const html = template({
+                        networks,
+                        macAddress,
+                        registrationToken,
+                        redirectUrl
+                    });
+                    return callback(null, html);
+                });
+            });
         });
     }
 };
