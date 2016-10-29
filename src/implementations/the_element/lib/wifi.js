@@ -11,6 +11,11 @@ Handlebars.registerHelper('list', (ctx, opt) => ctx.reduce((prev, curr) => prev 
 
 module.exports = {
 
+    /**
+     * Get a list of nearby Wi-Fi networks
+     * Includes filtering for invalid values in list
+     * @param callback
+     */
     list(callback) {
         function getSsids(stdout) {
             const essids = stdout.split('\n').filter(a => a);
@@ -44,6 +49,10 @@ module.exports = {
         });
     },
 
+    /**
+     * Get current Wi-Fi status from fiw service
+     * @param callback
+     */
     status(callback) {
         exec(`${service} wlan0 status`, (err, stdout) => {
             if (err)
@@ -54,6 +63,10 @@ module.exports = {
         });
     },
 
+    /**
+     * Get name of network currently connected to
+     * @param callback
+     */
     network(callback) {
         exec(`${service} wlan0 network`, (err, stdout) => {
             if (err)
@@ -64,6 +77,10 @@ module.exports = {
         });
     },
 
+    /**
+     * Get IP address
+     * @param callback
+     */
     ip(callback) {
         exec(`${service} wlan0 ip`, (err, stdout) => {
             if (err)
@@ -74,6 +91,10 @@ module.exports = {
         });
     },
 
+    /**
+     * Get MAC address
+     * @param callback
+     */
     mac(callback) {
         exec(`${service} wlan0 mac`, (err, stdout) => {
             if (err)
@@ -84,6 +105,13 @@ module.exports = {
         });
     },
 
+    /**
+     * Connect to a network by essid/password combo
+     * @param essid
+     * @param password
+     * @param callback
+     * @returns {*}
+     */
     connect(essid, password, callback) {
         if (essid == null || essid.length === 0 || essid.length > 32)
             return callback(new Error('essid must be 1..32 characters'));
@@ -112,6 +140,10 @@ module.exports = {
             });
     },
 
+    /**
+     * Reset Wi-Fi and fall back to hotspot mode
+     * @param callback
+     */
     reset(callback) {
         exec(`${service} wlan0 reset`, (err, stdout) => {
             if (err)
@@ -121,6 +153,11 @@ module.exports = {
         });
     },
 
+    /**
+     * Get setup page for Wi-Fi and Formide account connection
+     * @param platformUrl
+     * @param callback
+     */
     getWlanSetupPage(platformUrl, callback) {
         fs.readFile(__dirname + "/networks.html", 'utf8', (err, data) => {
             if (err)
