@@ -9,31 +9,35 @@ const service    = 'sudo fiw'; // NB: all sudo actions have to be permitted in s
 
 Handlebars.registerHelper('list', (ctx, opt) => ctx.reduce((prev, curr) => prev + opt.fn(curr), ''));
 
+/**
+ * Filter list of networks to only return valid essids
+ * @param stdout
+ * @returns {{}}
+ */
+function getSsids(stdout) {
+    const essids = stdout.split('\n').filter(a => a);
+    let result = {};
+    for (const essid of essids) {
+        // HACK: NAT-160: removing weird entries
+        if (essid.startsWith('\\x'))
+            continue;
+
+        // HACK: NAT-124: removing weird ping
+        if (essid.startsWith('PING '))
+            break;
+
+        result[essid] = { ssid: essid };
+    }
+    return result;
+}
+
 module.exports = {
 
     /**
      * Get a list of nearby Wi-Fi networks
-     * Includes filtering for invalid values in list
      * @param callback
      */
     list(callback) {
-        function getSsids(stdout) {
-            const essids = stdout.split('\n').filter(a => a);
-            let result = {};
-            for (const essid of essids) {
-                // HACK: NAT-160: removing weird entries
-                if (essid.startsWith('\\x'))
-                    continue;
-
-                // HACK: NAT-124: removing weird ping
-                if (essid.startsWith('PING '))
-                    break;
-
-                result[essid] = { ssid: essid };
-            }
-            return result;
-        }
-
         exec(`${service} wlan0 cached-scan`, (err, stdout) => {
             if (err || !stdout)
                 return exec('sudo fiw wlan0 scan', (err, stdout) => {
