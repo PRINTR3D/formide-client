@@ -135,10 +135,8 @@ module.exports = {
             if (err || stderr)
                 return callback(new Error(`Failed to connect to ${essid}`));
 
-            const ok = stdout.trim() == 'OK';
-
-            if (!ok)
-                return callback(new Error(`Failed to connect to ${essid}`));
+            if (stdout.trim() !== 'OK')
+                return callback(new Error(`Failed to connect with custom config`));
 
             return callback(null, { message: `Successfully connected to ${essid}` });
         });
@@ -163,7 +161,10 @@ module.exports = {
             if (err)
                 return callback(err);
 
-            return callback(null, { message: "Successfully connected from custom config" });
+            if (stdout.trim() !== 'OK')
+                return callback(new Error(`Failed to connect with custom config`));
+
+            return callback(null, { message: "Successfully connected with custom config" });
         });
     },
 
