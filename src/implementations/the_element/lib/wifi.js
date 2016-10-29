@@ -4,7 +4,7 @@ const exec       = require('child_process').exec;
 const fs         = require('fs');
 const uuid       = require('uuid');
 const Handlebars = require('handlebars');
-const bashEscape = require('./../bashutils').escape;
+const bashEscape = require('../bashutils').escape;
 const service    = 'sudo fiw'; // NB: all sudo actions have to be permitted in sudoers.d/formide
 
 Handlebars.registerHelper('list', (ctx, opt) => ctx.reduce((prev, curr) => prev + opt.fn(curr), ''));
@@ -17,6 +17,7 @@ Handlebars.registerHelper('list', (ctx, opt) => ctx.reduce((prev, curr) => prev 
 function getSsids(stdout) {
     const essids = stdout.split('\n').filter(a => a);
     let result = {};
+
     for (const essid of essids) {
         // HACK: NAT-160: removing weird entries
         if (essid.startsWith('\\x'))
@@ -28,6 +29,7 @@ function getSsids(stdout) {
 
         result[essid] = { ssid: essid };
     }
+
     return result;
 }
 
@@ -129,19 +131,40 @@ module.exports = {
         var connectCommand = `${service} wlan0 connect ${_essid} ${_password}`;
         connectCommand = connectCommand.trim();
 
-        exec(connectCommand,
-            (err, stdout) => {
-                if (err)
-                    return callback(new Error(
-                        `Failed to connect to ${essid}`));
-
-                const ok = stdout.trim() == 'OK';
-                if (ok)
-                    return callback(null, {
-                        message: "Successfully connected to " + essid
-                    });
+        exec(connectCommand, function (err, stdout, stderr) {
+            if (err || stderr)
                 return callback(new Error(`Failed to connect to ${essid}`));
-            });
+
+            const ok = stdout.trim() == 'OK';
+
+            if (!ok)
+                return callback(new Error(`Failed to connect to ${essid}`));
+
+            return callback(null, { message: `Successfully connected to ${essid}` });
+        });
+    },
+
+    /**
+     * Connect to a network using a custom wpa_supplicant configuration
+     * This allows connecting to any network that is supported by wpa_supplicant, including 802.11x networks
+     * @param wpaConfigFile
+     * @param callback
+     */
+    connectEnterprise(wpaConfigFile, callback) {
+        const configFilePath = '/data/wpa_supplicant.conf';
+        const readStream = fs.createReadStream(wpaConfigFile.path);
+        const writeStream = fs.createWriteStream(configFilePath);
+
+        // copy config to correct path
+        readStream.pipe(writeStream);
+
+        // execute reconnect of fiw service
+        exec(`${service} wlan0 reconnect`, (err, stdout) => {
+            if (err)
+                return callback(err);
+
+            return callback(null, { message: "Successfully connected from custom config" });
+        });
     },
 
     /**
