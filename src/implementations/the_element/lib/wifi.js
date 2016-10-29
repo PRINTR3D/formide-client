@@ -155,7 +155,7 @@ module.exports = {
     connectEnterprise(wpaConfig, callback) {
         const configFilePath = '/data/wpa_supplicant.conf';
 
-        console.log(wpaConfig);
+        // TODO: add lock file info
 
         fs.writeFileSync(configFilePath, wpaConfig);
 
