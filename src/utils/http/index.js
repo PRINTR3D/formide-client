@@ -111,11 +111,12 @@ module.exports = {
 		// Root URL containing Wi-Fi setup page
 		this.app.get('/', function (req, res) {
 			if (FormideClient.ci && FormideClient.ci.wifi) {
-				const url = FormideClient.config.get('cloud.platformUrl');
-				FormideClient.ci.wifi.getWlanSetupPage(url, (err, html) => {
+				const setup = require('./setup');
+				setup(FormideClient.ci.wifi, function (err, html) {
 					if (err)
-						return res.serverError(err.message);
-					res.send(html);
+						return res.serverError(err);
+
+					return res.send(html);
 				});
 			}
 		});
