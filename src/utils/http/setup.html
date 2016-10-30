@@ -65,6 +65,10 @@
 		p {
 			margin: 0 0 24px;
 		}
+		hr {
+			border: none;
+			border-top: solid 1px #f3f3f3;
+		}
 		.notice{
 			font-size: 0.9rem;
 			margin: 15px 0 0 0;
@@ -76,9 +80,7 @@
 			width: 100%;
 			border-radius: 3px;
 			box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-			border-color: #dcdcde;
-			border-style: solid;
-			border-width: 1px;
+			border: 1px solid #dcdcde;
 			padding: 6px 12px;
 			outline: none;
 		}
@@ -140,9 +142,9 @@
 		<section id="main" rel="main" class="content content--small">
 			<div class="block">
 				<form class="form" id="form" name="networks" onsubmit="event.preventDefault(); onSubmit()">
-					<center>
+					<div style="text-align: center;">
 						<p>Select the network you would like your <br />Element to be connected to:</p>
-					</center>
+					</div>
 
 					<input type="hidden" name="macAddress" value="{{macAddress}}">
 					<input type="hidden" name="registrationToken" value="{{registrationToken}}">
@@ -156,8 +158,14 @@
 							</select>
 						</li>
 						<li>
-							<input type="password" name="password" class="text-input" placeholder="password" maxlength="63"><br>
+							<input type="password" name="password" class="text-input" placeholder="password" maxlength="63"><br/>
 						</li>
+						<hr/>
+						<li id="customConfigField">
+							<br/>
+							<textarea name="customConfig" class="text-input" placeholder="custom config"></textarea>
+						</li>
+						<hr/>
 						<li>
 							<p id="error-msg" class="hidden"></p>
 						</li>
@@ -165,14 +173,16 @@
 							<button class="btn" id="submit" type="submit">Connect</button>
 					  	</li>
 					</ul>
-					<center><p class="notice">Please note this may take up to a minute to complete</p></center>
+					<div style="text-align: center;">
+						<p class="notice">Please note this may take up to a minute to complete</p>
+					</div>
 				</form>
 				<a id="redirectBtn" class="btn hidden" href="{{redirectUrl}}">Return to Formide</a>
 			</div>
 			<div class="block">
-				<center>
+				<div style="text-align: center;">
 					<p>Frequently Asked Questions</p>
-				</center>
+				</div>
 				<ul class="faqs">
 					<li onclick="toggleFAQ(this)">
 						<div class="faqTitle">
@@ -188,7 +198,18 @@
 						</div>
 						<div class="faqBody hidden">
 							The Wi-Fi network you select has to be a WPA-2 secured network (a common router security standard for homes and offices) or an open network.
-							Enterprise networks that require a certificate or older networks with WEP security are not supported.
+							We also support enterprise networks that use the 802.11x protocol using a custom config.
+						</div>
+					</li>
+					<li onclick="toggleFAQ(this)">
+						<div class="faqTitle">
+							What is a custom config?
+						</div>
+						<div class="faqBody hidden">
+							The custom config field can be used to connect to networks that require more setup than just a password.
+							You can supply a wpa_supplicant configuration here that The Element will use to connect to the network.
+							An example is the Eduroam network used on many university and college campuses across the world.
+							If you're not sure which configuration to use, please check our help center or contact us.
 						</div>
 					</li>
 					<li onclick="toggleFAQ(this)">
@@ -214,7 +235,7 @@
 
 	<script>
 
-		function toggleFAQ (el){
+		function toggleFAQ(el) {
 
 			var className = 'hidden';
 			el = el.childNodes[3];
@@ -277,6 +298,7 @@
 			callUrl('POST', '/api/cloud/connect', JSON.stringify({
 				ssid:              document.networks['ssid'].value,
 				password:          document.networks['password'].value,
+				customConfig:      document.networks['customConfig'].value,
 				macAddress:        document.networks['macAddress'].value,
 				registrationToken: document.networks['registrationToken'].value
 			}), function(err, response) {

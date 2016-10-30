@@ -122,10 +122,18 @@ module.exports = {
     },
 
     update(imageURL, signature, callback) {
-        exec(`${service} update ${imageURL} ${signature}`, (err, stdout, stderr) => {
-            if (err || stderr)
-                return callback(err || stderr);
-            return callback(null);
+        this.checkForUpdate((err, hasUpdate) => {
+            if (err)
+                return callback(err);
+
+            if (!hasUpdate.imageURL || !hasUpdate.signature)
+                return callback(new Error('incomplete update object'));
+
+            exec(`${service} update ${hasUpdate.imageURL} ${hasUpdate.signature}`, (err, stdout, stderr) => {
+                if (err || stderr)
+                    return callback(err || stderr);
+                return callback(null);
+            });
         });
     }
 };

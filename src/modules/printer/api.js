@@ -1,3 +1,5 @@
+'use strict';
+
 /*
  *	This code was created for Printr B.V. It is open source under the formide-client package.
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
@@ -118,6 +120,31 @@ module.exports = function(routes, module) {
 			if (err) return res.serverError(err);
 			if (!result) return res.notFound('No printer on this port');
 			return res.ok({ message: "Command executing" });
+		});
+	});
+
+	// get control mode
+	routes.get('/control_mode', function (req, res) {
+		module.getControlMode(function (err, mode) {
+			if (err) return res.serverError(err);
+			if (!mode) return res.notFound('Control mode could not be determined');
+			return res.ok({
+				mode: mode,
+				message: 'Control mode found'
+			});
+		})
+	});
+
+	// set control mode
+	routes.post('/control_mode', function (req, res) {
+		if (!req.body.mode)
+			return res.badRequest('Mode not found in body');
+
+		module.setControlMode(function (err, response) {
+			if (err) return res.serverError(err);
+			return res.ok({
+				message: `Control mode set to ${req.body.mode}`
+			});
 		});
 	});
 };
