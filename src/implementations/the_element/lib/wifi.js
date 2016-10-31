@@ -115,7 +115,7 @@ module.exports = {
      * @param callback
      * @returns {*}
      */
-    connect(essid, password, customConfig, callback) {
+    connect(essid, password, callback) {
         //if (customConfig)
         //    return this.connectEnterprise(customConfig, callback);
 

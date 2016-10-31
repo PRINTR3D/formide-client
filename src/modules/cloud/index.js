@@ -353,9 +353,9 @@ module.exports = {
 	/**
 	 * Connect device to selected network
 	 */
-	connect: function (essid, password, customConfig, cb) {
+	connect: function (essid, password, cb) {
 		if (this.tools)
-			this.tools.connect(essid, password, customConfig, cb);
+			this.tools.connect(essid, password, cb);
 		else
 			cb(new Error('element-tools not installed'));
 	},
