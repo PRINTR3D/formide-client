@@ -36,7 +36,7 @@ module.exports = {
 		// use self to prevent bind(this) waterfall
 		var self = this;
 
-		if (FormideClient.ci) {
+		if (FormideClient.ci && FormideClient.ci.wifi) {
 			self.tools = FormideClient.ci.wifi;
 		}
 
