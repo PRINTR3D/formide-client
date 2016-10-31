@@ -307,7 +307,7 @@ module.exports = {
 	 */
 	getNetworks: function(cb) {
 		if (this.tools)
-			this.tools.networks(cb);
+			this.tools.list(cb);
 		else
 			cb(new Error('element-tools not installed'));
 	},
