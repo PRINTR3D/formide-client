@@ -317,7 +317,7 @@ module.exports = {
 					FormideClient.events.emit(`usb.${value}`, `USB host was ${value}`)
 
 					if (value === 'plugged-out')
-						self.switchControlMode('ELEMENT', function(err, result) {
+						self.setControlMode('ELEMENT', function(err, result) {
 							if (err)
 								FormideClient.log.error('Error handling USB host switch back', e);
 							else
