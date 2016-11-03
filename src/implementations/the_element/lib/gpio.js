@@ -16,7 +16,7 @@ const dtrTargetReset = new Gpio(6, 'out');
 
 // default to ELEMENT control
 setTimeout(function() {
-    controlMode.writeSync(0);
+    // controlMode.writeSync(0);
 }, 500);
 
 // free up GPIO again when stopping client
