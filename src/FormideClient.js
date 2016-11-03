@@ -31,7 +31,7 @@ module.exports = dbConfig => {
 	// Ensure needed files and dirs are available
     require('./utils/ensureNeeds');
 
-	let useImplementation = 'the_element';
+	var useImplementation = 'the_element';
 
 	// Client implementation, default is the_element
 	try {
@@ -40,6 +40,7 @@ module.exports = dbConfig => {
 	}
 	catch (e) {
 		console.warn(`No native client implementation found at implementations/${useImplementation}, continuing without...`);
+		console.error(e);
 	}
 
 	// Events
