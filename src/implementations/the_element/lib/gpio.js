@@ -10,15 +10,19 @@ const assert = require('assert');
 const Gpio = require('onoff').Gpio;
 
 // GPIO pins
-const controlMode = new Gpio(90, 'out');
-const usbStatus = new Gpio(93, 'in');
+const controlMode = new Gpio(90, 'out', function() {
+    // set control mode to Element by default
+    timeout(function() {
+        controlMode.writeSync(0);
+    }, 100);
+});
+const usbStatus = new Gpio(93, 'in', function() {
+    // listen to both plug-in and plug-out USB actions
+    timeout(function() {
+        usbStatus.setEdge('both');
+    }, 100);
+});
 const dtrTargetReset = new Gpio(6, 'out');
-
-// listen to both plug-in and plug-out USB actions
-usbStatus.setEdge('both');
-
-// set control mode to Element by default
-controlMode.writeSync(0);
 
 // free up GPIO again when stopping client
 process.on('SIGINT', function () {
