@@ -84,7 +84,9 @@ module.exports = {
 
         // this toggles DTR reset in the printer firmware!
         dtrTargetReset.writeSync(0);
-        dtrTargetReset.writeSync(1);
+        setTimeout(function() {
+            dtrTargetReset.writeSync(1);
+        }, 10);
 
         // set control mode
         controlMode.write(value, function (err) {
