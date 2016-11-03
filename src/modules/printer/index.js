@@ -311,8 +311,6 @@ module.exports = {
 					FormideClient.log.error('Error handling USB host change', e);
 				else {
 					FormideClient.events.emit(`usb.${value}`, `USB host was ${value}`)
-
-					if ()
 				}
 			});
 			return callback();
