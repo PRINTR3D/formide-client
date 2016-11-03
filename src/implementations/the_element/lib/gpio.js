@@ -13,6 +13,7 @@ const Gpio = require('onoff').Gpio;
 const controlMode = new Gpio(90, 'out', function() {
     // set control mode to Element by default
     timeout(function() {
+        console.log('about to write');
         controlMode.writeSync(0);
     }, 100);
 });
