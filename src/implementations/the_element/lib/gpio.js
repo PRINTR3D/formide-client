@@ -20,6 +20,13 @@ usbStatus.setEdge('both');
 // set control mode to Element by default
 controlMode.writeSync(0);
 
+// free up GPIO again when stopping client
+process.on('SIGINT', function () {
+    controlMode.unexport();
+    usbStatus.unexport();
+    dtrTargetReset.unexport();
+});
+
 module.exports = {
 
     /**
