@@ -18,7 +18,7 @@ const dtrTargetReset = new Gpio(6, 'out');
 usbStatus.setEdge('both');
 
 // set control mode to Element by default
-controlMode.writeSync(1);
+controlMode.writeSync(0);
 
 module.exports = {
 
