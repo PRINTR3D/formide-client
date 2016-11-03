@@ -309,8 +309,11 @@ module.exports = {
 			this.gpio.registerOnChange(function (err, value) {
 				if (err)
 					FormideClient.log.error('Error handling USB host change', e);
-				else
+				else {
 					FormideClient.events.emit(`usb.${value}`, `USB host was ${value}`)
+
+					if ()
+				}
 			});
 			return callback();
 		}

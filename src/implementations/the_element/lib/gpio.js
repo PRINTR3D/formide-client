@@ -33,14 +33,15 @@ module.exports = {
      * @param callback
      */
     registerOnChange(callback) {
+        const self = this;
         usbStatus.watch(function (err, value) {
             if (err)
                 return callback(err);
 
-            console.log('trigger', err, value);
-
             if (value === 0)
-                return callback(null, 'plugged-out');
+                self.switchControlMode('ELEMENT', function(err, result) {
+                    return callback(null, 'plugged-out');
+                });
             else if (value === 1)
                 return callback(null, 'plugged-in');
         });
