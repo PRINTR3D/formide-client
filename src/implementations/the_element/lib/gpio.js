@@ -82,18 +82,17 @@ module.exports = {
         else
             return callback(new Error('Mode invalid'));
 
-        // this toggles DTR reset in the printer firmware!
-        dtrTargetReset.write(0, function() {
-            dtrTargetReset.write(1, function() {
+        // set control mode
+        controlMode.write(value, function (err) {
+            if (err)
+                return callback(err);
 
-                // set control mode
-                controlMode.write(value, function (err) {
-                    if (err)
-                        return callback(err);
-
+            // this toggles DTR reset in the printer firmware!
+            dtrTargetReset.write(0, function() {
+                dtrTargetReset.write(1, function () {
                     return callback(null, 'OK');
-                });
-            })
+                }, 10);
+            }, 10);
         });
     }
 }
