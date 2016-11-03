@@ -140,7 +140,7 @@ module.exports = function(routes, module) {
 		if (!req.body.mode)
 			return res.badRequest('Mode not found in body');
 
-		module.setControlMode(function (err, response) {
+		module.setControlMode(req.body.mode, function (err, response) {
 			if (err) return res.serverError(err);
 			return res.ok({
 				message: `Control mode set to ${req.body.mode}`,
@@ -154,7 +154,7 @@ module.exports = function(routes, module) {
 		module.enableControlMode(function (err, response) {
 			if (err) return res.serverError(err);
 			return res.ok({
-				message: `Control mode switching events enabled`,
+				message: 'Control mode switching events enabled',
 				response: response
 			});
 		});

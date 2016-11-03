@@ -37,6 +37,8 @@ module.exports = {
             if (err)
                 return callback(err);
 
+            console.log('trigger', err, value);
+
             if (value === 0)
                 return callback(null, 'plugged-out');
             else if (value === 1)

@@ -305,13 +305,15 @@ module.exports = {
 	 * @param callback
 	 */
 	enableControlMode: function(callback) {
-		if (this.gpio)
+		if (this.gpio) {
 			this.gpio.registerOnChange(function (err, value) {
 				if (err)
 					FormideClient.log.error('Error handling USB host change', e);
 				else
 					FormideClient.events.emit(`usb.${value}`, `USB host was ${value}`)
 			});
+			return callback();
+		}
 		else
 			return callback(new Error('gpio implementation not found'));
 	}
