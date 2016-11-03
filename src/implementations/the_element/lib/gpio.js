@@ -12,7 +12,7 @@ const Gpio = require('onoff').Gpio;
 // GPIO pins
 const controlMode = new Gpio(90, 'out');
 const usbStatus = new Gpio(93, 'in');
-const reset = new Gpio(6, 'out');
+const dtrTargetReset = new Gpio(6, 'out');
 
 // listen to both plug-in and plug-out USB actions
 usbStatus.setEdge('both');
@@ -31,7 +31,10 @@ module.exports = {
             if (err)
                 return callback(err);
 
-            return callback(null, value);
+            if (value === 0)
+                return callback(null, 'plugged-out');
+            else if (value === 1)
+                return callback(null, 'plugged-in');
         });
     },
 
@@ -48,9 +51,9 @@ module.exports = {
             var mode = '';
 
             if (value === 0)
-                mode = SWITCH_0;
+                mode = 'ELEMENT';
             else if (value === 1)
-                mode = SWITCH_1;
+                mode = 'USB';
 
             return callback(null, mode);
         });
@@ -74,8 +77,8 @@ module.exports = {
             return callback(new Error('Mode invalid'));
 
         // this toggles DTR reset in the printer firmware!
-        reset.writeSync(0);
-        reset.writeSync(1);
+        dtrTargetReset.writeSync(0);
+        dtrTargetReset.writeSync(1);
 
         // set control mode
         controlMode.write(value, function (err) {
