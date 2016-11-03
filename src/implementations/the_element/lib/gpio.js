@@ -15,7 +15,7 @@ const usbStatus = new Gpio(93, 'in', 'both');
 const dtrTargetReset = new Gpio(6, 'out');
 
 // default to ELEMENT control
-timeout(function() {
+setTimeout(function() {
     controlMode.writeSync(0);
 }, 100);
 
