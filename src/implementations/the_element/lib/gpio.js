@@ -5,20 +5,20 @@
  * between The Element and external USB host.
  */
 
-// constants
-const service     = 'sudo fgpio'; // custom service that's available on The Element
-const GPIO_STATUS = 'gpio91';
-const GPIO_SWITCH = 'gpio90';
-
-// statuses
-const SWITCH_0    = 'ELEMENT';
-const SWITCH_1    = 'USB';
-const STATUS_0    = 'NOT_PLUGGED';
-const STATUS_1    = 'PLUGGED';
-
 // modules
-const exec   = require('child_process').exec;
 const assert = require('assert');
+const Gpio = require('onoff').Gpio;
+
+// GPIO pins
+const controlMode = new Gpio(90, 'out');
+const usbStatus = new Gpio(93, 'in');
+const reset = new Gpio(6, 'out');
+
+// listen to both plug-in and plug-out USB actions
+usbStatus.setEdge('both');
+
+// set control mode to Element by default
+controlMode.writeSync(1);
 
 module.exports = {
 
@@ -27,7 +27,12 @@ module.exports = {
      * @param callback
      */
     registerOnChange(callback) {
+        usbStatus.watch(function (err, value) {
+            if (err)
+                return callback(err);
 
+            return callback(null, value);
+        });
     },
 
     /**
@@ -35,11 +40,11 @@ module.exports = {
      * @param callback
      */
     getControlMode(callback) {
-        exec(`${service} get ${GPIO_SWITCH}`, function (err, stdout, stderr) {
-            if (err || stderr)
-                return callback(err || stderr);
+        controlMode.read(function (err, value) {
+            if (err)
+                return callback(err);
 
-            var value = +(stdout);
+            value = +(value); // force int
             var mode = '';
 
             if (value === 0)
@@ -61,17 +66,23 @@ module.exports = {
 
         var value = 0;
 
-        if (mode === SWITCH_0)
+        if (mode === 'ELEMENT')
             value = 0;
-        else if (mode === SWITCH_1)
+        else if (mode === 'USB')
             value = 1;
+        else
+            return callback(new Error('Mode invalid'));
 
-        // set GPIO 90 to the correct value
-        exec(`${service} set ${GPIO_SWITCH} ${value}`, function (err, stdout, stderr) {
-            if (err || stderr)
-                return callback(err || stderr);
+        // this toggles DTR reset in the printer firmware!
+        reset.writeSync(0);
+        reset.writeSync(1);
 
+        // set control mode
+        controlMode.write(value, function (err) {
+            if (err)
+                return callback(err);
 
+            return callback(null, 'OK');
         });
     }
 }
