@@ -39,9 +39,7 @@ module.exports = {
                 return callback(err);
 
             if (value === 0)
-                self.switchControlMode('ELEMENT', function(err, result) {
-                    return callback(null, 'plugged-out');
-                });
+                return callback(null, 'plugged-out');
             else if (value === 1)
                 return callback(null, 'plugged-in');
         });
