@@ -33,7 +33,6 @@ module.exports = {
      * @param callback
      */
     registerOnChange(callback) {
-        const self = this;
         usbStatus.watch(function (err, value) {
             if (err)
                 return callback(err);
