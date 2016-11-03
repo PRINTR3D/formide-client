@@ -143,7 +143,19 @@ module.exports = function(routes, module) {
 		module.setControlMode(function (err, response) {
 			if (err) return res.serverError(err);
 			return res.ok({
-				message: `Control mode set to ${req.body.mode}`
+				message: `Control mode set to ${req.body.mode}`,
+				response: response
+			});
+		});
+	});
+
+	// enable control mode switching events
+	routes.post('/control_mode/enable', function (req, res) {
+		module.enableControlMode(function (err, response) {
+			if (err) return res.serverError(err);
+			return res.ok({
+				message: `Control mode switching events enabled`,
+				response: response
 			});
 		});
 	});

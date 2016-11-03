@@ -31,9 +31,11 @@ module.exports = dbConfig => {
 	// Ensure needed files and dirs are available
     require('./utils/ensureNeeds');
 
+	let useImplementation = 'the_element';
+
 	// Client implementation, default is the_element
 	try {
-		const useImplementation = process.env.FORMIDE_CLIENT_IMPLEMENTATION || 'the_element';
+		useImplementation = process.env.FORMIDE_CLIENT_IMPLEMENTATION || 'the_element';
 		FormideClient.ci = require(`./implementations/${useImplementation}`);
 	}
 	catch (e) {
