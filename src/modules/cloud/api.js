@@ -125,7 +125,7 @@ module.exports = (routes, cloud) => {
 		if (req.body.registrationToken == null)
 			return res.badRequest('registrationToken must be set');
 
-		cloud.connect(req.body.ssid, req.body.password, req.body.customConfig, err => {
+		cloud.connect(req.body.ssid, req.body.password, function(err) {
 			if (err)
 				return res.serverError(err);
 

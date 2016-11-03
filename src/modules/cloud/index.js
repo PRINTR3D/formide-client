@@ -36,7 +36,7 @@ module.exports = {
 		// use self to prevent bind(this) waterfall
 		var self = this;
 
-		if (FormideClient.ci) {
+		if (FormideClient.ci && FormideClient.ci.wifi) {
 			self.tools = FormideClient.ci.wifi;
 		}
 
@@ -307,7 +307,7 @@ module.exports = {
 	 */
 	getNetworks: function(cb) {
 		if (this.tools)
-			this.tools.networks(cb);
+			this.tools.list(cb);
 		else
 			cb(new Error('element-tools not installed'));
 	},
@@ -353,9 +353,9 @@ module.exports = {
 	/**
 	 * Connect device to selected network
 	 */
-	connect: function (essid, password, customConfig, cb) {
+	connect: function (essid, password, cb) {
 		if (this.tools)
-			this.tools.connect(essid, password, customConfig, cb);
+			this.tools.connect(essid, password, cb);
 		else
 			cb(new Error('element-tools not installed'));
 	},
