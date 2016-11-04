@@ -5,9 +5,8 @@
   "license": "GPL-2.0",
   "description": "Formide client is a modular 3D printing cloud client with the goal of serving all 3D printers.",
   "keywords": [
-    "PRINTR",
-    "FORMIDE",
-    "FORMIDEOS",
+    "Printr",
+    "Formide",
     "Interface",
     "3D Printing",
     "NodeJS",
