@@ -186,7 +186,7 @@ module.exports = {
 					var name = file[8];
 
 					if (file.length > 9)
-						name = file.splice(8, file.length - 1).join('');
+						name = file.splice(8, file.length - 1).join(' ');
 
 					if (file.length >= 8)
 						output.push({
