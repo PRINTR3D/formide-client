@@ -102,6 +102,7 @@ module.exports = (routes, db) => {
 				queueItem.destroy(function (err) {
 					if (err) return res.serverError(err);
 
+					// Emit event so pages can refresh
 					FormideClient.events.emit('queueItem.deleted', { title: 'Queue item deleted', message: `${queueItem.printJob.name} was removed from the queue` });
 
 					// When queueItem was custom printjob and uploaded locally, remove it from printjobs as well
