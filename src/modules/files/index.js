@@ -244,6 +244,9 @@ module.exports = {
 						reason: 'FILE_TOO_LARGE'
 					});
 
+				// escape spaces in file path
+				filePath = '\'' + filePath.replace(/'/g, "'\\''") + '\'';
+
 				self.tools.copy(drive, filePath, target, hash, (err, success) => {
 					if (err) return callback(err);
 
