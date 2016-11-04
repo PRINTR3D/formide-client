@@ -85,6 +85,10 @@ module.exports = (routes, cloud) => {
 	routes.post('/setup', (req, res) => {
 		cloud.setupMode(err => {
 			if (err) return res.serverError(err);
+
+			// emit event
+			FormideClient.events.emit('wifi.reset', { message: `Wi-Fi is now in setup mode` });
+
 			return res.ok({ message: 'Started access point' });
 		});
 	});
@@ -104,6 +108,9 @@ module.exports = (routes, cloud) => {
 		cloud.connect(req.body.ssid, req.body.password, err => {
 			if (err)
 				return res.serverError(err);
+
+			// emit event
+			FormideClient.events.emit('wifi.connected', { message: `Wi-Fi is now connected to ${req.body.ssid}` });
 
 			res.ok({ message: 'Device connected to network' });
 		});
@@ -128,6 +135,9 @@ module.exports = (routes, cloud) => {
 		cloud.connect(req.body.ssid, req.body.password, function(err) {
 			if (err)
 				return res.serverError(err);
+
+			// emit event
+			FormideClient.events.emit('wifi.connected', { message: `Wi-Fi is now connected to ${req.body.ssid}` });
 
 			res.ok({ message: 'Device connected to network' });
 
