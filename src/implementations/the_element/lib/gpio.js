@@ -73,7 +73,7 @@ module.exports = {
     switchControlMode(mode, callback) {
         assert(mode, 'mode is a required parameter for switching control mode');
 
-        getControlMode(function(err, oldValue) {
+        this.getControlMode(function(err, oldValue) {
             var value = 0;
 
             if (mode === 'ELEMENT')
