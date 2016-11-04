@@ -160,12 +160,12 @@
 						<li>
 							<input type="password" name="password" class="text-input" placeholder="password" maxlength="63"><br/>
 						</li>
-						<hr/>
-						<li id="customConfigField">
-							<br/>
-							<textarea name="customConfig" class="text-input" placeholder="custom config"></textarea>
-						</li>
-						<hr/>
+						<!--<hr/>-->
+						<!--<li id="customConfigField">-->
+							<!--<br/>-->
+							<!--<textarea name="customConfig" class="text-input" placeholder="custom config"></textarea>-->
+						<!--</li>-->
+						<!--<hr/>-->
 						<li>
 							<p id="error-msg" class="hidden"></p>
 						</li>
@@ -201,17 +201,17 @@
 							We also support enterprise networks that use the 802.11x protocol using a custom config.
 						</div>
 					</li>
-					<li onclick="toggleFAQ(this)">
-						<div class="faqTitle">
-							What is a custom config?
-						</div>
-						<div class="faqBody hidden">
-							The custom config field can be used to connect to networks that require more setup than just a password.
-							You can supply a wpa_supplicant configuration here that The Element will use to connect to the network.
-							An example is the Eduroam network used on many university and college campuses across the world.
-							If you're not sure which configuration to use, please check our help center or contact us.
-						</div>
-					</li>
+					<!--<li onclick="toggleFAQ(this)">-->
+						<!--<div class="faqTitle">-->
+							<!--What is a custom config?-->
+						<!--</div>-->
+						<!--<div class="faqBody hidden">-->
+							<!--The custom config field can be used to connect to networks that require more setup than just a password.-->
+							<!--You can supply a wpa_supplicant configuration here that The Element will use to connect to the network.-->
+							<!--An example is the Eduroam network used on many university and college campuses across the world.-->
+							<!--If you're not sure which configuration to use, please check our help center or contact us.-->
+						<!--</div>-->
+					<!--</li>-->
 					<li onclick="toggleFAQ(this)">
 						<div class="faqTitle">
 							Connecting is taking more than a minute, what should I do?
@@ -298,7 +298,7 @@
 			callUrl('POST', '/api/cloud/connect', JSON.stringify({
 				ssid:              document.networks['ssid'].value,
 				password:          document.networks['password'].value,
-				customConfig:      document.networks['customConfig'].value,
+//				customConfig:      document.networks['customConfig'].value,
 				macAddress:        document.networks['macAddress'].value,
 				registrationToken: document.networks['registrationToken'].value
 			}), function(err, response) {

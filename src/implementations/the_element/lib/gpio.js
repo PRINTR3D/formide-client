@@ -5,20 +5,26 @@
  * between The Element and external USB host.
  */
 
-// constants
-const service     = 'sudo fgpio'; // custom service that's available on The Element
-const GPIO_STATUS = 'gpio91';
-const GPIO_SWITCH = 'gpio90';
-
-// statuses
-const SWITCH_0    = 'ELEMENT';
-const SWITCH_1    = 'USB';
-const STATUS_0    = 'NOT_PLUGGED';
-const STATUS_1    = 'PLUGGED';
-
 // modules
-const exec   = require('child_process').exec;
 const assert = require('assert');
+const Gpio = require('onoff').Gpio;
+
+// GPIO pins
+const controlMode = new Gpio(90, 'out');
+const usbStatus = new Gpio(93, 'in', 'both');
+const dtrTargetReset = new Gpio(6, 'out');
+
+// default to ELEMENT control
+setTimeout(function() {
+    controlMode.writeSync(0);
+}, 500);
+
+// free up GPIO again when stopping client
+process.on('SIGINT', function () {
+    controlMode.unexport();
+    usbStatus.unexport();
+    dtrTargetReset.unexport();
+});
 
 module.exports = {
 
@@ -27,7 +33,15 @@ module.exports = {
      * @param callback
      */
     registerOnChange(callback) {
+        usbStatus.watch(function (err, value) {
+            if (err)
+                return callback(err);
 
+            if (value === 0)
+                return callback(null, 'plugged-out');
+            else if (value === 1)
+                return callback(null, 'plugged-in');
+        });
     },
 
     /**
@@ -35,17 +49,17 @@ module.exports = {
      * @param callback
      */
     getControlMode(callback) {
-        exec(`${service} get ${GPIO_SWITCH}`, function (err, stdout, stderr) {
-            if (err || stderr)
-                return callback(err || stderr);
+        controlMode.read(function (err, value) {
+            if (err)
+                return callback(err);
 
-            var value = +(stdout);
+            value = +(value); // force int
             var mode = '';
 
             if (value === 0)
-                mode = SWITCH_0;
+                mode = 'ELEMENT';
             else if (value === 1)
-                mode = SWITCH_1;
+                mode = 'USB';
 
             return callback(null, mode);
         });
@@ -61,17 +75,27 @@ module.exports = {
 
         var value = 0;
 
-        if (mode === SWITCH_0)
+        if (mode === 'ELEMENT')
             value = 0;
-        else if (mode === SWITCH_1)
+        else if (mode === 'USB')
             value = 1;
+        else
+            return callback(new Error('Mode invalid'));
 
-        // set GPIO 90 to the correct value
-        exec(`${service} set ${GPIO_SWITCH} ${value}`, function (err, stdout, stderr) {
-            if (err || stderr)
-                return callback(err || stderr);
+        // this toggles DTR reset in the printer firmware!
+        dtrTargetReset.writeSync(0);
+        dtrTargetReset.writeSync(1);
 
+        // set control mode
+        controlMode.write(value, function (err) {
+            if (err)
+                return callback(err);
 
+            // this toggles DTR reset in the printer firmware!
+            dtrTargetReset.writeSync(0);
+            dtrTargetReset.writeSync(1);
+
+            return callback(null, 'OK');
         });
     }
 }

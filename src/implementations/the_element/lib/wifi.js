@@ -115,9 +115,9 @@ module.exports = {
      * @param callback
      * @returns {*}
      */
-    connect(essid, password, customConfig, callback) {
-        if (customConfig)
-            return this.connectEnterprise(customConfig, callback);
+    connect(essid, password, callback) {
+        //if (customConfig)
+        //    return this.connectEnterprise(customConfig, callback);
 
         if (essid == null || essid.length === 0 || essid.length > 32)
             return callback(new Error('essid must be 1..32 characters'));
