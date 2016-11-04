@@ -73,29 +73,34 @@ module.exports = {
     switchControlMode(mode, callback) {
         assert(mode, 'mode is a required parameter for switching control mode');
 
-        var value = 0;
+        getControlMode(function(err, oldValue) {
+            var value = 0;
 
-        if (mode === 'ELEMENT')
-            value = 0;
-        else if (mode === 'USB')
-            value = 1;
-        else
-            return callback(new Error('Mode invalid'));
+            if (mode === 'ELEMENT')
+                value = 0;
+            else if (mode === 'USB')
+                value = 1;
+            else
+                return callback(new Error('Mode invalid'));
 
-        // this toggles DTR reset in the printer firmware!
-        dtrTargetReset.writeSync(0);
-        dtrTargetReset.writeSync(1);
-
-        // set control mode
-        controlMode.write(value, function (err) {
-            if (err)
-                return callback(err);
+            if (oldValue === value)
+                return callback(null, 'OK');
 
             // this toggles DTR reset in the printer firmware!
             dtrTargetReset.writeSync(0);
             dtrTargetReset.writeSync(1);
 
-            return callback(null, 'OK');
+            // set control mode
+            controlMode.write(value, function (err) {
+                if (err)
+                    return callback(err);
+
+                // this toggles DTR reset in the printer firmware!
+                dtrTargetReset.writeSync(0);
+                dtrTargetReset.writeSync(1);
+
+                return callback(null, 'OK');
+            });
         });
     }
 }
