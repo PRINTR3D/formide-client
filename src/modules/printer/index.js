@@ -295,7 +295,14 @@ module.exports = {
 	 */
 	setControlMode: function(mode, callback) {
 		if (this.gpio)
-			this.gpio.switchControlMode(mode, callback);
+			this.gpio.switchControlMode(mode, function (err, result) {
+				if (err)
+					return callback(err);
+
+				FormideClient.events.emit('usb.switched', `USB control mode was switched to ${mode}`);
+
+				return callback(null, result);
+			});
 		else
 			return callback(new Error('gpio implementation not found'));
 	},
