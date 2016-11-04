@@ -181,13 +181,18 @@ module.exports = {
 				// get name, size and type from file list
 				for (var i = 0; i < files.length; i++) {
 					var file = files[i];
-					file = file.replace(/ +(?= )/g,'').split(' ');
+					file = file.replace(/ +(?= )/g, '').split(' ');
 
-					if (file.length === 9)
+					var name = file[8];
+
+					if (file.length > 9)
+						name = file.splice(8, file.length - 1).join('');
+
+					if (file.length >= 8)
 						output.push({
-							name: file[8],
+							name: name,
 							size: file[4],
-							type: (file[8].charAt(file[8].length - 1) === '/') ? 'dir' : 'file' // check if file or dir (with -F)
+							type: (name.charAt(name.length - 1) === '/') ? 'dir' : 'file' // check if file or dir (with -F)
 						});
 				}
 
