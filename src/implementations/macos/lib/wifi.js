@@ -13,7 +13,7 @@ const commands = {
     connect: 'networksetup -setairportnetwork {IFACE} {SSID} {PASSWORD}',
     currentNetwork: 'networksetup -getairportnetwork {IFACE}',
     ip: 'ipconfig getifaddr {IFACE}',
-    mac: ''
+    mac: 'networksetup -getmacaddress Wi-Fi'
 };
 const scanRegex = /([0-9a-zA-Z]{1}[0-9a-zA-Z]{1}[:]{1}){5}[0-9a-zA-Z]{1}[0-9a-zA-Z]{1}/;
 const iface = 'en0';
@@ -28,8 +28,8 @@ function parseOutput(str, callback) {
     var err = null;
 
     try {
-        var lines      = str.split('\n');
-        var wifis = [];
+        var lines = str.split('\n');
+        var wifis = {};
 
         for (var i = 1, l = lines.length; i < l; i++) {
             var mac = lines[i].match(scanRegex);
@@ -37,20 +37,24 @@ function parseOutput(str, callback) {
                 continue;
             }
             var macStart = lines[i].indexOf(mac[0]);
-            var elements = lines[i].substr(macStart).split(/[ ]+/);
-            wifis.push({
-                'ssid'    : lines[i].substr(0, macStart).trim(),
-                'mac'     : elements[0].trim(),
-                'channel' : parseInt(elements[2].trim(), 10),
-                'rssi'    : parseInt(elements[1].trim())
-            });
+            var ssid = lines[i].substr(0, macStart).trim();
+
+            wifis[ssid] = { ssid };
         }
     }
     catch (ex) {
         err = ex;
     }
 
-    callback(err, wifis);
+    return callback(err, wifis);
+}
+
+/**
+ * Get MAC address from full terminal command response
+ * @param input
+ */
+function parseMacAddress(input) {
+    return input.split(' ')[2];
 }
 
 /**
@@ -59,8 +63,7 @@ function parseOutput(str, callback) {
  */
 function execute(cmd, callback) {
     exec(cmd, function(err, stdout, stderr) {
-        if (err || stderr)
-            return callback(err || stderr)
+        if (err || stderr) return callback(err || stderr)
         return callback(null, stdout.trim());
     });
 }
@@ -97,26 +100,53 @@ module.exports = {
      * @param callback
      */
     network(callback) {
-        execute(commands.currentNetwork.replace('{IFACE}', 'en0'), function (err, network) {
-            if (err)
-                return callback(err);
+        execute(commands.currentNetwork.replace('{IFACE}', iface), function (err, network) {
+            if (err) return callback(err);
             return callback(null, network);
         });
     },
 
-    ip() {
-
+    /**
+     * Get IP address
+     * @param callback
+     */
+    ip(callback) {
+        execute(commands.ip.replace('{IFACE}', iface), function (err, ip) {
+            if (err) return callback(err);
+            return callback(null, ip);
+        });
     },
 
-    mac() {
-
+    /**
+     * Get MAC address
+     * @param callback
+     */
+    mac(callback) {
+        execute(commands.mac.replace('{IFACE}', iface), function (err, mac) {
+            if (err) return callback(err);
+            return callback(null, parseMacAddress(mac));
+        });
     },
 
-    connect() {
-
+    /**
+     * Connect to a nearby network
+     * @param ssid
+     * @param password
+     * @param callback
+     */
+    connect(ssid, password, callback) {
+        execute(commands.connect.replace('{IFACE}', iface).replace('{SSID}', ssid).replace('{PASSWORD}', password), function (err, status) {
+            if (err) return callback(err);
+                console.log(status);
+            return callback(null, status);
+        });
     },
 
-    reset() {
+    /**
+     * reset Wi-Fi
+     * @param callback
+     */
+    reset(callback) {
 
     }
 }
