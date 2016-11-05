@@ -112,10 +112,6 @@ module.exports = {
                 console.log("Starting downloading: " + name);
             });
 
-            hasUpdate.autoupdater.on('download.progress', function(name, perc) {
-                process.stdout.write("Downloading " + perc + "% \033[0G");
-            });
-
             hasUpdate.autoupdater.on('download.end', function(name) {
                 console.log("Downloaded " + name);
             });
