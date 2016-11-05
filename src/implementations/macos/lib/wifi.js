@@ -89,10 +89,11 @@ module.exports = {
 
     /**
      * Get Wi-Fi status
+     * Since this feature is difficult to implement in MacOS, we act like we are always connected
      * @param callback
      */
     status(callback) {
-
+        return callback(null, 'connected,configured');
     },
 
     /**
