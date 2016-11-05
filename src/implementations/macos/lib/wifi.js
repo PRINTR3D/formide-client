@@ -7,8 +7,6 @@
 const exec = require('child_process').exec;
 
 const commands = {
-    on: 'networksetup -setairportpower {IFACE} on',
-    off: 'networksetup -setairportpower {IFACE} off',
     scan: '/System/Library/PrivateFrameworks/Apple80211.framework/Versions/A/Resources/airport scan',
     connect: 'networksetup -setairportnetwork {IFACE} {SSID} {PASSWORD}',
     currentNetwork: 'networksetup -getairportnetwork {IFACE}',
@@ -145,9 +143,10 @@ module.exports = {
 
     /**
      * reset Wi-Fi
+     * Since MacOS can't really reset all Wi-Fi (and you don't want to), we always return a success message
      * @param callback
      */
     reset(callback) {
-
+        return callback(null, { message: "Successfully reset Wi-Fi" });
     }
 }
