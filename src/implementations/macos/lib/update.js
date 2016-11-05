@@ -119,9 +119,7 @@ module.exports = {
                             if (err) return FormideClient.log.error(err);
 
                             // restart app
-                            const fork = require('child_process').fork;
-                            fork('npm run start-mac-dev');
-                            process.kill(0);
+
                         });
 
                         npm.on("log", function (message) {
