@@ -117,7 +117,11 @@ module.exports = {
 
                         npm.commands.install(deps, function (err, data) {
                             if (err) return FormideClient.log.error(err);
-                            console.log(data);
+
+                            // restart app
+                            const fork = require('child_process').fork;
+                            fork('npm run start-mac-dev');
+                            process.kill(0);
                         });
 
                         npm.on("log", function (message) {
