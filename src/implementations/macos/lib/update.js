@@ -43,7 +43,7 @@ module.exports = {
     checkForUpdate(callback) {
 
         const autoupdater = new AutoUpdater({
-            pathToJson: 'package.json',
+            pathToJson: '',
             autoupdate: false,
             checkgit: false,
             jsonhost: 'raw.githubusercontent.com',
@@ -67,11 +67,31 @@ module.exports = {
         });
 
         autoupdater.on('check.out-dated', function(v_old, v) {
-            console.warn("Your version is outdated. " + v_old + " of " + v);
-            // autoupdater.fire('download-update');
+            return callback(null, {
+                message:     'Update found',
+                needsUpdate: true,
+                imageURL:    'PRINTR3D/formide-client',
+                version:     v,
+                autoupdater: autoupdater
+            });
+        });
+
+        autoupdater.on('error', function(name, e) {
+            console.error(name, e);
         });
 
         // Start checking
         autoupdater.fire('check');
+    },
+
+    update(imageURL, signature, callback) {
+        this.checkForUpdate(function (err, hasUpdate) {
+            if (err) return callback (err);
+
+            if (!hasUpdate.autoupdater)
+                return callback(new Error('incomplete update object'));
+
+            hasUpdate.autoupdater.fire('download-update');
+        });
     }
 }
