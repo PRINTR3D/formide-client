@@ -71,6 +71,7 @@
     "nodejs-config": "^1.0.1",
     "nodejs-leds": "0.0.3",
     "nodejs-websocket": "^1.4.0",
+    "npm": "^3.10.9",
     "observed": "^1.1.1",
     "onoff": "^1.1.1",
     "passport": "^0.3.2",

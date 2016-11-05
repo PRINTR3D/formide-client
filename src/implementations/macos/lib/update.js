@@ -5,6 +5,7 @@
  */
 
 const AutoUpdater = require('auto-updater');
+const npm = require('npm');
 
 module.exports = {
 
@@ -107,9 +108,22 @@ module.exports = {
                 console.log("Update extracted successfully!");
 
                 const deps = hasUpdate.autoupdater.fire('diff-dependencies');
-                console.log(deps);
 
-                console.warn("RESTART THE APP!");
+                if (deps.length > 0)
+                    npm.load({
+                        loaded: false
+                    }, function (err) {
+                        if (err) return FormideClient.log.error(err);
+
+                        npm.commands.install(deps, function (err, data) {
+                            if (err) return FormideClient.log.error(err);
+                            console.log(data);
+                        });
+
+                        npm.on("log", function (message) {
+                            console.log(message);
+                        });
+                    });
             });
 
             hasUpdate.autoupdater.on('download.start', function(name) {
