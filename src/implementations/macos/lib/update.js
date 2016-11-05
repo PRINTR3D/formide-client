@@ -105,6 +105,10 @@ module.exports = {
 
             hasUpdate.autoupdater.on('update.extracted', function() {
                 console.log("Update extracted successfully!");
+
+                const deps = hasUpdate.autoupdater.fire('diff-dependencies');
+                console.log(deps);
+
                 console.warn("RESTART THE APP!");
             });
 
