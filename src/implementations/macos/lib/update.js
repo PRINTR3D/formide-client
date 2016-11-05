@@ -92,6 +92,33 @@ module.exports = {
                 return callback(new Error('incomplete update object'));
 
             hasUpdate.autoupdater.fire('download-update');
+
+            hasUpdate.autoupdater.on('update.downloaded', function() {
+                console.log("Update downloaded and ready for install");
+                hasUpdate.autoupdater.fire('extract');
+            });
+
+            hasUpdate.autoupdater.on('update.not-installed', function() {
+                console.log("The Update was already in your folder! It's read for install");
+                hasUpdate.autoupdater.fire('extract');
+            });
+
+            hasUpdate.autoupdater.on('update.extracted', function() {
+                console.log("Update extracted successfully!");
+                console.warn("RESTART THE APP!");
+            });
+
+            hasUpdate.autoupdater.on('download.start', function(name) {
+                console.log("Starting downloading: " + name);
+            });
+
+            hasUpdate.autoupdater.on('download.progress', function(name, perc) {
+                process.stdout.write("Downloading " + perc + "% \033[0G");
+            });
+
+            hasUpdate.autoupdater.on('download.end', function(name) {
+                console.log("Downloaded " + name);
+            });
         });
     }
 }
