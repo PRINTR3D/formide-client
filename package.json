@@ -17,7 +17,9 @@
     "test": "NODE_ENV=test mocha --harmony test/**/*.test.js",
     "clean": "rm -rf ./node_modules",
     "build-dist": "bower update && grunt",
-    "build-docs": "./node_modules/.bin/apidoc -i ./src"
+    "build-docs": "./node_modules/.bin/apidoc -i ./src",
+    "start-mac": "FORMIDE_CLIENT_IMPLEMENTATION=macos NODE_ENV=production node app",
+    "start-mac-dev": "FORMIDE_CLIENT_IMPLEMENTATION=macos NODE_ENV=development-cluster node app"
   },
   "dependencies": {
     "async": "^2.1.1",
