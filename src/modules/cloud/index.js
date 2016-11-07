@@ -370,6 +370,9 @@ module.exports = {
 
 		// get MAC address, then ask API for setup code
 		getMac((err, macAddress) => {
+
+			console.log('macAddress', macAddress);
+
 			request
 				.get(`${FormideClient.config.get('cloud.url')}/devices/register/code?mac_address=${macAddress}`, {
 					strictSSL: false
