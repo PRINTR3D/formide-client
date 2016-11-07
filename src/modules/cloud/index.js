@@ -85,14 +85,14 @@ module.exports = {
 		 */
 		this.cloud.on('connect', () => {
 			let getMac = getmac.getMac;
-			if (self.tools && self.tools.getMac instanceof Function)
-				getMac = self.tools.getMac;
+			if (self.tools && self.tools.mac instanceof Function)
+				getMac = self.tools.mac;
 
 			let getIp = callback => {
 				setImmediate(() => callback(null, internalIp()));
 			};
-			if (self.tools && self.tools.getIp instanceof Function)
-				getIp = self.tools.getIp;
+			if (self.tools && self.tools.ip instanceof Function)
+				getIp = self.tools.ip;
 
 			// authenticate formideos based on mac address and api token, also
 			// sends permissions for faster blocking via cloud
@@ -321,8 +321,8 @@ module.exports = {
 			setImmediate(() => callback(null, internalIp()));
 		};
 
-		if (this.tools && this.tools.getIp instanceof Function)
-			getIp = this.tools.getIp;
+		if (this.tools && this.tools.ip instanceof Function)
+			getIp = this.tools.ip;
 
 		getIp((err, internalIpAddress) => {
 			return cb(err, internalIpAddress);
@@ -365,8 +365,8 @@ module.exports = {
 	 */
 	generateCode: function(cb) {
 		let getMac = getmac.getMac;
-		if (this.tools && this.tools.getMac instanceof Function)
-			getMac = this.tools.getMac;
+		if (this.tools && this.tools.mac instanceof Function)
+			getMac = this.tools.mac;
 
 		// get MAC address, then ask API for setup code
 		getMac((err, macAddress) => {
