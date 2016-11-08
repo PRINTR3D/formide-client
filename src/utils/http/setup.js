@@ -17,31 +17,31 @@ function getWlanSetupPage(wifi, callback) {
 
         const template = Handlebars.compile(data);
 
-        // wifi.mac((macErr, macAddress) => {
-        //     if (macErr)
-        //         return callback(macErr);
-        //
-        //     wifi.list((wifiErr, ssids) => {
-        //         if (wifiErr)
-        //             return callback(wifiErr);
-        //
-        const networks = [];
-        //         for (const ssid in ssids)
-        //             networks.push({ ssid });
+        wifi.mac((macErr, macAddress) => {
+            if (macErr)
+                return callback(macErr);
 
-        const platformUrl = FormideClient.config.get('cloud.platformUrl');
-        const registrationToken = uuid.v4();
-        const redirectUrl = `${platformUrl}/#/manage/devices/setup?registration_token=${registrationToken}`
+            wifi.list((wifiErr, ssids) => {
+                if (wifiErr)
+                    return callback(wifiErr);
 
-        const html = template({
-            networks,
-            // macAddress,
-            registrationToken,
-            redirectUrl
+                const networks = [];
+                for (const ssid in ssids)
+                    networks.push({ssid});
+
+                const platformUrl = FormideClient.config.get('cloud.platformUrl');
+                const registrationToken = uuid.v4();
+                const redirectUrl = `${platformUrl}/#/manage/devices/setup?registration_token=${registrationToken}`
+
+                const html = template({
+                    networks,
+                    macAddress,
+                    registrationToken,
+                    redirectUrl
+                });
+                return callback(null, html);
+            });
         });
-        return callback(null, html);
-        //     });
-        // });
     });
 }
 
