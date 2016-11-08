@@ -108,14 +108,18 @@ module.exports = {
 			next();
 		});
 
-		// root url containing device information
-		// this.app.get('/', function (req, res) {
-		// 	return res.ok({
-		// 		versions:    FormideClient.config.getVersions(),
-		// 	 	environment: FormideClient.config.environment,
-		// 		mac: 		 FormideClient.config.getMacAddress()
-		// 	});
-		// });
+		// Root URL containing Wi-Fi setup page
+		this.app.get('/', function (req, res) {
+			if (FormideClient.ci && FormideClient.ci.wifi) {
+				const setup = require('./setup');
+				setup(FormideClient.ci.wifi, function (err, html) {
+					if (err)
+						return res.serverError(err);
+
+					return res.send(html);
+				});
+			}
+		});
 	},
 
 	setupPassport: function() {

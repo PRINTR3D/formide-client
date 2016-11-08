@@ -1,3 +1,5 @@
+'use strict';
+
 /*
  *	This code was created for Printr B.V. It is open source under the formide-client package.
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
@@ -8,23 +10,33 @@ const AbstractPrinter = require('./abstractPrinter');
 
 module.exports = {
 
+	// global params
 	numberOfPorts: 0,
 	driver: null,
 	printers: {},
 	config: {},
+	gpio: null,
 
+	/**
+	 * Initialize printer module
+	 * @param config
+	 */
 	init: function(config) {
 
 		var self = this;
 		this.config = config;
 
-		// loaded via katana-slicer npm package and node-pre-gyp
+		// loaded via formide-drivers npm package and node-pre-gyp
 		try {
 			this.driver = require('formide-drivers');
 		}
 		catch (e) {
 			FormideClient.log.warn('Cannot load drivers binary, try re-installing formide-drivers');
 		}
+
+		// load native gpio module if found
+		if (FormideClient.ci && FormideClient.ci.gpio)
+			this.gpio = FormideClient.ci.gpio;
 
 		// check if any items were printing when a hard reboot was done (e.g. power loss) and set those back to queued
 		FormideClient.db.QueueItem
@@ -44,7 +56,7 @@ module.exports = {
 				}
 
 				else if (event) {
-					// an event came back which we can use to do sometehing with!
+					// an event came back which we can use to do something with!
 
 					if (event.type === 'printerConnected') {
 						self.printerConnected(event.port);
@@ -55,8 +67,11 @@ module.exports = {
 					else if (event.type === 'printerOnline') {
 						self.printerOnline(event.port);
 					}
-					else if (event.type === 'printFinished') {
+					else if (event.type === 'printFinished' || event.type === 'printerFinished') {
 						self.printFinished(event.port, event.printjobID);
+					}
+					else if (event.type === 'printerInfo') {
+						self.printerEvent('info', event);
 					}
 					else if (event.type === 'printerWarning') {
 						self.printerEvent('warning', event);
@@ -68,6 +83,10 @@ module.exports = {
 			});
 	},
 
+	/**
+	 * Event handling for printer connected
+	 * @param port
+	 */
 	printerConnected: function(port) {
 		if (this.numberOfPorts < 4) {
 			var self = this;
@@ -80,6 +99,10 @@ module.exports = {
 		}
 	},
 
+	/**
+	 * Event handling for printer disconnected
+	 * @param port
+	 */
 	printerDisconnected: function(port) {
 		const self = this;
 		this.numberOfPorts--;
@@ -97,12 +120,21 @@ module.exports = {
 		}
 	},
 
+	/**
+	 * Event handling for printer online
+	 * @param port
+	 */
 	printerOnline: function(port) {
 		this.numberOfPorts++;
 		FormideClient.log('Printer online: ' + port);
 		FormideClient.events.emit('printer.online', { port: port });
 	},
 
+	/**
+	 * Event handling for printer finished
+	 * @param port
+	 * @param printjobId
+	 */
 	printFinished: function(port, printjobId) {
 		if (this.printers[port.split("/")[2]] !== undefined) {
 			this.printers[port.split("/")[2]].printFinished(printjobId);
@@ -118,6 +150,10 @@ module.exports = {
 		FormideClient.events.emit('printer.' + level, event);
 	},
 
+	/**
+	 * Get a list of all connected printers and their status
+	 * @returns {{}}
+	 */
 	getPrinters: function() {
 		var result = {};
 		for(var i in this.printers) {
@@ -126,53 +162,177 @@ module.exports = {
 		return result;
 	},
 
+	/**
+	 * Get available commands for a printer by port
+	 * @param port
+	 * @param callback
+	 * @returns {*}
+	 */
 	getCommands: function(port, callback) {
 		if (this.printers[port] == undefined) return callback(null, false);
 		callback(this.printers[port].getCommands());
 	},
 
+	/**
+	 * Get status for a printer by port
+	 * @param port
+	 * @param callback
+	 * @returns {*}
+	 */
 	getStatus: function(port, callback) {
 		if (this.printers[port] == undefined) return callback(null, false);
 		callback(null, this.printers[port].getStatus());
 	},
 
+	/**
+	 * Control a printer by port
+	 * @param port
+	 * @param data
+	 * @param callback
+	 * @returns {*}
+	 */
 	printerControl: function (port, data, callback) {
 		if (this.printers[port] == undefined) return callback(null, false);
 		this.printers[port].command(data.command, data.parameters, callback);
 	},
 
+	/**
+	 * Send custom G-code to a printer by port
+	 * @param port
+	 * @param gcode
+	 * @param callback
+	 * @returns {*}
+	 */
 	gcode: function(port, gcode, callback) {
 		if (this.printers[port] == undefined) return callback(null, false);
 		this.printers[port].gcode(gcode, callback);
 	},
 
+	/**
+	 * Send tune command to a printer by port
+	 * @param port
+	 * @param tuneCode
+	 * @param callback
+	 * @returns {*}
+	 */
 	tuneGcode: function (port, tuneCode, callback) {
 		if (this.printers[port] == undefined) return callback(null, false);
 		this.printers[port].tune(tuneCode, callback);
 	},
 
+	/**
+	 * Start a printer by queueItemId and port
+	 * @param port
+	 * @param id
+	 * @param callback
+	 * @returns {*}
+	 */
 	startPrint: function(port, id, callback) {
 		if (this.printers[port] == undefined) return callback(null, false);
 		this.printers[port].startPrint(id, callback);
 	},
 
+	/**
+	 * Stop a printer by port
+	 * @param port
+	 * @param callback
+	 * @returns {*}
+	 */
 	stopPrint: function(port, callback) {
 		if (this.printers[port] == undefined) return callback(null, false);
 		this.printers[port].stopPrint(callback);
 	},
 
+	/**
+	 * Pause a printer by port
+	 * @param port
+	 * @param callback
+	 * @returns {*}
+	 */
 	pausePrint: function(port, callback) {
 		if (this.printers[port] == undefined) return callback(null, false);
 		this.printers[port].pausePrint(callback);
 	},
 
+	/**
+	 * Resume a printer by port
+	 * @param port
+	 * @param callback
+	 * @returns {*}
+	 */
 	resumePrint: function(port, callback) {
 		if (this.printers[port] == undefined) return callback(null, false);
 		this.printers[port].resumePrint(callback);
 	},
 
+	/**
+	 * Print a file by absolute file path and port
+	 * @param port
+	 * @param file
+	 * @param callback
+	 * @returns {*}
+	 */
 	printFile: function(port, file, callback) {
 		if (this.printers[port] == undefined) return callback(null, false);
 		this.printers[port].printFile(file, callback)
+	},
+
+	/**
+	 * Get the current control mode for integrated printers
+	 * @param callback
+	 */
+	getControlMode: function(callback) {
+		if (this.gpio)
+			this.gpio.getControlMode(callback);
+		else
+			return callback(new Error('gpio implementation not found'));
+	},
+
+	/**
+	 * Change the control mode for integrated printers
+	 * @param mode
+	 * @param callback
+	 */
+	setControlMode: function(mode, callback) {
+		if (this.gpio)
+			this.gpio.switchControlMode(mode, function (err, result) {
+				if (err)
+					return callback(err);
+
+				FormideClient.events.emit('usb.switched', `USB control mode was switched to ${mode}`);
+
+				return callback(null, result);
+			});
+		else
+			return callback(new Error('gpio implementation not found'));
+	},
+
+	/**
+	 * Enable events from USB plugging
+	 * @param callback
+	 */
+	enableControlMode: function(callback) {
+		const self = this;
+		if (this.gpio) {
+			this.gpio.registerOnChange(function (err, value) {
+				if (err)
+					FormideClient.log.error('Error handling USB host change', e);
+				else {
+					FormideClient.events.emit(`usb.${value}`, `USB host was ${value}`)
+
+					if (value === 'plugged-out')
+						self.gpio.switchControlMode('ELEMENT', function(err, result) {
+							if (err)
+								FormideClient.log.error('Error handling USB host switch back', e);
+							else
+								FormideClient.log(result);
+						});
+				}
+			});
+
+			callback();
+		}
+		else
+			return callback(new Error('gpio implementation not found'));
 	}
 };

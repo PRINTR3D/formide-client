@@ -31,6 +31,18 @@ module.exports = dbConfig => {
 	// Ensure needed files and dirs are available
     require('./utils/ensureNeeds');
 
+	var useImplementation = 'the_element';
+
+	// Client implementation, default is the_element
+	try {
+		useImplementation = process.env.FORMIDE_CLIENT_IMPLEMENTATION || 'the_element';
+		FormideClient.ci = require(`./implementations/${useImplementation}`);
+	}
+	catch (e) {
+		console.warn(`No native client implementation found at implementations/${useImplementation}, continuing without...`);
+		console.error(e);
+	}
+
 	// Events
 	FormideClient.events = require('./utils/events.js');
 
@@ -45,15 +57,6 @@ module.exports = dbConfig => {
 
 	// Module manager
 	FormideClient.moduleManager = require('./utils/moduleManager.js')();
-
-	// Client implementation
-	try {
-		const ciLocation = process.env.FORMIDE_CLIENT_IMPLEMENTATION || 'element-tools';
-		FormideClient.ci = require(ciLocation);
-	}
-	catch (e) {
-		FormideClient.log.warn('No native client implementation found');
-	}
 
 	// Array to keep track of installed modules
 	FormideClient.modules = [];
