@@ -5,6 +5,7 @@
  *	Copyright (c) 2015, All rights reserved, http://printr.nl
  */
 
+const crypto = require('crypto');
 const path = require('path');
 const fork = require('child_process').fork;
 
@@ -15,13 +16,12 @@ const fork = require('child_process').fork;
 function comm() {
     const driver = fork(path.join(FormideClient.appRoot, 'node_modules', 'formide-drivers', 'thread.js'));
 
-    var callbacks = [];
-
     /**
      * Listen to driver events
      * @param callback
      */
     function on(callback) {
+
         // handle driver process error
         driver.on('error', function (err) {
             return callback(err);
@@ -52,7 +52,7 @@ function comm() {
      * @private
      */
     function _sendWithCallback(method, data, callback) {
-        const callbackId =  1;//callbacks.push(callback);
+        const callbackId = crypto.randomBytes(64).toString('hex');
         driver.send({ method, callbackId, data });
 
         // wait for callback
@@ -98,7 +98,7 @@ function comm() {
      * @param callback
      */
     function printFile(fileName, printjobId, serialPortPath, callback) {
-
+        return _sendWithCallback('printFile', { fileName, printjobId, serialPortPath }, callback);
     }
 
     /**
@@ -106,7 +106,7 @@ function comm() {
      * @param callback
      */
     function getPrinterList(callback) {
-
+        return _sendWithCallback('getPrinterList', {}, callback);
     }
 
     /**
@@ -115,7 +115,7 @@ function comm() {
      * @param callback
      */
     function getPrinterInfo(serialPortPath, callback) {
-
+        return _sendWithCallback('getPrinterInfo', { serialPortPath }, callback);
     }
 
     /**
@@ -124,7 +124,7 @@ function comm() {
      * @param callback
      */
     function pausePrint(serialPortPath, callback) {
-
+        return _sendWithCallback('pausePrint', { serialPortPath }, callback);
     }
 
     /**
@@ -133,7 +133,7 @@ function comm() {
      * @param callback
      */
     function resumePrint(serialPortPath, callback) {
-
+        return _sendWithCallback('resumePrint', { serialPortPath }, callback);
     }
 
     /**
@@ -143,7 +143,7 @@ function comm() {
      * @param callback
      */
     function stopPrint(serialPortPath, stopGcode, callback) {
-
+        return _sendWithCallback('stopPrint', { stopGcode, serialPortPath }, callback);
     }
 
     // return functions
