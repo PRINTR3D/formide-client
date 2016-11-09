@@ -36,31 +36,28 @@ module.exports = {
 				if (err)
 					FormideClient.log.error(err);
 
-				console.log(event);
-
-				if (!event)
-					FormideClient.log.warn('Undefined event', event);
-
-				if (event.type === 'printerConnected') {
-					self.printerConnected(event.port);
-				}
-				else if (event.type === 'printerDisconnected') {
-					self.printerDisconnected(event.port);
-				}
-				else if (event.type === 'printerOnline') {
-					self.printerOnline(event.port);
-				}
-				else if (event.type === 'printFinished' || event.type === 'printerFinished') {
-					self.printFinished(event.port, event.printjobID);
-				}
-				else if (event.type === 'printerInfo') {
-					self.printerEvent('info', event);
-				}
-				else if (event.type === 'printerWarning') {
-					self.printerEvent('warning', event);
-				}
-				else if (event.type === 'printerError') {
-					self.printerEvent('error', event);
+				if (event) {
+					if (event.type === 'printerConnected') {
+						self.printerConnected(event.port);
+					}
+					else if (event.type === 'printerDisconnected') {
+						self.printerDisconnected(event.port);
+					}
+					else if (event.type === 'printerOnline') {
+						self.printerOnline(event.port);
+					}
+					else if (event.type === 'printFinished' || event.type === 'printerFinished') {
+						self.printFinished(event.port, event.printjobID);
+					}
+					else if (event.type === 'printerInfo') {
+						self.printerEvent('info', event);
+					}
+					else if (event.type === 'printerWarning') {
+						self.printerEvent('warning', event);
+					}
+					else if (event.type === 'printerError') {
+						self.printerEvent('error', event);
+					}
 				}
 			});
 		}

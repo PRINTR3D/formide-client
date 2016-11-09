@@ -21,6 +21,11 @@ function comm() {
         driver.kill();
     });
 
+    // handle driver process error
+    driver.on('error', function (err) {
+        FormideClient.log.error(err);
+    });
+
     // hold callbacks
     var callbacks = {};
 
@@ -29,13 +34,6 @@ function comm() {
      * @param callback
      */
     function on(callback) {
-
-        // handle driver process error
-        driver.on('error', function (err) {
-            return callback(err);
-        });
-
-        // handle incoming messages from driver process
         driver.on('message', function (message) {
             if (!message.type)
                 callback(new Error('Driver message has incorrect format'));
@@ -68,7 +66,7 @@ function comm() {
         setTimeout(function() {
             if (callbacks[callbackId]) {
                 callback(new Error('timeout'));
-                delete callbacks[message.callbackId];
+                delete callbacks[callbackId];
             }
         }, 5000);
     }
@@ -148,7 +146,7 @@ function comm() {
      * @param callback
      */
     function stopPrint(serialPortPath, stopGcode, callback) {
-        return _sendWithCallback('stopPrint', [stopGcode, serialPortPath], callback);
+        return _sendWithCallback('stopPrint', [serialPortPath, stopGcode], callback);
     }
 
     // return functions
