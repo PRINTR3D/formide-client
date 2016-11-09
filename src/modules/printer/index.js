@@ -7,6 +7,8 @@
 
 // dependencies
 const AbstractPrinter = require('./abstractPrinter');
+const Driver = require('./comm');
+const path = require('path');
 
 module.exports = {
 
@@ -28,36 +30,13 @@ module.exports = {
 
 		// loaded via formide-drivers npm package and node-pre-gyp
 		try {
-			this.driver = require('formide-drivers');
-		}
-		catch (e) {
-			FormideClient.log.warn('Cannot load drivers binary, try re-installing formide-drivers');
-		}
+			this.driver = new Driver();
 
-		// load native gpio module if found
-		if (FormideClient.ci && FormideClient.ci.gpio)
-			this.gpio = FormideClient.ci.gpio;
+			this.driver.on(function (err, event) {
+				if (err)
+					FormideClient.log.error(err);
 
-		// check if any items were printing when a hard reboot was done (e.g. power loss) and set those back to queued
-		FormideClient.db.QueueItem
-			.update({ status: 'printing' }, { status: 'queued' })
-			.exec(function(err) {
-				if (err) FormideClient.log.warn(err);
-			});
-
-		// start drivers
-		if (this.driver !== null)
-			this.driver.start(function(err, started, event) {
-				if (err) {
-					FormideClient.log.error('formide-drivers err: ' + err.message);
-				}
-				else if (started) {
-					FormideClient.log('formide-drivers started successfully');
-				}
-
-				else if (event) {
-					// an event came back which we can use to do something with!
-
+				if (event) {
 					if (event.type === 'printerConnected') {
 						self.printerConnected(event.port);
 					}
@@ -80,6 +59,22 @@ module.exports = {
 						self.printerEvent('error', event);
 					}
 				}
+			});
+		}
+		catch (e) {
+			FormideClient.log.warn('Cannot load drivers binary, try re-installing formide-drivers');
+			console.log(e);
+		}
+
+		// load native gpio module if found
+		if (FormideClient.ci && FormideClient.ci.gpio)
+			this.gpio = FormideClient.ci.gpio;
+
+		// check if any items were printing when a hard reboot was done (e.g. power loss) and set those back to queued
+		FormideClient.db.QueueItem
+			.update({ status: 'printing' }, { status: 'queued' })
+			.exec(function(err) {
+				if (err) FormideClient.log.warn(err);
 			});
 	},
 
