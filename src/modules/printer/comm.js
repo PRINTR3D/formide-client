@@ -155,6 +155,7 @@ function comm() {
     return {
         on,
         sendGcode,
+        sendTuneGcode,
         printFile,
         getPrinterList,
         getPrinterInfo,

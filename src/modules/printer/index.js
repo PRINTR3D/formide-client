@@ -36,6 +36,8 @@ module.exports = {
 				if (err)
 					FormideClient.log.error(err);
 
+				console.log(event);
+
 				if (!event)
 					FormideClient.log.warn('Undefined event', event);
 
