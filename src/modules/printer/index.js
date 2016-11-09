@@ -7,6 +7,7 @@
 
 // dependencies
 const AbstractPrinter = require('./abstractPrinter');
+const path = require('path');
 
 module.exports = {
 
@@ -28,10 +29,34 @@ module.exports = {
 
 		// loaded via formide-drivers npm package and node-pre-gyp
 		try {
-			this.driver = require('formide-drivers');
+			// this.driver = require('formide-drivers');
+
+			const fork = require('child_process').fork;
+			const testDriver = fork(path.join(FormideClient.appRoot, 'node_modules', 'formide-drivers', 'thread.js'));
+
+			testDriver.on('error', function (err) {
+				FormideClient.log.error('formide-drivers error', err);
+			});
+
+			testDriver.on('message', function (response) {
+				console.log('main thread message', response);
+
+				if (response.type)
+					if (response.type === 'event')
+						handleEvent(response.data);
+					else if (response.type === 'error')
+						FormideClient.log.error('formide-drivers error', response.data);
+					else if (response.type === 'started')
+						FormideClient.log('formide-drivers started successfully in separate thread');
+
+			});
+
+			// start the drivers
+			testDriver.send({ action: 'start', data: {} });
 		}
 		catch (e) {
 			FormideClient.log.warn('Cannot load drivers binary, try re-installing formide-drivers');
+			console.log(e);
 		}
 
 		// load native gpio module if found
@@ -44,6 +69,33 @@ module.exports = {
 			.exec(function(err) {
 				if (err) FormideClient.log.warn(err);
 			});
+
+		function handleEvent(event) {
+
+			console.log('incoming driver event', event);
+
+			// if (event.type === 'printerConnected') {
+			// 	self.printerConnected(event.port);
+			// }
+			// else if (event.type === 'printerDisconnected') {
+			// 	self.printerDisconnected(event.port);
+			// }
+			// else if (event.type === 'printerOnline') {
+			// 	self.printerOnline(event.port);
+			// }
+			// else if (event.type === 'printFinished' || event.type === 'printerFinished') {
+			// 	self.printFinished(event.port, event.printjobID);
+			// }
+			// else if (event.type === 'printerInfo') {
+			// 	self.printerEvent('info', event);
+			// }
+			// else if (event.type === 'printerWarning') {
+			// 	self.printerEvent('warning', event);
+			// }
+			// else if (event.type === 'printerError') {
+			// 	self.printerEvent('error', event);
+			// }
+		}
 
 		// start drivers
 		if (this.driver !== null)
