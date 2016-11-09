@@ -14,7 +14,7 @@ const fork = require('child_process').fork;
  * @param callback
  */
 function comm() {
-    const driver = fork(path.join(FormideClient.appRoot, 'node_modules', 'formide-drivers', 'thread.js'));
+    const driver = fork(path.join(__dirname, 'thread.js'));
 
     // when client process stops, also kill driver process
     process.on('exit', function () {
@@ -71,17 +71,6 @@ function comm() {
                 delete callbacks[message.callbackId];
             }
         }, 5000);
-
-        // listen for incoming callback message
-        // driver.on('message', function (message) {
-        //     if (message.type === 'callback')
-        //         if (message.callbackId === callbackId) {
-        //             if (message.err)
-        //                 return callback(new Error(message.err));
-        //             else
-        //                 return callback(null, message.data);
-        //         }
-        // });
     }
 
     /**
