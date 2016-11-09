@@ -33,6 +33,14 @@ module.exports = {
 			this.driver = new Driver();
 
 			this.driver.on(function (err, event) {
+				if (err)
+					FormideClient.log.error(err);
+
+				if (!event)
+					FormideClient.log.warn('Undefined event', event);
+
+				console.log('driver event', event);
+
 				if (event.type === 'printerConnected') {
 					self.printerConnected(event.port);
 				}

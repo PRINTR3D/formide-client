@@ -16,6 +16,14 @@ const fork = require('child_process').fork;
 function comm() {
     const driver = fork(path.join(FormideClient.appRoot, 'node_modules', 'formide-drivers', 'thread.js'));
 
+    // when client process stops, also kill driver process
+    process.on('exit', function () {
+        driver.kill();
+    });
+
+    // hold callbacks
+    var callbacks = {};
+
     /**
      * Listen to driver events
      * @param callback
@@ -29,18 +37,18 @@ function comm() {
 
         // handle incoming messages from driver process
         driver.on('message', function (message) {
-
-            if (!message.type || !message.data)
-                return callback(new Error('Driver message has incorrect format'));
-
-            if (message.type === 'started')
+            if (!message.type)
+                callback(new Error('Driver message has incorrect format'));
+            else if (message.type === 'started')
                 FormideClient.log('formide-drivers started successfully in separate thread');
-
-            else if (message.type === 'error')
+            else if (message.type === 'error' && message.data)
                 FormideClient.log.error('formide-drivers error', message.data);
-
-            else if (message.type === 'event')
-                return callback(null, message.data);
+            else if (message.type === 'event' && message.data)
+                callback(null, message.data);
+            else if (message.type === 'callback' && message.callbackId) {
+                callbacks[message.callbackId].apply(null, [message.err, message.result]);
+                delete callbacks[message.callbackId];
+            }
         });
     }
 
@@ -54,18 +62,26 @@ function comm() {
     function _sendWithCallback(method, data, callback) {
         const callbackId = crypto.randomBytes(64).toString('hex');
         driver.send({ method, callbackId, data });
+        callbacks[callbackId] = callback;
 
         // wait for callback
         setTimeout(function() {
-            return callback(new Error('timeout'));
-        });
+            if (callbacks[callbackId]) {
+                callback(new Error('timeout'));
+                delete callbacks[message.callbackId];
+            }
+        }, 5000);
 
         // listen for incoming callback message
-        driver.on('message', function (message) {
-            if (message.type && message.type === 'callback')
-                if (message.callbackId === callbackId)
-                    return callback(null, message.data); // TODO: handle error?
-        });
+        // driver.on('message', function (message) {
+        //     if (message.type === 'callback')
+        //         if (message.callbackId === callbackId) {
+        //             if (message.err)
+        //                 return callback(new Error(message.err));
+        //             else
+        //                 return callback(null, message.data);
+        //         }
+        // });
     }
 
     /**
@@ -76,7 +92,7 @@ function comm() {
      * @returns {*}
      */
     function sendGcode(gcodeCommand, serialPortPath, callback) {
-        return _sendWithCallback('sendGcode', { gcodeCommand, serialPortPath }, callback);
+        return _sendWithCallback('sendGcode', [gcodeCommand, serialPortPath], callback);
     }
 
     /**
@@ -87,7 +103,7 @@ function comm() {
      * @returns {*}
      */
     function sendTuneGcode(gcodeCommand, serialPortPath, callback) {
-        return _sendWithCallback('sendTuneGcode', { gcodeCommand, serialPortPath }, callback);
+        return _sendWithCallback('sendTuneGcode', [gcodeCommand, serialPortPath], callback);
     }
 
     /**
@@ -98,7 +114,7 @@ function comm() {
      * @param callback
      */
     function printFile(fileName, printjobId, serialPortPath, callback) {
-        return _sendWithCallback('printFile', { fileName, printjobId, serialPortPath }, callback);
+        return _sendWithCallback('printFile', [fileName, printjobId, serialPortPath], callback);
     }
 
     /**
@@ -106,7 +122,7 @@ function comm() {
      * @param callback
      */
     function getPrinterList(callback) {
-        return _sendWithCallback('getPrinterList', {}, callback);
+        return _sendWithCallback('getPrinterList', [], callback);
     }
 
     /**
@@ -115,7 +131,7 @@ function comm() {
      * @param callback
      */
     function getPrinterInfo(serialPortPath, callback) {
-        return _sendWithCallback('getPrinterInfo', { serialPortPath }, callback);
+        return _sendWithCallback('getPrinterInfo', [serialPortPath], callback);
     }
 
     /**
@@ -124,7 +140,7 @@ function comm() {
      * @param callback
      */
     function pausePrint(serialPortPath, callback) {
-        return _sendWithCallback('pausePrint', { serialPortPath }, callback);
+        return _sendWithCallback('pausePrint', [serialPortPath], callback);
     }
 
     /**
@@ -133,7 +149,7 @@ function comm() {
      * @param callback
      */
     function resumePrint(serialPortPath, callback) {
-        return _sendWithCallback('resumePrint', { serialPortPath }, callback);
+        return _sendWithCallback('resumePrint', [serialPortPath], callback);
     }
 
     /**
@@ -143,7 +159,7 @@ function comm() {
      * @param callback
      */
     function stopPrint(serialPortPath, stopGcode, callback) {
-        return _sendWithCallback('stopPrint', { stopGcode, serialPortPath }, callback);
+        return _sendWithCallback('stopPrint', [stopGcode, serialPortPath], callback);
     }
 
     // return functions
