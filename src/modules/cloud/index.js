@@ -74,15 +74,15 @@ module.exports = {
 		});
 
 		this.cloud.on('connect_error', function (err) {
-			FormideClient.log.warn('Connecting to cloud', err);
+			FormideClient.log.warn('Connecting to cloud');
 		});
 
 		this.cloud.on('connect_timeout', function (err) {
-			FormideClient.log.error('Timeout when connecting to cloud', err);
+			FormideClient.log.error('Timeout when connecting to cloud');
 		});
 
 		this.cloud.on('reconnect_failed', function (err) {
-			FormideClient.log.error('Failed reconnecting to cloud', err);
+			FormideClient.log.error('Failed reconnecting to cloud');
 		});
 
 		/**
