@@ -276,24 +276,28 @@ module.exports = {
 			const throttle = new Throttle(10000000);
 
 			request
-			.get(`${FormideClient.config.get('cloud.url')}/files/download/gcode?hash=${data.gcode}`, {
-				strictSSL: false
-			})
-			.on('error', (err) => {
-				FormideClient.log.error('error downloading gcode:', err.message);
-				FormideClient.events.emit('queueItem.downloadError', { title: `${data.printJob.name} has failed to download`, message: err.message });
-			})
-			.pipe(throttle)
-			.pipe(fws)
-			.on('finish', () => {
-				FormideClient.log('finished downloading gcode. Received ' + fws.bytesWritten + ' bytes');
+				.get(`${FormideClient.config.get('cloud.url')}/files/download/gcode?hash=${data.gcode}`, {
+					strictSSL: false
+				})
+				.on('error', (err) => {
+					FormideClient.log.error('error downloading gcode:', err.message);
+					FormideClient.events.emit('queueItem.downloadError', { title: `${data.printJob.name} has failed to download`, message: err.message });
+				})
+				.pipe(throttle)
+				.pipe(fws)
+				.on('error', (err) => {
+					FormideClient.log.error('error downloading gcode:', err.message);
+					FormideClient.events.emit('queueItem.downloadError', { title: `${data.printJob.name} has failed to download`, message: err.message });
+				})
+				.on('finish', () => {
+					FormideClient.log('finished downloading gcode. Received ' + fws.bytesWritten + ' bytes');
 
-				// set status to queued to indicate it's ready to print
-				queueItem.status = 'queued';
-				queueItem.save(() => {
-					FormideClient.events.emit('queueItem.downloaded', { title: `${data.printJob.name} is ready to print`, message: 'The gcode was downloaded and is now ready to be printed' });
+					// set status to queued to indicate it's ready to print
+					queueItem.status = 'queued';
+					queueItem.save(() => {
+						FormideClient.events.emit('queueItem.downloaded', { title: `${data.printJob.name} is ready to print`, message: 'The gcode was downloaded and is now ready to be printed' });
+					});
 				});
-			});
 		});
 	},
 
