@@ -63,21 +63,26 @@ module.exports = {
 			timeout: 5000
 		});
 
+		// handle local connection errors
+		this.local.on('error', function (err) {
+			FormideClient.log.error('Error with local connection', err);
+		});
+
 		// handle cloud connection errors
 		this.cloud.on('error', function (err) {
-			FormideClient.log.error("Error with cloud connection: " + err);
+			FormideClient.log.error('Error with cloud connection', err);
 		});
 
 		this.cloud.on('connect_error', function (err) {
-			FormideClient.log.warn("Connecting to cloud: " + err);
+			FormideClient.log.warn('Connecting to cloud', err);
 		});
 
 		this.cloud.on('connect_timeout', function (err) {
-			FormideClient.log.error("Timeout when connecting to cloud: " + err);
+			FormideClient.log.error('Timeout when connecting to cloud', err);
 		});
 
 		this.cloud.on('reconnect_failed', function (err) {
-			FormideClient.log.error("Failed reconnecting to cloud: " + err);
+			FormideClient.log.error('Failed reconnecting to cloud', err);
 		});
 
 		/**
