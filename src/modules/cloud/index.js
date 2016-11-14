@@ -229,7 +229,7 @@ module.exports = {
 					return callback(null, body);
 				}).on('error', (err) => {
 					FormideClient.log.error('http GET proxy error:', err);
-				});
+				}).end();
 			}
 			else {
 				request({
@@ -244,7 +244,7 @@ module.exports = {
 					return callback(null, body);
 				}).on('error', (err) => {
 					FormideClient.log.error(`http ${data.method} proxy error:`, err);
-				});
+				}).end();
 			}
 		});
 	},
