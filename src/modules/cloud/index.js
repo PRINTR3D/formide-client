@@ -51,7 +51,7 @@ module.exports = {
 			reconnectionAttempts: 1000,
 			reconnectionDelayMax: 5000,
 			transports: ['websocket'],
-			timeout: 5000
+			// timeout: 5000
 		});
 
 		this.local = socket('ws://127.0.0.1:' + FormideClient.http.server.address().port, {
@@ -60,7 +60,7 @@ module.exports = {
 			reconnectionAttempts: 1000,
 			reconnectionDelayMax: 5000,
 			transports: ['websocket', 'polling'],
-			timeout: 5000
+			// timeout: 5000
 		});
 
 		// handle local connection errors
