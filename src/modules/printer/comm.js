@@ -44,8 +44,10 @@ function comm() {
             else if (message.type === 'event' && message.data)
                 callback(null, message.data);
             else if (message.type === 'callback' && message.callbackId) {
-                callbacks[message.callbackId].apply(null, [message.err, message.result]);
-                delete callbacks[message.callbackId];
+                if (callbacks[message.callbackId]) {
+                    callbacks[message.callbackId].apply(null, [message.err, message.result]);
+                    delete callbacks[message.callbackId];
+                }
             }
         });
     }
