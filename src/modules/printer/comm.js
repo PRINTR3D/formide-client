@@ -21,6 +21,12 @@ function comm() {
         driver.kill();
     });
 
+    // handle driver process exit
+    driver.on('exit', function (code, signal) {
+        FormideClient.log.error('Process exiting because driver fork crashed', code, signal);
+        process.exit(code);
+    });
+
     // handle driver process error
     driver.on('error', function (err) {
         FormideClient.log.error(err);
