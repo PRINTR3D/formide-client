@@ -133,12 +133,26 @@ module.exports = {
      * @param password
      * @param callback
      */
-    connect(ssid, password, callback) {
-        execute(commands.connect.replace('{IFACE}', iface).replace('{SSID}', ssid).replace('{PASSWORD}', password), function (err, status) {
-            if (err) return callback(err);
-                console.log(status);
-            return callback(null, status);
-        });
+    connect(config, callback) {
+
+        var wpa_supplicant = "network={\n";
+
+        for (var param in req.body) {
+            wpa_supplicant += `${param}="${req.body[param]}"\n`;
+        }
+
+        wpa_supplicant += '}';
+
+        console.log(wpa_supplicant);
+
+        return callback(new Error('test'));
+
+
+        // execute(commands.connect.replace('{IFACE}', iface).replace('{SSID}', ssid).replace('{PASSWORD}', password), function (err, status) {
+        //     if (err) return callback(err);
+        //         console.log(status);
+        //     return callback(null, status);
+        // });
     },
 
     /**

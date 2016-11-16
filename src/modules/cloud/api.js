@@ -100,19 +100,15 @@ module.exports = (routes, cloud) => {
 	 * @apiVersion 1.0.0
 	 */
 	routes.post('/wifi', (req, res) => {
-		if (req.body.ssid == null)
-			return res.badRequest('ssid must be set');
-		if (req.body.password == null)
-			return res.badRequest('password must be set');
+		if (req.body.ssid == null) return res.badRequest('ssid must be set');
 
-		cloud.connect(req.body.ssid, req.body.password, err => {
-			if (err)
-				return res.serverError(err);
+		cloud.connect(req.body, err => {
+			if (err) return res.serverError(err);
 
 			// emit event
 			FormideClient.events.emit('wifi.connected', { message: `Wi-Fi is now connected to ${req.body.ssid}` });
 
-			res.ok({ message: 'Device connected to network' });
+			return res.ok({ message: 'Device connected to network' });
 		});
 	});
 
@@ -123,24 +119,17 @@ module.exports = (routes, cloud) => {
 	 * @apiVersion 1.0.0
 	 */
 	routes.post('/connect', (req, res) => {
-		// if (req.body.ssid == null || req.body.password)
-		// 	return res.badRequest('essid must be set');
-		// if (req.body.password == null)
-		// 	return res.badRequest('password must be set');
-		if (req.body.macAddress == null)
-			return res.badRequest('macAddress must be set');
-		if (req.body.registrationToken == null)
-			return res.badRequest('registrationToken must be set');
+		if (req.body.ssid == null || req.body.password) return res.badRequest('essid must be set');
 
-		cloud.connect(req.body.ssid, req.body.password, function(err) {
-			if (err)
-				return res.serverError(err);
+		cloud.connect(req.body, function(err) {
+			if (err) return res.serverError(err);
 
 			// emit event
 			FormideClient.events.emit('wifi.connected', { message: `Wi-Fi is now connected to ${req.body.ssid}` });
 
 			res.ok({ message: 'Device connected to network' });
 
+			// execute Formide platform registration flow
 			const registrationStart = os.uptime();
 			FormideClient.log('Waiting for device registration to start');
 			return setTimeout(waitForRegistrationStart,

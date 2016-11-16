@@ -166,6 +166,26 @@
 							<!--<textarea name="customConfig" class="text-input" placeholder="custom config"></textarea>-->
 						<!--</li>-->
 						<!--<hr/>-->
+
+						<li>
+							<input type="text" name="key_mgmt" class="text-input" placeholder="key_mgmt"><br/>
+						</li>
+						<li>
+							<input type="text" name="eap" class="text-input" placeholder="eap"><br/>
+						</li>
+						<li>
+							<input type="text" name="identity" class="text-input" placeholder="identity"><br/>
+						</li>
+						<li>
+							<input type="text" name="anonymous_identity" class="text-input" placeholder="anonymous_identity"><br/>
+						</li>
+						<li>
+							<input type="text" name="phase1" class="text-input" placeholder="phase1"><br/>
+						</li>
+						<li>
+							<input type="text" name="phase2" class="text-input" placeholder="phase2"><br/>
+						</li>
+
 						<li>
 							<p id="error-msg" class="hidden"></p>
 						</li>
@@ -295,13 +315,10 @@
 				submitButton.innerHTML = "Connecting" + Array(i+1).join(".");
 			}, 400);
 
-			callUrl('POST', '/api/cloud/connect', JSON.stringify({
-				ssid:              document.networks['ssid'].value,
-				password:          document.networks['password'].value,
-//				customConfig:      document.networks['customConfig'].value,
-				macAddress:        document.networks['macAddress'].value,
-				registrationToken: document.networks['registrationToken'].value
-			}), function(err, response) {
+			var form = document.querySelector('networks');
+			var data = new FormData(form);
+
+			callUrl('POST', '/api/cloud/connect', JSON.stringify(data), function(err, response) {
 				if (err) {
 					console.log('Error Connecting Cloud API', err);
 					clearInterval(processingInterval);

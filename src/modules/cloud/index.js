@@ -51,7 +51,7 @@ module.exports = {
 			reconnectionAttempts: 1000,
 			reconnectionDelayMax: 5000,
 			transports: ['websocket'],
-			timeout: 5000
+			// timeout: 5000
 		});
 
 		this.local = socket('ws://127.0.0.1:' + FormideClient.http.server.address().port, {
@@ -60,24 +60,29 @@ module.exports = {
 			reconnectionAttempts: 1000,
 			reconnectionDelayMax: 5000,
 			transports: ['websocket', 'polling'],
-			timeout: 5000
+			// timeout: 5000
+		});
+
+		// handle local connection errors
+		this.local.on('error', function (err) {
+			FormideClient.log.error('Error with local connection', err);
 		});
 
 		// handle cloud connection errors
 		this.cloud.on('error', function (err) {
-			FormideClient.log.error("Error with cloud connection: " + err);
+			FormideClient.log.error('Error with cloud connection', err);
 		});
 
 		this.cloud.on('connect_error', function (err) {
-			FormideClient.log.warn("Connecting to cloud: " + err);
+			FormideClient.log.warn('Connecting to cloud');
 		});
 
 		this.cloud.on('connect_timeout', function (err) {
-			FormideClient.log.error("Timeout when connecting to cloud: " + err);
+			FormideClient.log.error('Timeout when connecting to cloud');
 		});
 
 		this.cloud.on('reconnect_failed', function (err) {
-			FormideClient.log.error("Failed reconnecting to cloud: " + err);
+			FormideClient.log.error('Failed reconnecting to cloud');
 		});
 
 		/**
@@ -85,14 +90,14 @@ module.exports = {
 		 */
 		this.cloud.on('connect', () => {
 			let getMac = getmac.getMac;
-			if (self.tools && self.tools.getMac instanceof Function)
-				getMac = self.tools.getMac;
+			if (self.tools && self.tools.mac instanceof Function)
+				getMac = self.tools.mac;
 
 			let getIp = callback => {
 				setImmediate(() => callback(null, internalIp()));
 			};
-			if (self.tools && self.tools.getIp instanceof Function)
-				getIp = self.tools.getIp;
+			if (self.tools && self.tools.ip instanceof Function)
+				getIp = self.tools.ip;
 
 			// authenticate formideos based on mac address and api token, also
 			// sends permissions for faster blocking via cloud
@@ -224,7 +229,7 @@ module.exports = {
 					return callback(null, body);
 				}).on('error', (err) => {
 					FormideClient.log.error('http GET proxy error:', err);
-				});
+				}).end();
 			}
 			else {
 				request({
@@ -239,7 +244,7 @@ module.exports = {
 					return callback(null, body);
 				}).on('error', (err) => {
 					FormideClient.log.error(`http ${data.method} proxy error:`, err);
-				});
+				}).end();
 			}
 		});
 	},
@@ -271,24 +276,28 @@ module.exports = {
 			const throttle = new Throttle(10000000);
 
 			request
-			.get(`${FormideClient.config.get('cloud.url')}/files/download/gcode?hash=${data.gcode}`, {
-				strictSSL: false
-			})
-			.on('error', (err) => {
-				FormideClient.log.error('error downloading gcode:', err.message);
-				FormideClient.events.emit('queueItem.downloadError', { title: `${data.printJob.name} has failed to download`, message: err.message });
-			})
-			.pipe(throttle)
-			.pipe(fws)
-			.on('finish', () => {
-				FormideClient.log('finished downloading gcode. Received ' + fws.bytesWritten + ' bytes');
+				.get(`${FormideClient.config.get('cloud.url')}/files/download/gcode?hash=${data.gcode}`, {
+					strictSSL: false
+				})
+				.on('error', (err) => {
+					FormideClient.log.error('error downloading gcode:', err.message);
+					FormideClient.events.emit('queueItem.downloadError', { title: `${data.printJob.name} has failed to download`, message: err.message });
+				})
+				.pipe(throttle)
+				.pipe(fws)
+				.on('error', (err) => {
+					FormideClient.log.error('error downloading gcode:', err.message);
+					FormideClient.events.emit('queueItem.downloadError', { title: `${data.printJob.name} has failed to download`, message: err.message });
+				})
+				.on('finish', () => {
+					FormideClient.log('finished downloading gcode. Received ' + fws.bytesWritten + ' bytes');
 
-				// set status to queued to indicate it's ready to print
-				queueItem.status = 'queued';
-				queueItem.save(() => {
-					FormideClient.events.emit('queueItem.downloaded', { title: `${data.printJob.name} is ready to print`, message: 'The gcode was downloaded and is now ready to be printed' });
+					// set status to queued to indicate it's ready to print
+					queueItem.status = 'queued';
+					queueItem.save(() => {
+						FormideClient.events.emit('queueItem.downloaded', { title: `${data.printJob.name} is ready to print`, message: 'The gcode was downloaded and is now ready to be printed' });
+					});
 				});
-			});
 		});
 	},
 
@@ -321,8 +330,8 @@ module.exports = {
 			setImmediate(() => callback(null, internalIp()));
 		};
 
-		if (this.tools && this.tools.getIp instanceof Function)
-			getIp = this.tools.getIp;
+		if (this.tools && this.tools.ip instanceof Function)
+			getIp = this.tools.ip;
 
 		getIp((err, internalIpAddress) => {
 			return cb(err, internalIpAddress);
@@ -353,9 +362,9 @@ module.exports = {
 	/**
 	 * Connect device to selected network
 	 */
-	connect: function (essid, password, cb) {
+	connect: function (config, cb) {
 		if (this.tools)
-			this.tools.connect(essid, password, cb);
+			this.tools.connect(config, cb);
 		else
 			cb(new Error('element-tools not installed'));
 	},
@@ -365,8 +374,8 @@ module.exports = {
 	 */
 	generateCode: function(cb) {
 		let getMac = getmac.getMac;
-		if (this.tools && this.tools.getMac instanceof Function)
-			getMac = this.tools.getMac;
+		if (this.tools && this.tools.mac instanceof Function)
+			getMac = this.tools.mac;
 
 		// get MAC address, then ask API for setup code
 		getMac((err, macAddress) => {

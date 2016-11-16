@@ -103,13 +103,14 @@ module.exports = {
 
                     if (body.hasUpdate)
                         return callback(null, {
-                            message:    'update found',
-                            needsUpdate: true,
-                            imageURL:    body.imageURL,
-                            signature:   body.signature,
-                            version:     body.version,
-                            flavour:     body.flavour,
-                            published:   body.published
+                            message:         'update found',
+                            needsUpdate:     true,
+                            imageURL:        body.imageURL,
+                            signature:       body.signature,
+                            version:         body.version,
+                            flavour:         body.flavour,
+                            published:       body.published,
+                            releaseNotesURL: body.releaseNotesURL
                         });
 
                     return callback(null, {
