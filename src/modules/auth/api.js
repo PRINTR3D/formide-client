@@ -29,7 +29,7 @@ module.exports = function(routes, module) {
 			.then((accessToken) => {
 				return res.ok({ access_token: accessToken.token });
 			})
-			.error(res.serverError);
+			.catch(res.serverError);
 	});
 
 	/**
@@ -59,7 +59,7 @@ module.exports = function(routes, module) {
 		.find()
 		.populate('createdBy')
 		.then(res.ok)
-		.error(res.serverError);
+		.catch(res.serverError);
 	});
 
 	/**
@@ -76,9 +76,9 @@ module.exports = function(routes, module) {
 			sessionOrigin:	'local'
 		})
 		.then((accessToken) => {
-			return res.ok({ message: 'Access token created', accessToken });
+			return res.ok({ message: 'Access token created', token: accessToken.token });
 		})
-		.error(res.serverError);
+		.catch(res.serverError);
 	});
 
 	/**
@@ -93,7 +93,7 @@ module.exports = function(routes, module) {
 		.then(() => {
 			return res.ok({ message: 'Access token deleted' })
 		})
-		.error(res.serverError);
+		.catch(res.serverError);
 	});
 
 	/**
@@ -106,7 +106,7 @@ module.exports = function(routes, module) {
 		FormideClient.db.User
 		.find()
 		.then(res.ok)
-		.error(res.serverError);
+		.catch(res.serverError);
 	});
 
 	/**
@@ -122,7 +122,7 @@ module.exports = function(routes, module) {
 			if (!user) return res.notFound();
 			return res.ok(user);
 		})
-		.error(res.serverError);
+		.catch(res.serverError);
 	});
 
 	/**
@@ -141,7 +141,7 @@ module.exports = function(routes, module) {
 		.then((user) => {
 			return res.ok({ message: "User created", user });
 		})
-		.error(res.serverError);
+		.catch(res.serverError);
 	});
 
 	/**
@@ -160,7 +160,7 @@ module.exports = function(routes, module) {
 		.then((updated) => {
 			return res.ok({ message: "User updated", user: updated[0] });
 		})
-		.error(res.serverError);
+		.catch(res.serverError);
 	});
 
 	/**
@@ -175,6 +175,6 @@ module.exports = function(routes, module) {
 		.then(() => {
 			return res.ok({ message: "User deleted" });
 		})
-		.error(res.serverError);
+		.catch(res.serverError);
 	});
 };
