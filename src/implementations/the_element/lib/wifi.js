@@ -124,7 +124,7 @@ module.exports = {
                 delete config[field];
 
         // choose connection type
-        if (config.length === 2)
+        if (Object.keys(config).length === 2)
             connectSimple(config.ssid, config.password, callback);
         else
             connectAdvanced(config, callback);
