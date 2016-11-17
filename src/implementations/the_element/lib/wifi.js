@@ -201,6 +201,6 @@ function connectAdvanced(config, callback) {
         if (stdout.trim() !== 'OK')
             return callback(new Error(`Failed to connect with custom config`));
 
-        return callback(null, { message: "Successfully connected with custom config" });
+        return callback(null, { message: `Successfully connected to ${config.ssid}` });
     });
 }
