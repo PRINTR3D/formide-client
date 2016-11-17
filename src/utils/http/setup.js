@@ -26,6 +26,7 @@ function getWlanSetupPage(wifi, callback) {
                     return callback(wifiErr);
 
                 const networks = [];
+
                 for (const ssid in ssids)
                     networks.push({ssid});
 

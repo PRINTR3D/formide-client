@@ -51,7 +51,7 @@ module.exports = {
 			reconnectionAttempts: 1000,
 			reconnectionDelayMax: 5000,
 			transports: ['websocket'],
-			timeout: 5000
+			// timeout: 5000
 		});
 
 		this.local = socket('ws://127.0.0.1:' + FormideClient.http.server.address().port, {
@@ -60,7 +60,7 @@ module.exports = {
 			reconnectionAttempts: 1000,
 			reconnectionDelayMax: 5000,
 			transports: ['websocket', 'polling'],
-			timeout: 5000
+			// timeout: 5000
 		});
 
 		// handle local connection errors
@@ -74,15 +74,15 @@ module.exports = {
 		});
 
 		this.cloud.on('connect_error', function (err) {
-			FormideClient.log.warn('Connecting to cloud', err);
+			FormideClient.log.warn('Connecting to cloud');
 		});
 
 		this.cloud.on('connect_timeout', function (err) {
-			FormideClient.log.error('Timeout when connecting to cloud', err);
+			FormideClient.log.error('Timeout when connecting to cloud');
 		});
 
 		this.cloud.on('reconnect_failed', function (err) {
-			FormideClient.log.error('Failed reconnecting to cloud', err);
+			FormideClient.log.error('Failed reconnecting to cloud');
 		});
 
 		/**
@@ -229,7 +229,7 @@ module.exports = {
 					return callback(null, body);
 				}).on('error', (err) => {
 					FormideClient.log.error('http GET proxy error:', err);
-				});
+				}).end();
 			}
 			else {
 				request({
@@ -244,7 +244,7 @@ module.exports = {
 					return callback(null, body);
 				}).on('error', (err) => {
 					FormideClient.log.error(`http ${data.method} proxy error:`, err);
-				});
+				}).end();
 			}
 		});
 	},
@@ -276,24 +276,28 @@ module.exports = {
 			const throttle = new Throttle(10000000);
 
 			request
-			.get(`${FormideClient.config.get('cloud.url')}/files/download/gcode?hash=${data.gcode}`, {
-				strictSSL: false
-			})
-			.on('error', (err) => {
-				FormideClient.log.error('error downloading gcode:', err.message);
-				FormideClient.events.emit('queueItem.downloadError', { title: `${data.printJob.name} has failed to download`, message: err.message });
-			})
-			.pipe(throttle)
-			.pipe(fws)
-			.on('finish', () => {
-				FormideClient.log('finished downloading gcode. Received ' + fws.bytesWritten + ' bytes');
+				.get(`${FormideClient.config.get('cloud.url')}/files/download/gcode?hash=${data.gcode}`, {
+					strictSSL: false
+				})
+				.on('error', (err) => {
+					FormideClient.log.error('error downloading gcode:', err.message);
+					FormideClient.events.emit('queueItem.downloadError', { title: `${data.printJob.name} has failed to download`, message: err.message });
+				})
+				.pipe(throttle)
+				.pipe(fws)
+				.on('error', (err) => {
+					FormideClient.log.error('error downloading gcode:', err.message);
+					FormideClient.events.emit('queueItem.downloadError', { title: `${data.printJob.name} has failed to download`, message: err.message });
+				})
+				.on('finish', () => {
+					FormideClient.log('finished downloading gcode. Received ' + fws.bytesWritten + ' bytes');
 
-				// set status to queued to indicate it's ready to print
-				queueItem.status = 'queued';
-				queueItem.save(() => {
-					FormideClient.events.emit('queueItem.downloaded', { title: `${data.printJob.name} is ready to print`, message: 'The gcode was downloaded and is now ready to be printed' });
+					// set status to queued to indicate it's ready to print
+					queueItem.status = 'queued';
+					queueItem.save(() => {
+						FormideClient.events.emit('queueItem.downloaded', { title: `${data.printJob.name} is ready to print`, message: 'The gcode was downloaded and is now ready to be printed' });
+					});
 				});
-			});
 		});
 	},
 
@@ -358,9 +362,9 @@ module.exports = {
 	/**
 	 * Connect device to selected network
 	 */
-	connect: function (essid, password, cb) {
+	connect: function (config, cb) {
 		if (this.tools)
-			this.tools.connect(essid, password, cb);
+			this.tools.connect(config, cb);
 		else
 			cb(new Error('element-tools not installed'));
 	},
