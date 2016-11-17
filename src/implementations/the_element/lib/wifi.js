@@ -181,18 +181,18 @@ function connectSimple(essid, password, callback) {
  * @param callback
  */
 function connectAdvanced(config, callback) {
+
     // build wpa_supplicant config
-    var wpa_supplicant = "network={\n";
-    for (var param in config)
-        wpa_supplicant += `${param}="${config[param]}"\n`;
-    wpa_supplicant += '}';
+    var wpa_supplicant = '';
+    for (var param in config) {
+        var wpa_supplicant_command = bashEscape(`${param}="${config[param]}" `);
+        wpa_supplicant += wpa_supplicant_command;
+    }
 
-    const _wpa_supplicant = bashEscape(wpa_supplicant);
-
-    console.log('_wpa_supplicant', _wpa_supplicant);
+    console.log('_wpa_supplicant', wpa_supplicant);
 
     // execute reconnect of fiw service, now using updated config
-    exec(`${service} wlan0 connectWithConfig ${_wpa_supplicant}`, (err, stdout) => {
+    exec(`${service} wlan0 connectWithConfig ${wpa_supplicant}`, (err, stdout) => {
         if (err)
             return callback(err);
 
