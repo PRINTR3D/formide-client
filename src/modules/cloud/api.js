@@ -123,12 +123,8 @@ module.exports = (routes, cloud) => {
 		if (!req.body.registrationToken) return res.badRequest('registrationToken must be set');
 		if (!req.body.macAddress) return res.badRequest('macAddress must be set');
 
-		console.log(req.body);
-
 		const macAddress = req.body.macAddress;
 		const registrationToken = req.body.registrationToken;
-
-		console.log(macAddress, registrationToken);
 
 		cloud.connect(req.body, function(err) {
 			if (err) return res.serverError(err);
