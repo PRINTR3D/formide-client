@@ -165,6 +165,8 @@ module.exports = (routes, cloud) => {
 function waitForRegistrationStart(
 	registrationStart, macAddress, registrationToken, cloud) {
 
+	console.log('test2', registrationStart, macAddress, registrationToken);
+
 	assert(registrationStart);
 	assert(macAddress);
 	assert(registrationToken);
