@@ -190,9 +190,9 @@ function connectAdvanced(config, callback) {
     }
 
     // execute reconnect of fiw service, now using updated config
-    exec(`${service} wlan0 connectWithConfig ${wpa_supplicant}`, (err, stdout) => {
-        if (err)
-            return callback(err);
+    exec(`${service} wlan0 connectWithConfig ${wpa_supplicant}`, (err, stdout, stderr) => {
+        if (err || stderr)
+            return callback(new Error(`Failed to connect to ${config.ssid}`));
 
         if (stdout.trim() !== 'OK')
             return callback(new Error(`Failed to connect with custom config`));
