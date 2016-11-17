@@ -125,6 +125,11 @@ module.exports = (routes, cloud) => {
 
 		console.log(req.body);
 
+		const macAddress = req.body.macAddress;
+		const registrationToken = req.body.registrationToken;
+
+		console.log(macAddress, registrationToken);
+
 		cloud.connect(req.body, function(err) {
 			if (err) return res.serverError(err);
 
@@ -139,8 +144,8 @@ module.exports = (routes, cloud) => {
 			return setTimeout(waitForRegistrationStart,
 				REGISTRATION_START_INTERVAL,
 				registrationStart,
-				req.body.macAddress,
-				req.body.registrationToken,
+				macAddress,
+				registrationToken,
 				cloud);
 		});
 	});
