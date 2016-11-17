@@ -40,7 +40,7 @@ module.exports = function(routes, module) {
 				if (!uploadedFile.data && uploadedFile.reason === 'FILE_TOO_LARGE')
 					return res.badRequest(uploadedFile.message);
 
-				return res.ok({ message: "Uploaded file", uploadedFile: uploadedFile.data });
+				return res.ok({ message: "Uploaded file", data: [uploadedFile.data] });
 			});
 		}
         else {
