@@ -134,25 +134,15 @@ module.exports = {
      * @param callback
      */
     connect(config, callback) {
+        if (!config.ssid)
+            return callback(new Error('SSID not found in config'));
+        if (!config.password)
+            return callback(new Error('Password not found in config'));
 
-        var wpa_supplicant = "network={\n";
-
-        for (var param in req.body) {
-            wpa_supplicant += `${param}="${req.body[param]}"\n`;
-        }
-
-        wpa_supplicant += '}';
-
-        console.log(wpa_supplicant);
-
-        return callback(new Error('test'));
-
-
-        // execute(commands.connect.replace('{IFACE}', iface).replace('{SSID}', ssid).replace('{PASSWORD}', password), function (err, status) {
-        //     if (err) return callback(err);
-        //         console.log(status);
-        //     return callback(null, status);
-        // });
+        execute(commands.connect.replace('{IFACE}', iface).replace('{SSID}', config.ssid).replace('{PASSWORD}', config.password), function (err, status) {
+            if (err) return callback(err);
+            return callback(null, status);
+        });
     },
 
     /**

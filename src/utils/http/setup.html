@@ -133,6 +133,14 @@
 		.hidden {
 			display: none;
 		}
+		.advanced-settings-toggle {
+			font-size: 12px;
+			color: #0e90d2;
+		}
+		.advanced-settings-toggle:hover {
+			text-decoration: underline;
+			cursor: pointer;
+		}
 	</style>
 
 	<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
@@ -143,7 +151,7 @@
 			<div class="block">
 				<form class="form" id="form" name="networks" onsubmit="event.preventDefault(); onSubmit()">
 					<div style="text-align: center;">
-						<p>Select the network you would like your <br />Element to be connected to:</p>
+						<p>Select the network you would like <br />to connect to:</p>
 					</div>
 
 					<input type="hidden" name="macAddress" value="{{macAddress}}">
@@ -160,38 +168,39 @@
 						<li>
 							<input type="password" name="password" class="text-input" placeholder="password" maxlength="63"><br/>
 						</li>
-						<!--<hr/>-->
-						<!--<li id="customConfigField">-->
-							<!--<br/>-->
-							<!--<textarea name="customConfig" class="text-input" placeholder="custom config"></textarea>-->
-						<!--</li>-->
-						<!--<hr/>-->
+
+						<a onclick="toggleAdvanced()" class="advanced-settings-toggle">Show advanced settings</a>
+
+						<div id="advanced-settings" class="hidden">
+							<li>
+								<input type="text" name="key_mgmt" class="text-input" placeholder="key_mgmt"><br/>
+							</li>
+							<li>
+								<input type="text" name="eap" class="text-input" placeholder="eap"><br/>
+							</li>
+							<li>
+								<input type="text" name="identity" class="text-input" placeholder="identity"><br/>
+							</li>
+							<li>
+								<input type="text" name="anonymous_identity" class="text-input" placeholder="anonymous_identity"><br/>
+							</li>
+							<li>
+								<input type="text" name="phase1" class="text-input" placeholder="phase1"><br/>
+							</li>
+							<li>
+								<input type="text" name="phase2" class="text-input" placeholder="phase2"><br/>
+							</li>
+						</div>
 
 						<li>
-							<input type="text" name="key_mgmt" class="text-input" placeholder="key_mgmt"><br/>
-						</li>
-						<li>
-							<input type="text" name="eap" class="text-input" placeholder="eap"><br/>
-						</li>
-						<li>
-							<input type="text" name="identity" class="text-input" placeholder="identity"><br/>
-						</li>
-						<li>
-							<input type="text" name="anonymous_identity" class="text-input" placeholder="anonymous_identity"><br/>
-						</li>
-						<li>
-							<input type="text" name="phase1" class="text-input" placeholder="phase1"><br/>
-						</li>
-						<li>
-							<input type="text" name="phase2" class="text-input" placeholder="phase2"><br/>
-						</li>
+							<br/>
+							<button class="btn" id="submit" type="submit">Connect</button>
+					  	</li>
 
 						<li>
 							<p id="error-msg" class="hidden"></p>
 						</li>
-						<li>
-							<button class="btn" id="submit" type="submit">Connect</button>
-					  	</li>
+
 					</ul>
 					<div style="text-align: center;">
 						<p class="notice">Please note this may take up to a minute to complete</p>
@@ -255,11 +264,7 @@
 
 	<script>
 
-		function toggleFAQ(el) {
-
-			var className = 'hidden';
-			el = el.childNodes[3];
-
+		function toggleClass(el, className) {
 			var classes = el.className.split(' ');
 			var existingIndex = classes.indexOf(className);
 
@@ -269,6 +274,29 @@
 				classes.push(className);
 			}
 			el.className = classes.join(' ');
+		}
+
+		function toggleFAQ(el) {
+			var className = 'hidden';
+			el = el.childNodes[3];
+			toggleClass(el, className);
+		}
+
+		function toggleAdvanced() {
+			var className = 'hidden';
+			var el = document.getElementById("advanced-settings");
+			toggleClass(el, className);
+		}
+
+		function getFormValues(el) {
+			var elements = el.elements;
+			var obj ={};
+			for(var i = 0 ; i < elements.length ; i++){
+				var item = elements.item(i);
+				if (item.value !== "")
+					obj[item.name] = item.value;
+			}
+			return obj;
 		}
 
 		function callUrl(method, url, data, callback) {
@@ -309,16 +337,16 @@
 			var redirectBtn = document.getElementById("redirectBtn");
 			redirectBtn.style.display = 'none';
 
-			i = 0;
-			var processingInterval =  setInterval(function() {
+			var i = 0;
+			var processingInterval = setInterval(function() {
 				i = ++i % 4;
 				submitButton.innerHTML = "Connecting" + Array(i+1).join(".");
 			}, 400);
 
-			var form = document.querySelector('networks');
-			var data = new FormData(form);
+			var formData = getFormValues(document.getElementById('form'));
+			console.log(formData);
 
-			callUrl('POST', '/api/cloud/connect', JSON.stringify(data), function(err, response) {
+			callUrl('POST', '/api/cloud/connect', JSON.stringify(formData), function(err, response) {
 				if (err) {
 					console.log('Error Connecting Cloud API', err);
 					clearInterval(processingInterval);
