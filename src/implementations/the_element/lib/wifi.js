@@ -189,8 +189,6 @@ function connectAdvanced(config, callback) {
         wpa_supplicant += wpa_supplicant_command + " ";
     }
 
-    console.log('_wpa_supplicant', wpa_supplicant);
-
     // execute reconnect of fiw service, now using updated config
     exec(`${service} wlan0 connectWithConfig ${wpa_supplicant}`, (err, stdout) => {
         if (err)
