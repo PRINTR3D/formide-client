@@ -185,8 +185,8 @@ function connectAdvanced(config, callback) {
     // build wpa_supplicant config
     var wpa_supplicant = '';
     for (var param in config) {
-        var wpa_supplicant_command = bashEscape(`${param}="${config[param]}" `);
-        wpa_supplicant += wpa_supplicant_command;
+        var wpa_supplicant_command = bashEscape(`${param}="${config[param]}"`);
+        wpa_supplicant += wpa_supplicant_command + " ";
     }
 
     console.log('_wpa_supplicant', wpa_supplicant);
