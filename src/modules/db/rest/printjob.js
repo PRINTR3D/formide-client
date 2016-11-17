@@ -27,6 +27,20 @@ module.exports = (routes, db) => {
 	});
 
 	/**
+	 * Get all sliced items
+	 */
+	routes.get('/printjobs/slices', (req, res) => {
+		db.PrintJob
+			.find({ createdBy: req.user.id, sliceFinished: true, sliceMethod: 'local' }, { select: ((req.query.fields) ? req.query.fields.split(',') : "") })
+			.populate('printer')
+			.populate('sliceProfile')
+			.populate('materials')
+			.populate('files')
+			.then(res.ok)
+			.catch(res.serverError);
+	});
+
+	/**
 	 * Get single printJob
 	 */
 	routes.get('/printjobs/:id', (req, res) => {

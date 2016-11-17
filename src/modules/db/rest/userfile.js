@@ -26,6 +26,7 @@ module.exports = (routes, db) => {
 	routes.get('/files', (req, res) => {
 		db.UserFile
 			.find({ createdBy: req.user.id }, { select: ((req.query.fields) ? req.query.fields.split(',') : "") })
+			.sort('createdAt DESC')
 			.populate('printJobs')
 			.then(res.ok)
 			.error(res.serverError);
