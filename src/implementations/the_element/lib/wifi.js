@@ -187,10 +187,12 @@ function connectAdvanced(config, callback) {
         wpa_supplicant += `${param}="${config[param]}"\n`;
     wpa_supplicant += '}';
 
-    // const _wpa_supplicant = bashEscape(wpa_supplicant);
+    const _wpa_supplicant = bashEscape(wpa_supplicant);
+
+    console.log('_wpa_supplicant', _wpa_supplicant);
 
     // execute reconnect of fiw service, now using updated config
-    exec(`${service} wlan0 connectWithConfig "${wpa_supplicant}"`, (err, stdout) => {
+    exec(`${service} wlan0 connectWithConfig ${_wpa_supplicant}`, (err, stdout) => {
         if (err)
             return callback(err);
 
