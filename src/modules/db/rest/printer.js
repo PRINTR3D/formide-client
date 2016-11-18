@@ -12,6 +12,7 @@ module.exports = (routes, db) => {
 		db.Printer
 			.find({}, { select: ((req.query.fields) ? req.query.fields.split(',') : "") })
 			.sort('presetOrder ASC')
+			.sort('createdAt DESC')
 			.then(res.ok)
 			.catch(res.serverError);
 	});
