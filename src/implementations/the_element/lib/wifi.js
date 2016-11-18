@@ -2,7 +2,7 @@
 
 const fs         = require('fs');
 const exec       = require('child_process').exec;
-const bashEscape = require('../bashutils').escape;
+const bashEscape = require('../bashUtils').escape;
 const service    = 'sudo fiw'; // NB: all sudo actions have to be permitted in sudoers.d/formide
 
 /**
@@ -115,56 +115,19 @@ module.exports = {
      * @param callback
      * @returns {*}
      */
-    connect(essid, password, callback) {
-        //if (customConfig)
-        //    return this.connectEnterprise(customConfig, callback);
+    connect(config, callback) {
 
-        if (essid == null || essid.length === 0 || essid.length > 32)
-            return callback(new Error('essid must be 1..32 characters'));
+        // filter out fields that wpa_supplicant cannot handle
+        const allowedFields = ['ssid', 'password', 'key_mgmt', 'eap', 'identity', 'anonymous_identity', 'phase1', 'phase2'];
+        for (var field in config)
+            if (allowedFields.indexOf(field) < 0)
+                delete config[field];
 
-        if (password.length !== 0 && (password.length < 8 || password.length > 63))
-            return callback(new Error('password must be 8..63 characters, or 0 characters for an unprotected network'));
-
-        const _essid    = bashEscape(essid);
-        const _password = bashEscape(password);
-
-        var connectCommand = `${service} wlan0 connect ${_essid} ${_password}`;
-        connectCommand = connectCommand.trim();
-
-        exec(connectCommand, function (err, stdout, stderr) {
-            if (err || stderr)
-                return callback(new Error(`Failed to connect to ${essid}`));
-
-            if (stdout.trim() !== 'OK')
-                return callback(new Error(`Failed to connect with custom config`));
-
-            return callback(null, { message: `Successfully connected to ${essid}` });
-        });
-    },
-
-    /**
-     * Connect to a network using a custom wpa_supplicant configuration
-     * This allows connecting to any network that is supported by wpa_supplicant, including 802.11x networks
-     * @param wpaConfigFile
-     * @param callback
-     */
-    connectEnterprise(wpaConfig, callback) {
-        const configFilePath = '/data/wpa_supplicant.conf';
-
-        // TODO: add lock file info
-
-        fs.writeFileSync(configFilePath, wpaConfig);
-
-        // execute reconnect of fiw service
-        exec(`${service} wlan0 reconnect`, (err, stdout) => {
-            if (err)
-                return callback(err);
-
-            if (stdout.trim() !== 'OK')
-                return callback(new Error(`Failed to connect with custom config`));
-
-            return callback(null, { message: "Successfully connected with custom config" });
-        });
+        // choose connection type
+        if (Object.keys(config).length === 2)
+            connectSimple(config.ssid, config.password, callback);
+        else
+            connectAdvanced(config, callback);
     },
 
     /**
@@ -180,3 +143,64 @@ module.exports = {
         });
     }
 };
+
+/**
+ * Connect using SSID and password
+ * @param essid
+ * @param password
+ * @param callback
+ * @returns {*}
+ */
+function connectSimple(essid, password, callback) {
+    if (essid == null || essid.length === 0 || essid.length > 32)
+        return callback(new Error('essid must be 1..32 characters'));
+
+    if (password.length !== 0 && (password.length < 8 || password.length > 63))
+        return callback(new Error('password must be 8..63 characters, or 0 characters for an unprotected network'));
+
+    const _essid    = bashEscape(essid);
+    const _password = bashEscape(password);
+
+    var connectCommand = `${service} wlan0 connect ${_essid} ${_password}`;
+    connectCommand = connectCommand.trim();
+
+    exec(connectCommand, function (err, stdout, stderr) {
+        if (err || stderr)
+            return callback(new Error(`Failed to connect to ${essid}`));
+
+        if (stdout.trim() !== 'OK')
+            return callback(new Error(`Failed to connect with custom config`));
+
+        return callback(null, { message: `Successfully connected to ${essid}` });
+    });
+}
+
+/**
+ * Connect using advanced wpa_supplicant configuration
+ * @param config
+ * @param callback
+ */
+function connectAdvanced(config, callback) {
+
+    // build wpa_supplicant config
+    var wpa_supplicant = '';
+    for (var param in config) {
+        var wpa_supplicant_command = "";
+        if (param === 'key_mgmt' || param === 'eap')
+            wpa_supplicant_command = bashEscape(`${param}=${config[param]}`);
+        else
+            wpa_supplicant_command = bashEscape(`${param}="${config[param]}"`);
+        wpa_supplicant += wpa_supplicant_command + " ";
+    }
+
+    // execute reconnect of fiw service, now using updated config
+    exec(`${service} wlan0 connectWithConfig ${wpa_supplicant}`, (err, stdout, stderr) => {
+        if (err || stderr)
+            return callback(new Error(`Failed to connect to ${config.ssid}`));
+
+        if (stdout.trim() !== 'OK')
+            return callback(new Error(`Failed to connect with custom config`));
+
+        return callback(null, { message: `Successfully connected to ${config.ssid}` });
+    });
+}

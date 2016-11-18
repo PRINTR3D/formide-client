@@ -21,6 +21,12 @@ function comm() {
         driver.kill();
     });
 
+    // handle driver process exit
+    driver.on('exit', function (code, signal) {
+        FormideClient.log.error('Process exiting because driver fork crashed', code, signal);
+        process.exit(code);
+    });
+
     // handle driver process error
     driver.on('error', function (err) {
         FormideClient.log.error(err);
@@ -44,8 +50,10 @@ function comm() {
             else if (message.type === 'event' && message.data)
                 callback(null, message.data);
             else if (message.type === 'callback' && message.callbackId) {
-                callbacks[message.callbackId].apply(null, [message.err, message.result]);
-                delete callbacks[message.callbackId];
+                if (callbacks[message.callbackId]) {
+                    callbacks[message.callbackId].apply(null, [message.err, message.result]);
+                    delete callbacks[message.callbackId];
+                }
             }
         });
     }

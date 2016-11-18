@@ -12,6 +12,7 @@ module.exports = (routes, db) => {
 		db.SliceProfile
 			.find({ or: [ { createdBy: req.user.id }, { preset: true } ] }, { select: ((req.query.fields) ? req.query.fields.split(',') : "") })
 			.sort('presetOrder ASC')
+			.sort('createdAt DESC')
 			.then(res.ok)
 			.catch(res.serverError);
 	});
