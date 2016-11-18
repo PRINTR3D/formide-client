@@ -32,6 +32,7 @@ module.exports = (routes, db) => {
 	routes.get('/printjobs/slices', (req, res) => {
 		db.PrintJob
 			.find({ createdBy: req.user.id, sliceFinished: true, sliceMethod: 'local' }, { select: ((req.query.fields) ? req.query.fields.split(',') : "") })
+			.sort('createdAt DESC')
 			.populate('printer')
 			.populate('sliceProfile')
 			.populate('materials')
