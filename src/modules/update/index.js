@@ -44,7 +44,7 @@ module.exports = {
 
 	update: function (cb) {
 		if (this.tools)
-			this.tools.update(cb);
+			this.tools.update(false, false, cb);
 		else
 			return cb(new Error('client implementation not found'));
 	}
