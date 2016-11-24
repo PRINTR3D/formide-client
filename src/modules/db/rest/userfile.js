@@ -161,17 +161,22 @@ module.exports = (routes, db) => {
 	routes.get('/files/:id/images/:hash', function(req, res) {
 		// get image from disk
 		const imagePath = path.join(FormideClient.config.get('app.storageDir'), FormideClient.config.get('paths.images'), req.params.hash);
-		const readStream = fs.createReadStream(imagePath);
-		const imageStats = fs.statSync(imagePath);
+		try {
+            const readStream = fs.createReadStream(imagePath);
+            const imageStats = fs.statSync(imagePath);
 
-		// setup response headers
-		res.set('Content-disposition', `attachment; filename=${req.params.hash}`);
-		res.set('Content-type', 'image/png');
-		res.set('Content-length', imageStats.size);
+            // setup response headers
+            res.set('Content-disposition', `attachment; filename=${req.params.hash}`);
+            res.set('Content-type', 'image/png');
+            res.set('Content-length', imageStats.size);
 
-		// respond with file stream
-		if (req.query.encoding === 'base64') return readStream.pipe(base64.encode()).pipe(res);
-		return readStream.pipe(res);
+            // respond with file stream
+            if (req.query.encoding === 'base64') return readStream.pipe(base64.encode()).pipe(res);
+            return readStream.pipe(res);
+        }
+        catch (e) {
+			return res.notFound('Could not find image');
+		}
 	});
 
 	/**
