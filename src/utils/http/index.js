@@ -108,6 +108,16 @@ module.exports = {
 			next();
 		});
 
+		// Export environment info
+        this.app.get('/status', function (req, res) {
+        	return res.ok({
+        		platformURL: FormideClient.config.get('cloud.platformUrl'),
+				environment: FormideClient.config.environment,
+				uptime: process.uptime(),
+				version: pkg.version
+			});
+		});
+
 		// Root URL containing Wi-Fi setup page
 		this.app.get('/', function (req, res) {
 			if (FormideClient.ci && FormideClient.ci.wifi) {
