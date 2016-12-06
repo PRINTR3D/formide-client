@@ -34,7 +34,7 @@ module.exports = {
 
 		const self = this;
 
-		diskspace.check('/data', function (err, total, free) {
+		diskspace.check(FormideClient.config.get('app.storageDir'), function (err, total, free) {
 			if (err) return callback(err);
 
 			if (free < SPACE_BUFFER)
