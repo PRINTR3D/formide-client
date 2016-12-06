@@ -109,7 +109,7 @@ module.exports = {
 		});
 
 		// Export environment info
-        this.app.get('/status', function (req, res) {
+        this.app.get('/api', function (req, res) {
         	return res.ok({
         		platformURL: FormideClient.config.get('cloud.platformUrl'),
 				environment: FormideClient.config.environment,
