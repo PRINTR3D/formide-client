@@ -12,7 +12,7 @@
 console.time('boot time');
 
 // Dependencies
-const pkg 	       = require('./package.json');
+pkg 	           = require('./package.json');
 var moduleConfig   = null;
 
 try {
