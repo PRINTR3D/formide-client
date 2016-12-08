@@ -275,7 +275,7 @@ module.exports = {
 			// create a throttle of 10Mbps for downloading gcode
 			const throttle = new Throttle(10000000);
 
-			request
+            request
 				.get(`${FormideClient.config.get('cloud.url')}/files/download/gcode?hash=${data.gcode}`, {
 					strictSSL: false
 				})

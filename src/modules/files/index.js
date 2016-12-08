@@ -35,7 +35,7 @@ module.exports = {
 				return callback(err);
 			}
 
-			diskspace.check('/data', function (err, total, free) {
+			diskspace.check(FormideClient.config.get('app.storageDir'), function (err, total, free) {
 				if (err) return callback(err);
 
 				// check if file will fit on filesystem
@@ -117,7 +117,7 @@ module.exports = {
 	 * @param callback
 	 */
 	getDiskSpace(callback) {
-		diskspace.check('/data', function (err, total, free, status) {
+		diskspace.check(FormideClient.config.get('app.storageDir'), function (err, total, free, status) {
 			if (err) return callback(err);
 			return callback(null, { total, free, status });
 		});
@@ -219,7 +219,7 @@ module.exports = {
 			const fileName = filePathArray[filePathArray.length - 1];
 			const fileStats = fs.statSync(path.join('/run/media', drive, filePath));
 
-			diskspace.check('/data', function (err, total, free) {
+			diskspace.check(FormideClient.config.get('app.storageDir'), function (err, total, free) {
 				if (err) return callback(err);
 
 				// check if file will fit on filesystem
