@@ -1,6 +1,6 @@
 {
   "name": "formide-client",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "Formide client is a modular 3D printing cloud client with the goal of serving all 3D printers.",
   "main": "app.js",
   "author": "Chris ter Beke <chris@printr.com>",
