@@ -6,7 +6,7 @@
 // dependencies
 const fs 		   = require('fs');
 const uuid 		   = require('node-uuid');
-const formideTools = require('katana-tools');
+const katanaTools = require('katana-slicer').tools;
 const diskspace	   = require('diskspace');
 const assert	   = require('assert');
 const SPACE_BUFFER = 40000000; // 40MB should be free for slice to store resulting G-code
@@ -179,7 +179,7 @@ module.exports = {
 			assert(reference,'no reference found');
 			assert(version,'no version found');
 
-			formideTools.updateSliceprofile(reference, version, printJob.sliceProfile.settings, function(err, fixedSettings, version) {
+      katanaTools.updateSliceprofile(reference, version, printJob.sliceProfile.settings, function(err, fixedSettings, version) {
 				if (err) return callback(err);
 
 				FormideClient.db.SliceProfile.update({ id: printJob.sliceProfile.id }, { settings: fixedSettings, version: version }, function(err, update) {
@@ -198,7 +198,7 @@ module.exports = {
 						var updatedPrintJob = printJob.toObject();
 						updatedPrintJob.sliceProfile.settings = fixedSettings;
 
-						formideTools.generateSlicerequestFromPrintjob(updatedPrintJob,{
+            katanaTools.generateSlicerequestFromPrintjob(updatedPrintJob,{
 									version: version,
 									bucketIn: FormideClient.config.get('app.storageDir') + FormideClient.config.get("paths.modelfiles"),
 									bucketOut: FormideClient.config.get('app.storageDir') + FormideClient.config.get("paths.gcode"),
