@@ -21,7 +21,7 @@ module.exports = {
 
 		// loaded via katana-slicer npm package and node-pre-gyp
 		try {
-			this.katana = require('katana-slicer');
+			this.katana = require('katana-slicer').katana;
 		}
 		catch (e) {
 			FormideClient.log.warn('Cannot load katana binary, try re-installing katana-slicer');
