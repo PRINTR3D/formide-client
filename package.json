@@ -1,6 +1,6 @@
 {
   "name": "formide-client",
-  "version": "1.6.2",
+  "version": "1.6.3",
   "description": "Formide client is a modular 3D printing cloud client with the goal of serving all 3D printers.",
   "main": "app.js",
   "author": "Chris ter Beke <chris@printr.com>",
@@ -52,7 +52,7 @@
     "express-session": "^1.14.1",
     "express-validator": "^2.9.0",
     "fancy-errors": "^0.1.2",
-    "formide-drivers": "printr3d/formide-drivers-npm#v6.4.7",
+    "formide-drivers": "printr3d/formide-drivers-npm#v6.5.0",
     "fs-extra": "^0.30.0",
     "getmac": "^1.0.7",
     "handlebars": "^4.0.5",
