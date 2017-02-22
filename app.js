@@ -27,6 +27,18 @@ catch(e) {
 if (!process.env.NODE_ENV)
 	process.env.NODE_ENV = 'production';
 
+// catch uncaught connection errors
+process.on('uncaughtException', function(error) {
+	console.error((new Date).toUTCString() + ' uncaughtException:', error.message)
+	console.error(error.stack);
+	
+	if (error.message === 'read ECONNRESET') {
+		console.error('Caught ECONNRESET, not exiting...')
+	} else {
+		process.exit(1)
+	}
+})
+
 // Load formide-client src file
 const initFormide = require('./src/FormideClient');
 
