@@ -25,7 +25,7 @@ catch(e) {
 
 // set default env
 if (!process.env.NODE_ENV)
-	process.env.NODE_ENV = 'development';
+	process.env.NODE_ENV = 'production';
 
 // Load formide-client src file
 const initFormide = require('./src/FormideClient');
