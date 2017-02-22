@@ -114,10 +114,10 @@ module.exports = {
 							port:        FormideClient.config.get('app.port')
 						}, response => {
 							if (response.success) {
-								FormideClient.log('Cloud connected');
+								FormideClient.log('Cloud connected')
 
 								// forward all events to the cloud
-								FormideClient.events.onAny(forwardEvents);
+								FormideClient.events.onAny(forwardEvents)
 							}
 							else {
 								// something went wrong when connecting to the cloud
