@@ -25,28 +25,46 @@ catch(e) {
 
 // set default env
 if (!process.env.NODE_ENV)
-	process.env.NODE_ENV = 'development';
+	process.env.NODE_ENV = 'production';
+
+/**
+ * Handle exceptions
+ * @param error
+ */
+function handleException (error) {
+	console.error((new Date).toUTCString() + ' uncaughtException:', error.message)
+	console.error(error.stack);
+	
+	if (error.message.indexOf('ECONNRESET') > -1) {
+		console.error('Caught ECONNRESET, not exiting...')
+	} else {
+		process.exit(1)
+	}
+}
+
+// catch uncaught connection errors
+process.on('uncaughtException', handleException)
 
 // Load formide-client src file
 const initFormide = require('./src/FormideClient');
 
-initFormide().then(() => {
+initFormide().then((formideClient) => {
 
 	// Log awesome app starter logo
 	require('./src/utils/logLogo');
 
 	// Log app header
-	FormideClient.log.info('==============================================');
-	FormideClient.log.info('Starting formide-client v' + pkg.version + ' as ' + process.env.NODE_ENV);
-	FormideClient.log.info('==============================================');
+	formideClient.log.info('==============================================');
+	formideClient.log.info('Starting formide-client v' + pkg.version + ' as ' + process.env.NODE_ENV);
+	formideClient.log.info('==============================================');
 
 	// Load modules
 	for (var module in moduleConfig.modules) {
-		FormideClient.moduleManager.loadModule(moduleConfig.modules[module].path, module);
+		formideClient.moduleManager.loadModule(moduleConfig.modules[module].path, module);
 	}
 
 	// Activate all loaded modules
-	FormideClient.moduleManager.activateLoadedModules();
+	formideClient.moduleManager.activateLoadedModules();
 
 	console.timeEnd('boot time');
-});
+}).catch(handleException)

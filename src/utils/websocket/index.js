@@ -20,7 +20,7 @@ module.exports = {
 		var self = this;
 
 		// base websocket server to LCD display notifications and events
-		var server = ws.createServer(function (conn) {
+		var nativeSocketServer = ws.createServer(function (conn) {
 
 			function forwardEvents(event, data) {
 				data = data || {};
@@ -63,12 +63,22 @@ module.exports = {
 		    });
 
 		    conn.on("error", function (err) {
-				// FormideClient.log.error(err.message);
+					FormideClient.log.error('Native socket error:' + err.message)
 		    });
 
-		}).listen(3001)
-
-
+		})
+		
+		// catch error
+		nativeSocketServer.on('error', function (err) {
+			FormideClient.log.error('Native socket error:' + err.message)
+		})
+		
+		// start listening
+		nativeSocketServer.listen(3001)
+		
+		
+		
+		// local socket.io server
 		var socketio = io.listen(FormideClient.http.server);
 
 		// emit all system events
